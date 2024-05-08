@@ -3347,7 +3347,7 @@ CLOCK: [2024-04-21 Sun 11:59]--[2024-04-21 Sun 12:24] =>  0:25
 
     ;; To speed up startup, don't put to init section
     (setq org-modules nil                 ; Faster loading
-          org-directory "~/org"
+          org-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"
           org-capture-templates
           `(("i" "Idea" entry (file ,(concat org-directory "/idea.org"))
              "*  %^{Title} %?\n%U\n%a\n")
@@ -3394,11 +3394,10 @@ CLOCK: [2024-04-21 Sun 11:59]--[2024-04-21 Sun 12:24] =>  0:25
      org-agenda-start-with-log-mode t
      org-agenda-include-deadlines t
      org-agenda-include-diary t
-     org-directory "/Users/ldangelo/Documents/org"
-     org-agenda-files "/Users/ldangelo/Documents/org/org-agenda-files.txt"
+     org-agenda-files (concat org-directory "/org-agenda-files.txt")
 
-     org-default-inbox-file (expand-file-name "~/org/inbox.org")
-     org-default-someday-file (expand-file-name "~/org/someday.org")
+     org-default-inbox-file (expand-file-name (concat org-directory "/inbox.org"))
+     org-default-someday-file (expand-file-name (concat org-directory "/someday.org"))
      org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
 
 
@@ -3546,8 +3545,8 @@ CLOCK: [2024-04-21 Sun 11:59]--[2024-04-21 Sun 12:24] =>  0:25
     :commands (doct-org-roam)
     :after org-roam
     :init
-    (setq org-roam-directory "~/org/roam")
-    (setq org-roam-dailies-directory "~/org/roam/daily")
+    (setq org-roam-directory (concat org-directory "/roam"))
+    (setq org-roam-dailies-directory (concat org-directory "/roam/daily"))
     (setq org-roam-capture-templates
           (doct-org-roam '(
                            ("Default" :keys "d"
@@ -3577,7 +3576,7 @@ CLOCK: [2024-04-21 Sun 11:59]--[2024-04-21 Sun 12:24] =>  0:25
     (setq org-roam-dailies-capture-templates
           '(
             ("d" "Today"
-             plain (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+             plain (file (concat org-directory "/templates/org-roam-dailies.org"))
              :if-new (file "%<%Y-%m-%d>.org")
              )
 
@@ -3704,8 +3703,8 @@ CLOCK: [2024-04-21 Sun 11:59]--[2024-04-21 Sun 12:24] =>  0:25
       :load-path "packages/"
       :commands (doct-org-roam)
       :init
-      (setq org-roam-directory "~/org/roam")
-      (setq org-roam-dailies-directory "~/org/roam/daily")
+      (setq org-roam-directory (expand-file-name (concat org-directory "/roam")))
+      (setq org-roam-dailies-directory (expand-file-name (concat org-directory "/roam/daily")))
       (setq org-roam-capture-templates
             (doct-org-roam '(
                              ("Default" :keys "d"
@@ -3732,33 +3731,33 @@ CLOCK: [2024-04-21 Sun 11:59]--[2024-04-21 Sun 12:24] =>  0:25
     (setq org-roam-dailies-capture-templates
           '(
             ("d" "Today"
-             plain (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+             plain (file (expand-file-name (concat org-directory "/templates/org-roam-dailies.org")))
              :if-new (file "%<%Y-%m-%d>.org")
              )
 
             ("e" "Email"
              entry "** TODO Respond to e-mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\nCREATED: %U\n:END:\n %a"
-             (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+             (file (expand-file-name (concat org-directory "/templates/org-roam-dailies.org")))
              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Tasks")))
 
             ("p" "Phone Call"
              entry "** Phone call with %?"
-             (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+             (file (expand-file-name (concat "/templates/org-roam-dailies.org")))
              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Phone Calls")))
 
             ("m" "Meeting" entry "** Meeting with %?"
-             (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+             (file (expand-file-name (concat org-directory "/templates/org-roam-dailies.org")))
              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Meetings")))
 
             ("t" "Todo" entry "** TODO %?\n%a"
-             (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+             (file (expand-file-name (concat org-directory "/templates/org-roam-dailies.org")))
              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Tasks")))
 
             ("$" "Trade"
              table-line
              "|%<%H:%M>|%^{Direction|BUY|SELL}|%^{Size|5}|%^{WL|WIN|LOSS}|%^{Gross}|%^{Commissions}|"
              :table-line-pos "II-1" ;; first line before the second horizontal separator line
-             (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+             (file (expand-file-name (concat org-directory "/templates/org-roam-dailies.org")))
              :target (file+olp "%<%Y-%m-%d>.org" ("Trading" "Trade Details") )
              )
             ))
@@ -4346,7 +4345,7 @@ CLOCK: [2024-04-21 Sun 11:59]--[2024-04-21 Sun 12:24] =>  0:25
 
       (use-package elfeed-org
         :config
-        (setq rmh-elfeed-org-files (list "~/org/elfeed.org"))
+        (setq rmh-elfeed-org-files (list (concat org-directory "/elfeed.org")))
         (elfeed-org))
 #+end_src
 * WGrep
