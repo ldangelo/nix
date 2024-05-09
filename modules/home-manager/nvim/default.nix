@@ -8,13 +8,13 @@
       relativenumber = true;
       incsearch = true;
     };
-     
+
     colorschemes.onedark.enable = true;
     plugins.lualine.enable = true;
     plugins.nix.enable = true;
 
     plugins.treesitter.enable = true;
-      
+
     plugins.telescope.enable = true;
 
     plugins.harpoon = {
@@ -30,12 +30,11 @@
           "<leader>j" = "goto_next";
         };
 
-        lspBuf = { 
+        lspBuf = {
           gd = "definition";
           K  = "hover";
         };
-       };
-   };
+      };
+    };
   };
 }
-
