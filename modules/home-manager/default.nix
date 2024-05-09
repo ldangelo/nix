@@ -26,7 +26,10 @@
      packages = with pkgs; [
        nixVersions.latest
 
+#       ./spacevim.nix
        # user selected packages
+       pkgs.devbox
+       pkgs.devpod
        pkgs.helix
        pkgs.raycast
        pkgs.warp-terminal
@@ -67,7 +70,10 @@
    };
 
    fonts.fontconfig.enable = true;
-   home.stateVersion =
-     "22.11"; # To figure this out (in-case it changes) you can comment out the line and see what version it expected.
+
+   # To figure this out (in-case it changes) you can comment out the line and see what version it expected.
+   home.stateVersion = "22.11";
+
+   # Let Home Manager install and manage itself
    programs.home-manager.enable = true;
-   }
+}
