@@ -17,6 +17,12 @@
   homebrew = {
     enable = true;
 
+    masApps = {
+      _1PasswordforSafari = 1569813296;
+      userscripts = 1463298887;
+      vimari = 1480933944;
+    };
+
     casks = [
       "1password"
     ];
