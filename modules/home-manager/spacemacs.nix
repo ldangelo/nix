@@ -47,5 +47,6 @@ in
     poppler
     mu
     wordnet
+    nil
   ];
 }
