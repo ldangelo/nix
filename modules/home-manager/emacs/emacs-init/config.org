@@ -4943,7 +4943,7 @@ https://github.com/dgutov/diff-hl
 
 #+end_src
 *** DotNet
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (defun csharp-setup-backend ()
     
     (add-hook 'csharp-mode-hook 'omnisharp-mode))
