@@ -25,6 +25,7 @@
 
     casks = [
       "1password"
+      "rider"
     ];
   };
 
