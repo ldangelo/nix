@@ -2,13 +2,14 @@
    imports = [
      ./dotfiles
      ./nvim
-     ./emacs
+     #     ./emacs
      ./programs.nix
      ./path.nix
      ./shell.nix
      ./user.nix
      ./alias.nix
      #     ./trash
+     ./spacemacs.nix
    ];
 
    nixpkgs = {
