@@ -1,8 +1,8 @@
 { config, pkgs, inputs, ... }: {
    imports = [
      ./dotfiles
-     ./nvim
-     #     ./emacs
+#     ./nvim
+#     ./emacs
      ./programs.nix
      ./path.nix
      ./shell.nix
@@ -10,6 +10,8 @@
      ./alias.nix
      #     ./trash
      ./spacemacs.nix
+     ./spacevim.nix
+     ./boraers/default.nix
    ];
 
    nixpkgs = {
@@ -65,8 +67,17 @@
        pkgs.ripgrep
        pkgs.vscode
        pkgs.just
-       (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
+       pkgs.nerdfonts
+#       (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
        pkgs.silver-searcher
+       pkgs.thefuck
+       pkgs.jq
+       pkgs.fasd
+       pkgs.zoxide
+       pkgs.eza
+       pkgs.scc
+       pkgs.duf
+       pkgs.just
      ];
    };
 

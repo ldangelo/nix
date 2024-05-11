@@ -1,6 +1,6 @@
-{...}: {
+{config, pkgs, ...}: {
   # write .bordersrc file
-  xdg.configjfile = {
+  xdg.configFile = {
     name = "borders";
     source = builtins.path {
      name = "bordersrc";
