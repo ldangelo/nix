@@ -1,10 +1,18 @@
 { nixpkgs, nix-darwin, ... }: {
   # here go the darwin preferences and config items
-  programs.zsh.enable = true;
   users.users.ldangelo.home = "/Users/ldangelo";
+#  system.defaults.dock.mru_space = false;  # do not rearrange spaces
+  
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
+
+  programs = {
+    zsh.enable = true;
+    gnupg.agent.enable = true;
+  };
+
+  fonts.fontDir.enable = true;
 
   imports = [
     ./system.nix
@@ -17,11 +25,20 @@
   homebrew = {
     enable = true;
 
+    taps = [
+      "FelixKratz/formulae"
+    ];
+
+
     masApps = {
       _1PasswordforSafari = 1569813296;
       userscripts = 1463298887;
       vimari = 1480933944;
     };
+
+    brews = [
+      "borders"
+    ];
 
     casks = [
       "1password"
