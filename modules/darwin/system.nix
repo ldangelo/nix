@@ -24,7 +24,7 @@
         launchanim=false;
         static-only=false;
         showhidden=true;
-        show-recents=true;
+        show-recents=false;
         show-process-indicators=true;
 
         # Style options
@@ -36,6 +36,11 @@
         _FXShowPosixPathInTitle = true;
       };
 
+      # Tab between form controls and F-row that behaves as F1-F12
+      NSGlobalDomain = {
+        AppleKeyboardUIMode = 3;
+        "com.apple.keyboard.fnState" = true;
+      };
     };
   };
 

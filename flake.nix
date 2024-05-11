@@ -16,8 +16,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     # nixvim
-    nixvim.url = "github:nix-community/nixvim";
-    nixvim.inputs.nixpkgs.follows = "nixpkgs";
+#    nixvim.url = "github:nix-community/nixvim";
+#    nixvim.inputs.nixpkgs.follows = "nixpkgs";
 
     # flake-parts
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -35,7 +35,7 @@
     };
 };
 
-  outputs = inputs@{ self, nixpkgs, nur, home-manager, nixvim, nix-darwin, ...}:
+  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, ...}:
     let
       darwinConfiguration = { pkgs, ... }: {
         environment.systemPackages = [
@@ -56,16 +56,6 @@
         nixpkgs.config.allowUnfree = true;
       };
 
-      homeManagerConfiguration = { pkgs, ... }: {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          users.ldangelo.imports = [
-            nixvim.homeManagerModules.nixvim
-            ./modules/home-manager
-          ];
-        };
-      };
     in {
       darwinConfigurations."ldangelo" = nix-darwin.lib.darwinSystem {
         modules = [
@@ -76,8 +66,9 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              backupFileExtension = "backup";
               users.ldangelo.imports = [
-                nixvim.homeManagerModules.nixvim
+#                nixvim.homeManagerModules.nixvim
                 ./modules/home-manager
               ];
             };
@@ -87,6 +78,6 @@
 
 
 
-            darwinPackages = self.darwinConfigurations."ldangelo".pkgs;
+      darwinPackages = self.darwinConfigurations."ldangelo".pkgs;
     };
 }
