@@ -18,7 +18,6 @@
     ./system.nix
     ./yabai/default.nix
     ./skhd/default.nix
-    ./borders/default.nix
     #    ./spacebar.nix
   ];
 
