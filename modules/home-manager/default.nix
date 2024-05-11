@@ -11,7 +11,7 @@
      #     ./trash
      ./spacemacs.nix
      ./spacevim.nix
-     ./boraers/default.nix
+     ./borders
    ];
 
    nixpkgs = {
