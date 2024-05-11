@@ -18,7 +18,7 @@
     ./system.nix
     ./yabai/default.nix
     ./skhd/default.nix
-    #    ./spacebar.nix
+    ./sketcybar/default.nix
   ];
 
   homebrew = {
