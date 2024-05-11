@@ -13,12 +13,12 @@
   };
 
   fonts.fontDir.enable = true;
+  fonts.fonts = [ nixpkgs.source-code-pro ]; 
 
   imports = [
     ./system.nix
     ./yabai/default.nix
     ./skhd/default.nix
-    ./sketchybar/default.nix
   ];
 
   homebrew = {
