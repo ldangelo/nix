@@ -48,5 +48,6 @@ in
     mu
     wordnet
     nil
+    nixfmt-classic
   ];
 }
