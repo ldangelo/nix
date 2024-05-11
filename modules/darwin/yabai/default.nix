@@ -5,8 +5,9 @@
     enable = true;
     package = pkgs.yabai;
     enableScriptingAddition = true;
+    
     config = {
-          window_border = "off";
+          window_border = "on";
           window_border_width = 2;
           active_window_border_color = "0xff81a1c1";
           normal_window_border_color = "0xff3b4252";
@@ -14,8 +15,8 @@
           mouse_follows_focus = "off";
           mouse_drop_action = "stack";
           window_placement = "second_child";
-          window_opacity = "off";
-          window_topmost = "off";
+          window_opacity = "on";
+          window_topmost = "on";
           split_ratio = "0.50";
           auto_balance = "on";
           mouse_modifier = "fn";
@@ -44,6 +45,7 @@
           yabai -m signal --add event=window_moved action="sketchybar --trigger window_on_spaces"
           yabai -m signal --add event=window_created action="sketchybar --trigger windows_on_spaces"
           yabai -m signal --add event=window_destroyed action="sketchybar --trigger windows_on_spaces"
+         borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 & 
         '';
   };
 }
