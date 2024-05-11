@@ -2,8 +2,10 @@
    home-manager.xdg.configFile = {
      "sketchybar" = {
        source = builtins.path {
-         path = ./sketchybar;
+         path = ./skechybar;
        };
      };
    }; 
 }
+
+ 
