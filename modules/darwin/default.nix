@@ -14,7 +14,6 @@
 
   fonts.fontDir.enable = true;
 #   fonts.fonts = [ nixpkgs.source-code-pro ]; 
-
 #  services.sketchybar.enable = true;
 #  services.sketchybar.package = pkgs.sketchybar;
   
