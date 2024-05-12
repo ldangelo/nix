@@ -165,7 +165,24 @@
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs",
-        "nur": "nur"
+        "nur": "nur",
+        "sketchybar-lua": "sketchybar-lua"
+      }
+    },
+    "sketchybar-lua": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1709104673,
+        "narHash": "sha256-C2tg1mypz/CdUmRJ4vloPckYfZrwHxc4v8hsEow4RZs=",
+        "owner": "FelixKratz",
+        "repo": "SbarLua",
+        "rev": "29395b1928835efa1b376d438216fbf39e0d0f83",
+        "type": "github"
+      },
+      "original": {
+        "owner": "FelixKratz",
+        "repo": "SbarLua",
+        "type": "github"
       }
     },
     "systems": {

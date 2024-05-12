@@ -27,6 +27,7 @@
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
+    sketchybar-lua         = { url = github:FelixKratz/SbarLua; flake = false; };
     # Overlays
 
     emacs-overlay = {
@@ -70,6 +71,7 @@
               users.ldangelo.imports = [
 #                nixvim.homeManagerModules.nixvim
                 ./modules/home-manager
+                ./overlays
               ];
             };
           }
