@@ -1,4 +1,4 @@
-{ nixpkgs, nix-darwin, ... }: {
+{ pkgs, ... }: {
   # here go the darwin preferences and config items
   users.users.ldangelo.home = "/Users/ldangelo";
 #  system.defaults.dock.mru_space = false;  # do not rearrange spaces
@@ -13,8 +13,11 @@
   };
 
   fonts.fontDir.enable = true;
-  fonts.fonts = [ nixpkgs.source-code-pro ]; 
+#   fonts.fonts = [ nixpkgs.source-code-pro ]; 
 
+#  services.sketchybar.enable = true;
+#  services.sketchybar.package = pkgs.sketchybar;
+  
   imports = [
     ./system.nix
     ./yabai/default.nix

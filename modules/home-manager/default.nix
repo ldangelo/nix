@@ -12,7 +12,7 @@
      ./spacemacs.nix
      ./spacevim.nix
      ./borders
-     ./sketchybar
+##     ./sketchybar
    ];
 
    nixpkgs = {
