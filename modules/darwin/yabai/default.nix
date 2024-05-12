@@ -45,7 +45,6 @@
           yabai -m signal --add event=window_moved action="sketchybar --trigger window_on_spaces"
           yabai -m signal --add event=window_created action="sketchybar --trigger windows_on_spaces"
           yabai -m signal --add event=window_destroyed action="sketchybar --trigger windows_on_spaces"
-         borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 & 
         '';
   };
 }
