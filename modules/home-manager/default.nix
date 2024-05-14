@@ -12,7 +12,7 @@
      ./spacemacs.nix
      ./spacevim.nix
      ./borders
-##     ./sketchybar
+#     ./sketchybar
    ];
 
    nixpkgs = {
@@ -32,6 +32,7 @@
 
 #       ./spacevim.nix
        # user selected packages
+       pkgs.sketchybar-lua
        pkgs.devbox
        pkgs.devpod
        pkgs.helix
@@ -39,6 +40,7 @@
        pkgs.warp-terminal
        pkgs.lazygit
        pkgs.nerdfonts
+       pkgs.source-code-pro
        pkgs.aldente
        pkgs.apparency
        #      pkgs.apple-sdk
