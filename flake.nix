@@ -27,8 +27,8 @@
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
-    sketchybar-lua         = { url = github:FelixKratz/SbarLua; flake = false; };
     # Overlays
+    sketchybar-lua         = { url = github:FelixKratz/SbarLua; flake = false; };
 
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
