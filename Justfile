@@ -6,6 +6,9 @@
 #
 ############################################################################
 
+deploy-nc:
+  darwin-rebuild switch --flake .#ldangelo --option eval-cache false
+
 deploy:
   darwin-rebuild switch --flake .#ldangelo
 
