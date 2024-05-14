@@ -7,10 +7,10 @@
 
 stdenv.mkDerivation {
     pname = "sketchybar-lua";
-    version = "0.0.0.0";
+    version = "1.0.0";
     src = sources.sketchybar-lua;
     nativeBuildInputs = [ clang gcc ];
-ldInputs = [ readline ];
+    inputs = [ readline ];
     installPhase = ''
         mv bin "$out"
     '';

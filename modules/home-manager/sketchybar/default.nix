@@ -1,6 +1,6 @@
 {pkgs,  config, ...}: {
    xdg.file = {
-     ".local/share/sketcybar_lua/sketchybar_lua.so" = pkgs.sketcybar_lua; 
+     ".lcal/share/sketchybar_lua/sketchybar_lua.so" = pkgs.sketchybar-lua; 
    }; 
      
    xdg.configFile = {
