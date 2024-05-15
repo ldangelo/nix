@@ -32,7 +32,8 @@
 
 #       ./spacevim.nix
        # user selected packages
-       pkgs.sketchybar-lua
+       pkgs.cyrus_sasl
+       pkgs.cyrus-sasl-xoauth2
        pkgs.devbox
        pkgs.devpod
        pkgs.helix
