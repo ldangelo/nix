@@ -38,12 +38,16 @@
     };
 
     brews = [
+      "podman"
+      "docker-compose"
       "borders"
     ];
 
     casks = [
       "1password"
+      "1password-cli"
       "rider"
+      "alt-tab"
     ];
   };
 
