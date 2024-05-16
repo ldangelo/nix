@@ -18,6 +18,7 @@
    nixpkgs = {
      overlays = [
        #       inputs.brew-nix.overlay.${builtins.currentSystem}
+     inputs.nixpkgs.isync.override { withCyrusSaslXoauth2 = true; }
      ];
 };
 
@@ -28,7 +29,7 @@
      username = "ldangelo";
      homeDirectory = "/Users/ldangelo";
      packages = with pkgs; [
-       nixVersions.latest
+#       nixVersions.latest
 
 #       ./spacevim.nix
        # user selected packages

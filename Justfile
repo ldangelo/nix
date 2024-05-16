@@ -9,6 +9,9 @@
 deploy-nc:
   darwin-rebuild switch --flake .#ldangelo --option eval-cache false
 
+deploy-rebuild:
+  darwin-rebuild switch --rebuild --flake .#ldangelo
+
 deploy:
   darwin-rebuild switch --flake .#ldangelo
 
@@ -31,7 +34,7 @@ repl:
 
 clean:
   # remove all generations older than 7 days
-  sudo nix profile wipe-history --profile /nix/var/nix/profiles/system  --older-than 7d
+  nix profile wipe-history --profile /nix/var/nix/profiles/system  --older-than 7d
 
 gc:
   # garbage collect all unused nix store entries

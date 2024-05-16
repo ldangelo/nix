@@ -3,12 +3,13 @@
 
   inputs = {
     # Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
+    unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     #    flake-utils.url = "github:numtide/flake-utils";
 
     # Home manager
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Darwin
@@ -16,8 +17,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     # nixvim
-#    nixvim.url = "github:nix-community/nixvim";
-#    nixvim.inputs.nixpkgs.follows = "nixpkgs";
+    #    nixvim.url = "github:nix-community/nixvim";
+    #    nixvim.inputs.nixpkgs.follows = "nixpkgs";
 
     # flake-parts
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -28,20 +29,21 @@
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
     # Overlays
-    sketchybar-lua         = { url = github:FelixKratz/SbarLua; flake = false; };
+    sketchybar-lua = {
+      url = "github:FelixKratz/SbarLua";
+      flake = false;
+    };
 
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-};
+  };
 
-  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, ...}:
+  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, ... }:
     let
       darwinConfiguration = { pkgs, ... }: {
-        environment.systemPackages = [
-          pkgs.vim
-        ];
+        environment.systemPackages = [ pkgs.vim ];
 
         services.nix-daemon.enable = true;
 
@@ -63,13 +65,14 @@
 
           darwinConfiguration
           ./modules/darwin
-          home-manager.darwinModules.home-manager {
+          home-manager.darwinModules.home-manager
+          {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "backup";
               users.ldangelo.imports = [
-#                nixvim.homeManagerModules.nixvim
+                #                nixvim.homeManagerModules.nixvim
                 ./modules/home-manager
                 ./overlays
               ];
@@ -77,8 +80,6 @@
           }
         ];
       };
-
-
 
       darwinPackages = self.darwinConfigurations."ldangelo".pkgs;
     };
