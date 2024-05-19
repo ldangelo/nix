@@ -34,13 +34,15 @@
     masApps = {
       _1PasswordforSafari = 1569813296;
       userscripts = 1463298887;
-      vimari = 1480933944;
+      vimlike = 1584519802;
+#      vimari = 1480933944;
     };
 
     brews = [
       "podman"
       "docker-compose"
       "borders"
+#       "isync" # the nix package doesn't support oauth
     ];
 
     casks = [
