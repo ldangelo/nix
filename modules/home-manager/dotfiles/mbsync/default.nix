@@ -1,6 +1,7 @@
 { pkgs, environment, ... }: {
   # output .mbsyncrc file
   programs.mbsync.enable = true;
+  programs.mbsync.package = pkgs.isync-oauth2;
   programs.msmtp.enable = true;
 
   accounts.email = {

@@ -49,5 +49,6 @@ in
     wordnet
     nil
     nixfmt
+    fasd
   ];
 }
