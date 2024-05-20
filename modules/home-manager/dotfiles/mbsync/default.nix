@@ -4,23 +4,52 @@
     enable = true;
     package = pkgs.isync-oauth2;
     extraConfig = ''
-     # Keeps timestamp mased message sorting intactt
-     CopyArrivalDate = yes;
-     SyncState = *
-'';
+      # Keeps timestamp mased message sorting intactt
+      CopyArrivalDate yes
+      SyncState *
+    '';
   };
 
   programs.msmtp.enable = true;
   programs.notmuch = {
     enable = true;
 
-    new.tags = [
-      "new"
-    ];
+    new.tags = [ "new" ];
     hooks = {
-      preNew = "mbsync -all";
-      postNew = "afew --tag --new";
+      preNew = "mbsync -a";
+      postNew = "afew -t -n -vv -C ~/.config/notmuch/default/config";
     };
+  };
+  programs.afew = {
+    enable = true;
+
+    extraConfig = ''
+
+      [SentMailsFilter]
+      sent_tag=+sent;
+
+      [SpamFilter]
+      [KillThreadsFilter]
+      [ListMailsFilter]
+      [ArchiveSentMailsFilter]
+
+      [Filter.0]
+      query = from:fortiumpartners.com
+      tags = +important
+      message = Message from Fortium
+
+      [Filter.1]
+      query = from:hchb.com
+      tags = +important;+currentclient;+hchb
+      message = Message from HCHB
+
+      [Filter.2]
+      query = from:musicmaster.com
+      tags  = +important;+currentclient;+musicmaster
+      message = Mesage from MusicMaster
+
+      [InboxFilter]
+    '';
   };
 
   accounts = {
@@ -36,7 +65,15 @@
           create = "maildir";
         };
         notmuch.enable = true;
-        msmtp.enable = true;
+        msmtp = {
+          enable = true;
+          extraConfig = {
+            tls = "on";
+            tls_starttls = "on";
+            port = "587";
+            tls_certcheck = "off";
+          };
+        };
         primary = true;
         realName = "Leo A. DAngelo";
         signature = {
@@ -62,13 +99,22 @@
           expunge = "both";
           extraConfig.account = { AuthMechs = "XOAUTH2"; };
         };
-        msmtp.enable = true;
-        notmuch.enable = true;
+        msmtp = {
+          enable = true;
+          extraConfig = {
+            auth = "oauthbearer";
+            tls = "on";
+            tls_starttls = "on";
+            port = "587";
+            tls_certcheck = "off";
+          };
+        };
+         notmuch.enable = true;
         primary = false;
         realName = "Leo A. D'Angelo";
         smtp = {
-          host = "localhost";
-          port = 1465;
+          host = "smtp.gmail.com";
+#          port = 1465;
         };
       };
     };
