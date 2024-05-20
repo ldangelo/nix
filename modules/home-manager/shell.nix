@@ -35,7 +35,15 @@
     };
 
     oh-my-zsh.enable = true;
-    oh-my-zsh.plugins = [ "systemd" ];
+    oh-my-zsh.plugins = [
+      "1password"
+      "fzf"
+      "keychain"
+      "podman"
+      "thefuck"
+      "systemd"
+      "zoxide"
+    ];
     initExtraBeforeCompInit = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
@@ -141,8 +149,9 @@
       (( $+aliases[run-help] )) && unalias run-help
       autoload -Uz run-help run-help-nix
 
+      NOTMUCH_CONFIG=~/.config/notmuch/default/config
       # vterm (emacs) related functions for prompt tracking, etc...
-      source ~/.vterm/emacs-vterm-zsh.sh 
+      source ~/.vterm/emacs-vterm-zsh.sh
       '';
   };
 }
