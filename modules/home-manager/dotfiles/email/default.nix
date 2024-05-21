@@ -13,8 +13,8 @@
   programs.offlineimap = {
     enable = true;
     extraConfig.general = {
-       accounts = "icloud";
-       metadata = "~/Maildir/.offlineimap";
+      accounts = "icloud";
+      metadata = "~/Maildir/.offlineimap";
     };
   };
   programs.msmtp.enable = true;
@@ -67,7 +67,7 @@
         address = "ldangelo@mac.com";
         imap = {
           host = "imap.mail.me.com";
-          tls.enable =true;
+          tls.enable = true;
           tls.useStartTls = true;
         };
         userName = "ldangelo@mac.com";
@@ -75,9 +75,7 @@
         passwordCommand = "op item get mbsync-icloud --fields password";
 
         flavor = "plain";
-        offlineimap = {
-          enable = true;
-        };
+        offlineimap = { enable = true; };
         # mbsync = {
         #   enable = true;
         #   create = "maildir";
@@ -113,16 +111,20 @@
       };
       accounts.fortium = {
         address = "leo.dangelo@fortiumpartners.com";
-        imap.host = "imap.gmail.com";
-        imap.tls.enable = true;
+        imap = {
+          host = "imap.gmail.com";
+          tls.enable = true;
+          tls.useStartTls = true;
+        };
+        offlineimap.enable = true;
         userName = "leo.dangelo@fortiumpartners.com";
         passwordCommand = "pizauth show fortium";
-        mbsync = {
-          enable = true;
-          create = "both";
-          expunge = "both";
-          extraConfig.account = { AuthMechs = "XOAUTH2"; };
-        };
+        # mbsync = {
+        #   enable = true;
+        #   create = "both";
+        #   expunge = "both";
+        #   extraConfig.account = { AuthMechs = "XOAUTH2"; };
+        # };
         msmtp = {
           enable = true;
           extraConfig = {
@@ -133,12 +135,12 @@
             tls_certcheck = "off";
           };
         };
-         notmuch.enable = true;
+        notmuch.enable = true;
         primary = false;
         realName = "Leo A. D'Angelo";
         smtp = {
           host = "smtp.gmail.com";
-#          port = 1465;
+          #          port = 1465;
         };
       };
     };
