@@ -7,12 +7,13 @@
     isync-oauth2
     notmuch
     afew
+    offlineimap
 #    alot
     mu
    # pkgs.isync
   ];
 
   imports = [
-    ./mbsync
+    ./email
   ];
 }

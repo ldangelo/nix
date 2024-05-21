@@ -1,16 +1,22 @@
 { pkgs, environment, ... }: {
   # output .mbsyncrc file
-  programs.mbsync = {
+  # programs.mbsync = {
+  #   enable = true;
+  #   package = pkgs.isync-oauth2;
+  #   extraConfig = ''
+  #     # Keeps timestamp mased message sorting intactt
+  #     CopyArrivalDate yes
+  #     SyncState *
+  #     Sync All
+  #   '';
+  # };
+  programs.offlineimap = {
     enable = true;
-    package = pkgs.isync-oauth2;
-    extraConfig = ''
-      # Keeps timestamp mased message sorting intactt
-      CopyArrivalDate yes
-      SyncState *
-      Sync All
-    '';
+    extraConfig.general = {
+       accounts = "icloud";
+       metadata = "~/Maildir/.offlineimap";
+    };
   };
-
   programs.msmtp.enable = true;
   programs.neomutt.enable = true;
   programs.notmuch = {
@@ -59,20 +65,28 @@
     email = {
       accounts.icloud = {
         address = "ldangelo@mac.com";
-        imap.host = "imap.mail.me.com";
+        imap = {
+          host = "imap.mail.me.com";
+          tls.enable =true;
+          tls.useStartTls = true;
+        };
         userName = "ldangelo@mac.com";
         # Use the keychain to keep from having to type the op password in... it sucks!
         passwordCommand = "op item get mbsync-icloud --fields password";
 
-        mbsync = {
+        flavor = "plain";
+        offlineimap = {
           enable = true;
-          create = "maildir";
-          patterns = [
-            "INBOX"
-            "Trash"
-
-          ];
         };
+        # mbsync = {
+        #   enable = true;
+        #   create = "maildir";
+        #   patterns = [
+        #     "INBOX"
+        #     "Trash"
+
+        #   ];
+        # };
         notmuch.enable = true;
         neomutt.enable = true;
         msmtp = {
