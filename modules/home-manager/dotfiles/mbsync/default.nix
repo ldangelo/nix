@@ -7,10 +7,12 @@
       # Keeps timestamp mased message sorting intactt
       CopyArrivalDate yes
       SyncState *
+      Sync All
     '';
   };
 
   programs.msmtp.enable = true;
+  programs.neomutt.enable = true;
   programs.notmuch = {
     enable = true;
 
@@ -59,12 +61,20 @@
         address = "ldangelo@mac.com";
         imap.host = "imap.mail.me.com";
         userName = "ldangelo@mac.com";
+        # Use the keychain to keep from having to type the op password in... it sucks!
         passwordCommand = "op item get mbsync-icloud --fields password";
+
         mbsync = {
           enable = true;
           create = "maildir";
+          patterns = [
+            "INBOX"
+            "Trash"
+
+          ];
         };
         notmuch.enable = true;
+        neomutt.enable = true;
         msmtp = {
           enable = true;
           extraConfig = {
