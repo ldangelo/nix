@@ -33,7 +33,9 @@
       pkgs.devpod
       pkgs.helix
       pkgs.raycast
-      pkgs.warp-terminal
+#       pkgs.warp-terminal
+      pkgs.alacritty
+      pkgs.kitty
       pkgs.lazygit
       pkgs.nerdfonts
       pkgs.source-code-pro
@@ -59,6 +61,7 @@
       # Fleek Bling
       pkgs.git
       pkgs.htop
+      pkgs.btop
       pkgs.github-cli
       pkgs.glab
       pkgs.gnupg
