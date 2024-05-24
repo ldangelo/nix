@@ -45,10 +45,10 @@ in
     shellcheck
     # tetex # Does not build properly (2024-03-09)
     poppler
-    mu
+#    mu
     wordnet
     nil
-    nixfmt
+    nixfmt-classic
     fasd
   ];
 }
