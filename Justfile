@@ -5,6 +5,8 @@
 #  Nix commands related to the local machine
 #
 ############################################################################
+default:
+  @just --list
 
 deploy-nc:
   darwin-rebuild switch --flake .#ldangelo --option eval-cache false
