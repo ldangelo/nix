@@ -8,6 +8,7 @@
     notmuch
     afew
     offlineimap
+    imapfilter
 #    alot
     mu
    # pkgs.isync
