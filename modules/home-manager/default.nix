@@ -15,12 +15,19 @@
     #     ./sketchybar
   ];
 
+  stylix.autoEnable = true;
 
+  stylix.base16Scheme =
+    "${pkgs.base16-schemes}/share/themes/darcula.yaml";
+  stylix.fonts.sizes.terminal=16;
+  stylix.fonts.sizes.desktop=14;
+  stylix.fonts.sizes.applications=14;
   # packages are just installed (no configuration applied)
   # programs are installed and configuration applied to dotfiles
   home = {
     username = "ldangelo";
     homeDirectory = "/Users/ldangelo";
+
     packages = with pkgs; [
       #       nixVersions.latest
 
@@ -33,7 +40,7 @@
       pkgs.devpod
       pkgs.helix
       pkgs.raycast
-#       pkgs.warp-terminal
+      #       pkgs.warp-terminal
       pkgs.alacritty
       pkgs.kitty
       pkgs.lazygit
