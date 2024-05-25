@@ -4,7 +4,7 @@
   inputs = {
     # Nixpkgs
     #    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     #    flake-utils.url = "github:numtide/flake-utils";
 
@@ -28,6 +28,9 @@
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
+    stylix.url = "github:danth/stylix";
+    stylix.inputs.nixpkgs.follows = "nixpkgs";
+
     # Overlays
     sketchybar-lua = {
       url = "github:FelixKratz/SbarLua";
@@ -40,7 +43,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, ... }:
+  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, stylix,... }:
     let
       common-overlays = [
 
@@ -110,7 +113,7 @@
     in {
       darwinConfigurations."ldangelo" = nix-darwin.lib.darwinSystem {
         modules = [
-
+#          stylix.darwinModules.stylix
           darwinConfiguration
           ./modules/darwin
           home-manager.darwinModules.home-manager
@@ -120,7 +123,7 @@
               useUserPackages = true;
               backupFileExtension = "backup";
               users.ldangelo.imports = [
-                #                nixvim.homeManagerModules.nixvim
+                stylix.homeManagerModules.stylix
                 ./modules/home-manager
                 ./overlays
               ];

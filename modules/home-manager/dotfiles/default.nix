@@ -7,7 +7,7 @@
     isync-oauth2
     notmuch
     afew
-    offlineimap
+#    offlineimap
     imapfilter
 #    alot
     mu
@@ -16,6 +16,6 @@
 
   imports = [
     ./email
-    ./alacritty
+#    ./alacritty
   ];
 }
