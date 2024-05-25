@@ -16,5 +16,6 @@
 
   imports = [
     ./email
+    ./alacritty
   ];
 }
