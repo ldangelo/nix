@@ -16,6 +16,6 @@
 
   imports = [
     ./email
-#    ./alacritty
+    ./alacritty
   ];
 }

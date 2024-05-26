@@ -15,13 +15,13 @@
 
       cursor.style = "Beam";
 
-      font = {
-        size = 14.0;
+      # font = {
+      #   size = 14.0;
 
-        normal.family = "FiraCode Nerd Font";
-        bold.family = "FiraCode Nerd Font";
-        italic.family = "FiraCode Nerd Font";
-      };
+      #   normal.family = "FiraCode Nerd Font";
+      #   bold.family = "FiraCode Nerd Font";
+      #   italic.family = "FiraCode Nerd Font";
+      # };
 
       # let stylix manage colors
       # colors = {
