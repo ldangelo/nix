@@ -8,6 +8,7 @@
       NSGlobalDomain = {
         # Dark mode
         AppleInterfaceStyle = "Dark";
+        AppleFontSmoothing = 2;
 
         # Show all file extensions
         AppleShowAllExtensions = true;

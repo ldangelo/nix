@@ -8,14 +8,14 @@
 
     #    flake-utils.url = "github:numtide/flake-utils";
 
+
+    # Darwin
+    nix-darwin.url = "github:lnl7/nix-darwin";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
     # Home manager
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Darwin
-    nix-darwin.url = "github:lnl7/nix-darwin/master";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-
     # nixvim
     #    nixvim.url = "github:nix-community/nixvim";
     #    nixvim.inputs.nixpkgs.follows = "nixpkgs";
@@ -89,6 +89,8 @@
               --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
           '';
         };
+
+
       })
       ];
 

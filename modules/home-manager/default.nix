@@ -15,13 +15,32 @@
     #     ./sketchybar
   ];
 
-  stylix.autoEnable = true;
+  stylix = {
+    polarity = "dark";
+    autoEnable = true;
 
-  stylix.base16Scheme =
-    "${pkgs.base16-schemes}/share/themes/darcula.yaml";
-  stylix.fonts.sizes.terminal=16;
-  stylix.fonts.sizes.desktop=14;
-  stylix.fonts.sizes.applications=14;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/darcula.yaml";
+    fonts = {
+      serif = { 
+        package  = pkgs.source-code-pro;
+        name = "Source Code Pro"; 
+      };
+      sansSerif = { 
+        package  = pkgs.source-code-pro;
+        name = "Source Code Pro"; 
+      };
+      monospace = { 
+        package = pkgs.jetbrains-mono;
+        name = "JetBrainsMonoNL Nerd Font Mono"; 
+      };
+      sizes = {
+        terminal=16;
+        desktop=14;
+        applications=14;
+      };
+    };
+  };
+   
   # packages are just installed (no configuration applied)
   # programs are installed and configuration applied to dotfiles
   home = {
@@ -45,6 +64,7 @@
       pkgs.kitty
       pkgs.lazygit
       pkgs.nerdfonts
+      pkgs.dejavu_fonts
       pkgs.source-code-pro
       pkgs.aldente
       pkgs.apparency
@@ -52,20 +72,22 @@
       pkgs.binutils
       pkgs.dockutil
       pkgs.duti
-      #      pkgs.macfuse
+      pkgs.lua5_4 # needed for sketcybar
+      pkgs.macfuse-stubs
       pkgs.mas
       pkgs.mysides
-      #      pkgs.openwith
+      darwin.openwith
+      darwin.osx-cpu-temp
+      darwin.iproute2mac
       pkgs.shortcat
       pkgs.swiftdefaultapps
-      #      pkgs.trash
-      #      pkgs.utm
+      darwin.trash
+      pkgs.utm
       #      pkgs.xcode
 
       #      pkgs.emacs-macport
       #    pkgs.yabai
       pkgs.discord
-      # Fleek Bling
       pkgs.git
       pkgs.htop
       pkgs.btop
