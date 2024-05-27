@@ -1,8 +1,32 @@
-{ pkgs, ... }: {
-  services.skhd = {
-    enable = true;
-    package = pkgs.skhd;
-    skhdConfig = ''
+{
+  lib,
+  pkgs,
+  config,
+  namespace,
+  ...
+}:
+with lib;
+with lib.${namespace}; let
+  cfg = config.${namespace}.desktop.addons.skhd;
+
+  mkScript = name: file:
+    pkgs.writeShellApplication {
+      inherit name;
+      checkPhase = "";
+      text = builtins.readFile file;
+    };
+
+  open-iterm2 = mkScript "open-iterm2" ./scripts/open-iterm2.sh;
+in {
+  options.${namespace}.desktop.addons.skhd = {
+    enable = mkEnableOption "skhd";
+  };
+
+  config = mkIf cfg.enable {
+    services.skhd = {
+      enable = true;
+
+      skhdConfig = ''
       alt - j : yabai -m window --focus south
       alt - k : yabai -m window --focus north
       alt - h : yabai -m window --focus west
@@ -47,10 +71,11 @@
 
 
       ctrl + alt - q : yabai --stop-service
-      ctrl + alt - s : yabai --start-service 
-      ctrl + alt - r : yabai --restart-service 
+      ctrl + alt - s : yabai --start-service
+      ctrl + alt - r : yabai --restart-service
 
       cmd - return : /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~
-    '';
+       '';
+    };
   };
 }

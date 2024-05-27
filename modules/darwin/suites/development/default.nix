@@ -17,7 +17,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    plusultra = {
+    oftheangels = {
       apps = {
         vscode = enabled;
         emacs = enabled;
@@ -35,7 +35,7 @@ in {
 #        java = enabled;
       };
 
-      virtualisation = { podman = enabled; };
+      #      virtualization = { podman = enabled; };
     };
   };
 }

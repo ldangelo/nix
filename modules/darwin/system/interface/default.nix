@@ -29,6 +29,6 @@ in {
       };
     };
 
-    plusultra.home.file.".hushlogin".text = "";
+    oftheangels.home.file.".hushlogin".text = "";
   };
 }

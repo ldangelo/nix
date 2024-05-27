@@ -1,22 +1,19 @@
-{
-  lib,
-  pkgs,
-  namespace,
-  ...
-}:
+{ lib, pkgs, namespace, ... }:
+with lib;
 with lib.${namespace}; {
-  ofthenagels = {
+  oftheangels = {
+#    virtualization = { podman = enabled; }; #
     suites = {
       common = enabled;
       development = enabled;
     };
 
+
     desktop.yabai = enabled;
   };
 
-  environment.systemPath = [
-    "/opt/homebrew/bin"
-  ];
+
+  environment.systemPath = [ "/opt/homebrew/bin" ];
 
   system.stateVersion = 4;
 }

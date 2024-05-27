@@ -14,6 +14,9 @@ deploy-nc:
 deploy-rebuild:
   darwin-rebuild switch --rebuild --flake .#ldangelo
 
+build:
+  darwin-rebuild build --flake .#ldangelo@mbpro
+
 deploy:
   darwin-rebuild switch --flake .#ldangelo
 

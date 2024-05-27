@@ -8,9 +8,9 @@
 }:
 with lib;
 with lib.${namespace}; let
-  cfg = config.${namespace}.apps.iterm2;
+  cfg = config.${namespace}.apps.alacritty;
 in {
-  options.${namespace}.apps.iterm2 = with types; {
+  options.${namespace}.apps.alacritty = with types; {
     enable = mkBoolOpt false "Whether or not to enable iTerm2.";
   };
 

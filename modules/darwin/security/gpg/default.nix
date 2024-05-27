@@ -75,7 +75,7 @@ in {
       enableSSHSupport = true;
     };
 
-    plusultra.home.file = {
+    oftheangels.home.file = {
       ".gnupg/.keep".text = "";
 
       ".gnupg/yubikey-guide.md".source = guide;
