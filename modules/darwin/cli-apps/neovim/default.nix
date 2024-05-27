@@ -19,7 +19,7 @@ in {
       # FIXME: As of today (2022-12-09), `page` no longer works with my Neovim
       # configuration. Either something in my configuration is breaking it or `page` is busted.
       # page
-      plusultra.neovim
+      oftheangels.neovim
     ];
 
     environment.variables = {
@@ -32,7 +32,7 @@ in {
       EDITOR = "nvim";
     };
 
-    plusultra.home = {
+    oftheangels.home = {
       configFile = {
         "dashboard-nvim/.keep".text = "";
       };

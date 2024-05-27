@@ -17,12 +17,12 @@ in {
   config = mkIf cfg.enable {
     programs.zsh = enabled;
 
-    plusultra = {
+    oftheangels = {
       nix = enabled;
 
       apps = {
-        iterm2 = enabled;
-        kitty = enabled;
+#        iterm2 = enabled;
+#        kitty = enabled;
         alacritty = enabled;
       };
 
