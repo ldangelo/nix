@@ -38,6 +38,7 @@ in {
       useUserPackages = true;
       useGlobalPkgs = true;
 
+
       # users.${config.${namespace}.user.name} = args:
       #   mkAliasDefinitions options.${namespace}.home.extraOptions;
     };
