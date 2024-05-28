@@ -24,7 +24,7 @@
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
 
     # Snowfall Lib
-    snowfall-lib.url = "github:snowfallorg/lib?ref=v3.0.0";
+    snowfall-lib.url = "github:snowfallorg/lib?ref=v3.0.2";
     snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
 
     # Avalanche
@@ -58,17 +58,6 @@
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "unstable";
 
-    # Neovim
-    neovim.url = "github:jakehamilton/neovim";
-    neovim.inputs.nixpkgs.follows = "unstable";
-
-    # Tmux
-    tmux.url = "github:jakehamilton/tmux";
-    tmux.inputs = {
-      nixpkgs.follows = "nixpkgs";
-      unstable.follows = "unstable";
-    };
-
     # Binary Cache
     attic = {
       url = "github:zhaofengli/attic";
@@ -91,26 +80,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Discord Replugged
-    replugged.url = "github:LunNova/replugged-nix-flake";
-    replugged.inputs.nixpkgs.follows = "unstable";
-
-    # Discord Replugged plugins / themes
-    discord-tweaks = {
-      url = "github:NurMarvin/discord-tweaks";
-      flake = false;
-    };
-    discord-nord-theme = {
-      url = "github:DapperCore/NordCord";
-      flake = false;
-    };
-
-    # Backup management
-    icehouse = {
-      url = "github:snowfallorg/icehouse?ref=v1.1.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Yubikey Guide
     yubikey-guide = {
       url = "github:drduh/YubiKey-Guide";
@@ -128,45 +97,10 @@
       flake = false;
     };
 
-    rf = {
-      url = "github:jakehamilton/rf";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Hosted Sites
-    lasersandfeelings = {
-      url = "github:jakehamilton/lasersandfeelings";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "unstable";
-    };
-    pungeonquest = {
-      url = "github:jakehamilton/pungeonquest";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "unstable";
-    };
-    scrumfish = {
-      url = "github:jakehamilton/scrumfi.sh";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "unstable";
-    };
-    retrospectacle = {
-      url = "github:jakehamilton/retrospectacle.app";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "unstable";
-    };
-    jakehamilton-website = {
-      url = "github:jakehamilton/jakehamilton.dev";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "unstable";
-    };
     noop-ai-website = {
       url = "github:noopai/noop.ai";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.unstable.follows = "unstable";
-    };
-    sokoban-app-website = {
-      url = "https://github.com/jakehamilton/sokoban.app/releases/download/v1/sokoban.app.tar.gz";
-      flake = false;
     };
     snowfall-docs = {
       url = "github:snowfallorg/docs";
@@ -181,7 +115,7 @@
   outputs = inputs: let
     lib = inputs.snowfall-lib.mkLib {
       inherit inputs;
-      src = ./.;
+      src = ./snowfall;
 
       snowfall = {
         meta = {
@@ -202,37 +136,37 @@
       };
 
       overlays = with inputs; [
-        avalanche.overlays.default
-        aux-website.overlays.default
-        neovim.overlays.default
-        tmux.overlay
+#        avalanche.overlays.default
+#        aux-website.overlays.default
+#        neovim.overlays.default
+#        tmux.overlay
         flake.overlays.default
-        thaw.overlays.default
-        drift.overlays.default
-        icehouse.overlays.default
-        rf.overlays.default
-        attic.overlays.default
+#        thaw.overlays.default
+#        drift.overlays.default
+#        icehouse.overlays.default
+#        rf.overlays.default
+#        attic.overlays.default
         snowfall-docs.overlays.default
-        nixpkgs-news.overlays.default
+#        nixpkgs-news.overlays.default
       ];
 
-      systems.modules.nixos = with inputs; [
-        avalanche.nixosModules."avalanche/desktop"
-        home-manager.nixosModules.home-manager
-        nix-ld.nixosModules.nix-ld
-        vault-service.nixosModules.nixos-vault-service
-        # TODO: Replace oftheangels.services.attic now that vault-agent
-        # exists and can force override environment files.
-        # attic.nixosModules.atticd
-      ];
+      # systems.modules.nixos = with inputs; [
+      #   avalanche.nixosModules."avalanche/desktop"
+      #   home-manager.nixosModules.home-manager
+      #   nix-ld.nixosModules.nix-ld
+      #   vault-service.nixosModules.nixos-vault-service
+      #   # TODO: Replace oftheangels.services.attic now that vault-agent
+      #   # exists and can force override environment files.
+      #   # attic.nixosModules.atticd
+      # ];
 
-      deploy = lib.mkDeploy {inherit (inputs) self;};
+      # deploy = lib.mkDeploy {inherit (inputs) self;};
 
-      checks =
-        builtins.mapAttrs
-        (system: deploy-lib:
-          deploy-lib.deployChecks inputs.self.deploy)
-        inputs.deploy-rs.lib;
+      # checks =
+      #   builtins.mapAttrs
+      #   (system: deploy-lib:
+      #     deploy-lib.deployChecks inputs.self.deploy)
+#        inputs.deploy-rs.lib;
     };
 }
 # {
