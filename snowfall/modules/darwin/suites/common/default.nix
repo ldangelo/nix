@@ -23,6 +23,8 @@ in {
       apps = {
         kitty = enabled;
         alacritty = enabled;
+        spacemacs = enabled;
+        raycast = enabled;
       };
 
       cli-apps = {
