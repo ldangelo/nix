@@ -5,6 +5,7 @@
 #  Nix commands related to the local machine
 #
 ############################################################################
+flakename := '.'
 default:
   @just --list
 
@@ -15,7 +16,7 @@ deploy-rebuild:
   darwin-rebuild switch --rebuild --flake .#ldangelo
 
 build:
-  darwin-rebuild build --flake .#ldangelo@mbpro
+  darwin-rebuild build --flake {{flakename}}
 
 deploy:
   darwin-rebuild switch --flake .#ldangelo
