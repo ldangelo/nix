@@ -6,23 +6,24 @@
 #
 ############################################################################
 flakename := '.'
+
 default:
   @just --list
 
 deploy-nc:
-  darwin-rebuild switch --flake .#ldangelo --option eval-cache false
-
-deploy-rebuild:
-  darwin-rebuild switch --rebuild --flake .#ldangelo
+  darwin-rebuild switch --flake {{flakename}} --option eval-cache false
 
 build:
   darwin-rebuild build --flake {{flakename}}
 
+build-nc:
+  darwin-rebuild build --flake {{flakename}} --option eval-cache false
+
 deploy:
-  darwin-rebuild switch --flake .#ldangelo
+  darwin-rebuild switch --flake {{flakename}}
 
 debug:
-  darwin-rebuild switch --flake .#ldangelo --show-trace --verbose
+  darwin-rebuild switch --flake {{flakename}} --show-trace --verbose
 
 up:
   nix flake update
