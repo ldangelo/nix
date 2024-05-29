@@ -1,31 +1,30 @@
 { config, pkgs, ... }:
 
+let
+  my-emacs = pkgs.emacsMacport.override {
+    withNativeCompilation = true;
+    withSQLite3 = true;
+    withTreeSitter = true;
+    withWebP = true;
+  };
 
-let my-emacs = pkgs.emacsMacport.override {
-      withNativeCompilation = true;
-      withSQLite3 = true;
-      withTreeSitter = true;
-      withWebP = true;
-    };
-
-    my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages (epkgs: with epkgs; [
-      notmuch
-      isync
-      msmtp
-      vterm
-      multi-vterm
-      pdf-tools
-      treesit-grammars.with-all-grammars
-    ]
-    );
-in
-{
+  my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages
+    (epkgs:
+      with epkgs; [
+        notmuch
+        afew
+        isync
+        msmtp
+        vterm
+        multi-vterm
+        pdf-tools
+        treesit-grammars.with-all-grammars
+      ]);
+in {
   programs.emacs = {
     enable = true;
     package = my-emacs-with-packages;
   };
-
-
 
   home.file.".emacs.d" = {
     # don't make the directory read only so that impure melpa can still happen
@@ -39,15 +38,14 @@ in
     };
   };
 
-
   home.packages = with pkgs; [
     emacs-all-the-icons-fonts
-    (aspellWithDicts (d: [d.en d.sv]))
+    (aspellWithDicts (d: [ d.en d.sv ]))
     ghostscript
     shellcheck
     # tetex # Does not build properly (2024-03-09)
     poppler
-#    mu
+    #    mu
     wordnet
     nil
     nixfmt-classic

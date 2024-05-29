@@ -4,7 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
 
-
     # NixPkgs Unstable (nixos-unstable)
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -112,42 +111,40 @@
     };
   };
 
-  outputs = inputs: let
-    lib = inputs.snowfall-lib.mkLib {
-      inherit inputs;
-      src = ./snowfall;
+  outputs = inputs:
+    let
+      lib = inputs.snowfall-lib.mkLib {
+        inherit inputs;
+        src = ./snowfall;
 
-      snowfall = {
-        meta = {
-          name = "oftheangels";
-          title = "Oftheangels Nix Config";
+        snowfall = {
+          meta = {
+            name = "oftheangels";
+            title = "Oftheangels Nix Config";
+          };
+
+          namespace = "oftheangels";
         };
-
-        namespace = "oftheangels";
       };
-    };
-  in
-    lib.mkFlake {
+    in lib.mkFlake {
       channels-config = {
         allowUnfree = true;
-        permittedInsecurePackages = [
-          "electron-25.9.0"
-        ];
+        permittedInsecurePackages = [ "electron-25.9.0" ];
       };
 
       overlays = with inputs; [
-#        avalanche.overlays.default
-#        aux-website.overlays.default
-#        neovim.overlays.default
-#        tmux.overlay
+        #        avalanche.overlays.default
+        #        aux-website.overlays.default
+        #        neovim.overlays.default
+        #        tmux.overlay
         flake.overlays.default
-#        thaw.overlays.default
-#        drift.overlays.default
-#        icehouse.overlays.default
-#        rf.overlays.default
-#        attic.overlays.default
+        #        thaw.overlays.default
+        #        drift.overlays.default
+        #        icehouse.overlays.default
+        #        rf.overlays.default
+        #        attic.overlays.default
         snowfall-docs.overlays.default
-#        nixpkgs-news.overlays.default
+        #        nixpkgs-news.overlays.default
       ];
 
       # systems.modules.nixos = with inputs; [
@@ -166,7 +163,7 @@
       #   builtins.mapAttrs
       #   (system: deploy-lib:
       #     deploy-lib.deployChecks inputs.self.deploy)
-#        inputs.deploy-rs.lib;
+      #        inputs.deploy-rs.lib;
     };
 }
 # {
@@ -178,7 +175,6 @@
 #     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
 #     #    flake-utils.url = "github:numtide/flake-utils";
-
 
 #     # Darwin
 #     nix-darwin.url = "github:lnl7/nix-darwin";
@@ -260,7 +256,6 @@
 #               --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
 #           '';
 #         };
-
 
 #       })
 #       ];
