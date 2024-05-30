@@ -7,20 +7,20 @@ with lib.${namespace}; {
     };
 
     cli-apps = {
-#      neovim = enabled;
+      neovim = enabled;
     };
 
     programs = {
       terminal = {
         shells = {
-#          zsh = enabled;
+          zsh = enabled;
         };
-
+        
         tools = {
-#          tmux = enabled;
-#          git = enabled;
-#          direnv = enabled;
-#          home-manager = enabled;
+          tmux = enabled;
+          git = enabled;
+          direnv = enabled;
+          home-manager = enabled;
         };
       };
     };
