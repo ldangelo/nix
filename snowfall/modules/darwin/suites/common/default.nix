@@ -1,14 +1,7 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  namespace,
-  ...
-}:
+{ options, config, lib, pkgs, namespace, ... }:
 with lib;
-with lib.${namespace}; let
-  cfg = config.${namespace}.suites.common;
+with lib.${namespace};
+let cfg = config.${namespace}.suites.common;
 in {
   options.${namespace}.suites.common = with types; {
     enable = mkBoolOpt false "Whether or not to enable common configuration.";
@@ -17,32 +10,45 @@ in {
   config = mkIf cfg.enable {
     programs.zsh = enabled;
 
+    homebrew = {
+      casks = [ alttab raycast aldente homerow borders ];
+    };
+
+    environment = {
+      loginShell = pkgs.zsh;
+
+      systemPackages = with pkgs; [
+        cask
+        fasd
+        gnugrep
+        gnutls
+        keychain
+        pkgs.${namespace}.trace-symlink
+        pkgs.${namespace}.trace-which
+        mas
+        moreutils
+        terminal-notifier
+        trash-cli
+        tree
+        wtf
+        thefuck
+          ];
+    };
+
+
     oftheangels = {
       nix = enabled;
 
-      apps = {
-        kitty = enabled;
-        alacritty = enabled;
-        spacemacs = enabled;
-        raycast = enabled;
-      };
-
-      cli-apps = {
-        neovim = enabled;
-      };
-
       tools = {
-        git = enabled;
-        flake = enabled;
+        homebrew = enabled;
       };
 
       system = {
         fonts = enabled;
-      };
-
-      security = {
-        gpg = enabled;
-      };
+        input = enabled;
+        interface = enabled;
+        networking = enabled;
+      }; 
     };
   };
 }

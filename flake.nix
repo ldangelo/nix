@@ -2,87 +2,18 @@
   description = "Oftheangels nix config";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
-
-    # NixPkgs Unstable (nixos-unstable)
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-
-    # Home Manager (release-22.05)
-    home-manager.url = "github:nix-community/home-manager/release-23.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    catppuccin.url = "github:catppuccin/nix";
 
     # macOS Support (master)
-    darwin.url = "github:lnl7/nix-darwin";
-    darwin.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Hardware Configuration
-    nixos-hardware.url = "github:nixos/nixos-hardware";
-
-    # Generate System Images
-    nixos-generators.url = "github:nix-community/nixos-generators";
-    nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Snowfall Lib
-    snowfall-lib.url = "github:snowfallorg/lib?ref=v3.0.2";
-    snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Avalanche
-    avalanche.url = "github:snowfallorg/avalanche";
-    # avalanche.url = "path:/home/short/work/@snowfallorg/avalanche";
-    avalanche.inputs.nixpkgs.follows = "unstable";
-
-    aux-website.url = "github:auxolotl/website";
-    aux-website.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Snowfall Flake
-    flake.url = "github:snowfallorg/flake?ref=v1.4.0";
-    flake.inputs.nixpkgs.follows = "unstable";
-
-    # Snowfall Thaw
-    thaw.url = "github:snowfallorg/thaw?ref=v1.0.6";
-
-    # Snowfall Drift
-    drift.url = "github:snowfallorg/drift";
-    drift.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Comma
-    comma.url = "github:nix-community/comma";
-    comma.inputs.nixpkgs.follows = "unstable";
+    darwin = {
+      url = "github:lnl7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # System Deployment
-    deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Run unpatched dynamically compiled binaries
-    nix-ld.url = "github:Mic92/nix-ld";
-    nix-ld.inputs.nixpkgs.follows = "unstable";
-
-    # Binary Cache
-    attic = {
-      url = "github:zhaofengli/attic";
-
-      # FIXME: A specific version of Rust is needed right now or
-      # the build fails. Re-enable this after some time has passed.
-      inputs.nixpkgs.follows = "unstable";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
-    };
-
-    # Vault Integration
-    vault-service = {
-      url = "github:DeterminateSystems/nixos-vault-service";
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Flake Hygiene
-    flake-checker = {
-      url = "github:DeterminateSystems/flake-checker";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Yubikey Guide
-    yubikey-guide = {
-      url = "github:drduh/YubiKey-Guide";
-      flake = false;
     };
 
     # GPG default configuration
@@ -91,23 +22,88 @@
       flake = false;
     };
 
-    bibata-cursors = {
-      url = "github:suchipi/Bibata_Cursor";
-      flake = false;
+    # Home Manager (master)
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      # url = "git+file:///home/khaneliman/Documents/github/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    noop-ai-website = {
-      url = "github:noopai/noop.ai";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "unstable";
-    };
-    snowfall-docs = {
-      url = "github:snowfallorg/docs";
+
+    # Weekly updating nix-index database
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-news = {
-      url = "github:jakehamilton/nixpkgs.news";
+
+    # NixPkgs (nixos-unstable)
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
+
+    # NixPkgs-Wayland
+    nixpkgs-wayland = {
+      url = "github:nix-community/nixpkgs-wayland";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # NixOS WSL Support
+    nixos-wsl = {
+      url = "github:nix-community/nixos-wsl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Run unpatched dynamically compiled binaries
+    nix-ld-rs = {
+      url = "github:nix-community/nix-ld-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Neovim nix configuration
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      # url = "git+file:///Users/khaneliman/Documents/github/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Nix User Repository (master)
+    nur = {
+      url = "github:nix-community/NUR";
+    };
+
+    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
+
+    # Snowfall Lib
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Snowfall Flake
+    snowfall-flake = {
+      url = "github:snowfallorg/flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Sops (Secrets)
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Spicetify
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    tmux.url = "github:jakehamilton/tmux";
+    tmux.inputs = {
+      nixpkgs.follows = "nixpkgs";
+}; 
+    # Yubikey Guide
+    yubikey-guide = {
+      url = "github:drduh/YubiKey-Guide";
+      flake = false;
     };
   };
 
@@ -137,13 +133,13 @@
         #        aux-website.overlays.default
         #        neovim.overlays.default
         #        tmux.overlay
-        flake.overlays.default
+        #flake.overlays.default
         #        thaw.overlays.default
         #        drift.overlays.default
         #        icehouse.overlays.default
         #        rf.overlays.default
         #        attic.overlays.default
-        snowfall-docs.overlays.default
+       # snowfall-docs.overlays.default
         #        nixpkgs-news.overlays.default
       ];
 
@@ -166,140 +162,3 @@
       #        inputs.deploy-rs.lib;
     };
 }
-# {
-#   description = "Leo's Nix Configuration";
-
-#   inputs = {
-#     # Nixpkgs
-#     #    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
-#     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
-#     #    flake-utils.url = "github:numtide/flake-utils";
-
-#     # Darwin
-#     nix-darwin.url = "github:lnl7/nix-darwin";
-#     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-
-#     # Home manager
-#     home-manager.url = "github:nix-community/home-manager";
-#     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-#     # nixvim
-#     #    nixvim.url = "github:nix-community/nixvim";
-#     #    nixvim.inputs.nixpkgs.follows = "nixpkgs";
-
-#     # flake-parts
-#     flake-parts.url = "github:hercules-ci/flake-parts";
-#     flake-parts.inputs.nixpkgs.follows = "nixpkgs";
-
-#     # nur: nix User Repository
-#     nur.url = "github:nix-community/NUR";
-#     nur.inputs.nixpkgs.follows = "nixpkgs";
-
-#     stylix.url = "github:danth/stylix";
-#     stylix.inputs.nixpkgs.follows = "nixpkgs";
-
-#     # Overlays
-#     sketchybar-lua = {
-#       url = "github:FelixKratz/SbarLua";
-#       flake = false;
-#     };
-
-#     emacs-overlay = {
-#       url = "github:nix-community/emacs-overlay";
-#       inputs.nixpkgs.follows = "nixpkgs";
-#     };
-#   };
-
-#   outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, stylix,... }:
-#     let
-#       common-overlays = [
-
-#       (self: super: {
-#         cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
-#           pname = "cyrus-sasl-xoauth2";
-#           version = "master";
-
-#           src = super.pkgs.fetchFromGitHub {
-#             owner = "moriyoshi";
-#             repo = "cyrus-sasl-xoauth2";
-#             rev = "master";
-#             sha256 = "sha256-OlmHuME9idC0fWMzT4kY+YQ43GGch53snDq3w5v/cgk=";
-#           };
-
-#           nativeBuildInputs =
-#             [ super.pkg-config super.automake super.autoconf super.libtool ];
-#           propagatedBuildInputs = [ super.cyrus_sasl ];
-
-#           buildPhase = ''
-#             ./autogen.sh
-#             ./configure
-#           '';
-
-#           installPhase = ''
-#             make DESTDIR="$out" install
-#           '';
-
-#           meta = with super.pkgs.lib; {
-#             homepage = "https://github.com/moriyoshi/cyrus-sasl-xoauth2";
-#             description = "XOAUTH2 mechanism plugin for cyrus-sasl";
-#           };
-#         };
-
-#         # https://github.com/NixOS/nixpkgs/issues/108480#issuecomment-1115108802
-#         isync-oauth2 = super.buildEnv {
-#           name = "isync-oauth2";
-#           paths = [ super.isync ];
-#           pathsToLink = [ "/bin" ];
-#           nativeBuildInputs = [ super.makeWrapper ];
-#           postBuild = ''
-#             wrapProgram "$out/bin/mbsync" \
-#               --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
-#           '';
-#         };
-
-#       })
-#       ];
-
-#       darwinConfiguration = { pkgs, ... }: {
-#         environment.systemPackages = [ pkgs.vim ];
-
-#         services.nix-daemon.enable = true;
-
-#         nix.settings.experimental-features = "nix-command flakes";
-
-#         programs.zsh.enable = true;
-
-#         system.configurationRevision = self.rev or self.dirtyRev or null;
-
-#         system.stateVersion = 4;
-
-#         nixpkgs.hostPlatform = "x86_64-darwin";
-#         nixpkgs.config.allowUnfree = true;
-#         nixpkgs.overlays = common-overlays;
-#       };
-
-#     in {
-#       darwinConfigurations."ldangelo" = nix-darwin.lib.darwinSystem {
-#         modules = [
-# #          stylix.darwinModules.stylix
-#           darwinConfiguration
-#           ./modules/darwin
-#           home-manager.darwinModules.home-manager
-#           {
-#             home-manager = {
-#               useGlobalPkgs = true;
-#               useUserPackages = true;
-#               backupFileExtension = "backup";
-#               users.ldangelo.imports = [
-#                 stylix.homeManagerModules.stylix
-#                 ./modules/home-manager
-#                 ./overlays
-#               ];
-#             };
-#           }
-#         ];
-#       };
-
-#       darwinPackages = self.darwinConfigurations."ldangelo".pkgs;
-#     };
-# }
