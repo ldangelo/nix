@@ -2,18 +2,17 @@
 with lib;
 with lib.${namespace}; {
   oftheangels = {
-#    virtualization = { podman = enabled; };
-#    suites = {
+    #    virtualization = { podman = enabled; };
+    suites = {
 #      common = enabled;
+#      desktop = enabled;
 #      development = enabled;
-#    };
+    };
 
-
-#    desktop.yabai = enabled;
+    #    desktop.yabai = enabled;
   };
 
-
-#  environment.systemPath = [ "/opt/homebrew/bin" ];
+  #  environment.systemPath = [ "/opt/homebrew/bin" ];
 
   system.stateVersion = 4;
 }

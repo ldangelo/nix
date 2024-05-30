@@ -17,7 +17,7 @@ build:
   darwin-rebuild build --flake {{flakename}}
 
 build-nc:
-  darwin-rebuild build --flake {{flakename}} --option eval-cache false
+  darwin-rebuild build --flake {{flakename}} --option eval-cache false --show-trace
 
 deploy:
   darwin-rebuild switch --flake {{flakename}}
