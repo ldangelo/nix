@@ -4,9 +4,9 @@ with lib.${namespace}; {
   oftheangels = {
     #    virtualization = { podman = enabled; };
     suites = {
-#      common = enabled;
-#      desktop = enabled;
-#      development = enabled;
+      common = enabled;
+      desktop = enabled;
+      development = enabled;
     };
 
     #    desktop.yabai = enabled;

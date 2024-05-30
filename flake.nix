@@ -132,8 +132,8 @@
         #        avalanche.overlays.default
         #        aux-website.overlays.default
         #        neovim.overlays.default
-        #        tmux.overlay
-        #flake.overlays.default
+#                tmux.overlay
+#        flake.overlays.default
         #        thaw.overlays.default
         #        drift.overlays.default
         #        icehouse.overlays.default
@@ -143,22 +143,23 @@
         #        nixpkgs-news.overlays.default
       ];
 
-      # systems.modules.nixos = with inputs; [
+
+       systems.modules.nixos = with inputs; [
       #   avalanche.nixosModules."avalanche/desktop"
-      #   home-manager.nixosModules.home-manager
+#         home-manager.nixosModules.home-manager
       #   nix-ld.nixosModules.nix-ld
       #   vault-service.nixosModules.nixos-vault-service
       #   # TODO: Replace oftheangels.services.attic now that vault-agent
       #   # exists and can force override environment files.
       #   # attic.nixosModules.atticd
-      # ];
+       ];
 
-      # deploy = lib.mkDeploy {inherit (inputs) self;};
+       deploy = lib.mkDeploy {inherit (inputs) self;};
 
-      # checks =
-      #   builtins.mapAttrs
-      #   (system: deploy-lib:
-      #     deploy-lib.deployChecks inputs.self.deploy)
-      #        inputs.deploy-rs.lib;
+       checks =
+         builtins.mapAttrs
+         (system: deploy-lib:
+           deploy-lib.deployChecks inputs.self.deploy)
+              inputs.deploy-rs.lib;
     };
 }
