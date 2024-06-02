@@ -11,7 +11,7 @@ in {
     programs.zsh = enabled;
 
     homebrew = {
-      casks = [ alttab raycast aldente homerow borders ];
+      casks = [ "alt-tab" "raycast" "aldente" "homerow" "borders" ];
     };
 
     environment = {
@@ -23,8 +23,8 @@ in {
         gnugrep
         gnutls
         keychain
-        pkgs.${namespace}.trace-symlink
-        pkgs.${namespace}.trace-which
+#        pkgs.${namespace}.trace-symlink
+#        pkgs.${namespace}.trace-which
         mas
         moreutils
         terminal-notifier
