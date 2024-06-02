@@ -13,8 +13,9 @@ in {
 
   config = mkIf cfg.enable {
     sops = {
-      inherit (cfg) defaultSopsFile;
+      #      inherit (cfg) defaultSopsFile;
       defaultSopsFormat = "yaml";
+      defaultSopsFile = lib.snowfall.fs.get-file "secrets/secrets.yaml";
 
       age = {
         generateKey = true;
@@ -23,12 +24,12 @@ in {
           ++ cfg.sshKeyPaths;
       };
 
-      secrets = {
-        nix = {
-          sopsFile = lib.snowfall.fs.get-file "secrets/secrets.yaml";
-          path = "${config.home.homeDirectory}/.config/nix/nix.conf";
-        };
-      };
+      # secrets = {
+      #   nix = {
+      #     sopsFile = lib.snowfall.fs.get-file "secrets/secrets.yaml";
+      #     #          path = "${config.home.homeDirectory}/.config/nix/nix.conf";
+      #        };
+      #      };
     };
   };
 }
