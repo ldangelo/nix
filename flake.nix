@@ -29,7 +29,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-
     # Weekly updating nix-index database
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -37,9 +36,7 @@
     };
 
     # NixPkgs (nixos-unstable)
-    nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
-    };
+    nixpkgs = { url = "github:nixos/nixpkgs/nixos-unstable"; };
 
     # NixPkgs-Wayland
     nixpkgs-wayland = {
@@ -66,9 +63,7 @@
     };
 
     # Nix User Repository (master)
-    nur = {
-      url = "github:nix-community/NUR";
-    };
+    nur = { url = "github:nix-community/NUR"; };
 
     pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
 
@@ -95,11 +90,9 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     tmux.url = "github:jakehamilton/tmux";
-    tmux.inputs = {
-      nixpkgs.follows = "nixpkgs";
-}; 
+    tmux.inputs = { nixpkgs.follows = "nixpkgs"; };
     # Yubikey Guide
     yubikey-guide = {
       url = "github:drduh/YubiKey-Guide";
@@ -128,38 +121,48 @@
         permittedInsecurePackages = [ "electron-25.9.0" ];
       };
 
-      overlays = with inputs; [
-        #        avalanche.overlays.default
-        #        aux-website.overlays.default
-        #        neovim.overlays.default
-#                tmux.overlay
-#        flake.overlays.default
-        #        thaw.overlays.default
-        #        drift.overlays.default
-        #        icehouse.overlays.default
-        #        rf.overlays.default
-        #        attic.overlays.default
-       # snowfall-docs.overlays.default
-        #        nixpkgs-news.overlays.default
+      overlays = with inputs;
+        [
+          #        avalanche.overlays.default
+          #        aux-website.overlays.default
+          #        neovim.overlays.default
+          #                tmux.overlay
+          #        flake.overlays.default
+          #        thaw.overlays.default
+          #        drift.overlays.default
+          #        icehouse.overlays.default
+          #        rf.overlays.default
+          #        attic.overlays.default
+          # snowfall-docs.overlays.default
+          #        nixpkgs-news.overlays.default
+        ];
+
+      homes.modules = with inputs; [
+        catppuccin.homeManagerModules.catppuccin
+        #        hypr-socket-watch.homeManagerModules.default
+        nix-index-database.hmModules.nix-index
+        nixvim.homeManagerModules.nixvim
+        sops-nix.homeManagerModules.sops
+        spicetify-nix.homeManagerModules.default
       ];
 
+      systems = {
+        modules = {
+          darwin = with inputs; [ nixvim.nixDarwinModules.nixvim ];
 
-       systems.modules.nixos = with inputs; [
-      #   avalanche.nixosModules."avalanche/desktop"
-#         home-manager.nixosModules.home-manager
-      #   nix-ld.nixosModules.nix-ld
-      #   vault-service.nixosModules.nixos-vault-service
-      #   # TODO: Replace oftheangels.services.attic now that vault-agent
-      #   # exists and can force override environment files.
-      #   # attic.nixosModules.atticd
-       ];
+          nixos = with inputs; [
+            # catppuccin.nixosModules.catppuccin
+            #            lanzaboote.nixosModules.lanzaboote
+            nixvim.nixosModules.nixvim
+            sops-nix.nixosModules.sops
+          ];
+        };
+      };
 
-       deploy = lib.mkDeploy {inherit (inputs) self;};
+      deploy = lib.mkDeploy { inherit (inputs) self; };
 
-       checks =
-         builtins.mapAttrs
-         (system: deploy-lib:
-           deploy-lib.deployChecks inputs.self.deploy)
-              inputs.deploy-rs.lib;
+      checks = builtins.mapAttrs
+        (system: deploy-lib: deploy-lib.deployChecks inputs.self.deploy)
+        inputs.deploy-rs.lib;
     };
 }

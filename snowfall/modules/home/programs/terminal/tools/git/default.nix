@@ -146,11 +146,11 @@ in {
 
     home = { inherit (aliases) shellAliases; };
 
-    # sops.secrets = {
-    #   "github/access-token" = {
-    #     sopsFile = lib.snowfall.fs.get-file "secrets/secrets.yaml";
-    #     path = "${config.home.homeDirectory}/.config/gh/access-token";
-    #   };
-    #};
+    sops.secrets = {
+      "github/access-token" = {
+        sopsFile = lib.snowfall.fs.get-file "secrets/secrets.yaml";
+        path = "${config.home.homeDirectory}/.config/gh/access-token";
+      };
+    };
   };
 }
