@@ -2,10 +2,12 @@
 with lib;
 with lib.${namespace}; {
   oftheangels = {
+
+    security = { sops = enabled; };
+
     #    virtualization = { podman = enabled; };
     suites = {
       common = enabled;
-      desktop = enabled;
       development = enabled;
     };
 

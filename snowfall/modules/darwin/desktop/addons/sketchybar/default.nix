@@ -35,8 +35,8 @@ in {
         jq
         lua5_4
         wttrbar
-        pkgs.${namespace}.sketchyhelper
-        pkgs.${namespace}.dynamic-island-helper
+#        pkgs.${namespace}.sketchyhelper
+#        pkgs.${namespace}.dynamic-island-helper
       ];
 
       # TODO: need to update nixpkg to support complex configurations

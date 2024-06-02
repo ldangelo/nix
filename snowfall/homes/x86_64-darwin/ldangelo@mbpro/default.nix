@@ -1,21 +1,21 @@
-{ lib, pkgs, config, osConfig ? { }, format ? "unknown", namespace, ... }:
-with lib.${namespace}; {
+{ config, lib, namespace, ... }:
+let
+  inherit (lib) mkForce;
+  inherit (lib.${namespace}) enabled disabled;
+in {
+
   oftheangels = {
     user = {
       enable = true;
-      name = config.oftheangels.user.name;
+      inherit (config.snowfallorg.user) name;
     };
 
-    cli-apps = {
-      neovim = enabled;
-    };
+    cli-apps = { neovim = enabled; };
 
     programs = {
       terminal = {
-        shells = {
-          zsh = enabled;
-        };
-        
+        shells = { zsh = enabled; };
+
         tools = {
           tmux = enabled;
           git = enabled;
@@ -24,9 +24,19 @@ with lib.${namespace}; {
         };
       };
     };
+
+    services = {
+      sops = {
+        enable = true;
+        defaultSopsFile = lib.snowfall.fs.get-file "secrets/secrets.yaml";
+        sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
+      };
+    };
+
+    suites = { common = enabled; };
   };
 
-  home.sessionPath = [ "$HOME/bin" ];
+  #   home.sessionPath = [ "$HOME/bin" ];
 
   home.stateVersion = "22.11";
 }
