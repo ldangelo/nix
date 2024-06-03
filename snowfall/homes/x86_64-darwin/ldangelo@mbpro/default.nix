@@ -8,9 +8,12 @@ in {
     user = {
       enable = true;
       inherit (config.snowfallorg.user) name;
+
+      email = enabled;
     };
 
     cli-apps = { neovim = enabled; };
+    services = { };
 
     programs = {
       terminal = {
