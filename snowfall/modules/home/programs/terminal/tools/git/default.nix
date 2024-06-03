@@ -17,7 +17,8 @@ in {
     signingKey = mkOpt types.str "${config.home.homeDirectory}/.ssh/id_ed25519"
       "The key ID to sign commits with.";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
-    userEmail = mkOpt types.str user.email "The email to configure git with.";
+    userEmail =
+      mkOpt types.str user.emailAddr "The email to configure git with.";
     wslAgentBridge = mkBoolOpt false "Whether to enable the wsl agent bridge.";
     wslGitCredentialManagerPath = mkOpt types.str
       "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe"
