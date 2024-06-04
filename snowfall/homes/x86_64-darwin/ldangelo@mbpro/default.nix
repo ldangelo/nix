@@ -12,6 +12,7 @@ in {
       email = enabled;
     };
 
+    
     cli-apps = { neovim = enabled; };
     services = { };
 
@@ -36,7 +37,10 @@ in {
       };
     };
 
-    suites = { common = enabled; };
+    suites = { 
+    common = enabled;
+    development = enabled;
+    };
   };
 
   #   home.sessionPath = [ "$HOME/bin" ];

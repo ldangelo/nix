@@ -48,8 +48,8 @@ in
             AppleKeyboardUIMode = 3;
             ApplePressAndHoldEnabled = false;
 
-            KeyRepeat = 1;
-            InitialKeyRepeat = 10;
+            KeyRepeat = 3;
+            InitialKeyRepeat = 5;
 
             NSAutomaticCapitalizationEnabled = false;
             NSAutomaticDashSubstitutionEnabled = false;
