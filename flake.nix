@@ -84,6 +84,9 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    stylix.url = "github:danth/stylix";
+    stylix.inputs.nixpkgs.follows = "nixpkgs";
+
 
     # Spicetify
     spicetify-nix = {
@@ -188,6 +191,7 @@
       homes.modules = with inputs; [
         catppuccin.homeManagerModules.catppuccin
         #        hypr-socket-watch.homeManagerModules.default
+                stylix.homeManagerModules.stylix
         nix-index-database.hmModules.nix-index
         nixvim.homeManagerModules.nixvim
         sops-nix.homeManagerModules.sops

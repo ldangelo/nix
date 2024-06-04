@@ -8,6 +8,7 @@ with lib.${namespace}; {
     #    virtualization = { podman = enabled; };
     suites = {
       common = enabled;
+      desktop = enabled;
       development = enabled;
     };
 

@@ -13,9 +13,6 @@ let
     (epkgs:
       with epkgs; [
         notmuch
-        afew
-        isync
-        msmtp
         vterm
         multi-vterm
         pdf-tools
@@ -37,6 +34,9 @@ in {
       emacs-all-the-icons-fonts
       (aspellWithDicts (d: [ d.en d.sv ]))
       ghostscript
+      afew
+      notmuch
+      msmtp
       shellcheck
       # tetex # Does not build properly (2024-03-09)
       poppler

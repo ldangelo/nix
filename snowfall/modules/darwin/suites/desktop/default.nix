@@ -15,7 +15,7 @@ in {
       skhd = enabled;
       yabai = enabled;
       sketchybar = enabled;
-      jankyborders = enabled;
+#      jankyborders = enabled;
     };
 
     homebrew = {
@@ -31,8 +31,6 @@ in {
         "sf-symbols"
         "stats"
         "aldente"
-        "homerow"
-        #     "borders". Use jankyborders instead
       ];
 
       taps = [

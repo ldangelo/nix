@@ -11,7 +11,7 @@ in {
     programs.zsh = enabled;
 
     homebrew = {
-      casks = [ "alt-tab" "raycast" "aldente" "homerow" "borders" ];
+      casks = [ "alt-tab" "raycast" "aldente" "zoom" "microsoft-teams" "slack" "tradingview"];
     };
 
     environment = {
