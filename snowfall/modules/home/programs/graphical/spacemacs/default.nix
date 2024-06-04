@@ -12,7 +12,6 @@ let
   my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages
     (epkgs:
       with epkgs; [
-        notmuch
         vterm
         multi-vterm
         pdf-tools
@@ -25,12 +24,28 @@ in {
   };
 
   config = mkIf cfg.enable {
+
+    # install emacs program
     programs.emacs = {
       enable = true;
       package = my-emacs-with-packages;
     };
 
-    home.packages = with pkgs; [
+    # clone spacemacs repository
+    home.file.".emacs.d" = {
+      # don't make the directory read only so that impure melpa can still happen
+      # for now
+      recursive = true;
+      source = pkgs.fetchFromGitHub {
+        owner = "syl20bnr";
+        repo = "spacemacs";
+        rev = "develop";
+        sha256 = "sha256-D5uI9nIf0Ocxs6ZPj9/BebFM81bizZdSAHRu43csuMA=";
+      };
+    };
+    
+   # install required system packages
+   home.packages = with pkgs; [
       emacs-all-the-icons-fonts
       (aspellWithDicts (d: [ d.en d.sv ]))
       ghostscript
