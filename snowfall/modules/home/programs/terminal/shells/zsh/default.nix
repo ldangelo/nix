@@ -1,17 +1,10 @@
-{
-  config,
-  lib,
-  pkgs,
-  namespace,
-  ...
-}:
+{ config, lib, pkgs, namespace, ... }:
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.strings) fileContents;
 
   cfg = config.${namespace}.programs.terminal.shells.zsh;
-in
-{
+in {
   options.${namespace}.programs.terminal.shells.zsh = {
     enable = mkEnableOption "ZSH";
   };
@@ -23,7 +16,7 @@ in
         package = pkgs.zsh;
 
         autocd = true;
-#         autosuggestion.enable = true;
+        #         autosuggestion.enable = true;
 
         completionInit = # bash
           ''
@@ -32,7 +25,7 @@ in
             zmodload zsh/complist
 
             _comp_options+=(globdots)
-            zcompdump="$XDG_DATA_HOME"/zsh/.zcompdump-"$ZSH_VERSION"-"$(date --iso-8601=date)"
+            zcompdump="$XDG_DATA_HOME"/zsh/.zcompdump-"$ZSH_VERSION"-"$(date)"
             compinit -d "$zcompdump"
 
             # Recompile zcompdump if it exists and is newer than zcompdump.zwc
@@ -180,7 +173,8 @@ in
           }
           {
             name = "fast-syntax-highlighting";
-            file = "share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
+            file =
+              "share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
             src = pkgs.zsh-fast-syntax-highlighting;
           }
           {

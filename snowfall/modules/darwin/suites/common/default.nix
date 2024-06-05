@@ -11,7 +11,16 @@ in {
     programs.zsh = enabled;
 
     homebrew = {
-      casks = [ "alt-tab" "raycast" "aldente" "zoom" "microsoft-teams" "slack" "tradingview"];
+      casks = [
+        "alt-tab"
+        "raycast"
+        "aldente"
+        "hookmark"
+        "zoom"
+        "microsoft-teams"
+        "slack"
+        "tradingview"
+      ];
     };
 
     environment = {
@@ -23,8 +32,8 @@ in {
         gnugrep
         gnutls
         keychain
-#        pkgs.${namespace}.trace-symlink
-#        pkgs.${namespace}.trace-which
+        #        pkgs.${namespace}.trace-symlink
+        #        pkgs.${namespace}.trace-which
         mas
         moreutils
         terminal-notifier
@@ -32,23 +41,20 @@ in {
         tree
         wtf
         thefuck
-          ];
+      ];
     };
-
 
     oftheangels = {
       nix = enabled;
 
-      tools = {
-        homebrew = enabled;
-      };
+      tools = { homebrew = enabled; };
 
       system = {
         fonts = enabled;
         input = enabled;
         interface = enabled;
         networking = enabled;
-      }; 
+      };
     };
   };
 }
