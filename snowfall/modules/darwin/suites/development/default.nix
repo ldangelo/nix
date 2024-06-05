@@ -9,9 +9,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    oftheangels = {
 
-      #      virtualization = { podman = enabled; };
-    };
+    homebrew = { brews = [ "jj" ]; };
   };
 }
