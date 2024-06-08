@@ -7,6 +7,7 @@ let
     withSQLite3 = true;
     withTreeSitter = true;
     withWebP = true;
+    withImageMagick = true;
   };
 
   cfg = config.${namespace}.apps.doomemacs;

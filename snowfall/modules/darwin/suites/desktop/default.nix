@@ -15,7 +15,7 @@ in {
       skhd = enabled;
       yabai = {
         enable = true;
-        enableScriptingAddition = true;
+        enable-scripting-addition = true;
       };
       sketchybar = enabled;
       jankyborders = enabled;

@@ -12,7 +12,7 @@ in {
 
     oftheangels = {
 
-      apps.doomemacs = enabled;
+#      apps.doomemacs = enabled;
 
       #      apps.spacemacs = enabled;
       apps.spacevim = enabled;
