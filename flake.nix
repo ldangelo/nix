@@ -87,7 +87,6 @@
     stylix.url = "github:danth/stylix";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
-
     # Spicetify
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";
@@ -101,6 +100,7 @@
       url = "github:drduh/YubiKey-Guide";
       flake = false;
     };
+      emacs-overlay.url  = "github:nix-community/emacs-overlay";
   };
 
   outputs = inputs:
@@ -191,7 +191,7 @@
       homes.modules = with inputs; [
         catppuccin.homeManagerModules.catppuccin
         #        hypr-socket-watch.homeManagerModules.default
-                stylix.homeManagerModules.stylix
+        stylix.homeManagerModules.stylix
         nix-index-database.hmModules.nix-index
         nixvim.homeManagerModules.nixvim
         sops-nix.homeManagerModules.sops

@@ -1,12 +1,14 @@
-{ config, lib, pkgs, namespace, ... }:
+{ options, config, lib, pkgs, namespace, inputs, ... }:
+with lib;
+with lib.${namespace};
 let
-  inherit (lib) mkEnableOption mkIf;
-  inherit (lib.strings) fileContents;
 
   cfg = config.${namespace}.programs.terminal.shells.zsh;
 in {
-  options.${namespace}.programs.terminal.shells.zsh = {
+  options.${namespace}.programs.terminal.shells.zsh = with types; {
     enable = mkEnableOption "ZSH";
+    PATH = mkOpt types.str "";
+    rcFiles = mkOpt types.str "";
   };
 
   config = mkIf cfg.enable {
@@ -145,6 +147,7 @@ in {
             ${fileContents ./rc/modules.zsh}
             ${fileContents ./rc/fzf-tab.zsh}
             ${fileContents ./rc/misc.zsh}
+            ${fileContents ./rc/vterm.zsh}
 
             # Set LS_COLORS by parsing dircolors output
             LS_COLORS="$(${pkgs.coreutils}/bin/dircolors --sh)"
