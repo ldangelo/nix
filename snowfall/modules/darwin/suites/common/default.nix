@@ -22,6 +22,7 @@ in {
         "tradingview"
         "1password"
         "1password-cli"
+        "emacs-mac"
       ];
     };
 

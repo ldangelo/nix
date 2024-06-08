@@ -26,7 +26,11 @@ in {
         upgrade = true;
       };
 
-      taps = [ "homebrew/bundle" "homebrew/services" ];
+      taps = [
+        "homebrew/bundle"
+        "homebrew/services"
+        "railwaycat/emacsmacport"
+      ];
     };
   };
 }
