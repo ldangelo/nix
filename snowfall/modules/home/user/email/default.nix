@@ -80,8 +80,7 @@ in {
         folders = icloud/Inbox icloud/Archive
         rename = true
 
-        icloud/Inbox= 'tag:deleted':icloud/Trash/
-        icloud/Inbox= 'folder:icloud/Inbox and not tag:inbox and not tag:unread':icloud/Archive/
+        icloud/Inbox= 'tag:deleted':icloud/Trash/ 'folder:icloud/Inbox and not tag:inbox and not tag:unread':icloud/Archive/
         icloud/Archive= 'tag:deleted':icloud/Trash/
       '';
     };

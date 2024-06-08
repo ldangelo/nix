@@ -20,6 +20,8 @@ in {
         "microsoft-teams"
         "slack"
         "tradingview"
+        "1password"
+        "1password-cli"
       ];
     };
 

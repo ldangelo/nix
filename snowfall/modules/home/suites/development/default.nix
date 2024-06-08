@@ -11,10 +11,11 @@ in {
   config = mkIf cfg.enable {
 
     oftheangels = {
- 
-  apps.spacemacs = enabled;
-  apps.spacevim = enabled;
-  };
+
+      apps.doomemacs = enabled;
+
+      #      apps.spacemacs = enabled;
+      apps.spacevim = enabled;
+    };
   };
 }
-

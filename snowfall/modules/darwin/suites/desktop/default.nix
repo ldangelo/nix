@@ -13,7 +13,10 @@ in {
   config = mkIf cfg.enable {
     ${namespace}.desktop.addons = {
       skhd = enabled;
-      yabai = enabled;
+      yabai = {
+        enable = true;
+        enableScriptingAddition = true;
+      };
       sketchybar = enabled;
       jankyborders = enabled;
     };
