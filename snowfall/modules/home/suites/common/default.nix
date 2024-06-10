@@ -14,6 +14,10 @@ in {
 
     oftheangels = {
       programs = {
+        graphical = {
+          alacritty = enabled;
+        };
+
         terminal = {
           tools = {
             direnv = enabled;
