@@ -24,6 +24,7 @@ in {
             git = enabled;
             home-manager = enabled;
             tmux = enabled;
+            w3m = enabled;
           };
 
           shells = {
