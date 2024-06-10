@@ -65,6 +65,7 @@ in {
           set fish_greeting
 
           ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
+          oh-my-posh init fish | source
         '';
 
       plugins = [

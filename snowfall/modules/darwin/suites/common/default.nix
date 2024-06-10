@@ -11,6 +11,12 @@ in {
     programs.zsh = enabled;
 
     homebrew = {
+      brews = [
+        "wakatime-cli"
+        "alot"
+      ];
+
+
       casks = [
         "alt-tab"
         "raycast"
@@ -23,6 +29,9 @@ in {
         "1password"
         "1password-cli"
         "emacs-mac"
+        "oh-my-posh"
+        "iTerm2"
+        "wakatime"
       ];
     };
 

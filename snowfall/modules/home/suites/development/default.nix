@@ -15,7 +15,8 @@ in {
 #      apps.doomemacs = enabled;
 
       #      apps.spacemacs = enabled;
-      apps.spacevim = enabled;
+#      spacevim is spewing too much crap into the terminal when deployed.
+#      apps.spacevim = enabled;
     };
   };
 }

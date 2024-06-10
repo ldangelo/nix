@@ -30,6 +30,7 @@ in {
         "homebrew/bundle"
         "homebrew/services"
         "railwaycat/emacsmacport"
+        "jandedobbeleer/oh-my-posh"
       ];
     };
   };

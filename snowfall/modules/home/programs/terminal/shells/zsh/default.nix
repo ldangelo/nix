@@ -107,8 +107,7 @@ in {
             fi
 
             source <(${lib.getExe config.programs.fzf.package} --zsh)
-            source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
-
+#            source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
             # Prevent the command from being written to history before it's
             # executed; save it to LASTHIST instead.  Write it to history
             # in precmd.
@@ -155,6 +154,9 @@ in {
             export LS_COLORS
 
             ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
+
+            # enable oh-my-posh prompt
+            eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/atomic.omp.json)"
           '';
 
         plugins = [

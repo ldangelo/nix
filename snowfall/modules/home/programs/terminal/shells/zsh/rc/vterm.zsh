@@ -50,10 +50,13 @@ add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
 vterm_prompt_end() {
     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
 }
+
+if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
 setopt PROMPT_SUBST
 PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
 
 ROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+fi
 
 vterm_cmd() {
     local vterm_elisp
