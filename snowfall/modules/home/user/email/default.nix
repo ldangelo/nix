@@ -40,7 +40,7 @@ in {
       new.tags = [ "new" ];
       hooks = {
         # before getting the new mail move the old mail too the trash
-        preNew = "afew -m -vv -C ~/.config/notmuch/default/config";
+        preNew = "afew -m -vv -C ~/.config/notmuch/default/config; mbsync -a";
 
         # filter and tag the newly received mail
         postNew = "afew -t -n -vv -C ~/.config/notmuch/default/config";

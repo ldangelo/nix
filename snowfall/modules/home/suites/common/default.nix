@@ -25,6 +25,7 @@ in {
             home-manager = enabled;
             tmux = enabled;
             w3m = enabled;
+            cmake = enabled;
           };
 
           shells = {
