@@ -16,6 +16,7 @@ in {
         "alot"
         "libvterm"
         "libtool"
+        "vfkit"
       ];
 
 
