@@ -24,11 +24,11 @@ in
   config = mkIf cfg.enable {
       environment.systemPackages = [
           pkgs.podman
-          qemu
+#          qemu
           pkgs.xz
       ];
 
-      environment.pathsToLink = [ "/share/qemu" ];
+#      environment.pathsToLink = [ "/share/qemu" ];
 
        # https://github.com/LnL7/nix-darwin/issues/432#issuecomment-1024951660
       environment.etc."containers/containers.conf.d/99-gvproxy-path.conf".text = ''

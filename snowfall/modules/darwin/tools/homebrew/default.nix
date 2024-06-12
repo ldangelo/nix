@@ -31,6 +31,7 @@ in {
         "homebrew/services"
         "railwaycat/emacsmacport"
         "jandedobbeleer/oh-my-posh"
+        "cfergeau/crc"
       ];
     };
   };
