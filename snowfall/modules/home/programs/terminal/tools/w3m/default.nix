@@ -9,7 +9,7 @@ let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.tmux;
+  cfg = config.${namespace}.programs.terminal.tools.w3m;
 in {
   options.${namespace}.programs.terminal.tools.w3m = {
     enable = mkBoolOpt false "Whether or not to enable w3m";

@@ -8,7 +8,17 @@ let
     withTreeSitter = true;
     withWebP = true;
     withImageMagick = true;
+    withMailutils = true;
   };
+
+  my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages
+    (epkgs:
+      with epkgs; [
+        vterm
+        multi-vterm
+        pdf-tools
+        treesit-grammars.with-all-grammars
+      ]);
 
   cfg = config.${namespace}.apps.doomemacs;
 in {
@@ -23,7 +33,12 @@ in {
   };
 
   config = mkIf cfg.enable {
-#    nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
+#    programs.emacs = {
+#      enable = true;
+#      package = my-emacs-with-packages;
+#    };
+
+ #   nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
 
 #    home.file.".emacs.d" = {
 #      source = pkgs.fetchFromGitHub {
@@ -47,6 +62,8 @@ in {
     home.packages = with pkgs; [
       ## Emacs itself
       binutils # native-comp needs 'as', provided by this
+      libtool
+      cmake
       # 28.2 + native-comp
       ((emacsPackagesFor emacsNativeComp).emacsWithPackages
         (epkgs: [ epkgs.vterm ]))

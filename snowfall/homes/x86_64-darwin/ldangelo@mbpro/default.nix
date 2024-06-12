@@ -38,8 +38,8 @@ in {
     };
 
     suites = { 
-    common = enabled;
-#    development = enabled;
+      common = enabled;
+      development = enabled;
     };
   };
 

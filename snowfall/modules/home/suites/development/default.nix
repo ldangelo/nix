@@ -6,13 +6,13 @@ let
   cfg = config.${namespace}.suites.development;
 in {
   options.${namespace}.suites.development = {
-    enable = mkBoolOpt false "Whether or not to enable common configuration.";
+    enable = mkBoolOpt false "Whether or not to enable development configuration.";
   };
   config = mkIf cfg.enable {
 
     oftheangels = {
 
-#      apps.doomemacs = enabled;
+      apps.doomemacs = enabled;
 
       #      apps.spacemacs = enabled;
 #      spacevim is spewing too much crap into the terminal when deployed.

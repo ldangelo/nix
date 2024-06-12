@@ -14,6 +14,8 @@ in {
       brews = [
         "wakatime-cli"
         "alot"
+        "libvterm"
+        "libtool"
       ];
 
 
@@ -59,7 +61,10 @@ in {
     oftheangels = {
       nix = enabled;
 
-      tools = { homebrew = enabled; };
+      tools = { 
+        homebrew = enabled;
+        podman = enabled;
+      };
 
       system = {
         fonts = enabled;
