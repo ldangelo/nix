@@ -2,16 +2,17 @@
 with lib;
 with lib.${namespace};
 let
-  my-emacs = pkgs.emacsMacport.override {
-    withNativeCompilation = true;
-    withSQLite3 = true;
-    withTreeSitter = true;
-    withWebP = true;
-    withImageMagick = true;
-    withMailutils = true;
-#    withXwidgets = true;
-  };
-
+  #   my-emacs = pkgs.emacsMacport.override {
+  #     withNativeCompilation = true;
+  #     withSQLite3 = true;
+  #     withTreeSitter = true;
+  #     withWebP = true;
+  #     withImageMagick = true;
+  #     withMailutils = true;
+  # #    withXwidgets = true;
+  #   };
+  #   Moved too an overlay
+  my-emacs = pkgs.emacsNoctuidWithPackages;
   my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages
     (epkgs:
       with epkgs; [
@@ -19,6 +20,7 @@ let
         multi-vterm
         pdf-tools
         treesit-grammars.with-all-grammars
+        ob-ammonite
       ]);
 
   cfg = config.${namespace}.apps.doomemacs;
@@ -34,14 +36,13 @@ in {
   };
 
   config = mkIf cfg.enable {
-#    nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
+    #    nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
 
     programs.doom-emacs = {
       enable = true;
       doomPrivateDir = ./doom.d;
       package = my-emacs-with-packages;
     };
-
 
     home.packages = with pkgs; [
       ## Emacs itself
@@ -84,9 +85,9 @@ in {
 
   };
 
-#  options.programs.terminal.shells.zsh = {
-#    PATH = [ "$XDG_CONFIG_HOME/emacs/bin" ];
-#    rcFiles = [ "$XDG_CONFIG_CONFIG/emacs/aliases.zsh" ];
-#  };
+  #  options.programs.terminal.shells.zsh = {
+  #    PATH = [ "$XDG_CONFIG_HOME/emacs/bin" ];
+  #    rcFiles = [ "$XDG_CONFIG_CONFIG/emacs/aliases.zsh" ];
+  #  };
 
 }
