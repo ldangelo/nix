@@ -35,6 +35,7 @@ in {
         "stats"
         "aldente"
         "fantastical"
+        "jetbrains-toolbox"
       ];
 
       taps = [

@@ -29,6 +29,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+
+    nix-straight = {
+      url = "github:codingkoi/nix-straight.el?ref=codingkoi/apply-librephoenixs-fix";
+      flake = false;
+    };
+
+    nix-doom-emacs = {
+        url = "github:nix-community/nix-doom-emacs";
+        inputs.nix-straight.follows = "nix-straight";
+        inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Weekly updating nix-index database
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -37,18 +49,6 @@
 
     # NixPkgs (nixos-unstable)
     nixpkgs = { url = "github:nixos/nixpkgs/nixos-unstable"; };
-
-    # NixPkgs-Wayland
-    nixpkgs-wayland = {
-      url = "github:nix-community/nixpkgs-wayland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # NixOS WSL Support
-    nixos-wsl = {
-      url = "github:nix-community/nixos-wsl";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # Run unpatched dynamically compiled binaries
     nix-ld-rs = {
@@ -196,6 +196,7 @@
         nixvim.homeManagerModules.nixvim
         sops-nix.homeManagerModules.sops
         spicetify-nix.homeManagerModules.default
+        nix-doom-emacs.hmModule
       ];
 
       systems = {

@@ -1,4 +1,4 @@
-{ options, config, lib, pkgs, namespace, ... }:
+{ options, config, lib, pkgs, namespace, inputs, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -9,6 +9,7 @@ let
     withWebP = true;
     withImageMagick = true;
     withMailutils = true;
+#    withXwidgets = true;
   };
 
   my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages
@@ -33,31 +34,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-#    programs.emacs = {
-#      enable = true;
-#      package = my-emacs-with-packages;
-#    };
+#    nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
 
- #   nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
+    programs.doom-emacs = {
+      enable = true;
+      doomPrivateDir = ./doom.d;
+      package = my-emacs-with-packages;
+    };
 
-#    home.file.".emacs.d" = {
-#      source = pkgs.fetchFromGitHub {
-#        owner = "doomemacs";
-#        repo = "doomemacs";
-#        rev = "master";
-#        sha256 = "sha256-fW+TA5AR9xwRhFHLB2frH3MGlZuL18aRQleg55XGqwA=";
-#      };
-#    };
-
-    #    home.file."doom" = {
-    #      source = pkgs.fetchFromGitHub {
-    #        owner = "ldangelo";
-    #        repo = "doomemacs-private";
-    #        rev = "main";
-    #        deepClone = true;
-    #        sha256 = "";
-    #      };
-    #    };
 
     home.packages = with pkgs; [
       ## Emacs itself
@@ -92,6 +76,10 @@ in {
       beancount
       fava # HACK Momentarily broken on nixos-unstable
       emacs-all-the-icons-fonts
+      dotnet-runtime
+      omnisharp-roslyn
+      coreutils
+      nixfmt
     ];
 
   };

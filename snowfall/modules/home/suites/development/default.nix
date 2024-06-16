@@ -11,7 +11,7 @@ in {
   config = mkIf cfg.enable {
 
     oftheangels = {
-
+      programs.terminal.tools.dotnet = enabled;
       apps.doomemacs = enabled;
 
       #      apps.spacemacs = enabled;
