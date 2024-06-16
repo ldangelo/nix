@@ -100,7 +100,11 @@
       url = "github:drduh/YubiKey-Guide";
       flake = false;
     };
-      emacs-overlay.url  = "github:nix-community/emacs-overlay";
+
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -126,6 +130,8 @@
 
       overlays = with inputs;
         [
+          (import emacs-overlay)
+          (import ./snowfall/overlays/emacs.nix)
           (self: super: {
             cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
               pname = "cyrus-sasl-xoauth2";
@@ -172,7 +178,6 @@
                   --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
               '';
             };
-
           })
           #        avalanche.overlays.default
           #        aux-website.overlays.default

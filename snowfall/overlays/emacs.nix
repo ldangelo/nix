@@ -10,11 +10,13 @@
 self: super: rec {
   # configuration shared for all systems
   emacsGitNoctuidGeneric = super.emacs-git.override {
+    withNativeCompilation = true;
     withSQLite3 = true;
+    withTreeSitter = true;
     withWebP = true;
     withImageMagick = true;
-    # have to force this; lib.version check wrong or because emacsGit?
-    withTreeSitter = true;
+    withMailutils = true;
+#    withXwidgets = true;
   };
   emacsNoctuid =
     if super.stdenv.isDarwin
