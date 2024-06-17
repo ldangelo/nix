@@ -1,11 +1,4 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  namespace,
-  ...
-}:
+{ options, config, lib, pkgs, namespace, ... }:
 with lib;
 with lib.${namespace};
 let cfg = config.${namespace}.programs.graphical.wezterm;
@@ -14,12 +7,13 @@ in {
     enable = mkBoolOpt false "Whether or not to enable wezterm.";
   };
 
-  programs.wezterm = {
+  config = mkIf cfg.enable {
+    programs.wezterm = {
       enable = true;
       enableZshIntegration = true;
-      enableFishIntegration = true;
 
       extraConfig = builtins.readFile config/wezterm.lua;
-  }
+    };
+  };
 }
 

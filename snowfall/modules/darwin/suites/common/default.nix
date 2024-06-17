@@ -35,6 +35,7 @@ in {
         "oh-my-posh"
         "iTerm2"
         "wakatime"
+        "wezterm"
       ];
     };
 
