@@ -41,7 +41,7 @@ in {
     programs.doom-emacs = {
       enable = true;
       doomPrivateDir = ./doom.d;
-      package = my-emacs-with-packages;
+      #      package = my-emacs-with-packages;
     };
 
     home.packages = with pkgs; [
@@ -49,9 +49,6 @@ in {
       binutils # native-comp needs 'as', provided by this
       libtool
       cmake
-      # 28.2 + native-comp
-      ((emacsPackagesFor emacsNativeComp).emacsWithPackages
-        (epkgs: [ epkgs.vterm ]))
 
       ## Doom dependencies
       #      git

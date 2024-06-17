@@ -16,6 +16,7 @@ in {
       programs = {
         graphical = {
           alacritty = enabled;
+          #          wezterm = enabled;
         };
 
         terminal = {
