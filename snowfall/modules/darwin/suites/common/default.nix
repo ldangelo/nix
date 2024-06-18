@@ -8,7 +8,8 @@ in {
   };
 
   config = mkIf cfg.enable {
-    programs.zsh = enabled;
+    # this sets zsh as the default shell for the user
+    programs.zsh.enable = true;
 
     homebrew = {
       brews = [
@@ -36,6 +37,7 @@ in {
         "iTerm2"
         "wakatime"
         "wezterm"
+        "mactex"
       ];
     };
 
