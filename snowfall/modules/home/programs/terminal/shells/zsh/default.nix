@@ -63,11 +63,23 @@ in {
     oh-my-zsh.enable = true;
     oh-my-zsh.plugins = [
       "1password"
+      "ag"
+      "direnv"
+      "dotnet"
+      "emacs"
       "fzf"
+      "git"
+      "httpie"
       "keychain"
+      "kubectl"
+      "kubectx"
+      "macos"
       "podman"
       "thefuck"
+      "sudo"
       "systemd"
+      "tmux"
+      "tmuxinator"
       "zoxide"
     ];
     initExtraBeforeCompInit = ''
@@ -75,7 +87,6 @@ in {
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
       # Where to look for autoloaded function definitions
-      fpath=(~/.zfunc $fpath)
     '';
     initExtra = ''
       DIRSTACKSIZE=100
@@ -87,11 +98,6 @@ in {
         local dir
         dir=$(dirs -l -p | fzf +m) &&
         cd $dir
-      }
-
-      gcd() {
-        local dir="$(git ls-tree -d -r --name-only --full-name HEAD $(git rev-parse --show-cdup) | fzf +m -0)" &&
-        cd "./$(git rev-parse --show-cdup)/$dir"
       }
 
       # Rebind fzf-cd to a sane key
@@ -177,7 +183,7 @@ in {
 
       NOTMUCH_CONFIG=~/.config/notmuch/default/config
       # vterm (emacs) related functions for prompt tracking, etc...
-      source ~/.vterm/emacs-vterm-zsh.sh
+      ${fileContents ./rc/vterm.zsh}
       '';
       #    initExtra = ''
       #       # avoid duplicated entries in PATH
@@ -228,7 +234,6 @@ in {
       #       ${fileContents ./rc/modules.zsh}
       #       ${fileContents ./rc/fzf-tab.zsh}
       #       ${fileContents ./rc/misc.zsh}
-      #       ${fileContents ./rc/vterm.zsh}
 
       #       # Set LS_COLORS by parsing dircolors output
       #       LS_COLORS="$(${pkgs.coreutils}/bin/dircolors --sh)"

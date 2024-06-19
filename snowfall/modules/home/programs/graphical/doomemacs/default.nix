@@ -20,7 +20,6 @@ let
         multi-vterm
         pdf-tools
         treesit-grammars.with-all-grammars
-        ob-ammonite
       ]);
 
   cfg = config.${namespace}.apps.doomemacs;
@@ -36,18 +35,17 @@ in {
   };
 
   config = mkIf cfg.enable {
-    #    nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
 
     programs.doom-emacs = {
       enable = true;
       doomPrivateDir = ./doom.d;
-      #      package = my-emacs-with-packages;
+      package = my-emacs-with-packages;
     };
 
     home.packages = with pkgs; [
       ## Emacs itself
       binutils # native-comp needs 'as', provided by this
-      libtool
+      libtool-bin
       cmake
 
       ## Doom dependencies
