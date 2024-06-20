@@ -45,7 +45,7 @@ in {
     home.packages = with pkgs; [
       ## Emacs itself
       binutils # native-comp needs 'as', provided by this
-      libtool-bin
+      libtool
       cmake
 
       ## Doom dependencies

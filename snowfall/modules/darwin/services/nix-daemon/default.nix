@@ -15,5 +15,6 @@ in {
 
   config = mkIf cfg.enable {
     services.nix-daemon = enabled;
+    services.emacs-daemon = enabled; # run emacs as a daemon
   };
 }

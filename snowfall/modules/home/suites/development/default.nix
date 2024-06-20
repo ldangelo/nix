@@ -13,7 +13,7 @@ in {
 
     oftheangels = {
       programs.terminal.tools.dotnet = enabled;
-      #      apps.doomemacs = enabled;
+#         apps.doomemacs = enabled;
 
       #      apps.spacemacs = enabled;
       #      spacevim is spewing too much crap into the terminal when deployed.
