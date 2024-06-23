@@ -1,9 +1,5 @@
-{
-  lib,
-  config,
-  namespace,
-  ...
-}: let
+{ lib, config, namespace, ... }:
+let
   inherit (lib) types mkIf;
   inherit (lib.${namespace}) mkOpt enabled;
 
@@ -16,5 +12,10 @@ in {
   config = mkIf cfg.enable {
     services.nix-daemon = enabled;
     services.emacs-daemon = enabled; # run emacs as a daemon
+    services.pizauth-daemon = {
+      enable = true;
+
+      logFile = "/var/log/pizauth.out";
+    };
   };
 }

@@ -48,6 +48,15 @@ options = {
       serviceConfig.StandardErrorPath = cfg.logFile;
 
       serviceConfig.KeepAlive = mkIf (!cfg.enableSocketListener) true;
-    };
+
+    serviceConfig.EnvironmentVariables = mkMerge [
+      config.nix.envVars
+      {
+        HOME = "/Users/ldangelo";
+        TMPDIR = mkIf (cfg.tempDir != null) cfg.tempDir;
+
+      }
+    ];
+     };
   };
 }

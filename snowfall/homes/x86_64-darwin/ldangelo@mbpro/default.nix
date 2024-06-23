@@ -13,7 +13,9 @@ in {
     };
 
     
-    cli-apps = { neovim = enabled; };
+    cli-apps = { 
+      neovim = enabled; 
+    };
     services = { };
 
     programs = {

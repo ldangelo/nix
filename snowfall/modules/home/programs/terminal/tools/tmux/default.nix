@@ -91,10 +91,10 @@ in
 
       inherit plugins;
     };
-xdg.configFile."tmux/plugins" = {
-      source = lib.cleanSourceWith { src = lib.cleanSource ./plugins/.; };
-      recursive = true;
-    };
+#xdg.configFile."tmux/plugins" = {
+#      source = lib.cleanSourceWith { src = lib.cleanSource ./plugins/.; };
+#      recursive = true;
+#    };
 
   };
 }

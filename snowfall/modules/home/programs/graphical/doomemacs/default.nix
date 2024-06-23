@@ -36,17 +36,19 @@ in {
 
   config = mkIf cfg.enable {
 
-    programs.doom-emacs = {
-      enable = true;
-      doomPrivateDir = ./doom.d;
-      package = my-emacs-with-packages;
-    };
+#    programs.doom-emacs = {
+#      enable = true;
+ #     doomPrivateDir = ./doom.d;
+ #     package = my-emacs-with-packages;
+ #   };
 
     home.packages = with pkgs; [
       ## Emacs itself
       binutils # native-comp needs 'as', provided by this
       libtool
       cmake
+      # :lang latex & :lang org (latex previews)
+      texliveFull.out
 
       ## Doom dependencies
       #      git
@@ -66,8 +68,6 @@ in {
       editorconfig-core-c # per-project style config
       # :tools lookup & :lang org +roam
       sqlite
-      # :lang latex & :lang org (latex previews)
-      texlive.combined.scheme-medium
       # :lang beancount
       beancount
       fava # HACK Momentarily broken on nixos-unstable
