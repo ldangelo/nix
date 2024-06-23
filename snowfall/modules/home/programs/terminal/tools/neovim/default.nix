@@ -8,13 +8,13 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs;
-      [
-        # FIXME: As of today (2022-12-09), `page` no longer works with my Neovim
-        # configuration. Either something in my configuration is breaking it or `page` is busted.
-        # page
-        neovim
-      ];
+    home.packages = with pkgs; [
+      # FIXME: As of today (2022-12-09), `page` no longer works with my Neovim
+      # configuration. Either something in my configuration is breaking it or `page` is busted.
+      # page
+      neovim
+      nil
+    ];
 
     home.sessionVariables = {
       # PAGER = "page";
@@ -27,5 +27,5 @@ in {
     };
 
     programs.zsh.shellAliases.vimdiff = "nvim -d";
-    };
+  };
 }

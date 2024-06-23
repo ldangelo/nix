@@ -12,14 +12,7 @@ in {
     programs.zsh.enable = true;
 
     homebrew = {
-      brews = [
-        "wakatime-cli"
-        "alot"
-        "libvterm"
-        "libtool"
-        "vfkit"
-      ];
-
+      brews = [ "wakatime-cli" "alot" "libvterm" "libtool" "vfkit" ];
 
       casks = [
         "alt-tab"
@@ -45,6 +38,7 @@ in {
       loginShell = pkgs.zsh;
 
       systemPackages = with pkgs; [
+        ollama
         cask
         fasd
         gnugrep
@@ -65,7 +59,7 @@ in {
     oftheangels = {
       nix = enabled;
 
-      tools = { 
+      tools = {
         homebrew = enabled;
         podman = enabled;
       };
