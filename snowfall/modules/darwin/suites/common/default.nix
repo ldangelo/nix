@@ -15,22 +15,23 @@ in {
       brews = [ "wakatime-cli" "alot" "libvterm" "libtool" "vfkit" ];
 
       casks = [
-        "alt-tab"
-        "raycast"
-        "aldente"
-        "hookmark"
-        "zoom"
-        "microsoft-teams"
-        "slack"
-        "tradingview"
         "1password"
         "1password-cli"
+        "aldente"
+        "alt-tab"
         "emacs-mac"
-        "oh-my-posh"
+        "hammerspoon"
+        "hookmark"
         "iTerm2"
+        "mactex"
+        "microsoft-teams"
+        "oh-my-posh"
+        "raycast"
+        "slack"
+        "tradingview"
         "wakatime"
         "wezterm"
-        "mactex"
+        "zoom"
       ];
     };
 
