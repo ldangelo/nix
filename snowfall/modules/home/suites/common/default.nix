@@ -27,6 +27,7 @@ in {
             tmux = enabled;
             w3m = enabled;
             cmake = enabled;
+            hammerspoon = enabled;
           };
 
           shells = {
