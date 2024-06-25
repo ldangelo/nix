@@ -50,7 +50,6 @@ in {
         {
           HOME = "/Users/ldangelo";
           TMPDIR = mkIf (cfg.tempDir != null) cfg.tempDir;
-
         }
       ];
     };
