@@ -59,6 +59,8 @@ in {
 
         gsed = "${getExe pkgs.gnused}";
 
+        fcd = "cd $(find . -type d -print | fzf)";
+
         # File management
         rcp = "${
             getExe pkgs.rsync

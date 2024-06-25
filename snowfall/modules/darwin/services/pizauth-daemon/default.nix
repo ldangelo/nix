@@ -19,7 +19,7 @@ in {
     services.pizauth-daemon.logFile = mkOption {
       type = types.nullOr types.path;
       default = null;
-      example = "/var/log/pizauth-daemon.log";
+      example = "/tmp/pizauth-daemon.log";
       description = ''
         The logfile to use for the pizauth-daemon service. Alternatively
         {command}`sudo launchctl debug system/org.nixos.pizauth-daemon --stderr`
@@ -28,9 +28,19 @@ in {
       '';
     };
 
+    services.pizauth-daemon.homeDir = mkOption {
+      type = types.nullOr types.path;
+      default = "/Users/ldangelo/";
+      description = "The HOME to use for pizauth-daemon.";
+    };
+    services.pizauth-daemon.cacheDir = mkOption {
+      type = types.nullOr types.path;
+      default = "/Users/ldangelo/.local/share";
+      description = "The XDG_DATA_HOME_DIR to use for pizauth-daemon.";
+    };
     services.pizauth-daemon.tempDir = mkOption {
       type = types.nullOr types.path;
-      default = null;
+      default = "/tmp";
       description = "The TMPDIR to use for pizauth-daemon.";
     };
   };
@@ -54,9 +64,9 @@ in {
       serviceConfig.EnvironmentVariables = mkMerge [
         config.nix.envVars
         {
-          HOME = "/Users/ldangelo";
+          HOME = mkIf (cfg.homeDir != null) cfg.homeDir;
           TMPDIR = mkIf (cfg.tempDir != null) cfg.tempDir;
-
+          XDG_DATA_HOME = mkIf (cfg.cacheDir != null) cfg.cacheDir;
         }
       ];
     };
