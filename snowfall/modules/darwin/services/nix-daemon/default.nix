@@ -14,8 +14,9 @@ in {
     services.emacs-daemon = enabled; # run emacs as a daemon
     services.pizauth-daemon = {
       enable = true;
-
-      logFile = "/var/log/pizauth.out";
+      homeDir = "/Users/ldangelo";
+      cacheDir = "/Users/ldangelo/.local/share";
+      logFile = "/tmp/pizauth.out";
     };
   };
 }

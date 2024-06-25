@@ -18,8 +18,6 @@
     ### Add remote origin
     rao = "remote add origin";
 
-    # use fzf to switch directories
-    fcd = "cd $(find . -type d -print | fzf)";
     ##
     ## Git Flow Operations
     ### Commit all, commit all with message, add and commit all, amend commit
