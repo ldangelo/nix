@@ -2,9 +2,8 @@
 with lib;
 
 let cfg = config.services.emacs-daemon;
-in
-{
-options = {
+in {
+  options = {
     services.emacs-daemon.enable = mkOption {
       type = types.bool;
       default = false;
@@ -36,27 +35,24 @@ options = {
     };
   };
 
-
   config = mkIf cfg.enable {
-    launchd.daemons.emacs-daemon = {
-      serviceConfig.ProgramArguments = [
-        "/Applications/Emacs.app/Contents/MacOS/Emacs"
-        "--fg-daemon=work"
-      ];
+    launchd.user.agents.emacs-daemon = {
+      serviceConfig.ProgramArguments =
+        [ "/Applications/Emacs.app/Contents/MacOS/Emacs" "--fg-daemon=work" ];
       serviceConfig.ProcessType = config.nix.daemonProcessType;
       serviceConfig.Label = "emacs.daemon";
       serviceConfig.StandardErrorPath = cfg.logFile;
 
       serviceConfig.KeepAlive = mkIf (!cfg.enableSocketListener) true;
 
-    serviceConfig.EnvironmentVariables = mkMerge [
-      config.nix.envVars
-      {
-        HOME = "/Users/ldangelo";
-        TMPDIR = mkIf (cfg.tempDir != null) cfg.tempDir;
+      serviceConfig.EnvironmentVariables = mkMerge [
+        config.nix.envVars
+        {
+          HOME = "/Users/ldangelo";
+          TMPDIR = mkIf (cfg.tempDir != null) cfg.tempDir;
 
-      }
-    ];
-     };
+        }
+      ];
+    };
   };
 }

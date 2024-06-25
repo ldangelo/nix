@@ -2,9 +2,8 @@
 with lib;
 
 let cfg = config.services.pizauth-daemon;
-in
-{
-options = {
+in {
+  options = {
     services.pizauth-daemon.enable = mkOption {
       type = types.bool;
       default = false;
@@ -17,7 +16,7 @@ options = {
       description = "";
     };
 
-  services.pizauth-daemon.logFile = mkOption {
+    services.pizauth-daemon.logFile = mkOption {
       type = types.nullOr types.path;
       default = null;
       example = "/var/log/pizauth-daemon.log";
@@ -36,10 +35,9 @@ options = {
     };
   };
 
-
   config = mkIf cfg.enable {
-    launchd.daemons.pizauth-daemon = {
-       serviceConfig.ProgramArguments = [
+    launchd.user.agents.pizauth-daemon = {
+      serviceConfig.ProgramArguments = [
         "/usr/local/bin/pizauth"
         "server"
         "-c"
@@ -53,15 +51,14 @@ options = {
 
       serviceConfig.KeepAlive = mkIf (!cfg.enableSocketListener) true;
 
+      serviceConfig.EnvironmentVariables = mkMerge [
+        config.nix.envVars
+        {
+          HOME = "/Users/ldangelo";
+          TMPDIR = mkIf (cfg.tempDir != null) cfg.tempDir;
 
-    serviceConfig.EnvironmentVariables = mkMerge [
-      config.nix.envVars
-      {
-        HOME = "/Users/ldangelo";
-        TMPDIR = mkIf (cfg.tempDir != null) cfg.tempDir;
-
-      }
-    ];
+        }
+      ];
     };
   };
 }
