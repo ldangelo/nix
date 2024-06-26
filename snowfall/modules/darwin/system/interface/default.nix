@@ -1,16 +1,9 @@
-{
-  config,
-  lib,
-  pkgs,
-  namespace,
-  ...
-}:
+{ config, lib, pkgs, namespace, ... }:
 let
   inherit (lib) mkIf mkEnableOption;
 
   cfg = config.${namespace}.system.interface;
-in
-{
+in {
   options.${namespace}.system.interface = {
     enable = mkEnableOption "macOS interface";
   };
@@ -102,35 +95,35 @@ in
         # '$music' '$spotify' '$plex' '$small_blank' 																							\
         # '$code' '$github' '$gitkraken' '$small_blank' 													\
         # '$alacritty' '$kitty'"
-#         persistent-apps = [
-#           "/System/Applications/Launchpad.app"
-#           "/System/Applications/System Settings.app"
-#           "/System/Applications/App Store.app"
-#           # TODO: implement small_blank
-#           "/System/Applications/Messages.app"
-#           "/Applications/Caprine.app"
-#           "/Applications/Element.app"
-#           "/Applications/Microsoft Teams (work or school).app"
-#           "/Applications/Discord.app"
-#           "/Applications/Thunderbird.app"
-#           # TODO: implement small_blank
-#           "/Applications/Firefox Developer Edition.app"
-#           "/Applications/Safari.app"
-#           "/Applications/Fantastical.app"
-#           "/System/Applications/Reminders.app"
-#           "/System/Applications/Notes.app"
-#           # TODO: implement small_blank
-#           "/System/Applications/Music.app"
-#           "/Applications/Spotify.app"
-#           "/Applications/Plex.app"
-#           # TODO: implement small_blank
-#           "/Applications/Visual Studio Code.app"
-#           "/Applications/Visual Studio (Preview).app"
-#           "/Applications/GitHub Desktop.app"
-#           "/Applications/GitKraken.app"
-#           # TODO: implement small_blank
-# #          "${pkgs.wezterm}/Applications/WezTerm.app"
-#         ];
+        #         persistent-apps = [
+        #           "/System/Applications/Launchpad.app"
+        #           "/System/Applications/System Settings.app"
+        #           "/System/Applications/App Store.app"
+        #           # TODO: implement small_blank
+        #           "/System/Applications/Messages.app"
+        #           "/Applications/Caprine.app"
+        #           "/Applications/Element.app"
+        #           "/Applications/Microsoft Teams (work or school).app"
+        #           "/Applications/Discord.app"
+        #           "/Applications/Thunderbird.app"
+        #           # TODO: implement small_blank
+        #           "/Applications/Firefox Developer Edition.app"
+        #           "/Applications/Safari.app"
+        #           "/Applications/Fantastical.app"
+        #           "/System/Applications/Reminders.app"
+        #           "/System/Applications/Notes.app"
+        #           # TODO: implement small_blank
+        #           "/System/Applications/Music.app"
+        #           "/Applications/Spotify.app"
+        #           "/Applications/Plex.app"
+        #           # TODO: implement small_blank
+        #           "/Applications/Visual Studio Code.app"
+        #           "/Applications/Visual Studio (Preview).app"
+        #           "/Applications/GitHub Desktop.app"
+        #           "/Applications/GitKraken.app"
+        #           # TODO: implement small_blank
+        # #          "${pkgs.wezterm}/Applications/WezTerm.app"
+        #         ];
       };
 
       screencapture = {
@@ -152,7 +145,7 @@ in
         AppleShowAllExtensions = true;
         AppleShowScrollBars = "Automatic";
         NSAutomaticWindowAnimationsEnabled = false;
-        _HIHideMenuBar = true;
+        _HIHideMenuBar = false;
       };
     };
   };
