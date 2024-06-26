@@ -40,7 +40,8 @@ in {
       new.tags = [ "new" ];
       hooks = {
         # before getting the new mail move the old mail too the trash
-        preNew = "afew -m -vv -C ~/.config/notmuch/default/config; mbsync -a; exit 0";
+        preNew =
+          "afew -m -vv -C ~/.config/notmuch/default/config; mbsync -a; exit 0";
 
         # filter and tag the newly received mail
         postNew = "afew -t -n -vv -C ~/.config/notmuch/default/config";
@@ -108,6 +109,8 @@ in {
           mbsync = {
             enable = true;
             create = "maildir";
+            remove = "both";
+            expunge = "both";
             # patterns = [
             #   "INBOX"
             #   "Trash"
@@ -158,6 +161,8 @@ in {
             expunge = "both";
             extraConfig.account = { AuthMechs = "XOAUTH2"; };
           };
+          notmuch.enable = true;
+          neomutt.enable = true;
           msmtp = {
             enable = true;
             extraConfig = {
@@ -168,7 +173,6 @@ in {
               tls_certcheck = "off";
             };
           };
-          notmuch.enable = true;
           primary = false;
           realName = "Leo A. D'Angelo";
           smtp = {
