@@ -16,6 +16,7 @@ let
   my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages
     (epkgs:
       with epkgs; [
+        mu4e
         vterm
         multi-vterm
         pdf-tools
@@ -36,11 +37,11 @@ in {
 
   config = mkIf cfg.enable {
 
-#    programs.doom-emacs = {
-#      enable = true;
- #     doomPrivateDir = ./doom.d;
- #     package = my-emacs-with-packages;
- #   };
+    programs.doom-emacs = {
+      enable = true;
+      doomPrivateDir = ./doom.d;
+      package = my-emacs-with-packages;
+    };
 
     home.packages = with pkgs; [
       ## Emacs itself

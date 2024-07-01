@@ -46,7 +46,11 @@
 ;; (unpin! pinned-package)
 ;; ...or multiple packages
 ;; (unpin! pinned-package another-pinned-package)
-;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
+;; ...Or *all* package (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
+(package! darcula-theme)
 (package! wakatime-mode)
 (package! eat)
+(package! ellama)
+(package! doct)
+;; ;; (package! doct-org-roam :type 'local :recipe `(:files "./packages/doct-org-roam"))
