@@ -22,7 +22,7 @@ in {
         Sync All
       '';
     };
-    #  programs.imapfilter.enable = true;
+    #programs.imapfilter.enable = true;
     # programs.offlineimap = {
     #    enable = true;
     #    extraConfig.general = {
@@ -33,6 +33,8 @@ in {
 
     programs.msmtp.enable = true;
     programs.neomutt.enable = true;
+
+    programs.mu = { enable = true; };
 
     programs.notmuch = {
       enable = true;
@@ -117,6 +119,7 @@ in {
 
             # ];
           };
+          mu.enable = true;
           notmuch.enable = true;
           neomutt.enable = true;
           msmtp = {
@@ -161,6 +164,7 @@ in {
             expunge = "both";
             extraConfig.account = { AuthMechs = "XOAUTH2"; };
           };
+          mu.enable = true;
           notmuch.enable = true;
           neomutt.enable = true;
           msmtp = {
