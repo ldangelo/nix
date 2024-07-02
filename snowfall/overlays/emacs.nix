@@ -85,6 +85,9 @@ self: super: rec {
       epkgs.jinx
       # not needed on linux but needed on mac
       epkgs.vterm
+      epkgs.multi-vterm
+      epkgs.pdf-tools
+      epkgs.treesit-grammars.with-all-grammars
     ]));
 
   # for WSL with weston

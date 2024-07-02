@@ -12,7 +12,7 @@ in {
   config = mkIf cfg.enable {
     # setup hammerspoon directory
     home.file.".hammerspoon" = {
-      source = lib.cleanSourceWith { src = lib.cleanSource ./config/.; };
+      source = lib.cleanSource ./config/.;
       recursive = true;
     };
 

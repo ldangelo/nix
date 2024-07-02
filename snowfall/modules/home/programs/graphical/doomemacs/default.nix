@@ -13,15 +13,14 @@ let
   #   };
   #   Moved too an overlay
   my-emacs = pkgs.emacsNoctuidWithPackages;
-  my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages
-    (epkgs:
-      with epkgs; [
+  my-emacs-with-packages = ((pkgs.emacsPackagesFor my-emacs).emacsWithPackages
+    (epkgs: [
         mu4e
         vterm
         multi-vterm
         pdf-tools
         treesit-grammars.with-all-grammars
-      ]);
+    ]));
 
   cfg = config.${namespace}.apps.doomemacs;
 in {
@@ -45,6 +44,8 @@ in {
 
     home.packages = with pkgs; [
       ## Emacs itself
+      mu
+      ripgrep
       binutils # native-comp needs 'as', provided by this
       libtool
       cmake

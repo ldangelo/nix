@@ -53,4 +53,5 @@
 (package! eat)
 (package! ellama)
 (package! doct)
+(package! mu4e)
 ;; ;; (package! doct-org-roam :type 'local :recipe `(:files "./packages/doct-org-roam"))

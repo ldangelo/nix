@@ -38,7 +38,7 @@ in {
   config = mkIf cfg.enable {
     launchd.user.agents.emacs-daemon = {
       serviceConfig.ProgramArguments =
-        [ "/Applications/Emacs.app/Contents/MacOS/Emacs" "--fg-daemon=work" ];
+        [ "/Users/ldangelo/Applications/Home Manager Apps/Emacs.app/Contents/MacOS/Emacs" "--fg-daemon=work" ];
       serviceConfig.ProcessType = config.nix.daemonProcessType;
       serviceConfig.Label = "emacs.daemon";
       serviceConfig.StandardErrorPath = cfg.logFile;
