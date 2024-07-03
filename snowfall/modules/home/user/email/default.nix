@@ -11,6 +11,10 @@ in {
 
   config = mkIf cfg.enable {
 
+    environment.systemPackages = [
+      pkgs.spamassassin
+    ];
+   
     # output .mbsyncrc file
     programs.mbsync = {
       enable = true;
