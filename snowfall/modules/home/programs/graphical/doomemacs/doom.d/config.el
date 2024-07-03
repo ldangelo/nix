@@ -76,4 +76,5 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 (load! "./config/init-ai.el")
-;;(load! "./config/init-org.el")
+(after! mu4e (load! "./config/init-email.el"))
+(load! "./config/init-org.el")

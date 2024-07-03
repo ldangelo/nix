@@ -13,14 +13,6 @@ let
   #   };
   #   Moved too an overlay
   my-emacs = pkgs.emacsNoctuidWithPackages;
-  my-emacs-with-packages = ((pkgs.emacsPackagesFor my-emacs).emacsWithPackages
-    (epkgs: [
-        mu4e
-        vterm
-        multi-vterm
-        pdf-tools
-        treesit-grammars.with-all-grammars
-    ]));
 
   cfg = config.${namespace}.apps.doomemacs;
 in {
@@ -36,16 +28,14 @@ in {
 
   config = mkIf cfg.enable {
 
-    programs.doom-emacs = {
+    programs.emacs = {
       enable = true;
-      doomPrivateDir = ./doom.d;
-      package = my-emacs-with-packages;
+      #      doomPrivateDir = ./doom.d;
+      package = my-emacs;
     };
 
     home.packages = with pkgs; [
       ## Emacs itself
-      mu
-      ripgrep
       binutils # native-comp needs 'as', provided by this
       libtool
       cmake
@@ -80,6 +70,20 @@ in {
       nixfmt
     ];
 
+    xdg.configFile."emacs".source = builtins.fetchGit {
+      url = "https://github.com/doomemacs/doomemacs.git";
+      rev = "321f2d2249a5a933e4a4a3ef684e30ce0a7a74cf";
+    };
+
+    xdg.configFile."doom".source = ./doom.d;
+
+    home.sessionVariables = {
+      DOOMDIR = "${config.xdg.configHome}/doom";
+      EMACSDIR = "${config.xdg.configHome}/emacs";
+      DOOMLOCALDIR = "${config.xdg.dataHome}/doom";
+      DOOMPROFILELOADFILE = "${config.xdg.stateHome}/doom-profiles-load.el";
+    };
+    home.sessionPath = [ "${config.xdg.configHome}/emacs/bin" ];
   };
 
   #  options.programs.terminal.shells.zsh = {
