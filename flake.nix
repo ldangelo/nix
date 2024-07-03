@@ -35,12 +35,6 @@
       flake = false;
     };
 
-    nix-doom-emacs = {
-        url = "github:nix-community/nix-doom-emacs";
-        inputs.nix-straight.follows = "nix-straight";
-        inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Weekly updating nix-index database
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -201,7 +195,6 @@
         nixvim.homeManagerModules.nixvim
         sops-nix.homeManagerModules.sops
         spicetify-nix.homeManagerModules.default
-        nix-doom-emacs.hmModule
       ];
 
       systems = {
