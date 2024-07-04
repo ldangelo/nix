@@ -81,8 +81,8 @@
    org-agenda-start-with-log-mode t
    org-agenda-include-deadlines t
    org-agenda-include-diary t
-   org-directory "/Users/ldangelo/Documents/org"
-   org-agenda-files "/Users/ldangelo/Documents/org/org-agenda-files.txt"
+   org-directory "/Users/ldangelo/org"
+   org-agenda-files "/Users/ldangelo/org/org-agenda-files.txt"
 
    org-default-inbox-file (expand-file-name "~/org/inbox.org")
    org-default-someday-file (expand-file-name "~/org/someday.org")
