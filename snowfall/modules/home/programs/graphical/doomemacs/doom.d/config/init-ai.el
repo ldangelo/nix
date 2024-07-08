@@ -39,4 +39,24 @@
   ;; Translation llm provider
   (setopt ellama-translation-provider (make-llm-ollama
 				       :chat-model "phi3:14b-medium-128k-instruct-q6_K"
-				       :embedding-model "nomic-embed-text")))
+				       :embedding-model "nomic-embed-text"))
+  :config
+
+  (defvar ellama-executive-summary-prompt-template "Text:\n%s\nYou are a CTO providing a technical assessment for a third party.  Provide a professional executive summary of the provided findings.  Highlight the issues, opportunities and recommendations use examples from the provided text where appropriate.")
+
+  (defun ellama-executive-summary ()
+    "Summarize selected region or current buffer."
+    (interactive)
+    (let ((text (if (region-active-p)
+		    (buffer-substring-no-properties (region-beginning) (region-end))
+		  (buffer-substring-no-properties (point-min) (point-max)))))
+      (ellama-instant (format ellama-executive-summary-prompt-template text))))
+  (defun ellama-prompt-and-execute (prompt)
+
+    "Ask for a prompt before passing selected text too ollama"
+    (interactive "M\\nAi prompt:")
+    (let ((text (if (region-active-p)
+		    (buffer-substring-no-properties (region-beginning) (region-end))
+		  (buffer-substring-no-properties (point-min) (point-max)))))
+      (ellama-instant (format "Text:\n%s\n%s" text prompt))))
+  )
