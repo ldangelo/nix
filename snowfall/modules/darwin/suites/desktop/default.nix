@@ -58,6 +58,7 @@ in {
         "PopClip" = 445189367;
         "TestFlight" = 899247664;
         "WiFi Explorer" = 494803304;
+        "Pages" = 409201541;
       };
     };
   };
