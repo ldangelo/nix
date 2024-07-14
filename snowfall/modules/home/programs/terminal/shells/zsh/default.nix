@@ -13,6 +13,8 @@ in {
 
   config = mkIf cfg.enable {
     programs = {
+      atuin = { enable = true; };
+
       zsh = {
         enable = true;
 
@@ -186,6 +188,7 @@ in {
 
                 ${fileContents ./rc/fzf-tab.zsh}
                 ${fileContents ./rc/vterm.zsh}
+                ${fileContents ./rc/atuin.zsh}
         '';
         #    initExtra = ''
         #       # avoid duplicated entries in PATH
