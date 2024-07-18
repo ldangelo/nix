@@ -32,6 +32,7 @@ in {
         "wakatime"
         "wezterm"
         "zoom"
+        "obsidian"
       ];
     };
 
