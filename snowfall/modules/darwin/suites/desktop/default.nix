@@ -17,7 +17,7 @@ in {
         enable = true;
         enable-scripting-addition = true;
       };
-      sketchybar = enabled;
+      #sketchybar = enabled;
       jankyborders = enabled;
     };
 
