@@ -44,8 +44,8 @@ in {
         window_gap = 6;
         window_shadow = "float";
 
-        external_bar =
-          "all:${builtins.toString config.services.spacebar.config.height}:0";
+        #        external_bar =
+        #          "all:${builtins.toString config.services.spacebar.config.height}:0";
       };
 
       extraConfig = ''
