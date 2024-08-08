@@ -17,7 +17,7 @@ build:
   darwin-rebuild build --flake {{flakename}}
 
 build-nc:
-  darwin-rebuild build --flake {{flakename}} --option eval-cache false --show-trace
+  darwin-rebuild build --fallback --flake {{flakename}} --option eval-cache false --show-trace
 
 deploy:
   darwin-rebuild switch --flake {{flakename}}
@@ -45,6 +45,6 @@ clean: up
 
 gc:
   # garbage collect all unused nix store entries
-  nix-collect-garbage --delete-older-than 14d
+  nix-collect-garbage --delete-older-than 5d
 
 real-clean: clean gc

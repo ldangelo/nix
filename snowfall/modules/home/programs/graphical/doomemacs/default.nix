@@ -62,17 +62,19 @@ in {
       sqlite
       # :lang beancount
       beancount
-      fava # HACK Momentarily broken on nixos-unstable
+      #fava # HACK Momentarily broken on nixos-unstable
       emacs-all-the-icons-fonts
       dotnet-runtime
       omnisharp-roslyn
       coreutils
       nixfmt
+      nodejs
     ];
 
     xdg.configFile."emacs".source = builtins.fetchGit {
       url = "https://github.com/doomemacs/doomemacs.git";
-      rev = "321f2d2249a5a933e4a4a3ef684e30ce0a7a74cf";
+      ref = "master";
+      rev = "f5b3958331cebf66383bf22bdc8b61cd44eca645";
     };
 
     xdg.configFile."doom".source = ./doom.d;

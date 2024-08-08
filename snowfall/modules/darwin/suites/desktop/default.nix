@@ -59,6 +59,7 @@ in {
         "TestFlight" = 899247664;
         "WiFi Explorer" = 494803304;
         "Pages" = 409201541;
+        "Numbers" = 409203825;
       };
     };
   };

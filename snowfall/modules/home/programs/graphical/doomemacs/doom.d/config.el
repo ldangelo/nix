@@ -78,3 +78,4 @@
 (load! "./config/init-ai.el")
 (after! mu4e (load! "./config/init-email.el"))
 (load! "./config/init-org.el")
+(load! "./config/init-elfeed.el")

@@ -1,5 +1,5 @@
 ;;; config/init-org.el -*- lexical-binding: t; -*-
-(file! "./packages/doct-org-roam/doct-org-roam.el")
+(load! "../packages/doct-org-roam/doct-org-roam.el")
 (setq org-directory "~/org/")
 
 (add-hook! org (lambda () "Beautify org symbols."
@@ -10,7 +10,17 @@
                         (make-variable-buffer-local 'show-paren-mode)
                         (setq show-paren-mode nil)))
 
+
 (after! org
+  (with-eval-after-load "ox-latex"
+    (add-to-list 'org-latex-classes
+                 '("koma-article" "\\documentclass{report}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
   (defun hot-expand (str &optional mod)
     "Expand org template.
 
@@ -93,12 +103,12 @@
   (add-to-list 'org-structure-template-alist '("n" . "note"))
 
   ;; Use embedded webkit browser if possible
-  (when (featurep 'xwidget-internal)
-    (push '("\\.\\(x?html?\\|pdf\\)\\'"
-            .
-            (lambda (file _link)
-              (webkit-browse-url (concat "file://" file) t)))
-          org-file-apps))
+  ;; (when (featurep 'xwidget-internal)
+  ;;   (push '("\\.\\(x?html?\\|pdf\\)\\'"
+  ;;           .
+  ;;           (lambda (file _link)
+  ;;             (xwidget-webkit-browse-url  (concat "file://" file) t)))
+  ;;         org-file-apps))
   ;; Babel
   (setq org-confirm-babel-evaluate nil
         org-src-fontify-natively t

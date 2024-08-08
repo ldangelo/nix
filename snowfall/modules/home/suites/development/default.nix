@@ -14,11 +14,12 @@ in {
     oftheangels = {
       programs.terminal.tools.dotnet = enabled;
       programs.terminal.tools.rust = enabled;
-      apps.doomemacs = enabled;
+      programs.terminal.tools.neovim = enabled;
+#      apps.doomemacs = enabled;
 
       #      apps.spacemacs = enabled;
       #      spacevim is spewing too much crap into the terminal when deployed.
-      #      apps.spacevim = enabled;
+      # apps.spacevim = enabled;
     };
   };
 }
