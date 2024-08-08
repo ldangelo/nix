@@ -11,10 +11,8 @@ in {
 
   config = mkIf cfg.enable {
 
-    environment.systemPackages = [
-      pkgs.spamassassin
-    ];
-   
+    home.packages = [ pkgs.imapfilter ];
+
     # output .mbsyncrc file
     programs.mbsync = {
       enable = true;
@@ -117,11 +115,22 @@ in {
             create = "maildir";
             remove = "both";
             expunge = "both";
-            # patterns = [
-            #   "INBOX"
-            #   "Trash"
-
-            # ];
+            patterns = [
+              "INBOX"
+              "Trash"
+              "Archive"
+              "Reference"
+              "Waiting"
+              "Personal"
+              "Junk"
+              "@SaneBlackHole"
+              "@SaneCC"
+              "@SaneLater"
+              "@SaneNews"
+              "@SaneNoReplies"
+              "@SaneNotSpam"
+              "@SaneReceipts"
+            ];
           };
           mu.enable = true;
           notmuch.enable = true;

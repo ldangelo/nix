@@ -9,71 +9,69 @@
 
 self: super: rec {
   # configuration shared for all systems
-  emacsGitNoctuidGeneric = super.emacs-git.override {
+  emacsGitNoctuidGeneric = super.emacsMacport.override {
     withNativeCompilation = true;
     withSQLite3 = true;
     withTreeSitter = true;
     withWebP = true;
     withImageMagick = true;
     withMailutils = true;
-#    withXwidgets = true;
+    #    withPgtk = true;
+    #    withXwidgets = true;
   };
-  emacsNoctuid =
-    if super.stdenv.isDarwin
-    then
-      emacsGitNoctuidGeneric.overrideAttrs (old: {
-        patches =
-          (old.patches or [])
-          ++ [
-            # Don't raise another frame when closing a frame
-#            (super.fetchpatch {
-#              url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/no-frame-refocus-cocoa.patch";
-#              sha256 = "QLGplGoRpM4qgrIAJIbVJJsa4xj34axwT3LiWt++j/c=";
-#            })
-            # Fix OS window role so that yabai can pick up Emacs
-            (super.fetchpatch {
-              url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/fix-window-role.patch";
-              sha256 = "+z/KfsBm1lvZTZNiMbxzXQGRTjkCFO4QPlEK35upjsE=";
-            })
-            # Add setting to enable rounded window with no decoration (still
-            # have to alter default-frame-alist)
-#            (super.fetchpatch {
-#              url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-30/round-undecorated-frame.patch";
-#              sha256 = "uYIxNTyfbprx5mCqMNFVrBcLeo+8e21qmBE3lpcnd+4=";
-#            })
-            # Make Emacs aware of OS-level light/dark mode
-            # https://github.com/d12frosted/homebrew-emacs-plus#system-appearance-change
-#            (super.fetchpatch {
-#              url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/system-appearance.patch";
-#              sha256 = "oM6fXdXCWVcBnNrzXmF0ZMdp8j0pzkLE66WteeCutv8=";
-#            })
-          ];
-      })
-    else
-      # TODO nix's lucid reports the wrong mm-size (breaks textsize package):
-      # (frame-monitor-attribute 'mm-size (selected-frame))
-      (emacsGitNoctuidGeneric.override {
-        withX = true;
-        # lucid
-        # withGTK2 = false;
-        withGTK3 = true;
-        withXinput2 = true;
-      }).overrideAttrs(_: {
-        # for full control/testing (e.g. can't do lucid without cairo using
-        # builtin withs)
-        configureFlags = [
-          # for a (more) reproducible build
-          "--disable-build-details"
-          "--with-modules"
-          "--with-x-toolkit=gtk3"
-          "--with-xft"
-          "--with-cairo"
-          "--with-xaw3d"
-          "--with-native-compilation"
-          "--with-imagemagick"
-          "--with-xinput2"
-        ];
-      });
+  emacsNoctuid = if super.stdenv.isDarwin then
+    emacsGitNoctuidGeneric.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [
+        # Don't raise another frame when closing a frame
+        #            (super.fetchpatch {
+        #              url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/no-frame-refocus-cocoa.patch";
+        #              sha256 = "QLGplGoRpM4qgrIAJIbVJJsa4xj34axwT3LiWt++j/c=";
+        #            })
+        # Fix OS window role so that yabai can pick up Emacs
+        (super.fetchpatch {
+          url =
+            "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/fix-window-role.patch";
+          sha256 = "+z/KfsBm1lvZTZNiMbxzXQGRTjkCFO4QPlEK35upjsE=";
+        })
+        # Add setting to enable rounded window with no decoration (still
+        # have to alter default-frame-alist)
+        #            (super.fetchpatch {
+        #              url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-30/round-undecorated-frame.patch";
+        #              sha256 = "uYIxNTyfbprx5mCqMNFVrBcLeo+8e21qmBE3lpcnd+4=";
+        #            })
+        # Make Emacs aware of OS-level light/dark mode
+        # https://github.com/d12frosted/homebrew-emacs-plus#system-appearance-change
+        #            (super.fetchpatch {
+        #              url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/system-appearance.patch";
+        #              sha256 = "oM6fXdXCWVcBnNrzXmF0ZMdp8j0pzkLE66WteeCutv8=";
+        #            })
+      ];
+    })
+  else
+  # TODO nix's lucid reports the wrong mm-size (breaks textsize package):
+  # (frame-monitor-attribute 'mm-size (selected-frame))
+    (emacsGitNoctuidGeneric.override {
+      withX = true;
+      # lucid
+      # withGTK2 = false;
+      withGTK3 = true;
+      withXinput2 = true;
+    }).overrideAttrs (_: {
+      # for full control/testing (e.g. can't do lucid without cairo using
+      # builtin withs)
+      configureFlags = [
+        # for a (more) reproducible build
+        "--disable-build-details"
+        "--with-modules"
+        "--with-x-toolkit=gtk3"
+        "--with-xft"
+        "--with-cairo"
+        "--with-xaw3d"
+        "--with-native-compilation"
+        "--with-imagemagick"
+        "--with-xinput2"
+      ];
+    });
   emacsNoctuidWithPackages =
     ((super.emacsPackagesFor emacsNoctuid).emacsWithPackages (epkgs: [
       # necessary to install through nix to get libenchant integration working
@@ -87,14 +85,13 @@ self: super: rec {
     ]));
 
   # for WSL with weston
-  emacsPgtk =
-    (emacsGitNoctuidGeneric.override {
-      # pgtk since wslg uses weston (at least by default)
-      withX = false;
-      withPgtk = true;
-    });
-  emacsPgtkWithPackages =
-    ((super.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: [
+  emacsPgtk = (emacsGitNoctuidGeneric.override {
+    # pgtk since wslg uses weston (at least by default)
+    withX = false;
+    withPgtk = true;
+  });
+  emacsPgtkWithPackages = ((super.emacsPackagesFor emacsPgtk).emacsWithPackages
+    (epkgs: [
       # necessary to install through nix to get libenchant integration working
       epkgs.jinx
       # not needed but prevents need to compile on first run

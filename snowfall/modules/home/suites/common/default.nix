@@ -32,7 +32,7 @@ in {
 
           shells = {
             zsh = enabled;
-            fish = enabled;
+            #            fish = enabled;
           };
         };
       };

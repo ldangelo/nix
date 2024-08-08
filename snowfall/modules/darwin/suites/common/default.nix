@@ -19,6 +19,8 @@ in {
         "1password-cli"
         "aldente"
         "alt-tab"
+        "docker"
+        #        "docker-toolbox"
         "emacs-mac"
         "hammerspoon"
         "hookmark"
@@ -29,7 +31,7 @@ in {
         "raycast"
         "slack"
         "tradingview"
-        "wakatime"
+        #FIXME        "wakatime" seems broken on homebrew?
         "wezterm"
         "zoom"
         "obsidian"
@@ -63,7 +65,7 @@ in {
 
       tools = {
         homebrew = enabled;
-        podman = enabled;
+        #        podman = enabled;
       };
 
       system = {

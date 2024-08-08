@@ -12,12 +12,6 @@ in {
       email = enabled;
     };
 
-    
-    cli-apps = { 
-      neovim = enabled; 
-    };
-    services = { };
-
     programs = {
       terminal = {
         shells = { zsh = enabled; };
@@ -39,7 +33,7 @@ in {
       };
     };
 
-    suites = { 
+    suites = {
       common = enabled;
       development = enabled;
     };

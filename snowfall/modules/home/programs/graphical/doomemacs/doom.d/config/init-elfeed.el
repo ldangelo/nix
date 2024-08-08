@@ -43,6 +43,7 @@
   (start-process "mpv" nil "mpv" (shell-quote-argument url)))
 
 (use-package! elfeed
+  :after elfeed-org
   :bind ("C-c f")
   :hook elfeed-search-mode-hook elfeed-update
   :config
@@ -54,7 +55,7 @@
           ("." . browse-url-default-macosx-browser)))
   )
 
-;;          (add-hook 'elfeed-search-mode-hook #'elfeed-update)
+(add-hook 'elfeed-search-mode-hook #'elfeed-update)
 
 
 
@@ -63,9 +64,10 @@
 
 ;; download youtube urls with mpv instead of eww
 
-(use-package! elfeed-org
+(use-package elfeed-org
   :config
   (setq rmh-elfeed-org-files (list "~/org/elfeed.org"))
+  :init
   (elfeed-org))
 
 (provide 'init-elfeed)

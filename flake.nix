@@ -29,9 +29,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-
     nix-straight = {
-      url = "github:codingkoi/nix-straight.el?ref=codingkoi/apply-librephoenixs-fix";
+      url =
+        "github:codingkoi/nix-straight.el?ref=codingkoi/apply-librephoenixs-fix";
       flake = false;
     };
 
@@ -42,7 +42,7 @@
     };
 
     # NixPkgs (nixos-unstable)
-    nixpkgs = { url = "github:nixos/nixpkgs/nixos-unstable"; };
+    nixpkgs = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
 
     # Run unpatched dynamically compiled binaries
     nix-ld-rs = {
@@ -119,80 +119,77 @@
     in lib.mkFlake {
       channels-config = {
         allowUnfree = true;
+        allowBroken = false;
         permittedInsecurePackages = [ "electron-25.9.0" ];
       };
 
-      overlays = with inputs;
-        [
-          (import emacs-overlay)
-          (import ./snowfall/overlays/emacs.nix)
-          (self: super: {
-            cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
-              pname = "cyrus-sasl-xoauth2";
-              version = "master";
+      nixpkgs.config.allowBroken = true;
+      overlays = with inputs; [
+        (import emacs-overlay)
+        (import ./snowfall/overlays/emacs.nix)
+        (self: super: {
+          cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
+            pname = "cyrus-sasl-xoauth2";
+            version = "master";
 
-              src = super.pkgs.fetchFromGitHub {
-                owner = "moriyoshi";
-                repo = "cyrus-sasl-xoauth2";
-                rev = "master";
-                sha256 = "sha256-OlmHuME9idC0fWMzT4kY+YQ43GGch53snDq3w5v/cgk=";
-              };
-
-              nativeBuildInputs = [
-                super.pkg-config
-                super.automake
-                super.autoconf
-                super.libtool
-              ];
-              propagatedBuildInputs = [ super.cyrus_sasl ];
-
-              buildPhase = ''
-                ./autogen.sh
-                ./configure
-              '';
-
-              installPhase = ''
-                make DESTDIR="$out" install
-              '';
-
-              meta = with super.pkgs.lib; {
-                homepage = "https://github.com/moriyoshi/cyrus-sasl-xoauth2";
-                description = "XOAUTH2 mechanism plugin for cyrus-sasl";
-              };
+            src = super.pkgs.fetchFromGitHub {
+              owner = "moriyoshi";
+              repo = "cyrus-sasl-xoauth2";
+              rev = "master";
+              sha256 = "sha256-OlmHuME9idC0fWMzT4kY+YQ43GGch53snDq3w5v/cgk=";
             };
 
-            # https://github.com/NixOS/nixpkgs/issues/108480#issuecomment-1115108802
-            isync-oauth2 = super.buildEnv {
-              name = "isync-oauth2";
-              paths = [ super.isync ];
-              pathsToLink = [ "/bin" ];
-              nativeBuildInputs = [ super.makeWrapper ];
-              postBuild = ''
-                wrapProgram "$out/bin/mbsync" \
-                  --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
-              '';
+            nativeBuildInputs =
+              [ super.pkg-config super.automake super.autoconf super.libtool ];
+            propagatedBuildInputs = [ super.cyrus_sasl ];
+
+            buildPhase = ''
+              ./autogen.sh
+              ./configure
+            '';
+
+            installPhase = ''
+              make DESTDIR="$out" install
+            '';
+
+            meta = with super.pkgs.lib; {
+              homepage = "https://github.com/moriyoshi/cyrus-sasl-xoauth2";
+              description = "XOAUTH2 mechanism plugin for cyrus-sasl";
             };
-          })
-          #        avalanche.overlays.default
-          #        aux-website.overlays.default
-          #        neovim.overlays.default
-          #                tmux.overlay
-          #        flake.overlays.default
-          #        thaw.overlays.default
-          #        drift.overlays.default
-          #        icehouse.overlays.default
-          #        rf.overlays.default
-          #        attic.overlays.default
-          # snowfall-docs.overlays.default
-          #        nixpkgs-news.overlays.default
-        ];
+          };
+
+          # https://github.com/NixOS/nixpkgs/issues/108480#issuecomment-1115108802
+          isync-oauth2 = super.buildEnv {
+            name = "isync-oauth2";
+            paths = [ super.isync ];
+            pathsToLink = [ "/bin" ];
+            nativeBuildInputs = [ super.makeWrapper ];
+            postBuild = ''
+              wrapProgram "$out/bin/mbsync" \
+                --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
+            '';
+          };
+        })
+        #        avalanche.overlays.default
+        #        aux-website.overlays.default
+        #neovim.overlays.default
+        #                tmux.overlay
+        #        flake.overlays.default
+        #        thaw.overlays.default
+        #        drift.overlays.default
+        #        icehouse.overlays.default
+        #        rf.overlays.default
+        #        attic.overlays.default
+        # snowfall-docs.overlays.default
+        #        nixpkgs-news.overlays.default
+      ];
 
       homes.modules = with inputs; [
         catppuccin.homeManagerModules.catppuccin
         #        hypr-socket-watch.homeManagerModules.default
         stylix.homeManagerModules.stylix
         nix-index-database.hmModules.nix-index
-        nixvim.homeManagerModules.nixvim
+        #        nixvim.homeManagerModules.nixvim
         sops-nix.homeManagerModules.sops
         spicetify-nix.homeManagerModules.default
       ];
