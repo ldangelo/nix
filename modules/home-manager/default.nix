@@ -4,6 +4,7 @@
     #     ./nvim
     #     ./emacs
     ./programs.nix
+    ./packages.nix      # Migrated from Brewfile
     ./path.nix
     ./shell.nix
     ./user.nix
