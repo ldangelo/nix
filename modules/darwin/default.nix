@@ -21,37 +21,8 @@
     ./system.nix
     ./yabai/default.nix
     ./skhd/default.nix
+    ./homebrew.nix      # Migrated from Brewfile
   ];
-
-  homebrew = {
-    enable = true;
-
-    taps = [
-      "FelixKratz/formulae"
-    ];
-
-
-    masApps = {
-      _1PasswordforSafari = 1569813296;
-      userscripts = 1463298887;
-      vimlike = 1584519802;
-#      vimari = 1480933944;
-    };
-
-    brews = [
-      "podman"
-      "docker-compose"
-      "borders"
-#       "isync" # the nix package doesn't support oauth
-    ];
-
-    casks = [
-      "1password"
-      "1password-cli"
-      "rider"
-      "alt-tab"
-    ];
-  };
 
 
   system.activationScripts.postUserActivation.text = ''
