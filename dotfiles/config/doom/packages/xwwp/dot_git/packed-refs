@@ -1,0 +1,7 @@
+# pack-refs with: peeled fully-peeled sorted 
+48c4429d9cf360cedc7de28720dd246b15817c61 refs/remotes/origin/add-travis-support
+dcf6f9430dd9745e5f2705c0f42e013fab961c0e refs/remotes/origin/develop
+24d5d3b31ecefb5c6e3acc9ee838998f42ee800c refs/remotes/origin/emacs-27.1
+6204eb74076b0151b849d4143d840fc8aedf50f9 refs/remotes/origin/master
+06db3224c947355a1f2cb96546240ee6f9d61859 refs/remotes/origin/revamp
+2f6469ac9ca5f4a71de589af3e8316456eb8c958 refs/remotes/origin/xwwp-ace-dev

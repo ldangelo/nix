@@ -1,0 +1,51 @@
+defaults
+tls on
+logfile /Users/ldangelo/logs/msmtplog.txt
+
+
+
+###### iCloud #####
+account icloud
+host smtp.mail.me.com
+from ldangelo@mac.com
+tls on
+#tls_trust_file /usr/local/etc/openssl@1.1/cert.pem
+tls_certcheck off
+#tls_trust_file ~/icloud.crt
+auth on
+user ldangelo
+passwordeval "security find-generic-password -a icloud -s mbsync -w"
+port 587
+
+###### Fortium #####
+account Fortium
+host smtp.gmail.com
+from leo.dangelo@fortiumpartners.com
+tls on
+auth xoauth2
+user leo.dangelo@fortiumpartners.com
+passwordeval "pizauth show fortium"
+port 587
+
+#### Solo ####
+account Solo
+host smtp.gmail.com
+from l.dangelo@gosolo.io
+tls on
+auth xoauth2
+user l.dangelo@gosolo.io
+passwordeval "pizauth show solo"
+port 587
+
+#### Curantis ####
+account Curantis
+host localhost
+from leo.dangelo@curantissolutions.com
+tls on
+auth on
+user leo.dangelo@curantissolutions.com
+password reGda6-vahxaw-seqnah
+port 1025
+
+
+account default: icloud

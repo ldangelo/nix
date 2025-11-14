@@ -1,0 +1,8 @@
+account "fortium" {
+    auth_uri = "https://accounts.google.com/o/oauth2/auth";
+    auth_uri_fields = {"login_hint": "leo.dangelo@fortiumpartners.com"};
+    token_uri = "https://oauth2.googleapis.com/token";
+    client_id = "406964657835-aq8lmia8j95dhl1a2bvharmfk3t1hgqj.apps.googleusercontent.com";
+    client_secret = "{{ onepasswordRead "op://Personal/pizauthsecret/password" }}";
+    scopes = ["https://mail.google.com/"];
+}

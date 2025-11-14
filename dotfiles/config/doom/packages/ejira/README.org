@@ -1,0 +1,151 @@
+* JIRA integration to Emacs org-mode
+** Features
+- Two-way synchronization between JIRA and =org-mode=.
+- Convert description fields from/to JIRA markup to/from org-markup.
+- One-way push of =org-clock= data from =org-mode= to JIRA.
+- Support for issues, epics, stories and subtasks
+
+** Screenshots
+
+#+CAPTION: Ticket view
+[[./screenshot.png]]
+
+#+CAPTION: Agenda view
+[[./agenda.png]]
+
+** Installation
+Example configuration with =use-package=. Note, that for Ejira to work =org-id-track-globally= needs to be set to =t=, as =org-id=-lookups are heavily used by Ejira.
+#+BEGIN_SRC elisp
+  (use-package ejira
+    :init
+    (setq jiralib2-url              "https://jira.mycorp.com"
+          jiralib2-auth             'basic
+          jiralib2-user-login-name  "my-jira-username"
+          jiralib2-token            nil
+
+          ;; NOTE, this directory needs to be in `org-agenda-files'`
+          ejira-org-directory       "~/jira"
+          ejira-projects            '("EJ" "JL2")
+
+          ejira-priorities-alist    '(("Highest" . ?A)
+                                      ("High"    . ?B)
+                                      ("Medium"  . ?C)
+                                      ("Low"     . ?D)
+                                      ("Lowest"  . ?E))
+          ejira-todo-states-alist   '(("To Do"       . 1)
+                                      ("In Progress" . 2)
+                                      ("Done"        . 3)))
+    :config
+    ;; Tries to auto-set custom fields by looking into /editmeta
+    ;; of an issue and an epic.
+    (add-hook 'jiralib2-post-login-hook #'ejira-guess-epic-sprint-fields)
+
+    ;; They can also be set manually if autoconfigure is not used.
+    ;; (setq ejira-sprint-field       'customfield_10001
+    ;;       ejira-epic-field         'customfield_10002
+    ;;       ejira-epic-summary-field 'customfield_10004)
+
+    (require 'ejira-agenda)
+
+    ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
+    ;; into your `org-agenda-files'.
+    (add-to-list 'org-agenda-files ejira-org-directory)
+
+    ;; Add an agenda view to browse the issues that
+    (org-add-agenda-custom-command
+     '("j" "My JIRA issues"
+       ((ejira-jql "resolution = unresolved and assignee = currentUser()"
+                   ((org-agenda-overriding-header "Assigned to me")))))))
+#+END_SRC
+
+** Project file structure
+Each project will be synchronized into its own file, which is named as the project code with an =.org=-extension, and is located inside =ejira-org-directory=. All the data related to the project will be kept inside this project file.
+
+The project file can also contain extra org headings anywhere except inside the reserved "Description" and "Comments" headers. Ejira will not touch those headings but their clock entries get included in the total clocked hours for the task. This is useful, if for example one wishes to log the work hours from a meeting into a JIRA task, one can just refile the captured meeting notes under the specific Ejira ticket and the hours will be included. The meeting notes will also be visible when viewing the item with =ejira-focus-on-issue=.
+
+When a project in synced into a file, it's items get automatically refiled into a structure based on the hierarchy shown below. Not all levels need to be present, though, an issue or a story might not have an epic link, and thus will then be refiled directly under the project, for instance. The heading levels are dynamic, so the amount of asterisks for an issue depends on whether it has an epic link or not.
+
+#+BEGIN_SRC org
+  ,* Project
+  ,** Epic
+  ,*** Issue/Task
+  ,*** Story
+  ,**** Subtask
+#+END_SRC
+
+If the items are updated and these relationships change, the items are automatically refiled to reflect the structure in the server.
+
+** Usage
+*** Focus view
+In the focus view, the buffer is an indirect buffer into the main org-file buffer, it is narrowed to the selected item subtree and all of it's contents are expanded. The buffer also has a minor mode =ejira-mode= activated.
+
+Following functions are available in the focus view (most of them work also without the focus view, and operate on the isue under point):
+
+| *keybinding in ejira-mode* | *command*                      | *description*                                                                                        |
+|                            | =ejira-focus-item-under-point= | Focuses on the item under point. Renarrows/expands the buffer if needed.                             |
+|                            | =ejira-focus-up-level=         | Focuses the parent item, which could be a project, epic or a story.                                  |
+|                            | =ejira-pull-item-under-point=  | Pulls updated data from the server. Discards local edits. Item can be a comment, issue, project etc. |
+|                            | =ejira-push-item-under-point=  | Updates the changes to item summary and description to the server. Item can be a comment, issue etc. |
+| =C-c= ,                    | =ejira-set-priority=           | Set the priority with =org-priority= and sync to server.                                             |
+| =C-c C-d=                  | =ejira-set-deadline=           | Set the deadline with =org-deadline= and sync to server.                                             |
+| =C-c C-t=                  | =ejira-progress-issue=         | Progress the item by selecting an action.                                                            |
+|                            | =ejira-set-issuetype=          | Change the issuetype of the item and sync to server.                                                 |
+|                            | =ejira-set-epic=               | Change the Epic Link of the item and sync to server.                                                 |
+|                            | =ejira-add-comment=            | Add a comment to issue under point. With prefix argument add comment to currently clocked issue.     |
+|                            | =ejira-mention-user=           | Add a @user link at location of point.                                                               |
+|                            | =ejira-delete-comment=         | Remove the comment under point and sync to server.                                                   |
+| =C-c q=                    | =ejira-close-buffer=           | Close the indirect buffer.                                                                           |
+
+Additionally, following commands are provided, and are meant to be bound globally:
+
+| *command*                            | *description*                                                                     |
+| =ejira-insert-link-to-clocked-issue= | Inserts a url to the currently clocked issue into the buffer at point.            |
+| =ejira-update-my-projects=           | Pull all data from unresolved items under projects listed in =ejira-projects=.    |
+| =ejira-heading-to-task=              | Create a task from an org-headgin under point, interactively select the project.  |
+| =ejira-heading-to-subtask=           | Create a subtask from an org-heading under point, interactively select the story. |
+
+=ejira-heading-to-*task= uses the title of the heading as the summary of the issue, and the whole body as the description. The body is converted into JIRA-markup, and can contain any org-markup, including subheadings. If a region is active, repeat the action for all of the "top-level" headings within the region (the project or story is assumed to be the same for all).
+
+*** Agenda & Boards
+Ejira integrates to =org-agenda= by providing a new type for the agenda definitions: =ejira-jql=. =ejira-jql= behaves exactly alike the =tags=-type, except instead of a tag/property filter it uses a jql-query. Below is an example of an agenda view that shows the issues from board "Ejira" and groups them by their assignment status:
+
+#+BEGIN_SRC elisp
+  (org-add-agenda-custom-command
+   '("<a key of your choice>" "<name of the entry in agenda selection>"
+     ((ejira-jql "filter = \"Filter for Ejira\" and resolution = unresolved and assignee = currentUser()"
+                 ((org-agenda-overriding-header "Assigned to me")))
+      (ejira-jql "filter = \"Filter for Ejira\" and resolution = unresolved and assignee is EMPTY"
+                 ((org-agenda-overriding-header "Unassigned")))
+      (ejira-jql "filter = \"Filter for Ejira\" and resolution = unresolved and assignee != currentUser()"
+                 ((org-agenda-overriding-header "Others"))))))
+#+END_SRC
+
+Ejira caches the issue ids that are returned by each query. On the first lauch the cache is not available so the list is fetched from the server. If some of the items have no existing heading in your local copy, those items are synced with =ejira--update-task=. The selection of keys belonging to the view can be refreshed by opening (or refreshing) the agenda with a prefix argument =C-u=. This retrieves all the missing items and throws away items that no longer belong to the board. However, it does not refresh the state of the items you have already synced. That behavior can be achieved with two prefixes =C-u C-u=, which basically refreshes the whole board.
+
+Commands available in =ejira-agenda=:
+
+| *command*                    | *description*                                |
+|------------------------------+----------------------------------------------|
+| =ejira-agenda-pull-item=     | Updates the item under point from server     |
+| =ejira-agenda-progress-item= | Progress the item under point with an action |
+
+*** Logging work to JIRA
+=M-x ejira-hourmarking-get-hourlog= opens up a view from a selected day's clock entries. =C-k= and =C-j= can be used to adjust the line under point by steps of =ejira-hourmarking-step= minutes. =C-c C-c= pushes the current state to the server. =q= quits.
+
+By default the items are rounded to 15 minutes. If exact times are desired, set =ejira-hourmaking-round-by= to 1.
+
+Syncing worklogs from JIRA to org is not currently implemented, as I personally don't have a use case for it.
+*** Syncing only your tickets
+
+By default =ejira= synchronizes all tickets across a project. If you want to
+restrict synchronization to only your tickets (assigned or reported), use the
+following override:
+
+#+begin_example emacs-lisp
+(setq ejira-update-jql-unresolved-fn #'ejira-jql-my-unresolved-project-tickets)
+#+end_example
+
+*** Syncing tickets using custom JQL
+
+=ejira-update-jql-unresolved-fn= can be set to any function that accepts a
+string representing the project ID, and returns a JQL statement as a string.

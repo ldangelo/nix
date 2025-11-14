@@ -1,0 +1,5 @@
+alias la ls -a
+alias js jj st
+alias bu brew update
+alias BU brew upgrade
+alias claude /Users/ldangelo/.claude/local/claude

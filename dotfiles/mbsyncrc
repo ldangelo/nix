@@ -1,0 +1,125 @@
+CopyArrivalDate yes # Keeps timestamp mased message sorting intact
+SyncState *
+
+IMAPAccount icloud
+Host imap.mail.me.com
+User ldangelo@mac.com
+pipelineDepth 10
+AuthMech LOGIN
+PassCmd "security find-generic-password -a icloud -s mbsync -w"
+TLSType IMAPS
+
+IMAPStore icloud-remote
+Account icloud
+
+MaildirStore icloud-local
+SubFolders Verbatim
+Path ~/Maildir/icloud/
+Inbox ~/Maildir/icloud/Inbox
+Subfolders Verbatim
+
+Channel icloud-folders
+Far :icloud-remote:
+Near :icloud-local:
+Create Both
+Expunge Both
+Patterns *
+SyncState *
+
+Group icloud
+Channel icloud-folders
+
+IMAPAccount Fortium
+#Host imap.gmail.com
+Host imap.gmail.com
+User leo.dangelo@fortiumpartners.com
+PassCmd "pizauth show fortium";
+AuthMech XOAUTH2
+TLSType IMAPS
+
+IMAPStore Fortium-remote
+Account Fortium
+
+MaildirStore Fortium-local
+SubFolders Verbatim
+Path ~/Maildir/Fortium/
+Inbox ~/Maildir/Fortium/Inbox
+Trash ~/Maildir/Fortium/[Gmail].Trash
+
+
+Channel Fortium-folders
+Far :Fortium-remote:
+Near :Fortium-local:
+#Patterns "INBOX" "Archive" "Sent Mail" "Trash"
+Patterns *
+Create Both
+Expunge None
+SyncState *
+
+Group Fortium
+Channel Fortium-folders
+
+IMAPAccount Solo
+#Host imap.gmail.com
+Host imap.gmail.com
+User l.dangelo@gosolo.io
+PassCmd "pizauth show solo";
+AuthMech XOAUTH2
+TLSType IMAPS
+
+IMAPStore Solo-remote
+Account Solo
+
+MaildirStore Solo-local
+SubFolders Verbatim
+Path ~/Maildir/Solo/
+Inbox ~/Maildir/Solo/Inbox
+Trash ~/Maildir/Solo/[Gmail].Trash
+
+
+Channel Solo-folders
+Far :Solo-remote:
+Near :Solo-local:
+#Patterns "INBOX" "Archive" "Sent Mail" "Trash"
+Patterns *
+Create Both
+Expunge None
+SyncState *
+
+Group Solo
+Channel Solo-folders
+
+
+IMAPAccount Curantis
+#Host imap.gmail.com
+Host localhost
+Port 1143
+User leo.dangelo@curantissolutions.com
+Pass reGda6-vahxaw-seqnah
+#PassCmd "pizauth show solo";
+AuthMech LOGIN
+TLSType None
+SystemCertificates yes
+
+
+IMAPStore Curantis-remote
+Account Curantis
+
+MaildirStore Curantis-local
+SubFolders Verbatim
+Path ~/Maildir/Curantis/
+Inbox ~/Maildir/Curantis/Inbox
+Trash ~/Maildir/Curantis/Trash
+
+
+Channel Curantis-folders
+Far :Curantis-remote:
+Near :Curantis-local:
+#Patterns "INBOX" "Archive" "Sent Mail" "Trash"
+Patterns *
+Create Both
+Expunge None
+SyncState *
+
+Group Curantis
+Channel Curantis-folders

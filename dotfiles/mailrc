@@ -1,0 +1,3 @@
+set sendmail="/opt/homebrew/bin/msmtp"
+
+# leo's mailrc
