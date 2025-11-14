@@ -1,0 +1,6 @@
+source "./icloud.profile"
+folder-hook $folder 'source ./icloud.profile'
+
+bind index G mbsync -a
+macro index gi "<change-folder>=$INBOX<enter>"
+macro index gs "<change-folder>=$sent<enter>"

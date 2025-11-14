@@ -1,40 +1,15 @@
-{ pkgs, nixvim, programs, ...}:
+{ config, pkgs, ... }:
+
 {
-  programs.nixvim = {
-    enable = true;
-    globals.mapleader = " ";
+  # Install neovim
+  home.packages = [ pkgs.neovim ];
 
-    options = {
-      relativenumber = true;
-      incsearch = true;
-    };
-
-    colorschemes.onedark.enable = true;
-    plugins.lualine.enable = true;
-    plugins.nix.enable = true;
-
-    plugins.treesitter.enable = true;
-
-    plugins.telescope.enable = true;
-
-    plugins.harpoon = {
-      enable = true;
-      keymaps.addFile = "<leader>a";
-    };
-
-    plugins.lsp = {
-      keymaps = {
-        silent = true;
-        diagnostic = {
-          "<leader>k" = "goto_prev";
-          "<leader>j" = "goto_next";
-        };
-
-        lspBuf = {
-          gd = "definition";
-          K  = "hover";
-        };
-      };
-    };
+  # Copy the entire nvim configuration from nix repo
+  xdg.configFile."nvim".source = ../../../dotfiles/config/nvim;
+  
+  # Set as default editor
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
   };
 }

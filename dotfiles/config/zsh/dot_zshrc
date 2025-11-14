@@ -1,0 +1,96 @@
+          # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
+          [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
+          EDITOR='emacsclient -nw'
+          EDITOR='nvim'
+          export EDITOR
+##
+          export DOTNET_ROOT=/Users/ldangelo/.dotnet
+
+          path=('/Users/ldangelo/.local/bin' $path)
+          path="~/Library/Application\ Support/JetBrains/Toolbox/scripts":$path
+          path=('/Users/ldangelo/.npm-global/bin' $path)
+          path=('/Users/ldangelo/.cargo/bin' $path)
+          path=('/Users/ldangelo/.config/emacs/bin' $path)
+          path=('/Users/ldangelo/Development/omnisharp' $path)
+          path=('/opt/homebrew/bin' $path)
+          path=('/usr/local/bin' $path)
+          path=('/Users/ldangelo/bin' $path)
+          path=('/Users/ldangelo/.config/doom/bin' $path)
+          path=('/opt/homebrew/opt/python@3.13/bin/' $path)
+          eval "$(/usr/libexec/path_helper)"
+          path=("/opt/homebrew/opt/postgresql@17/bin" $path)
+
+          DIRSTACKSIZE=100
+
+          setopt notify interactivecomments recexact longlistjobs
+          setopt autoresume pushdsilent autopushd pushdminus
+
+          d() {
+            local dir
+            dir=$(dirs -l -p | fzf +m) &&
+            cd $dir
+          }
+
+          # Rebind fzf-cd to a sane key
+          source <(fzf --zsh)
+
+          bindkey '\eC' fzf-cd-widget
+          bindkey '\ec' capitalize-word
+
+          # Restore Alt-L behaviour overridden by Oh-My-Zsh (https://github.com/ohmyzsh/ohmyzsh/issues/5071)
+          bindkey '^[l' down-case-word
+
+          ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+          # Source localhost specific settings
+          source ~/.zshrc.local
+
+          autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+          add-zsh-hook chpwd chpwd_recent_dirs
+          zstyle ':completion:*:*:cdr:*:*' menu selection
+
+          autoload bashcompinit
+          bashcompinit
+
+          ZSH_BASH_COMPLETIONS_FALLBACK_PATH=/opt/homebrew/share/bash-completion
+          #ZSH_BASH_COMPLETIONS_FALLBACK_WHITELIST=(openssl)
+
+#          if test -n "$KITTY_INSTALLATION_DIR"; then
+#              export KITTY_SHELL_INTEGRATION="enabled"
+#              autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+#              kitty-integration
+#              unfunction kitty-integration
+#          fi
+
+export NVM_DIR="$HOME/.nvm"
+  [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+          bindkey -v
+          NOTMUCH_CONFIG=~/.config/notmuch/default/config
+          # vterm (emacs) related functions for prompt tracking, etc...
+#          eval "$(oh-my-posh init zsh)"
+          source ~/.config/zsh/rc/alias.zsh
+          source ~/.config/zsh/rc/homebrew.zsh
+          source ~/.config/zsh/rc/atuin.zsh
+          source ~/.config/zsh/rc/modules.zsh
+          source ~/.config/zsh/rc/set.zsh
+          source ~/.config/zsh/rc/unset.zsh
+          source ~/.config/zsh/rc/misc.zsh
+          source ~/.config/zsh/rc/comp.zsh
+          source ~/.config/zsh/rc/java.zsh
+          source ~/.config/zsh/rc/rbenv.zsh
+          source ~/.config/zsh/rc/fzf-tab.zsh
+          source ~/.config/zsh/rc/binds.zsh
+          source ~/.config/zsh/rc/vterm.zsh
+          source ~/.config/zsh/rc/starship.zsh
+if [[ -z "$INSIDE_EMACS" ]]; then
+#          source ~/.config/zsh/rc/zsh-autosuggestions.zsh
+          source ~/.config/zsh/rc/zsh-syntax-highlighting.zsh
+          source ~/.config/zsh/rc/ohmyzsh.zsh
+fi
+
+          path=($DOTNET_ROOT $path)
+          path=('/Users/ldangelo/.dotnet/tools' $path)
+          export PATH

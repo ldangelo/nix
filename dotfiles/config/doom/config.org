@@ -1,0 +1,1680 @@
+#+TITLE: My Doom configuration
+
+* Utility Functions
+#+begin_src emacs-lisp :tangle yes
+;; -*- lexical-bindings: t; -*-
+(defun read-file-contents-as-string (filename)
+  "Read the contents of a file and return as string."
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (buffer-string)))
+
+    (defun my/org-entry-is-scheduled-p ()
+  (let ((scheduled (org-entry-get (point) "SCHEDULED" nil)))
+    (when scheduled
+      (let ((scheduled-time (org-time-string-to-time scheduled))
+            (current-time (current-time)))
+        (time-less-p scheduled-time current-time)))))
+
+(defun my/org-entry-is-due-p ()
+  (let ((scheduled (org-entry-get (point) "DEADLINE" nil)))
+    (when scheduled
+      (let ((scheduled-time (org-time-string-to-time scheduled)))
+        (time-less-p scheduled-time (current-time))))))
+
+(defun my/org-alert-past-due-tasks ()
+  "Generate alerts for past due org-mode tasks."
+  (interactive)
+  (let* ((days-past-due 1)
+         (current-date (format-time-string "%Y-%m-%d"))
+         (past-due-tasks (org-map-entries
+                          (lambda ()
+                            (when
+                                ;;                                (and
+                                ;;                                 (and
+                                ;;                                  (not (org-entry-is-done-p))
+                                ;;                                      (org-entry-is-todo-p))
+                                (my/org-entry-is-due-p))
+                            (org-get-heading t t t t ))
+                          "TODO=\"TODO\"\"" 'agenda)))
+
+    (pp past-due-tasks)
+
+    (dolist (task past-due-tasks)
+      (when (not (equal task nil))
+        (pp task)
+        (setq-local due-date (org-entry-get (org-find-exact-heading-in-directory (substring-no-properties task)) "DEADLINE"))
+        (message "Due date" due-date)
+        (when due-date
+          (setq-local days-past (time-to-days (time-subtract (current-time) (org-time-string-to-seconds due-date))))
+          (print "days-past" days-past)
+          (when (>= days-past days-past-due)
+            (alert "you have past due items")))))))
+(defun vulpea-project-p ()
+  "Return non-nil if current buffer has any todo entry.
+
+TODO entries marked as done are ignored, meaning the this
+function returns nil if current buffer contains only completed
+tasks."
+  (seq-find                                 ; (3)
+   (lambda (type)
+     (eq type 'todo))
+   (org-element-map                         ; (2)
+       (org-element-parse-buffer 'headline) ; (1)
+       'headline
+     (lambda (h)
+       (org-element-property :todo-type h)))))
+
+(defun vulpea-project-update-tag ()
+    "Update PROJECT tag in the current buffer."
+    (when (and (not (active-minibuffer-window))
+               (vulpea-buffer-p))
+      (save-excursion
+        (goto-char (point-min))
+        (let* ((tags (vulpea-buffer-tags-get))
+               (original-tags tags))
+          (if (vulpea-project-p)
+              (setq tags (cons "project" tags))
+            (setq tags (remove "project" tags)))
+
+          ;; cleanup duplicates
+          (setq tags (seq-uniq tags))
+
+          ;; update tags if changed
+          (when (or (seq-difference tags original-tags)
+                    (seq-difference original-tags tags))
+            (apply #'vulpea-buffer-tags-set tags))))))
+
+(defun vulpea-buffer-p ()
+  "Return non-nil if the currently visited buffer is a note."
+  (and buffer-file-name
+       (string-prefix-p
+        (expand-file-name (file-name-as-directory org-roam-directory))
+        (file-name-directory buffer-file-name))))
+
+(defun vulpea-project-files ()
+    "Return a list of note files containing 'project' tag." ;
+    (seq-uniq
+     (seq-map
+      #'car
+      (org-roam-db-query
+       [:select [nodes:file]
+        :from tags
+        :left-join nodes
+        :on (= tags:node-id nodes:id)
+        :where (like tag (quote "%\"project\"%"))]))))
+
+(defun vulpea-agenda-files-update (&rest _)
+  "Update the value of `org-agenda-files'."
+  (setq org-agenda-files (append my-org-files (vulpea-project-files))))
+
+(defun my/org-roam-copy-todo-to-today ()
+  (interactive)
+  (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+        (org-roam-dailies-capture-templates
+          '(("t" "tasks" entry "%?"
+             :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+        (org-after-refile-insert-hook #'save-buffer)
+        today-file
+        pos)
+    (save-window-excursion
+      (org-roam-dailies--capture (current-time) t)
+      (setq today-file (buffer-file-name))
+      (setq pos (point)))
+
+    ;; Only refile if the target file is different than the current file
+    (unless (equal (file-truename today-file)
+                   (file-truename (buffer-file-name)))
+      (org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+#+end_src
+* General
+
+#+begin_src emacs-lisp :tangle yes :hlines no
+(setq inhibit-quit nil)
+(setq user-full-name "Leo D'Angelo"
+      user-mail-address "leo.dangelo@fortiumpartners.com")
+
+(setq doom-font (font-spec :family "Fira Code" :size 18))
+
+(setq doom-theme 'modus-vivendi)
+
+(setq-default
+ display-line-numbers-type 'relative
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ window-combination-resize t                      ; take new window space from all other windows (not just current)
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+
+(setq undo-limit 80000000                         ; Raise undo-limit to 80Mb
+      evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
+      auto-save-default t                         ; Nobody likes to loose work, I certainly don't
+      truncate-string-ellipsis "…"                ; Unicode ellispis are nicer than "...", and also save /precious/ space
+      password-cache-expiry nil                   ; I can trust my computers ... can't I?
+      ;; scroll-preserve-screen-position 'always     ; Don't have `point' jump around
+      scroll-margin 2)                            ; It's nice to maintain a little margin
+
+(display-time-mode 1)                             ; Enable time in the mode-line
+
+;;(unless (string-match-p "^Power N/A" (battery))   ; On laptops...
+;;  (display-battery-mode 1))                       ; it's nice to know how much power you have
+
+(global-subword-mode 1)                           ; Iterate through CamelCase words
+#+end_src
+
+
+#+begin_src emacs-lisp :tangle yes
+(add-load-path! "/usr/local/share/emacs/site-lisp/mu/mu4e")
+(add-load-path! "/Users/ldangelo/.doom.d/packages")
+(add-load-path! (dir!))
+#+end_src
+
+* Programming
+** Magit
+#+begin_src emacs-lisp :tangle yes
+
+(use-package!  magit-gitflow)
+(add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
+#+end_src
+** Jira
+#+begin_src emacs-lisp :tangle no
+
+(use-package! ejira
+  :load-path "/Users/ldangelo/.doom.d/packages/ejira"
+  :init
+  (setq jiralib2-url              "https://alliedpayment.atlassian.net"
+        jiralib2-auth             'basic
+        jiralib2-user-login-name  "leo.dangelo@alliedpayment.com"
+        jiralib2-token            nil
+
+        ;; NOTE, this directory needs to be in `org-agenda-files'`
+        ejira-org-directory       "~/org/jira"
+        ejira-projects            '("EJ" "JL2")
+
+        ejira-priorities-alist    '(("Highest" . ?A)
+                                    ("High"    . ?B)
+                                    ("Medium"  . ?C)
+                                    ("Low"     . ?D)
+                                    ("Lowest"  . ?E))
+        ejira-todo-states-alist   '(("To Do"       . 1)
+                                    ("In Progress" . 2)
+                                    ("Done"        . 3)))
+  :config
+  ;; Tries to auto-set custom fields by looking into /editmeta
+  ;; of an issue and an epic.
+  (add-hook 'jiralib2-post-login-hook #'ejira-guess-epic-sprint-fields)
+
+  ;; They can also be set manually if autoconfigure is not used.
+  ;; (setq ejira-sprint-field       'customfield_10001
+  ;;       ejira-epic-field         'customfield_10002
+  ;;       ejira-epic-summary-field 'customfield_10004)
+
+  (require 'ejira-agenda)
+
+  ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
+  ;; into your `org-agenda-files'.
+  (add-to-list 'org-agenda-files ejira-org-directory)
+
+  ;; Add an agenda view to browse the issues that
+  (org-add-agenda-custom-command
+   '("j" "My JIRA issues"
+     ((ejira-jql "resolution = unresolved and assignee = currentUser()"
+                 ((org-agenda-overriding-header "Assigned to me")))))))
+
+#+end_src
+** dotnet
+*** csharp-mode
+#+begin_src emacs-lisp :tangle no
+(use-package! csharp-mode
+  :hook (csharp-mode . rainbow-delimiters-mode)
+  :config
+  (set-electric! 'csharp-mode :chars '(?\n ?\}))
+  (set-rotate-patterns! 'csharp-mode
+    :symbols '(("public" "protected" "private")
+               ("class" "struct")))
+  (set-ligatures! 'csharp-mode
+    ;; Functional
+    :lambda        "() =>"
+    ;; Types
+    :null          "null"
+    :true          "true"
+    :false         "false"
+    :int           "int"
+    :float         "float"
+    :str           "string"
+    :bool          "bool"
+    :list          "List"
+    ;; Flow
+    :not           "!"
+    :in            "in"
+    :and           "&&"
+    :or            "||"
+    :for           "for"
+    :return        "return"
+    :yield         "yield")
+
+  (sp-local-pair 'csharp-mode "<" ">"
+                 :when '(+csharp-sp-point-in-type-p)
+                 :post-handlers '(("| " "SPC")))
+
+    (add-hook 'csharp-mode-local-vars-hook #'lsp! 'append)
+
+  (defadvice! +csharp-disable-clear-string-fences-a (fn &rest args)
+    "This turns off `c-clear-string-fences' for `csharp-mode'. When
+on for `csharp-mode' font lock breaks after an interpolated string
+or terminating simple string."
+    :around #'csharp-disable-clear-string-fences
+    (unless (eq major-mode 'csharp-mode)
+      (apply fn args))))
+
+#+end_src
+*** blazor
+#+begin_src emacs-lisp :tangle no
+(require 'web-mode)
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.cshtml?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.svelte?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.razor?\\'" . web-mode))
+  (setq web-mode-engines-alist
+	'(("razor"    . "\\.cshtml\\'")
+	  ("razor"  . "\\.razor\\.")
+	  ("blade"  . "\\.blade\\.")
+	  ("svelte" . "\\.svelte\\.")
+  ))
+#+end_src
+*** csproj-mode
+#+begin_src emacs-lisp :tangle no
+(use-package! csproj-mode)
+#+end_src
+*** sharper
+#+begin_src emacs-lisp :tangle no 
+(use-package! sharper
+  :demand t
+  :bind
+  ("C-c n" . sharper-main-transient))
+#+end_src
+*** dap
+Initialize dap for python
+
+#+begin_src emacs-lisp :tangle no
+(use-package! lsp-ui :commands lsp-ui-mode)
+(use-package! lsp-mode
+  :hook
+  ((python-mode . lsp-deferred))
+  :commands lsp lsp-deferred)
+
+(setq dap-python-executable "/opt/homebrew/bin/python3")
+(setq dap-python-debugger 'debugpy)
+#+end_src
+
+
+Initialize dap for dotnet
+
+#+begin_src emacs-lisp :tangle no
+
+  (use-package! dap-mode
+      :after lsp-mode
+      :commands (dap-debug dap-breakpoints-add)
+      :hook ((python-mode . dap-ui-mode)
+             (python-mode . dap-mode))
+      :init
+      (dap-mode 1)
+      (dap-ui-mode 1)
+      (dap-auto-configure-mode)
+      (require 'dap-netcore)
+      (require 'dap-python)
+
+      (defun dap-netcore--populate-launch-args (conf)
+        "Populate CONF with the default arguments."
+        (dap--put-if-absent conf :program (expand-file-name (read-file-name "Select an executable:" (concat (lsp-workspace-root) "/bin/Debug"))))
+        (dap--put-if-absent conf :dap-server-path (list (dap-netcore--debugger-locate-or-install) "--interpreter=vscode")))
+
+      (defun dap-netcore--populate-attach-args (conf)
+        "Populate CONF with the attach arguments."
+        (dap--put-if-absent conf :processId (string-to-number (read-string "Enter PID: " "2345")))
+        (dap--put-if-absent conf :dap-server-path (list (dap-netcore--debugger-locate-or-install) "--interpreter=vscode")))
+
+      (dap-register-debug-provider
+       "coreclr-attach"
+       'dap-netcore--populate-attach-args)
+
+      (dap-register-debug-provider
+       "coreclr-launch"
+       'dap-netcore--populate-launch-args)
+
+      (dap-register-debug-template ".Net Core Attach (Console)"
+                                   (list :type "coreclr-attach"
+                                         :request "attach"
+                                         :name "NetCoreDbg::Attach"
+                                         :stopAtEntry t))
+
+      (dap-register-debug-template ".Net Core Launch (Console)"
+                                   (list :type "coreclr-launch"
+                                         :request "launch"
+                                         :name "NetCoreDbg::Launch"
+                                         :stopAtEntry t)))
+#+end_src
+** Java
+#+begin_src emacs-lisp :tangle no
+(setq lsp-java-jdt-ls-prefer-native-command t)
+(setq lsp-java-java-path "/usr/bin/java")
+
+ (use-package! eglot-java-lombok
+   :config (eglot-java-lombok/init))
+
+#+end_src
+** Codium
+#+begin_src emacs-lisp :tangle no
+;; we recommend using use-package to organize your init.el
+(use-package! codeium
+    ;; if you use straight
+    ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
+    ;; otherwise, make sure that the codeium.el file is on load-path
+
+    :init
+    ;; use globally
+    (add-to-list 'completion-at-point-functions #'codeium-completion-at-point)
+    ;; or on a hook
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local completion-at-point-functions '(codeium-completion-at-point))))
+
+    ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local completion-at-point-functions
+    ;;             (list (cape-capf-super #'codeium-completion-at-point #'lsp-completion-at-point)))))
+    ;; an async company-backend is coming soon!
+
+    ;; codeium-completion-at-point is autoloaded, but you can
+    ;; optionally set a timer, which might speed up things as the
+    ;; codeium local language server takes ~0.2s to start up
+    ;; (add-hook 'emacs-startup-hook
+    ;;  (lambda () (run-with-timer 0.1 nil #'codeium-init)))
+
+    ;; :defer t ;; lazy loading, if you want
+    :config
+    (setq use-dialog-box nil) ;; do not use popup boxes
+
+    ;; if you don't want to use customize to save the api-key
+    ;; (setq codeium/metadata/api_key "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+
+    ;; get codeium status in the modeline
+    (setq codeium-mode-line-enable
+        (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
+    (add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
+    ;; alternatively for a more extensive mode-line
+    ;; (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
+
+    ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
+    (setq codeium-api-enabled
+        (lambda (api)
+            (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
+    ;; you can also set a config for a single buffer like this:
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local codeium/editor_options/tab_size 4)))
+
+    ;; You can overwrite all the codeium configs!
+    ;; for example, we recommend limiting the string sent to codeium for better performance
+    (defun my-codeium/document/text ()
+        (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
+    ;; if you change the text, you should also change the cursor_offset
+    ;; warning: this is measured by UTF-8 encoded bytes
+    (defun my-codeium/document/cursor_offset ()
+        (codeium-utf8-byte-length
+            (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
+    (setq codeium/document/text 'my-codeium/document/text)
+    (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset))
+#+end_src
+** AI Tools
+*** Aider
+#+begin_src emacs-lisp :tangle yes
+(use-package aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :config
+  :custom
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "sonet"))
+#+END_SRC
+*** GPTEL
+#+begin_src emacs-lisp :tangle no
+;;
+;; the API key is stored in my authinfo
+(use-package! gptel
+  :config (setq gptel-backend (gptel-make-ollama "Ollama" :host "localhost:11434" :models '(mistral:latest) :stream t)))
+#+end_src
+*** Elysium
+#+begin_src emacs-lisp :tangle no
+(use-package! elysium
+:custom
+(elysium-window-size 0.33)
+(elysium-window-style `vertical))
+#+end_src
+*** ELLAMA
+#+begin_src emacs-lisp :tangle no
+(use-package! ellama
+  :ensure t
+  :bind ("C-c e" . ellama-transient-main-menu)
+  :init
+  ;; setup key bindings
+  ;; (setopt ellama-keymap-prefix "C-c e")
+  ;; language you want ellama to translate to
+;;  (setopt ellama-language "German")
+  ;; could be llm-openai for example
+  (require 'llm-ollama)
+  ;; (setopt ellama-provider
+  ;; 	  (make-llm-ollama
+  ;; 	   ;; this model should be pulled to use it
+  ;; 	   ;; value should be the same as you print in terminal during pull
+  ;; 	   :chat-model "llama3:8b-instruct-q8_0"
+  ;; 	   :embedding-model "mistral:latest"
+  ;; 	   :default-chat-non-standard-params '(("num_ctx" . 8192))))
+  ;; (setopt ellama-summarization-provider
+  ;; 	  (make-llm-ollama
+  ;; 	   :chat-model "qwen2.5:3b"
+  ;; 	   :embedding-model "nomic-embed-text"
+  ;; 	   :default-chat-non-standard-params '(("num_ctx" . 32768))))
+  ;; (setopt ellama-coding-provider
+  ;; 	  (make-llm-ollama
+  ;; 	   :chat-model "qwen2.5-coder:3b"
+  ;; 	   :embedding-model "nomic-embed-text"
+  ;; 	   :default-chat-non-standard-params '(("num_ctx" . 32768))))
+  ;; ;; Predefined llm providers for interactive switching.
+  ;; ;; You shouldn't add ollama providers here - it can be selected interactively
+  ;; ;; without it. It is just example.
+  ;; (setopt ellama-providers
+  ;; 	  '(("zephyr" . (make-llm-ollama
+  ;; 			 :chat-model "zephyr:7b-beta-q6_K"
+  ;; 			 :embedding-model "zephyr:7b-beta-q6_K"))
+  ;; 	    ("mistral" . (make-llm-ollama
+  ;; 			  :chat-model "mistral:7b-instruct-v0.2-q6_K"
+  ;; 			  :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
+  ;; 	    ("mixtral" . (make-llm-ollama
+  ;; 			  :chat-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"
+  ;; 			  :embedding-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"))))
+  ;; ;; Naming new sessions with llm
+  ;; (setopt ellama-naming-provider
+  ;; 	  (make-llm-ollama
+  ;; 	   :chat-model "llama3:8b-instruct-q8_0"
+  ;; 	   :embedding-model "nomic-embed-text"
+  ;; 	   :default-chat-non-standard-params '(("stop" . ("\n")))))
+  ;; (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  ;; ;; Translation llm provider
+  ;; (setopt ellama-translation-provider
+  ;; 	  (make-llm-ollama
+  ;; 	   :chat-model "qwen2.5:3b"
+  ;; 	   :embedding-model "nomic-embed-text"
+  ;; 	   :default-chat-non-standard-params
+  ;; 	   '(("num_ctx" . 32768))))
+  ;; (setopt ellama-extraction-provider (make-llm-ollama
+  ;; 				      :chat-model "qwen2.5-coder:7b-instruct-q8_0"
+  ;; 				      :embedding-model "nomic-embed-text"
+  ;; 				      :default-chat-non-standard-params
+  ;; 				      '(("num_ctx" . 32768))))
+  ;; customize display buffer behaviour
+  ;; see ~(info "(elisp) Buffer Display Action Functions")~
+  (setopt ellama-chat-display-action-function #'display-buffer-full-frame)
+  (setopt ellama-instant-display-action-function #'display-buffer-at-bottom)
+  :config
+  ;; send last message in chat buffer with C-c C-c
+  (add-hook 'org-ctrl-c-ctrl-c-hook #'ellama-chat-send-last-message))
+#+end_src
+*** chatgpt-shell
+#+begin_src emacs-lisp :tangle no
+(use-package! chatgpt-shell
+  :custom
+  ((chatgpt-shell-openapi-key (lambda () (getenv "OPENAPI_KEY")))))
+
+#+end_src
+
+* Slack
+#+begin_src emacs-lisp :tangle no
+      (use-package! slack
+      :commands (slack-start)
+      :init
+      (setq slack-buffer-emojify t)
+      (setq slack-prefer-current-team t)
+      :config
+
+      (slack-register-team
+       :name "Allied"
+       :default t
+       :full-and-display-names t
+       :token "xoxc-2649183009-358349085783-4434046556657-3ae3728ced72a593256626d2495960863b2292034874c117c77890a98a7b573f"
+       :cookie "xoxd-llsSyvlXqxnb%2B%2FZvfmVb7BJaKuM7qJB7Rk4BocjKonQTZ74zOC9AE1JSGTnRHYBbENYzbCdrv3hi2aCxyRgJHaJNVK78zwwKeYyQBGuvIsePIIEzquDObQK5MAPtxo8k8W%2FJWrTxI6gmz0Iw7LxWyTJQZ32dKBXsZXFoy%2BOcmPy1TA5ovsTwqw%3D%3D"
+       :subscribed-channels '(engineering executive))
+      )
+#+end_src
+
+* Calendar
+
+#+begin_src emacs-lisp :tangle yes
+(setq plstore-cache-passphrase-for-symmetric-encryption t)
+(setq epg-pinentry-mode 'loopback)
+(epa-file-enable)
+
+;; Configure OAuth credentials via environment variables or ~/.authinfo.gpg
+;; See: https://github.com/kidd/org-gcal.el#authentication
+(setq org-gcal-client-id (or (getenv "ORG_GCAL_CLIENT_ID") "YOUR_CLIENT_ID_HERE")
+      org-gcal-client-secret (or (getenv "ORG_GCAL_CLIENT_SECRET") "YOUR_CLIENT_SECRET_HERE")
+      org-gcal-fetch-file-alist '(("leo.dangelo@fortiumpartners.com" .  "~/org/fortium-calendar.org")
+                                  ))
+(require 'org-gcal)
+
+(defun my-open-calendar ()
+(interactive)
+(org-gcal-fetch)
+(cfw:open-calendar-buffer
+:contents-sources
+(list
+(cfw:org-create-source "Yellow") ; org-agenda sources
+(cfw:org-create-file-source "Fortium" "~/org/fortium-calendar.org" "Blue")  ; other org source
+(cfw:org-create-file-source "Solo" "~/org/solo-calendar.org" "Red")  ; other org source
+;;(cfw:ical-create-source "Fortium" "https://calendar.google.com/calendar/embed?src=leo.dangelo%40fortiumpartners.com&ctz=America%2FChicago" "Blue")
+;;(cfw:ical-create-source "Solo" "https://calendar.google.com/calendar/embed?src=l.dangelo%40gosolo.io&ctz=America%2FChicago" "Red")
+)))
+#+end_src
+* Alerts
+#+begin_src emacs-lisp :tangle no
+(use-package! alert
+  :init (setq alert-default-style 'osx-notifier))
+#+end_src
+
+* Sauron
+#+begin_src emacs-lisp :tangle no
+
+(use-package! sauron
+  :defer 5
+  :commands (sauron-start sauron-start-hidden)
+  :init
+  (progn
+    (when (eq system-type 'darwin)
+      (setq sauron-modules '(sauron-erc sauron-org sauron-notifications
+                                        sauron-twittering sauron-jabber sauron-identica))
+;;      (defun sauron-dbus-start ()
+;;        nil)
+;;      (makunbound 'dbus-path-emacs)
+      ))
+  :config
+  (progn
+;;    (sauron-start-hidden)
+    ;; This should really check (featurep 'dbus) but for some reason
+    ;; this is always true even if support is not there.
+    (setq sauron-prio-sauron-started 2)
+    (setq sauron-min-priority 3)
+    ;; (setq sauron-dbus-cookie t) ;; linux only?
+    (setq sauron-separate-frame nil)
+    (setq sauron-nick-insensitivity 1)
+    (defun sauron:jabber-notify (origin priority message &optional properties)
+      (funcall notify-function "gtalk" message))
+    (defun sauron:erc-notify (origin priority message &optional properties)
+      (let ((event (plist-get properties :event)))
+        (funcall notify-function "IRC" message)))
+    (defun sauron:mu4e-notify (origin priority message &optional properties)
+      nil)
+;;    (defun sauron:dbus-notify (origin priority message &optional properties)
+;;      (funcall notify-function "GMail" message))
+    (defun sauron:dispatch-notify (origin priority message &optional properties)
+      (let ((handler (cond ((string= origin "erc") 'sauron:erc-notify)
+                           ((string= origin "jabber") 'sauron:jabber-notify)
+                           ((string= origin "mu4e") 'sauron:mu4e-notify)
+;;                           ((string= origin "dbus") 'sauron:dbus-notify)
+                           (t (lambda (&rest r) nil)))))
+        (funcall handler origin priority message properties)))
+    ;; Prefering alert.el for now ;; (add-hook 'sauron-event-added-functions 'sauron:dispatch-notify)
+ ;;   (sauron-start-hidden)
+    (add-hook 'sauron-event-added-functions 'sauron-alert-el-adapter)))
+
+
+#+end_src
+* Calendar
+
+Need to get the calendar to import my local calendar's
+#+begin_src emacs-lisp :tangle no
+(require 'calfw-org)
+(require 'calfw-ical)
+
+(defun my-open-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+  (cfw:org-create-source "Green") ;; org-agenda source
+  (cfw:cal-create-source "Orange") ;; diary source
+  (cfw:ical-create-source "Allied" "https://outlook.office365.com/owa/calendar/69d425ca33eb43629f8d9df0a392ba85@alliedpayment.com/21f0eb9cb93648348375d27d2edfdd3e4908229703223616338/calendar.ics" "Red")) ;; Office365 calendar
+    ))
+#+end_src
+* Twitter
+#+begin_src emacs-lisp :tangle no
+(setq twittering-use-master-password t)
+#+end_src
+* XWidget WebKit
+#+begin_src emacs-lisp :tangle no
+(use-package! xwwp)
+
+(use-package! xwwp-follow-link
+  :custom
+  (xwwp-follow-link-completion-system 'ivy)
+ :bind (:map xwidget-webkit-mode-map
+             ("f" . xwwp-follow-link)))
+
+#+end_src
+* RSS
+#+begin_src emacs-lisp :tangle no
+(add-hook 'elfeed-search-mode-hook #'elfeed-update)
+
+(setq  elfeed-goodies/entry-pane-position 'bottom)
+(setq elfeed-goodies/feed-source-column-width 32)
+(setq elfeed-search-title-min-width 32)
+
+(defun elfeed-show-eww-open (&optional use-generic-p)
+  "open with eww"
+  (interactive "P")
+  (let ((browse-url-handlers ("http[s]://*" . eww-browse-url))
+    (elfeed-show-visit use-generic-p))))
+
+(defun browse-url-default-macosx-browser (url &optional new-window)
+  (interactive (browse-url-interactive-arg "URL: "))
+  (if (and new-window (>= emacs-major-version 23))
+      (ns-do-applescript
+       (format (concat "tell application \"Safari\" to make document with properties {URL:\"%s\"}\n"
+		       "tell application \"Safari\" to activate") url))
+    (start-process (concat "open " url) nil "open" url)))
+
+(defun elfeed-search-eww-open (&optional use-generic-p)
+  "open with eww"
+  (interactive "P")
+  (let ((browse-url-handlers ("http[s]://*" . eww-browse-url))
+    (elfeed-search-browse-url use-generic-p))))
+
+;;(setq-hook! 'elfeed-search-mode-hook browse-url-handlers '(("." . #'eww-browse-url)))
+(setq-hook! 'elfeed-show-mode-hook browse-url-handlers '(("." . xwwp-browse-url-other-window)))
+
+;; download youtube urls with mpv instead of eww
+(setq browse-url-handlers
+      '(("https:\\/\\/www\\.youtu\\.*be." . browse-url-mpv)
+        ("." . browse-url-default-macosx-browser)))
+
+(defun browse-url-mpv (url &optional single)
+  (start-process "mpv" nil "mpv" (shell-quote-argument url)))
+#+end_src
+
+* Email
+** Mu4e
+#+begin_src elisp :tangle yes
+(after! mu4e
+  (require 'all-the-icons)
+  (ldangelo/setup-mu4e))
+
+(defun ldangelo/setup-mu4e()
+
+  (use-package! org-msg
+    :after org
+    :preface
+    (defun org-msg-no-temp-buffer (orig-fun &rest args)
+      "Advice to set `org-export-show-temporary-export-buffer' to `nil'."
+      (let ((org-export-show-temporary-export-buffer nil))
+        (apply orig-fun args)))
+
+    :config
+    (advice-add 'org-msg-preview :around #'org-msg-no-temp-buffer)
+    (advice-add 'org-msg-ctrl-c-ctrl-c :around #'org-msg-no-temp-buffer)
+    (add-hook 'message-sent-hook
+              (lambda ()
+                (interactive)
+                (switch-to-buffer "*mu4e-article*")
+                (mu4e-view-quit)
+                (kill-buffer "*Org ASCII Export*"))))
+
+  (setq!
+   +mu4e-backend 'mbsync
+   send-mail-function 'message-send-mail-with-sendmail
+   message-send-mail-function 'message-send-mail-with-sendmail
+   sendmail-program "/opt/homebrew/bin/msmtp"
+   my4e-mu-binary "/opt/homebrew/bin/mu"
+   mu4e-send-messages-behavior 'delete
+   mu4e-change-filenames-when-moving t
+   ;;   org-mu4e-convert-to-html t
+   )
+
+  ;; use imagemagick, if available
+  (setq mu4e-inboxes "(maildir:/icloud/INBOX OR maildir:/Fortium/INBOX OR maildir:/Solo/Inbox OR maildir:/Curantis/Inbox)")
+  (setq todays-unread-emails (concat mu4e-inboxes " AND date:today..now"))
+
+  (setq mu4e-alert-interesting-mail-query todays-unread-emails)
+  (setq fortium-signature "#+begin_signature\n--\n#+INCLUDE: ~/Documents/fortium-signature.html export html\n#+end_signature\n")
+  (setq curantis-signature "#+begin_signature\n--\n#+INCLUDE: ~/Documents/fortium-signature.html export html\n#+end_signature\n")
+  (setq solo-signature "#+begin_signature\n--\n#+INCLUDE: ~/Documents/fortium-signature.html export html\n#+end_signature\n")
+  (setq org-msg-signature fortium-signature)
+
+  (set-email-account! "Fortium"
+                      '((user-email-address . "leo.dangelo@fortiumpartners.com")
+                        (user-full-name . "Leo D'Angelo")
+                        (mu4e-compose-signature . fortium-signature)
+                        ;;                        (org-msg-signature . fortium-signature)
+                        (mu4e-drafts-folder . "/Fortium/[Gmail].Drafts")
+                        (mu4e-someday-folder . "/Fortium/Someday")
+                        (mu4e-waiting-folder . "/Fortium/Waiting")
+                        (mu4e-refile-folder . "/Fortium/Archived")
+                        (mu4e-review-folder . "/Fortium/Review")
+                        (mu4e-sent-folder . "/Fortium/[Gmail].Sent Mail")
+                        (mu4e-trash-folder . "/Fortium/[Gmail].Trash")
+                        (mu4e-update-interval . 1800))
+                      nil)
+
+  (set-email-account! "Solo"
+                      '((user-email-address . "l.dangelo@gosolo.io")
+                        (user-full-name . "Leo D'Angelo")
+                        (mu4e-compose-signature . solo-signature)
+                        ;;                        (org-msg-signature . fortium-signature)
+                        (mu4e-drafts-folder . "/Solo/[Gmail].Drafts")
+                        (mu4e-someday-folder . "/Solo/Someday")
+                        (mu4e-waiting-folder . "/Solo/Waiting")
+                        (mu4e-refile-folder . "/Solo/Archived")
+                        (mu4e-review-folder . "/Solo/Review")
+                        (mu4e-sent-folder . "/Solo/[Gmail].Sent Mail")
+                        (mu4e-trash-folder . "/Solo/[Gmail].Trash")
+                        (mu4e-update-interval . 1800))
+                      nil)
+
+  (set-email-account! "Curantis"
+                      '((user-email-address . "leo.dangelo@curantissolutions.com")
+                        (user-full-name . "Leo D'Angelo")
+                        (mu4e-compose-signature . curantis-signature)
+                        ;;                        (org-msg-signature . fortium-signature)
+                        (mu4e-drafts-folder . "/Curantis/Drafts")
+                        (mu4e-someday-folder . "/Curantis/Someday")
+                        (mu4e-waiting-folder . "/Curantis/Waiting")
+                        (mu4e-refile-folder . "/Curantis/Archived")
+                        (mu4e-review-folder . "/Curantis/Review")
+                        (mu4e-sent-folder . "/Curantis/Sent")
+                        (mu4e-trash-folder . "/Curantis/Trash")
+                        (mu4e-update-interval . 1800))
+                      nil)
+
+
+  (set-email-account! "icloud"
+                      '((user-email-address . "ldangelo@mac.com")
+                        (user-full-name . "Leo D'Angelo")
+                        (mu4e-compose-signature . "Leo A. D'Angelo\ne-mail: ldangelo@mac.com\ncell: (972) 979-0116")
+                        (mu4e-drafts-folder . "/icloud/Drafts")
+                        (mu4e-someday-folder . "/icloud/Someday")
+                        (mu4e-waiting-folder . "/icloud/Waiting")
+                        (mu4e-refile-folder . "/icloud/Archive")
+                        (mu4e-review-folder . "/icloud/Review")
+                        (mu4e-sent-folder . "/icloud/Sent")
+                        (mu4e-trash-folder . "/icloud/Trash")
+                        (mu4e-update-interval . 1800))
+                      nil)
+
+  ;; use the standard bindings as a base
+  (setq mu4e-bookmarks
+        '( ("flag:unread AND NOT tag:Trash" "Unread messages"      ?u)
+           ("date:1d.." "Today's messages" ?a)
+           ((lambda () (concat todays-unread-emails))                 "Inbox messages"     ?i)
+           ((lambda () (concat mu4e-inboxes " date:today..now AND NOT tag:Trash")) "Today's undeleted messages"     ?A)
+           ((lambda () (concat mu4e-inboxes " date:2d..now AND NOT tag:Trash"))                     "Last 2 days undeleted messages"          ?L)
+           ((lambda () (concat mu4e-inboxes " date:7d..now AND flag:unread AND NOT tag:Trash"))                     "Last 7 days undeleted messages"          ?W)
+           ("flag:flagged"  "Flagged Messages" ?g)
+           ("mime:image/*"                     "Messages with images" ?p)
+           ("x:follow-up"                       "Follow-up"            ?f)
+           ("x:read-review"                    "Read Review"          ?r)
+           ))
+
+  ;;(after! mu4e
+  ;;  (add-to-list 'mu4e-bookmarks
+  ;;               (make-mu4e-bookmark :name "Follow-up" :query "x:follow-up" :key ?f)
+  ;;               (make-mu4e-bookmark :name "Read Review" :query "x:read-review" :key ?r)))
+
+  (defun htmlize-and-send ()
+    "When in an org-mu4e-compose-org-mode message, htmlize and send it."
+    (interactive)
+    (org-mime-htmlize))
+
+  (defun mymu4e/header-mark-message(msg tags template)
+    (mu4e-action-retag-message msg tags)
+    (org-capture t template)
+    (mu4e-headers-mark-for-refile))
+
+  (defun mymu4e/mark-for-travel(msg)
+    (interactive)
+    (mu4e-action-retag-message msg "+Travel")
+    (org-capture t "t")
+    (mu4e-headers-mark-for-refile))
+
+  (defun mymu4e/mark-for-todo (msg)
+    (interactive)
+    (mu4e-action-retag-message msg "+TODO")
+    (org-capture t "t")
+    (mu4e-headers-mark-for-refile))
+
+  (defun mymu4e/mark-for-followup (msg)
+    (interactive)
+    (mu4e-action-retag-message msg "+RESPOND")
+    (org-capture t "r")
+    (mu4e-headers-mark-for-refile))
+
+
+  (defun mymu4e/mark-for-reference (msg)
+    (interactive)
+    (mu4e-action-retag-message msg "+REFERENCE")
+    (org-capture t "R")
+    (mu4e-headers-mark-for-refile))
+
+  (defun mymu4e/mark-for-read-review (msg)
+    (interactive)
+    (mu4e-action-retag-message msg "+READ-REVIEW")
+    (org-capture t "r")
+    (mu4e-headers-mark-for-refile))
+
+  (require 'mu4e-contrib)
+  ;;  (add-to-list 'mu4e-headers-actions '("aSelect All" . mu4e-headers-mark-all))
+  (add-to-list 'mu4e-headers-actions '("Tag" . mu4e-action-retag-message))
+  (add-to-list 'mu4e-headers-actions '("tTodo" . mymu4e/mark-for-todo))
+  (add-to-list 'mu4e-headers-actions '("vTravel" . mymu4e/mark-for-travel))
+  (add-to-list 'mu4e-headers-actions '("RReference" . mymu4e/mark-for-reference))
+  (add-to-list 'mu4e-headers-actions '("FFollow Up" . mymu4e/mark-for-followup))
+  (add-to-list 'mu4e-headers-actions '("rRead-Review" . mymu4e/mark-for-read-review))
+  (add-to-list 'mu4e-headers-actions '("fFilter by sender" . mu4e-headers-action-filter-by-sender))
+
+  (defadvice mu4e-headers-rerun-search (before reindex-before-search)
+    (mu4e-update-index))
+  (ad-activate 'mu4e-headers-rerun-search)
+
+  (defun mu4e-headers-action-filter-by-sender (msg)
+    "Search for all messages by the current sender"
+    (let* ((sender (car-safe (mu4e-message-field msg :from)))
+           (name (mu4e-contact-name sender))
+           (email (mu4e-contact-email sender)))
+      (message "name: %s address: %s" name email)
+      (mu4e-headers-search (concat "not tag:Trash and from:" email) nil nil nil nil nil)))
+
+
+  (defun my-string-width (str)
+    "Return the width in pixels of a string in the current
+window's default font. If the font is mono-spaced, this
+will also be the width of all other printable characters."
+    (let ((window (selected-window))
+          (remapping face-remapping-alist))
+      (with-temp-buffer
+        (make-local-variable 'face-remapping-alist)
+        (setq face-remapping-alist remapping)
+        (set-window-buffer window (current-buffer))
+        (insert str)
+        (car (window-text-pixel-size)))))
+
+
+  (cl-defun mu4e~normalised-icon (name &key set colour height v-adjust)
+    "Convert :icon declaration to icon"
+    (let* ((icon-set (intern (concat "all-the-icons-" (or set "faicon"))))
+           (v-adjust (or v-adjust 0.02))
+           (height (or height 0.8))
+           (icon (if colour
+                     (apply icon-set `(,name :face ,(intern (concat "all-the-icons-" colour)) :height ,height :v-adjust ,v-adjust))
+                   (apply icon-set `(,name  :height ,height :v-adjust ,v-adjust))))
+           (icon-width (my-string-width icon))
+           (space-width (my-string-width " "))
+           (space-factor (- 2 (/ (float icon-width) space-width))))
+      (concat (propertize " " 'display `(space . (:width ,space-factor))) icon)
+      ))
+
+
+  (defun mu4e~initialise-icons ()
+    (setq mu4e-use-fancy-chars t
+          mu4e-headers-draft-mark      (cons "D" (mu4e~normalised-icon "pencil"))
+          mu4e-headers-flagged-mark    (cons "F" (mu4e~normalised-icon "flag"))
+          mu4e-headers-new-mark        (cons "N" (mu4e~normalised-icon "sync" :set "material" :height 0.8 :v-adjust -0.10))
+          mu4e-headers-passed-mark     (cons "P" (mu4e~normalised-icon "arrow-right"))
+          mu4e-headers-replied-mark    (cons "R" (mu4e~normalised-icon "arrow-right"))
+          mu4e-headers-seen-mark       (cons "S" "") ;(mu4e~normalised-icon "eye" :height 0.6 :v-adjust 0.07 :colour "dsilver"))
+          mu4e-headers-trashed-mark    (cons "T" (mu4e~normalised-icon "trash"))
+          mu4e-headers-attach-mark     (cons "a" (mu4e~normalised-icon "file-text-o" :colour "silver"))
+          mu4e-headers-encrypted-mark  (cons "x" (mu4e~normalised-icon "lock"))
+          mu4e-headers-signed-mark     (cons "s" (mu4e~normalised-icon "certificate" :height 0.7 :colour "dpurple"))
+          mu4e-headers-unread-mark     (cons "u" (mu4e~normalised-icon "eye-slash" :v-adjust 0.05))))
+
+  (if (display-graphic-p)
+      (mu4e~initialise-icons)
+    ;; When it's the server, wait till the first graphical frame
+    (add-hook! 'server-after-make-frame-hook
+      (defun mu4e~initialise-icons-hook ()
+        (when (display-graphic-p)
+          (mu4e~initialise-icons)
+          (remove-hook #'mu4e~initialise-icons-hook)))))
+
+
+  (defun mu4e-header-colourise (str)
+    (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
+           (colour (nth (% str-sum (length mu4e-header-colourised-faces))
+                        mu4e-header-colourised-faces)))
+      (put-text-property 0 (length str) 'face colour str)
+      str))
+
+
+  (setq mu4e-headers-fields
+                          '((:account . 12)
+                            (:human-date . 8)
+                            (:flags . 6)
+                            (:from . 25)
+      ;;                      (:folder . 10)
+                            (:recipnum . 2)
+                            (:tags . 10)
+                            (:subject)))
+
+
+
+  (map! :map mu4e-headers-mode-map
+        :after mu4e
+        :v "M" #'mu4e-headers-mark-all
+        :n "M" #'mu4e-headers-mark-all
+        :v "*" #'mu4e-headers-mark-for-something
+        :v "!" #'mu4e-headers-mark-for-read
+        :v "?" #'mu4e-headers-mark-for-unread
+        :v "u" #'mu4e-headers-mark-for-unmark)
+
+  (defadvice! mu4e~main-action-prettier-str (str &optional func-or-shortcut)
+    "Highlight the first occurrence of [.] in STR.
+If FUNC-OR-SHORTCUT is non-nil and if it is a function, call it
+when STR is clicked (using RET or mouse-2); if FUNC-OR-SHORTCUT is
+a string, execute the corresponding keyboard action when it is
+clicked."
+    :override #'mu4e~main-action-str
+    (let ((newstr
+           (replace-regexp-in-string
+            "\\[\\(..?\\)\\]"
+            (lambda(m)
+              (format "%s"
+                      (propertize (match-string 1 m) 'face '(mode-line-emphasis bold))))
+            (replace-regexp-in-string "\t\\*" "\t⚫" str)))
+          (map (make-sparse-keymap))
+          (func (if (functionp func-or-shortcut)
+                    func-or-shortcut
+                  (if (stringp func-or-shortcut)
+                      (lambda()(interactive)
+                        (execute-kbd-macro func-or-shortcut))))))
+      (define-key map [mouse-2] func)
+      (define-key map (kbd "RET") func)
+      (put-text-property 0 (length newstr) 'keymap map newstr)
+      (put-text-property (string-match "[A-Za-z].+$" newstr)
+                         (- (length newstr) 1) 'mouse-face 'highlight newstr)
+      newstr))
+
+
+  (map! :map mu4e-main-mode-map
+        :after mu4e
+        :nive "h" #'+workspace/other)
+
+  ) ;; end of ldangelo/setup-mu4e
+#+end_src
+
+#+RESULTS:
+
+* Kubernetes
+
+#+begin_src emacs-lisp :tangle no
+(use-package! kubernetes)
+
+(after! kubernetes
+  (use-package! kubernetes-evil))
+#+end_src
+
+#+RESULTS:
+: kubernetes-evil
+
+* Hyperbole
+#+begin_src emacs-lisp :tangle no
+(use-package! hyperbole
+  :config
+  (hyperbole-mode 1))
+#+end_src
+* Marginalia
+
+https://github.com/minad/marginalia
+
+#+begin_src emacs-lisp :tangle no
+(use-package! marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+#+end_src
+* Consult
+https://github.com/minad/consult?tab=readme-ov-file
+
+#+begin_src emacs-lisp :tangle no
+;; Example configuration for Consult
+(use-package! consult
+  ;; Replace bindings. Lazily loaded due by `use-package'.
+  :bind (;; C-c bindings in `mode-specific-map'
+         ("C-c M-x" . consult-mode-command)
+         ("C-c h" . consult-history)
+         ("C-c k" . consult-kmacro)
+         ("C-c m" . consult-man)
+         ("C-c i" . consult-info)
+         ([remap Info-search] . consult-info)
+         ;; C-x bindings in `ctl-x-map'
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+         ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ;; M-g bindings in `goto-map'
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings in `search-map'
+         ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+         ("M-s c" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Optionally configure the register formatting. This improves the register
+  ;; preview for `consult-register', `consult-register-load',
+  ;; `consult-register-store' and the Emacs built-ins.
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+
+  ;; Optionally tweak the register preview window.
+  ;; This adds thin lines, sorting and hides the mode line of the window.
+  (advice-add #'register-preview :override #'consult-register-window)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+
+  ;; By default `consult-project-function' uses `project-root' from project.el.
+  ;; Optionally configure a different project root function.
+  ;;;; 1. project.el (the default)
+  ;; (setq consult-project-function #'consult--default-project--function)
+  ;;;; 2. vc.el (vc-root-dir)
+  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
+  ;;;; 3. locate-dominating-file
+  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
+  ;;;; 4. projectile.el (projectile-project-root)
+  ;; (autoload 'projectile-project-root "projectile")
+  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
+  ;;;; 5. No project support
+  ;; (setq consult-project-function nil)
+)
+#+end_src
+* Embark
+
+https://github.com/oantolin/embark?tab=readme-ov-file
+
+#+begin_src emacs-lisp :tangle no
+(use-package! embark
+  :ensure t
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc. You may adjust the
+  ;; Eldoc strategy, if you want to see the documentation from
+  ;; multiple providers. Beware that using this can be a little
+  ;; jarring since the message shown in the minibuffer can be more
+  ;; than one line, causing the modeline to move up and down:
+
+  ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package! embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+* Org Mode
+** General Settings
+#+begin_src emacs-lisp :tangle yes
+(setq
+ org-agenda-start-with-clockreport-mode t
+ org-agenda-start-with-follow-mode nil
+ org-agenda-start-with-log-mode t
+ org-agenda-include-deadlines t
+ org-agenda-include-diary t
+ org-directory "/Users/ldangelo/org"
+ org-hugo-base-dir "~/Documents/blog"
+ org-agenda-files "/Users/ldangelo/org/org-agenda-files.txt"
+
+ ;; '(
+ ;;                    "/Users/ldangelo/org/inbox.org"
+ ;;                    "/Users/ldangelo/org/allied.org"
+ ;;                    "/Users/ldangelo/org/ldangelo.org"
+ ;;                    "/Users/ldangelo/org/calendar.org"
+ ;;                    )
+ org-default-inbox-file (expand-file-name "~/org/inbox.org")
+ org-default-someday-file (expand-file-name "~/org/someday.org")
+ org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+
+#+end_src
+** Org Alert
+#+begin_src emacs-lisp :tangle no
+(use-package! org-alert
+  :ensure t
+  :after (org)
+  :config
+  (setq alert-default-style 'notifier)
+  (setq org-alert-time-match-string "\\(SCHEDULED\\|DEADLINE\\): <[0-9]*.[0-9][0-9]-[0-9][0-9].*>")
+  (org-alert-enable))
+#+end_src
+** Org Download
+#+begin_src emacs-lisp
+(use-package! org-download
+  :ensure t
+  :after (org)
+  :custom
+  (org-download-method 'directory)
+  (org-download-image-dir "images")
+  (org-download-heading-lvl nil)
+  (org-download-timestamp "%Y%m%d-%H%M%S_")
+  (org-image-actual-width 300)
+  (org-download-screenshot-method "/usr/sbin/screencapture %s")
+  :config
+  (require 'org-download)
+  (add-hook 'dired-mode-hook 'org-download-enable))
+#+end_src
+** Org Todo
+#+begin_src emacs-lisp :tangle yes
+(after! org
+(setq org-todo-keywords
+        '((sequence "TODO(t)" "STARTED(s)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")
+          (sequence "REF(r)" "READING(g)" "|" "READ(R!)" "ARCHIVED(a@)")))
+
+  ;; Custom colors for keywords
+  (setq org-todo-keyword-faces
+        '(("TODO" . (:foreground "red" :weight bold))
+          ("STARTED" . (:foreground "orange" :weight bold))
+          ("WAITING" . (:foreground "yellow" :weight bold))
+          ("REF" . (:foreground "blue" :weight bold))
+          ("READING" . (:foreground "purple" :weight bold))
+          ("DONE" . (:foreground "green" :weight bold))
+          ("READ" . (:foreground "dark green" :weight bold))
+          ("CANCELLED" . (:foreground "gray" :weight bold))
+          ("ARCHIVED" . (:foreground "dark gray" :weight bold))))
+)
+#+end_src
+** Org Capture
+#+begin_src emacs-lisp :tangle yes
+(after! org-capture
+ (add-to-list 'org-capture-templates '("." "Today" entry (file+headline org-default-inbox-file "Tasks")
+                                      "* TODO %^{Task}\nSCHEDULED: %t\n%a\n" :immediate-finish t))
+
+(add-to-list 'org-capture-templates '("R" "Raycast task" entry (file+headline org-default-inbox-file "Tasks")
+                                      "* TODO %:description\n"
+:immediate-finish t
+:prepend t
+:empty-lines 1) )
+
+(add-to-list 'org-capture-templates '("t" "New task" entry (file+headline org-default-inbox-file "Tasks")
+                                      "* TODO %?\n%a\n"))
+
+(add-to-list 'org-capture-templates '("s" "Someday" entry (file+headline org-default-inbox-file "Someday")
+                                      "* SOMEDAY %^{Task}\n\n%a\n"
+                                      :immediate-finish t))
+
+;; the 'r' template is used by mu4e customizations use caution when modifying
+(add-to-list 'org-capture-templates '("r" "Respond to email" entry (file+headline org-default-inbox-file "Tasks")
+                                      "* TODO Respond to %:from on %:subject  :email: \nSCHEDULED: %t\n%U\n%a\n"
+                                      :clock-in t
+                                      :clock-resume t
+                                      :immediate-finish t))
+
+(add-to-list 'org-capture-templates '("W" "Web Reference" entry (file+headline org-default-inbox-file "Reference" )
+                                      "* %:description\nSource: %:link\n #+BEGIN_QUOTE\n%:initial\n#+END_QUOTE\n\n\n"))
+
+(add-to-list 'org-capture-templates '("L" "Protocol Link" entry (file+headline org-default-inbox-file "Reference")
+                                      "* %:annotation :WEBURL:\nCaptured On: %U\n%?"))
+)
+#+end_src
+**
+** Org Mermaid
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package! ob-mermaid
+  :after org
+  :config
+(setq ob-mermaid-cli-path "/opt/homebrew/bin/mmdc")
+
+(add-to-list 'org-babel-load-languages '(mermaid . t))
+)
+#+END_SRC
+** Org Dot
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package! ob-dot
+  :after org
+  :config
+  (add-to-list 'org-babel-load-languages '(dot . t))
+  )
+#+END_SRC
+** Super agenda
+#+begin_src emacs-lisp :tangle yes
+(use-package! org-super-agenda
+  :after org-agenda
+  :init
+  (setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator nil
+      org-agenda-compact-blocks t
+      org-agenda-start-day nil ;; i.e. today
+      org-agenda-span 1
+      org-agenda-start-on-weekday nil)
+
+  (setq org-agenda-custom-commands
+        '(("c" "Super view"
+           ((agenda "" ((org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '((:name "Today"
+                                  :time-grid t
+                                  :date today
+                                  :order 1)))))
+            (alltodo "" ((org-agenda-overriding-header "")
+                         (org-super-agenda-groups
+                          '((:log t)
+                            (:name "To refile"
+                                   :file-path "inbox\\.org")
+                            (:name "Next to do"
+                                   :todo "NEXT"
+                                   :order 1)
+                            (:name "Important"
+                                   :priority "A"
+                                   :order 6)
+                            (:name "Today's tasks"
+                                   :file-path "roam/dailies")
+                            (:name "Due Today"
+                                   :deadline today
+                                   :order 2)
+                            (:name "Scheduled Soon"
+                                   :scheduled future
+                                   :order 8)
+                            (:name "Overdue"
+                                   :deadline past
+                                   :order 7)
+                            (:name "Meetings"
+                                   :and (:todo "MEET" :scheduled future)
+                                   :order 10)
+                            (:discard (:not (:todo "TODO")))))))))))
+  :config
+  (org-super-agenda-mode))
+#+end_src
+
+** Org roam
+https://magnus.therning.org/2021-03-14-keeping-todo-items-in-org-roam.html  THIS DID NOT WORK!
+
+https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
+
+#+begin_src emacs-lisp :tangle yes
+
+(after! org-roam
+  (require 'org-roam-protocol)
+
+  (use-package! doct-org-roam
+    :ensure t
+    :after org
+    :load-path "~/.config/doom/packages"
+    :commands (doct-org-roam)
+    :init
+
+    (setq org-roam-capture-templates
+          (doct-org-roam '(
+                           ("Default" :keys "d"
+                            :file "%<Y%m%d%H%M%S>-${slug}.org"
+                            :prepend t
+                            :type plain
+                            :template ("#+title: ${title}"
+                                       "%?"))
+
+                           ("Project" :keys "p"
+                            :file "%<Y%m%d%H%M%S>-${slug}.org"
+                            :prepend t
+                            :type plain
+                            :template ("#+title: ${title}"
+                                       "* Overview"
+                                       "* Goals"
+                                       "* Tasks"
+                                       "** TODO Add initial Tasks"
+                                       "** TODO %?"
+                                       "* Dates"
+                                       "* Contacts"))
+                           ))))
+
+    ;; (setq
+    ;;  org-roam-capture-templates
+    ;;  '(
+    ;;    ("d" "default"
+    ;;     plain "%?"
+    ;;     :target (file+head "%<Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+    ;;     :unnarrowd t)
+    ;;    ("p" "project"
+    ;;     plain "* Goals\n\n* Tasks\n\n** TODO Add initial Tasks\n\nDates\n\n"
+    ;;     :if-new (file+head "%<Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: Project")
+    ;;      :unnarrowd t)
+    ;;    ))
+ (setq org-roam-dailies-capture-templates
+      '(
+        ("d" "Today"
+         plain (file "/Users/ldangelo/org/templates/org-roam-dailies.org")
+         :if-new (file "%<%Y-%m-%d>.org")
+        )
+
+        ("e" "Email" entry "** TODO Respond to e-mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\nCREATED: %U\n:END:\n %a"
+          :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Tasks")))
+
+        ("p" "Phone Call" entry "** Phone call with %?"
+          :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Phone Calls")))
+
+        ("m" "Meeting" entry "** Meeting with %?"
+          :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Meetings")))
+
+        ("t" "Todo" entry "** TODO %?\n%a"
+          :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<Y-%m-%d>\n" ("Tasks")))
+
+        ("$" "Trade"
+         table-line
+         "|%<%H:%M>|%^{Direction|BUY|SELL}|%^{Size|5}|%^{WL|WIN|LOSS}|%^{Gross}|%^{Commissions}|"
+         :table-line-pos "II-1" ;; first line before the second horizontal separator line
+         :target (file+olp "%<%Y-%m-%d>.org" ("Trading" "Trade Details") )
+        )
+       ))
+
+      (setq org-roam-capture-ref-templates
+      '(
+        ("r" "ref" plain "%?" :target (file+head "${slug}.org" "#+title: ${title}\n#+filetags: :BOOKMARK:") :unnarrowed t)
+
+        ;; used by org-roam-protocol
+        ;; look here too see how it is used: [[file:~/.qutebrowser/config.py][qutebrowser]]
+        ("R" "ref" plain "%?"
+         :target (file+head "web/${slug}.org" "#+title: ${title}\n#+author: %(concat user-full-name)\n#+email: %(concat user-mail-address)\n#+created: %(format-time-string \"[%Y-%m-%d %H:%M]\")\n#+filetags: :BOOKMARK:\n\n")
+         :unnarrowed t)))
+
+    ;; copy completed tasks too org-roam dailies
+    (add-to-list 'org-after-todo-state-change-hook
+                 (lambda ()
+                   (when (equal org-state "DONE")
+                     (my/org-roam-copy-todo-to-today))))
+)
+#+end_src
+
+** Deft
+#+begin_src emacs-lisp :tangle no
+
+(use-package! deft
+  :after org
+  :bind
+  ("C-c r d" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory "~/org/" ))
+#+end_src
+
+** Vulpea
+#+begin_src emacs-lisp :tangle yes
+
+(setq my-org-files '("/Users/ldangelo/Documents/org/inbox.org"
+"/Users/ldangelo/Documents/org/personal.org"
+"/Users/ldangelo/Documents/org/fortium/fortium.org"
+"/Users/ldangelo/Documents/org/fortium/engagements/solo/solo.org"
+"/Users/ldangelo/Documents/org/fortium/engagements/curantis/curantis.org"
+"/Users/ldangelo/Documents/org/fortium/engagements/musicmaster.org"
+"/Users/ldangelo/Documents/org/fortium-calendar.org"))
+
+(use-package! vulpea
+  :ensure t
+  :after org-roam
+  :hook ((org-roam-db-autosync-mode . vulpea-db-autosync-enable)))
+
+(require 'vulpea-buffer)
+(add-hook 'find-file-hook #'vulpea-project-update-tag)
+(add-hook 'before-save-hook #'vulpea-project-update-tag)
+
+(advice-add 'org-agenda :before #'vulpea-agenda-files-update)
+(advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
+#+end_src
+
+** Task Management System (d12frosted approach)
+#+begin_src emacs-lisp :tangle yes
+
+;; Enhance org-roam agenda category display
+(defun vulpea-agenda-category (&optional len)
+  "Get category of item at point for agenda.
+
+Category is defined by one of the following items:
+
+- CATEGORY property
+- TITLE keyword
+- TITLE property
+- filename without directory and extension
+
+When LEN is a number, resulting string is padded right with
+spaces and then truncated with ... on the right if result is
+longer than LEN."
+  (let* ((file-name (when buffer-file-name
+                      (file-name-sans-extension
+                       (file-name-nondirectory buffer-file-name))))
+         (title (vulpea-buffer-prop-get "title"))
+         (category (org-get-category))
+         (result
+          (or (if (and
+                   title
+                   (string-equal category file-name))
+                  title
+                category)
+              "")))
+    (if (numberp len)
+        (s-truncate len (s-pad-right len " " result))
+      result)))
+
+;; Set up better agenda category display
+(setq org-agenda-prefix-format
+      '((agenda . " %(vulpea-agenda-category 12) %?-12t %12s")
+        (todo . " %(vulpea-agenda-category 12) %l")
+        (tags . " %(vulpea-agenda-category 12) %l")
+        (search . " %(vulpea-agenda-category 12) %l")))
+
+#+end_src
+
+** Person tagging system
+#+begin_src emacs-lisp :tangle yes
+
+;; Automatic person tagging when linking to person notes
+(defun vulpea-insert-handle (note-id)
+  "Hook to be called on NOTE-ID after `vulpea-insert'."
+  (when-let* ((note (vulpea-db-get-by-id note-id))
+              (title (vulpea-note-title note))
+              (tags (vulpea-note-tags note)))
+    (when (seq-contains-p tags "people")
+      (save-excursion
+        (ignore-errors
+          (org-back-to-heading)
+          (when (eq 'todo (org-element-property :todo-type (org-element-at-point)))
+            (org-toggle-tag (format "@%s" (s-replace " " "" title)))))))))
+
+;; Setup person tagging hook
+(add-hook 'vulpea-insert-handle-functions #'vulpea-insert-handle)
+
+;; Function to select person and view related tasks
+(defun vulpea-agenda-person ()
+  "Show all tasks related to a person."
+  (interactive)
+  (when-let* ((person (vulpea-select-from "Person" 
+                                        (vulpea-db-query-by-tags-every '("people"))))
+              (tag (format "@%s" (s-replace " " "" (vulpea-note-title person)))))
+    (org-tags-view nil tag)))
+
+#+end_src
+
+** File tags for person notes
+#+begin_src emacs-lisp :tangle yes
+
+;; Automatically add person file tags
+(defun vulpea-ensure-filetag ()
+  "Add a filetag to person notes."
+  (when (vulpea-note-tagged-all-p (vulpea-db-get-file buffer-file-name) "people")
+    (let* ((title (vulpea-buffer-prop-get "title"))
+           (tag (format "@%s" (s-replace " " "" title))))
+      (vulpea-buffer-prop-set "filetags" tag))))
+
+;; Add hook to ensure filetags on person notes
+(add-hook 'vulpea-find-file-hook #'vulpea-ensure-filetag)
+
+#+end_src
+
+** Org Query
+#+begin_src emacs-lisp :tangle yes
+
+(use-package! org-ql)
+;;(use-package! helm-org-ql)
+
+#+end_src
+
+** Org Roam Query
+#+begin_src emacs-lisp :tangle yes
+
+(use-package!  org-roam-ql-ql
+  ;; If using straight
+;;  :straight (org-roam-ql-ql :type git :host github :repo "ahmed-shariff/org-roam-ql"
+;;                            :files (:defaults (:exclude "org-roam-ql.el")))
+  ;; If using quelpa
+;;  :quelpa (org-roam-ql-ql :fetcher github :repo "ahmed-shariff/org-roam-ql"
+;;                          :files (:defaults (:exclude "org-roam-ql.el")))
+  ;; Simple config
+  :after (org-ql org-roam-ql)
+  :config
+  (org-roam-ql-ql-init))
+#+end_src
+
+** Org Gantt
+#+begin_src emacs-lisp :tangle yes
+(use-package org-gantt
+:after org)
+#+end_src
+* VTerm
+#+begin_src emacs-lisp :tangle no
+(add-hook! vterm-mode (setq vterm-eval-cmds (append vterm-eval-cmds '(("up" windmove-up) ("down" windmove-down) ("find-file-other-window" find-file-other-window)))))
+#+end_src
+* Key Bindings
+#+begin_src emacs-lisp :tangle yes
+(map!
+ (:map general-override-mode-map
+  "s-h" #'evil-window-left
+  "s-l" #'evil-window-right
+  "s-j" #'evil-window-down
+  "s-k" #'evil-window-up))
+
+(map!
+ ;; general bindings
+ ;;
+  ("C-k" 'evil-window-up)
+  ("C-j" 'evil-window-down)
+
+ (:leader
+  ;; leaderkey bindings
+  (:prefix-map ("t" . "toggle")
+              :desc "Toggle Debug On Error" "D" #'toggle-debug-on-error)
+  (:prefix-map ("o" . "open")
+               :desc "Open Browser" "B" #'xwwp-browse-url-other-window)
+  (:prefix-map ("o" . "open")
+               :desc "Open News" "n" #'=rss))
+
+ (:mode xwidget-webkit-mode
+         ;; xwidget bindings
+         (:n "f" #'xwwp-ace-toggle)
+         (:n "o" #'xwidget-webkit-browse-url))
+
+ ;; org-download
+ (:map org-mode-map
+        :localleader
+        (:prefix-map ("D" . "download")
+         :desc "Insert from clipboard" "c" #'org-download-clipboard
+         :desc "Insert from screenshot" "s" #'org-download-screenshot))
+
+
+ (:mode notmuch-search-mode
+        (:n "?" #'notmuch-help)
+        (:n "=" #'notmuch-refresh)
+        (:n "G" #'notmuch-poll-and-refresh-this-buffer)
+        (:n "f" #'ldangelo/notmuch-search-by-sender)
+        )
+ )
+
+#+end_src

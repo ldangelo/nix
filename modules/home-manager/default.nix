@@ -1,17 +1,24 @@
 { config, pkgs, inputs, ... }: {
   imports = [
-    ./dotfiles
-    #     ./nvim
-    #     ./emacs
-    ./programs.nix
+    # Program configurations with native home-manager support
+    ./git.nix           # Git configuration
+    ./jujutsu.nix       # Jujutsu (jj) configuration
+    ./nvim              # Neovim configuration
+    ./wezterm.nix       # WezTerm configuration
+    ./programs.nix      # Other program configs (fzf, direnv, starship)
     ./packages.nix      # Migrated from Brewfile
+
+    # Dotfiles from chezmoi
+    ./dotfiles-chezmoi.nix  # All chezmoi-managed dotfiles
+
+    # Legacy modules (keeping for reference)
+    ./dotfiles          # Old dotfiles module
     ./path.nix
     ./shell.nix
     ./user.nix
     ./alias.nix
-    #     ./trash
     ./spacemacs.nix
-    ./spacevim.nix
+    # ./spacevim.nix    # Disabled - conflicts with nvim config
     ./borders
     #     ./sketchybar
   ];

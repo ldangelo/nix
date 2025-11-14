@@ -1,0 +1,5 @@
+/.eldev
+/Eldev-local
+/.cask
+/dist/
+*.elc

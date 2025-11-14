@@ -19,8 +19,8 @@
 
   imports = [
     ./system.nix
-    ./yabai/default.nix
-    ./skhd/default.nix
+    #./yabai/default.nix
+    #./skhd/default.nix
     ./homebrew.nix      # Migrated from Brewfile
   ];
 
