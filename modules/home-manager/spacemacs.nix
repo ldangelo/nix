@@ -33,7 +33,7 @@ in
       owner = "syl20bnr";
       repo = "spacemacs";
       rev = "develop";
-      sha256 = "sha256-D5uI9nIf0Ocxs6ZPj9/BebFM81bizZdSAHRu43csuMA=";
+      sha256 = "sha256-j+VNUetz1fPvdEOALImN5tBmC6SJVEifEvc5ikfMkKU=";
     };
   };
 
