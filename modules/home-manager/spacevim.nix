@@ -5,9 +5,11 @@
     # don't make the directory read only so that impure melpa can still happen
     # for now
     recursive = true;
-    source = pkgs.fetchgit {
-      url = "https://spacevim.org/git/repos/SpaceVim/";
-      hash = "sha256-0KSxrUa4yo65Om/rQ38nEQ/wpZCOBjjkcAmgr+Q91vI=";
+    source = pkgs.fetchFromGitHub {
+      owner = "SpaceVim";
+      repo = "SpaceVim";
+      rev = "master";
+      sha256 = "sha256-AtOSrVRKzswXzU/xDR7/AE98OenEBXSlr4hmQgTmPyo=";
     };
   };
   # install nvim
