@@ -17,8 +17,9 @@
     ./shell.nix
     ./user.nix
     ./alias.nix
-    ./spacemacs.nix
-    # ./spacevim.nix    # Disabled - conflicts with nvim config
+    #     ./trash
+#    ./spacemacs.nix
+#    ./spacevim.nix
     ./borders
     #     ./sketchybar
   ];
@@ -43,7 +44,7 @@
       pkgs.raycast
       pkgs.warp-terminal
       pkgs.lazygit
-      pkgs.nerdfonts
+#      pkgs.nerd-fonts
       pkgs.source-code-pro
       pkgs.aldente
       pkgs.apparency
@@ -74,10 +75,7 @@
       pkgs.ripgrep
       pkgs.vscode
       pkgs.just
-      pkgs.nerdfonts
-      #       (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
       pkgs.silver-searcher
-      pkgs.thefuck
       pkgs.jq
       pkgs.fasd
       pkgs.zoxide

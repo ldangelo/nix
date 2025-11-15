@@ -38,10 +38,16 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    LazyVim = {
+      url = "github:matadaniel/LazyVim-module";
+      inputs.nixpkgs.follows = "nixpkgs";
+   };
   };
 
   outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, ... }:
     let
+      username = "ldangelo";
       common-overlays = [
 
       (self: super: {
@@ -89,11 +95,10 @@
       })
       ];
 
-      darwinConfiguration = { pkgs, ... }: {
-        environment.systemPackages = [ pkgs.vim ];
-
-        services.nix-daemon.enable = true;
-
+      configuration = { pkgs, ... }: {
+#        environment.systemPackages = [ pkgs.vim ];
+	system.primaryUser = "ldangelo";
+	nix.enable = false;
         nix.settings.experimental-features = "nix-command flakes";
 
         programs.zsh.enable = true;
@@ -102,7 +107,7 @@
 
         system.stateVersion = 4;
 
-        nixpkgs.hostPlatform = "x86_64-darwin";
+        nixpkgs.hostPlatform = "aarch64-darwin";
         nixpkgs.config.allowUnfree = true;
         nixpkgs.overlays = common-overlays;
       };
@@ -110,8 +115,8 @@
     in {
       darwinConfigurations."ldangelo" = nix-darwin.lib.darwinSystem {
         modules = [
+         configuration
 
-          darwinConfiguration
           ./modules/darwin
           home-manager.darwinModules.home-manager
           {
@@ -119,6 +124,9 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "backup";
+	      extraSpecialArgs = {
+	        inherit inputs;
+	      };
               users.ldangelo.imports = [
                 #                nixvim.homeManagerModules.nixvim
                 ./modules/home-manager
