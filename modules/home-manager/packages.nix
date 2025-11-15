@@ -49,7 +49,6 @@
     # ifstat - not in nixpkgs
     starship               # Cross-shell prompt
     terminal-notifier      # macOS notifications from CLI
-    thefuck                # Correct console commands
     zoxide                 # Smarter cd command
     zsh-autosuggestions
     zsh-syntax-highlighting
@@ -75,7 +74,7 @@
     # Cloud & Infrastructure
     awscli2                # AWS CLI (v2)
     docker-credential-helpers
-    flyctl                 # Fly.io CLI
+#    flyctl                 # Fly.io CLI
     gitlab-runner          # GitLab CI runner
     kubernetes-helm        # Kubernetes package manager
     kubectl                # Kubernetes CLI
@@ -137,11 +136,10 @@
     uv                     # Fast Python package installer
     # vfkit - not in nixpkgs
     virtualenv             # Python virtual environments
-    wakatime               # WakaTime CLI (package name is wakatime)
     wget                   # File retriever
 
     # Fonts
-    nerdfonts
+    #nerdfonts
     source-code-pro
 
     # GUI Applications (available in nixpkgs)

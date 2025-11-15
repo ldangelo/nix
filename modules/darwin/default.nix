@@ -12,7 +12,6 @@
     gnupg.agent.enable = true;
   };
 
-  fonts.fontDir.enable = true;
 #   fonts.fonts = [ nixpkgs.source-code-pro ];
 #  services.sketchybar.enable = true;
 #  services.sketchybar.package = pkgs.sketchybar;
@@ -24,9 +23,42 @@
     ./homebrew.nix      # Migrated from Brewfile
   ];
 
+  homebrew = {
+    enable = true;
 
-  system.activationScripts.postUserActivation.text = ''
+    taps = [
+      "FelixKratz/formulae"
+    ];
+
+
+    masApps = {
+#      _1PasswordforSafari = 1569813296;
+#      userscripts = 1463298887;
+#      vimlike = 1584519802;
+#      vimari = 1480933944;
+    };
+
+    brews = [
+      "podman"
+      "docker-compose"
+#       "isync" # the nix package doesn't support oauth
+      "borders"
+    ];
+
+    casks = [
+      "1password"
+      "1password-cli"
+      "claude-code"
+      "devbox"
+      "rider"
+      "alt-tab"
+      "wezterm"
+    ];
+  };
+
+
+#  system.activationScripts.postUserActivation.text = ''
     # Following line should allow us to avoid a logout/login cycle
-    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-  '';
+#    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+#  '';
 }
