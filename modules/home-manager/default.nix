@@ -37,11 +37,11 @@
       pkgs.cyrus_sasl
       pkgs.cyrus-sasl-xoauth2
       #       pkgs.isync this package does not support oauth
-      pkgs.devbox
-      pkgs.devpod
+#      pkgs.devbox
+#      pkgs.devpod
       pkgs.helix
       pkgs.raycast
-      pkgs.warp-terminal
+#      pkgs.warp-terminal
       pkgs.lazygit
       pkgs.nerdfonts
       pkgs.source-code-pro
