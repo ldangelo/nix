@@ -2,7 +2,7 @@
 { config, pkgs, ... }:
 
 
-let my-emacs = pkgs.emacsMacport.override {
+let my-emacs = pkgs.emacs-macport.override {
     withNativeCompilation = true;
     withSQLite3 = true;
     withTreeSitter = true;
