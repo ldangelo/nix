@@ -41,7 +41,7 @@
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
   };
 
-  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, nix-search-tv... }:
+  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, nix-search-tv,... }:
     let
       username = "ldangelo";
       common-overlays = [
