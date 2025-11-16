@@ -49,7 +49,7 @@
       "1password"
       "1password-cli"
       "claude-code"
-      "devbox"
+#      "devbox"
       "rider"
       "alt-tab"
       "wezterm"
