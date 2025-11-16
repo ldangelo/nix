@@ -4,6 +4,7 @@
     ./git.nix           # Git configuration
     ./jujutsu.nix       # Jujutsu (jj) configuration
     ./nvim              # Neovim configuration
+    ./emacs
     ./wezterm.nix       # WezTerm configuration
     ./programs.nix      # Other program configs (fzf, direnv, starship)
     ./packages.nix      # Migrated from Brewfile

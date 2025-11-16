@@ -20,9 +20,6 @@ in
     # Keyboard
     "kanata".source = "${dotfilesPath}/config/kanata";
 
-    # Emacs
-    "doom".source = "${dotfilesPath}/config/doom";
-
     # Email
     "neomutt".source = "${dotfilesPath}/config/neomutt";
     "msmtp".source = "${dotfilesPath}/config/msmtp";
