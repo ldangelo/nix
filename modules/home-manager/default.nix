@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }: {
+{ config, pkgs, inputs, nix-search-tv, ... }: {
   imports = [
     # Program configurations with native home-manager support
     ./git.nix           # Git configuration
@@ -35,6 +35,8 @@
 
       #       ./spacevim.nix
       # user selected packages
+      nix-search-tv.packages.default
+      pkgs.neovim
       pkgs.cyrus_sasl
       pkgs.cyrus-sasl-xoauth2
       #       pkgs.isync this package does not support oauth

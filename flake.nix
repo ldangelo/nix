@@ -28,12 +28,6 @@
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Overlays
-    sketchybar-lua = {
-      url = "github:FelixKratz/SbarLua";
-      flake = false;
-    };
-
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -43,9 +37,11 @@
       url = "github:matadaniel/LazyVim-module";
       inputs.nixpkgs.follows = "nixpkgs";
    };
+
+    nix-search-tv.url = "github:3timeslazy/nix-search-tv";
   };
 
-  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, ... }:
+  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, nix-search-tv... }:
     let
       username = "ldangelo";
       common-overlays = [
