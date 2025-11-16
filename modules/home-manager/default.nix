@@ -40,7 +40,7 @@
       pkgs.cyrus_sasl
       pkgs.cyrus-sasl-xoauth2
       #       pkgs.isync this package does not support oauth
-#      pkgs.devbox
+      pkgs.devbox
 #      pkgs.devpod
       pkgs.helix
       pkgs.raycast
