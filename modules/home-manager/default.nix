@@ -35,7 +35,7 @@
 
       #       ./spacevim.nix
       # user selected packages
-      inputs.nix-search-tv.packages.default
+      inputs.nix-search-tv
       pkgs.neovim
       pkgs.cyrus_sasl
       pkgs.cyrus-sasl-xoauth2
