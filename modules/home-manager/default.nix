@@ -17,6 +17,7 @@
     ./shell.nix
     ./user.nix
     ./alias.nix
+    ./nix-search-tv.nix
     #     ./trash
 #    ./spacemacs.nix
 #    ./spacevim.nix
@@ -35,7 +36,6 @@
 
       #       ./spacevim.nix
       # user selected packages
-      inputs.nix-search-tv
       pkgs.neovim
       pkgs.cyrus_sasl
       pkgs.cyrus-sasl-xoauth2
