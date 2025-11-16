@@ -5,7 +5,10 @@
   home.packages = [ pkgs.neovim ];
 
   # Copy the entire nvim configuration from nix repo
-  xdg.configFile."nvim".source = ../../../dotfiles/config/nvim;
+  home.file."conIg/nvim" = {
+      source=../../../dotfiles/config/nvim;
+      recursive=true;
+  };
   
   # Set as default editor
   home.sessionVariables = {
