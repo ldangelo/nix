@@ -26,14 +26,14 @@ in
 
 
 
-  xdg.configFile = {
-    "emacs" = {
-      source = builtins.path {
-        name = "emacs-dir";
-        path = ./emacs-init;
-      };
-      recursive = true;
-    };
+  home.file.".config/emacs" = {
+      source=../../../dotfiles/config/emacs;
+      recursive=true;
+  };
+
+  home.file.".config/doom" = {
+    source=../../../dotfiles/config/doom;
+    recursive=true;
   };
 
   home.packages = with pkgs; [
