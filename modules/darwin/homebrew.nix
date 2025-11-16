@@ -7,10 +7,10 @@
 
     # Taps that aren't in nixpkgs
     taps = [
-      "homebrew/cask"
-      "homebrew/core"
-      "homebrew/bundle"
-      "homebrew/services"
+#      "homebrew/cask"
+#      "homebrew/core"
+#      "homebrew/bundle"
+#      "homebrew/services"
       "d12frosted/emacs-plus"
       "felixkratz/formulae"
       "nikitabobko/tap"
@@ -23,8 +23,8 @@
       # Development Tools (not in nixpkgs)
       "aider"                          # AI pair programming
       "basedpyright"                   # Pyright fork with improvements
-      "devbox"                         # Development environments
-      "devpod"                         # Development containers
+#      "devbox"                         # Development environments
+#      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
       "igrep"                          # Interactive grep
       "jql"                            # JSON query language
@@ -146,7 +146,7 @@
       "tradingview"
       "vscodium"               # VS Code without telemetry
       "wakatime"
-      "warp-terminal"          # Terminal with AI
+#      "warp-terminal"          # Terminal with AI
       "wezterm"
       "witsy"                  # BYOK AI assistant
       "zed"                    # Code editor
