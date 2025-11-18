@@ -8,6 +8,7 @@
     ./wezterm.nix       # WezTerm configuration
     ./programs.nix      # Other program configs (fzf, direnv, starship)
     ./packages.nix      # Migrated from Brewfile
+    ./services.nix      # Service configurations (kanata, etc.)
 
     # Dotfiles from chezmoi
     ./dotfiles-chezmoi.nix  # All chezmoi-managed dotfiles
