@@ -1,6 +1,9 @@
 { config, pkgs, lib, ... }:
 
 {
+  # Launchd Services Configuration
+  # System-level daemons and user-level agents for macOS services
+
   # Karabiner-DriverKit-VirtualHIDDevice system daemons
   # These are required for kanata to work on macOS
   #
@@ -15,7 +18,7 @@
   #
   # Reference: https://github.com/jtroo/kanata/discussions/1537
 
-  # Karabiner VirtualHIDDevice Daemon
+  # Karabiner VirtualHIDDevice Daemon (system-level)
   # Manages the virtual HID device driver
   launchd.daemons.karabiner-vhiddaemon = {
     serviceConfig = {
@@ -30,7 +33,7 @@
     };
   };
 
-  # Karabiner VirtualHIDDevice Manager
+  # Karabiner VirtualHIDDevice Manager (system-level)
   # Activates the virtual HID device
   launchd.daemons.karabiner-vhidmanager = {
     serviceConfig = {
@@ -45,31 +48,21 @@
     };
   };
 
-  # Kanata - Advanced keyboard remapper
+  # Kanata - Advanced keyboard remapper (user-level agent)
   # https://github.com/jtroo/kanata
-  launchd.agents.kanata = {
-    enable = true;
-    config = {
+  launchd.user.agents.kanata = {
+    serviceConfig = {
+      Label = "com.ldangelo.kanata";
       ProgramArguments = [
         "${pkgs.kanata}/bin/kanata"
         "--cfg"
-        "${config.home.homeDirectory}/.config/kanata/home-row.kbd"
+        "${config.users.users.ldangelo.home}/.config/kanata/home-row.kbd"
       ];
-
-      # Keep the service running
       KeepAlive = true;
-
-      # Run on load
       RunAtLoad = true;
-
-      # Standard output and error logs
-      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/kanata.out.log";
-      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/kanata.err.log";
-
-      # Process type - interactive for keyboard input
+      StandardOutPath = "${config.users.users.ldangelo.home}/Library/Logs/kanata.out.log";
+      StandardErrorPath = "${config.users.users.ldangelo.home}/Library/Logs/kanata.err.log";
       ProcessType = "Interactive";
-
-      # Nice value for process priority
       Nice = -20;
     };
   };
