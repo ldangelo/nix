@@ -21,6 +21,7 @@
     #./yabai/default.nix
     #./skhd/default.nix
     ./homebrew.nix      # Migrated from Brewfile
+    ./services.nix      # Launchd services (kanata, karabiner, etc.)
   ];
 
   homebrew = {
