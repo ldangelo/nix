@@ -66,4 +66,7 @@
       Nice = -20;
     };
   };
+
+  # Jankyboarders: enable
+  services.jankyboarders.enable = true;
 }
