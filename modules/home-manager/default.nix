@@ -56,7 +56,7 @@
       pkgs.dockutil
       pkgs.duti
       #      pkgs.macfuse
-      pkgs.mas
+      #pkgs.mas
       pkgs.mysides
       #      pkgs.openwith
       pkgs.shortcat

@@ -68,5 +68,5 @@
   };
 
   # Jankyboarders: enable
-  services.jankyboarders.enable = true;
+  services.jankyborders.enable = true;
 }
