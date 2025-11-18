@@ -9,6 +9,8 @@
     # basedpyright - not in nixpkgs
     cargo-binstall         # Binary installation for rust projects
     cmake                  # Cross-platform make
+    claude-code
+    claude-monitor
     # devbox - not in nixpkgs
     # devpod - not in nixpkgs
     gradle                 # Build automation tool
