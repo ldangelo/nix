@@ -36,7 +36,6 @@
 
     oh-my-zsh.enable = true;
     oh-my-zsh.plugins = [ "systemd" ];
-    '';
     initContent = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
@@ -81,7 +80,7 @@
       }
 
           # Rebind fzf-cd to a sane key
-          source <(fzf --zsh)
+          source <(/opt/homebrew/bin/fzf --zsh)
 
           bindkey '\eC' fzf-cd-widget
           bindkey '\ec' capitalize-word
