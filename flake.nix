@@ -5,6 +5,7 @@
     # Nixpkgs
     #    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    catppuccin.url = "github:catppuccin/nix";
 
     #    flake-utils.url = "github:numtide/flake-utils";
 
@@ -41,7 +42,7 @@
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
   };
 
-  outputs = inputs@{ self, nixpkgs, nur, home-manager, nix-darwin, nix-search-tv,... }:
+  outputs = inputs@{ self, nixpkgs, catppuccin,nur, home-manager, nix-darwin, nix-search-tv,... }:
     let
       username = "ldangelo";
       common-overlays = [
@@ -120,11 +121,12 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "backup";
-	      extraSpecialArgs = {
-	        inherit inputs;
-	      };
+      	      extraSpecialArgs = {
+	             inherit inputs;
+      	      };
               users.ldangelo.imports = [
                 #                nixvim.homeManagerModules.nixvim
+                catppuccin.homeModules.catppuccin
                 ./modules/home-manager
                 ./overlays
               ];
