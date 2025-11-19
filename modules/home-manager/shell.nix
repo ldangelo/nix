@@ -36,16 +36,15 @@
 
     oh-my-zsh.enable = true;
     oh-my-zsh.plugins = [ "systemd" ];
-    initExtraBeforeCompInit = ''
+    '';
+    initContent = ''
+      DIRSTACKSIZE=100
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
       # Where to look for autoloaded function definitions
       fpath=(~/.zfunc $fpath)
-    '';
-    initExtra = ''
-      DIRSTACKSIZE=100
-
+ 
       setopt notify interactivecomments recexact longlistjobs
       setopt autoresume pushdsilent autopushd pushdminus
 
