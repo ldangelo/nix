@@ -30,6 +30,8 @@
       KeepAlive = true;
       StandardOutPath = "/var/log/karabiner-vhiddaemon.out.log";
       StandardErrorPath = "/var/log/karabiner-vhiddaemon.err.log";
+      UserName = "root";
+      GroupName = "wheel";
     };
   };
 
@@ -46,7 +48,9 @@
       KeepAlive = true;
       StandardOutPath = "/var/log/karabiner-vhidmanager.out.log";
       StandardErrorPath = "/var/log/karabiner-vhidmanager.err.log";
-    };
+      UserName = "root";
+      GroupName = "wheel";
+     };
   };
 
   # Kanata - Advanced keyboard remapper (user-level agent)
@@ -55,9 +59,9 @@
     serviceConfig = {
       Label = "com.ldangelo.kanata";
       ProgramArguments = [
-        "${pkgs.kanata}/bin/kanata"
+        "/opt/homebrew/bin/kanata"
         "--cfg"
-        "${config.users.users.ldangelo.home}/.config/kanata/home-row.kbd"
+        "/Users/ldangelo/.config/kanata/home-row.kbd"
       ];
       KeepAlive = true;
       RunAtLoad = true;
@@ -65,12 +69,16 @@
       StandardErrorPath = "${config.users.users.ldangelo.home}/Library/Logs/kanata.err.log";
       ProcessType = "Interactive";
       Nice = -20;
-    };
+      UserName = "root";
+      GroupName = "wheel";
+     };
   };
 
   # Jankyboarders: enable
   services.jankyborders = {
       enable = true;
+      width = 6.0;
+      hidpi = false;
       active_color =  "0xffe2e2e3";
       inactive_color = "0xff414550";
     };
