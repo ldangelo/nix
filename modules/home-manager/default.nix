@@ -15,7 +15,7 @@
     # Legacy modules (keeping for reference)
     ./dotfiles          # Old dotfiles module
     ./path.nix
-#    ./shell.nix
+    ./shell.nix
     ./user.nix
     ./alias.nix
     ./nix-search-tv.nix
