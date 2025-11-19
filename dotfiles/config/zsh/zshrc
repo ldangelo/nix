@@ -94,3 +94,5 @@ fi
           path=($DOTNET_ROOT $path)
           path=('/Users/ldangelo/.dotnet/tools' $path)
           export PATH
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+
