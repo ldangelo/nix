@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     # Development Tools
+    atuin
     act                    # Run GitHub Actions locally
     # aider - not in nixpkgs, available via brew
     ast-grep               # Code searching, linting, rewriting
