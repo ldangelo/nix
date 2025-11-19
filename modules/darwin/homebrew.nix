@@ -90,7 +90,7 @@
       "appcleaner"
       "arc"                    # Chromium browser
       "block-goose"            # AI agent
-      "borders"
+#      "felixkratz/formulae/borders"
       "claude-code"            # Terminal AI assistant
       "davmail-app"            # Exchange mail/calendar client
       "docker-desktop"
