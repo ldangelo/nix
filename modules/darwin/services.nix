@@ -43,6 +43,7 @@
         "activate"
       ];
       RunAtLoad = true;
+      KeepAlive = true;
       StandardOutPath = "/var/log/karabiner-vhidmanager.out.log";
       StandardErrorPath = "/var/log/karabiner-vhidmanager.err.log";
     };
