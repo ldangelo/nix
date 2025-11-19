@@ -80,7 +80,7 @@
       }
 
           # Rebind fzf-cd to a sane key
-          source <(/opt/homebrew/bin/fzf --zsh)
+          source <(/etc/profiles/per-user/ldangelo/bin/fzf --zsh)
 
           bindkey '\eC' fzf-cd-widget
           bindkey '\ec' capitalize-word

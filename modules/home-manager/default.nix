@@ -42,6 +42,7 @@
       pkgs.cyrus-sasl-xoauth2
       #       pkgs.isync this package does not support oauth
       pkgs.devbox
+      pkgs.bat
 #      pkgs.devpod
       pkgs.helix
       pkgs.raycast
@@ -88,7 +89,22 @@
       pkgs.just
     ];
   };
-
+  catppuccin = {
+    enable = true;
+    atuin.enable = true;
+    bat.enable = true;
+    btop.enable = true;
+    chromium.enable = true;
+    fzf.enable = true;
+    lazygit.enable = true;
+    fish.enable = true;
+    nushell.enable = true;
+    starship.enable = true;
+    wezterm.enable = true;
+    nvim.enable = true;
+    vscode.enable = true;
+    zsh-syntax-highlighting.enable = true;
+  };
   fonts.fontconfig.enable = true;
 
   # To figure this out (in-case it changes) you can comment out the line and see what version it expected.

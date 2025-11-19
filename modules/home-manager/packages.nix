@@ -17,6 +17,7 @@
     gradle                 # Build automation tool
     helix
     # jdtls - use jdt-language-server
+    jankyborders
     jdt-language-server    # Java language server
     just                   # Command runner
     lazygit                # Simple terminal UI for git
