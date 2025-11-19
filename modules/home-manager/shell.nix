@@ -38,100 +38,103 @@
     oh-my-zsh.plugins = [ "systemd" ];
     '';
     initContent = ''
-      DIRSTACKSIZE=100
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
       # Where to look for autoloaded function definitions
       fpath=(~/.zfunc $fpath)
  
-      setopt notify interactivecomments recexact longlistjobs
-      setopt autoresume pushdsilent autopushd pushdminus
+      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
-      d() {
-        local dir
-        dir=$(dirs -l -p | fzf +m) &&
-        cd $dir
-      }
+          EDITOR='nvim'
+          export EDITOR
+##
+          export DOTNET_ROOT=/Users/ldangelo/.dotnet
+
+          path=('/Users/ldangelo/.local/bin' $path)
+          path="~/Library/Application\ Support/JetBrains/Toolbox/scripts":$path
+          path=('/Users/ldangelo/.npm-global/bin' $path)
+          path=('/Users/ldangelo/.cargo/bin' $path)
+          path=('/Users/ldangelo/.config/emacs/bin' $path)
+          path=('/Users/ldangelo/Development/omnisharp' $path)
+          path=('/opt/homebrew/bin' $path)
+          path=('/Users/ldangelo/bin' $path)
+          path=('/Users/ldangelo/.config/doom/bin' $path)
+          path=('/opt/homebrew/opt/python@3.13/bin/' $path)
+          eval "$(/usr/libexec/path_helper)"
+          path=("/opt/homebrew/opt/postgresql@17/bin" $path)
+
+          DIRSTACKSIZE=100
+
+          setopt notify interactivecomments recexact longlistjobs
+          setopt autoresume pushdsilent autopushd pushdminus
+
+          d() {
+            local dir
+            dir=$(dirs -l -p | fzf +m) &&
+            cd $dir
+          }
 
       gcd() {
         local dir="$(git ls-tree -d -r --name-only --full-name HEAD $(git rev-parse --show-cdup) | fzf +m -0)" &&
         cd "./$(git rev-parse --show-cdup)/$dir"
       }
 
-      # Rebind fzf-cd to a sane key
-      bindkey '\eC' fzf-cd-widget
-      bindkey '\ec' capitalize-word
+          # Rebind fzf-cd to a sane key
+          source <(fzf --zsh)
 
-      # Restore Alt-L behaviour overridden by Oh-My-Zsh (https://github.com/ohmyzsh/ohmyzsh/issues/5071)
-      bindkey '^[l' down-case-word
+          bindkey '\eC' fzf-cd-widget
+          bindkey '\ec' capitalize-word
 
-      source ${pkgs.mc}/libexec/mc/mc.sh
-      # if [[ -f /usr/share/mc/bin/mc.sh ]]; then
-      #     source /usr/share/mc/bin/mc.sh
-      # else
-      #     if [[ -f /usr/libexec/mc/mc-wrapper.sh ]]; then
-      #         alias mc='. /usr/libexec/mc/mc-wrapper.sh'
-      #     fi
-      # fi
+          # Restore Alt-L behaviour overridden by Oh-My-Zsh (https://github.com/ohmyzsh/ohmyzsh/issues/5071)
+          bindkey '^[l' down-case-word
 
-      # # Autoload all shell functions from all directories in $fpath (following
-      # # symlinks) that have the executable bit on (the executable bit is not
-      # # necessary, but gives you an easy way to stop the autoloading of a
-      # # particular shell function). $fpath should not be empty for this to work.
-      # for func in $^fpath/*(N-.x:t); autoload $func
+          ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 
-      source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-      ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+          # Source localhost specific settings
+          source ~/.zshrc.local
 
-      # Source localhost specific settings
-      source ~/.zshrc.local
+          autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+          add-zsh-hook chpwd chpwd_recent_dirs
+          zstyle ':completion:*:*:cdr:*:*' menu selection
 
-      autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
-      add-zsh-hook chpwd chpwd_recent_dirs
-      zstyle ':completion:*:*:cdr:*:*' menu selection
+          autoload bashcompinit
+          bashcompinit
 
-      # autoload bashcompinit
-      # bashcompinit
+          ZSH_BASH_COMPLETIONS_FALLBACK_PATH=/opt/homebrew/share/bash-completion
 
-      vterm_printf(){
-          if [ -n "$TMUX" ]; then
-              # Tell tmux to pass the escape sequences through
-              # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
-              printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-          elif [ "''${TERM%%-*}" = "screen" ]; then
-              # GNU screen (screen, screen-256color, screen-256color-bce)
-              printf "\eP\e]%s\007\e\\" "$1"
-          else
-              printf "\e]%s\e\\" "$1"
-          fi
-      }
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-      # Finally include zsh snippets
-#      for zshrc_snipplet in ~/.zshrc.d/S[0-9][0-9]*[^~] ; do
-#        source $zshrc_snipplet
-#      done
+          bindkey -v
+          NOTMUCH_CONFIG=~/.config/notmuch/default/config
+          # vterm (emacs) related functions for prompt tracking, etc...
+#          eval "$(oh-my-posh init zsh)"
+          source ~/.config/zsh/rc/alias.zsh
+          source ~/.config/zsh/rc/homebrew.zsh
+          source ~/.config/zsh/rc/atuin.zsh
+          source ~/.config/zsh/rc/modules.zsh
+          source ~/.config/zsh/rc/set.zsh
+          source ~/.config/zsh/rc/unset.zsh
+          source ~/.config/zsh/rc/misc.zsh
+          source ~/.config/zsh/rc/comp.zsh
+          source ~/.config/zsh/rc/java.zsh
+          source ~/.config/zsh/rc/rbenv.zsh
+          source ~/.config/zsh/rc/fzf-tab.zsh
+          source ~/.config/zsh/rc/binds.zsh
+          source ~/.config/zsh/rc/vterm.zsh
+          source ~/.config/zsh/rc/starship.zsh
+if [[ -z "$INSIDE_EMACS" ]]; then
+#          source ~/.config/zsh/rc/zsh-autosuggestions.zsh
+          source ~/.config/zsh/rc/zsh-syntax-highlighting.zsh
+          source ~/.config/zsh/rc/ohmyzsh.zsh
+fi
 
-      ZSH_BASH_COMPLETIONS_FALLBACK_PATH=${pkgs.bash-completion}/share/bash-completion
-      #ZSH_BASH_COMPLETIONS_FALLBACK_WHITELIST=(openssl)
-
-      ranger_cd() {
-          temp_file="$(mktemp -t "ranger_cd.XXXXXXXXXX")"
-          ranger --choosedir="$temp_file" -- "''${@:-$PWD}"
-          if chosen_dir="$(cat -- "$temp_file")" && [ -n "$chosen_dir" ] && [ "$chosen_dir" != "$PWD" ]; then
-              cd -- "$chosen_dir"
-          fi
-          rm -f -- "$temp_file"
-      }
-
-      if test -n "$KITTY_INSTALLATION_DIR"; then
-          export KITTY_SHELL_INTEGRATION="enabled"
-          autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
-          kitty-integration
-          unfunction kitty-integration
-      fi
-
-
+          path=($DOTNET_ROOT $path)
+          path=('/Users/ldangelo/.dotnet/tools' $path)
+          export PATH
+          eval "$(/opt/homebrew/bin/brew shellenv)"
       # Setup ROS 2 auto completion for nix-direnv environments
       eval "$(${pkgs.python3Packages.argcomplete}/bin/register-python-argcomplete ros2)"
       eval "$(${pkgs.python3Packages.argcomplete}/bin/register-python-argcomplete colcon)"
@@ -140,8 +143,6 @@
       (( $+aliases[run-help] )) && unalias run-help
       autoload -Uz run-help run-help-nix
 
-      # vterm (emacs) related functions for prompt tracking, etc...
-      source ~/.vterm/emacs-vterm-zsh.sh 
-      '';
+     '';
   };
 }
