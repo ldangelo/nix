@@ -55,7 +55,7 @@
 
   # Kanata - Advanced keyboard remapper (user-level agent)
   # https://github.com/jtroo/kanata
-  launchd.user.agents.kanata = {
+  launchd.agents.kanata = {
     serviceConfig = {
       Label = "com.ldangelo.kanata";
       ProgramArguments = [
@@ -69,6 +69,7 @@
       StandardErrorPath = "${config.users.users.ldangelo.home}/Library/Logs/kanata.err.log";
       ProcessType = "Interactive";
       Nice = -20;
+      InitGroups = true;
       UserName = "root";
       GroupName = "wheel";
      };
