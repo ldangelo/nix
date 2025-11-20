@@ -34,6 +34,7 @@
       which = "nocorrect which";
     };
 
+# Set .envrc variables for common API keys (github, openrouter, anthropic, openai, etc...)
     oh-my-zsh.enable = true;
     oh-my-zsh.plugins = [ "systemd" ];
     initContent = ''

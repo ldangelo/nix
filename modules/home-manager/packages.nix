@@ -14,7 +14,9 @@
     claude-monitor
     # devbox - not in nixpkgs
     # devpod - not in nixpkgs
+    devenv
     gradle                 # Build automation tool
+    google-chrome
     helix
     # jdtls - use jdt-language-server
     jankyborders
