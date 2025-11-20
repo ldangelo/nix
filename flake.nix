@@ -29,6 +29,8 @@
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
+    shell-flake.url = "path:./modules/flakes/shell";
+
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,6 +42,7 @@
    };
 
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
   outputs = inputs@{ self, nixpkgs, catppuccin,nur, home-manager, nix-darwin, nix-search-tv,... }:
@@ -110,31 +113,48 @@
       };
 
     in {
-      darwinConfigurations."ldangelo" = nix-darwin.lib.darwinSystem {
-        modules = [
-         configuration
+      flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-darwin" ];
 
-          ./modules/darwin
-          home-manager.darwinModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "backup";
-      	      extraSpecialArgs = {
-	             inherit inputs;
-      	      };
-              users.ldangelo.imports = [
-                #                nixvim.homeManagerModules.nixvim
-                catppuccin.homeModules.catppuccin
-                ./modules/home-manager
-                ./overlays
-              ];
-            };
-          }
-        ];
+      perSystem = { system, pkgs, ... }: { };
+
+      flake = {
+        # --- nix-darwin Configuration ---
+        darwinConfigurations = {
+          "my-mac" = nix-darwin.lib.darwinSystem {
+            system = "x86_64-darwin";
+            modules = [
+              configuration
+              sops-nix.darwinModules.sops
+              ./modules/darwin/default.nix
+              home-manager.darwinModules.home-manager
+              {
+                # Home-manager configuration as a nix-darwin module
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.ldangelo = import ./modules/home-manager/home.nix;
+              }
+            ];
+            specialArgs = { inherit inputs; };
+          };
+        };
+
+        # --- Home Manager Standalone Config (optional) ---
+        homeConfigurations = {
+          "ldangelo" = home-manager.lib.homeManagerConfiguration {
+            pkgs = import nixpkgs { system = "x86_64-darwin"; };
+            modules = [
+              catppuccin.homeModules.catppuccin
+              sops-nix.homeManagerModules.sops
+              ./modules/home-manager/default.nix
+              ./overlays
+            ];
+            home.username = "ldangelo";
+            home.homeDirectory = "/Users/ldangelo";
+          };
+        };
       };
-
-      darwinPackages = self.darwinConfigurations."ldangelo".pkgs;
     };
+
+     darwinPackages = self.darwinConfigurations."ldangelo".pkgs;
 }
