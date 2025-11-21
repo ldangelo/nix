@@ -1,6 +1,6 @@
 return {
   "folke/tokyonight.nvim",
-  enabled = true,
+  enabled = false,
   style = "night",
   lazy = false,
   config = function() end,
