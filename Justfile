@@ -7,16 +7,16 @@
 ############################################################################
 
 deploy-nc:
-  darwin-rebuild switch --flake .#ldangelo --option eval-cache false
+  darwin-rebuild switch --flake .#Leos-MacBook-Pro --option eval-cache false
 
 deploy-rebuild:
-  darwin-rebuild switch --rebuild --flake .#ldangelo
+  darwin-rebuild switch --rebuild --flake .#Leos-MacBook-Pro
 
 deploy:
-  darwin-rebuild switch --flake .#ldangelo
+  darwin-rebuild switch --flake .#Leos-MacBook-Pro
 
 debug:
-  darwin-rebuild switch --flake .#ldangelo --show-trace --verbose
+  darwin-rebuild switch --flake .#Leos-MacBook-Pro --show-trace --verbose
 
 up:
   nix flake update

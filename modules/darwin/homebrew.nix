@@ -135,6 +135,7 @@
       "raycast"                # Launcher and productivity
       "readdle-spark"          # Email client
       "repo-prompt"            # Prompt generation
+      "rider"
       "setapp"
       "sf-symbols"
 #      "shortcat"               # Keyboard navigation
