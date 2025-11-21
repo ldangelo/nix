@@ -4,7 +4,7 @@
 #    pkgs.nix-tree
     cyrus_sasl
     cyrus-sasl-xoauth2
-    isync-oauth2
+#    isync-oauth2  # Package doesn't exist in nixpkgs
     notmuch
     afew
 #    alot

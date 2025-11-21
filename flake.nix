@@ -57,18 +57,19 @@
           "Leos-MacBook-Pro" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             modules = [
-      ({ ... }: {
-        # Let Determinate Nix handle Nix configuration
-        nix.enable = false;
-      }) 
-              sops-nix.darwinModules.sops 
-             ./modules/darwin/default.nix
+              ({ ... }: {
+                # Let Determinate Nix handle Nix configuration
+                nix.enable = false;
+              })
+              sops-nix.darwinModules.sops
+              ./modules/darwin/default.nix
               home-manager.darwinModules.home-manager
               {
                 # Home-manager configuration as a nix-darwin module
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
-                home-manager.users.ldangelo = import ./modules/home-manager/home.nix;
+                home-manager.sharedModules = [ catppuccin.homeModules.catppuccin ];
+                home-manager.users.ldangelo = import ./modules/home-manager/default.nix;
               }
             ];
             specialArgs = { inherit inputs; };
