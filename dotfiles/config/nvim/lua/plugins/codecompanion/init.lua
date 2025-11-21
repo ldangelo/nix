@@ -1,6 +1,7 @@
 return {
   {
     "olimorris/codecompanion.nvim", -- The KING of AI programming
+    enabled = false,
     cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
     dependencies = {
       "j-hui/fidget.nvim", -- Display status
