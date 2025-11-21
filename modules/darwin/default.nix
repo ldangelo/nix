@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   # here go the darwin preferences and config items
   users.users.ldangelo.home = "/Users/ldangelo";
+  system.primaryUser = "ldangelo";
 #  system.defaults.dock.mru_space = false;  # do not rearrange spaces
   
   nix.extraOptions = ''
@@ -22,6 +23,7 @@
     #./skhd/default.nix
     ./homebrew.nix      # Migrated from Brewfile
     ./services.nix      # Launchd services (kanata, karabiner, etc.)
+    ./sops.nix          # sops-nix secrets management
   ];
 
 
