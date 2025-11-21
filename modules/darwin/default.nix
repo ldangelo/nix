@@ -3,7 +3,10 @@
   users.users.ldangelo.home = "/Users/ldangelo";
   system.primaryUser = "ldangelo";
 #  system.defaults.dock.mru_space = false;  # do not rearrange spaces
-  
+
+  # Allow unfree packages (claude-code, google-chrome, vscode, etc.)
+  nixpkgs.config.allowUnfree = true;
+
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
