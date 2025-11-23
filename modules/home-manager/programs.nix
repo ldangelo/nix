@@ -22,9 +22,9 @@
   programs.qutebrowser = {
       enable = true;
       settings = {
-        fonts.keyhint = "15pt";
-      }
-  };
+        fonts.hints = "bold 18pt monospace";
+      };
+ };
   # User specified programs
   programs.dircolors.enable = true;
 }

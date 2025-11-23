@@ -104,6 +104,7 @@
     nvim.enable = true;
     vscode.enable = true;
     zsh-syntax-highlighting.enable = true;
+    qutebrowser.enable = true;
   };
   fonts.fontconfig.enable = true;
 
