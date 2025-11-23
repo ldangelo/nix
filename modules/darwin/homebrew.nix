@@ -131,7 +131,6 @@
       "postman"
       "postman-cli"
       "proxyman"               # HTTP debugging proxy
-      "qutebrowser"            # Vim-like browser
       "raycast"                # Launcher and productivity
       "readdle-spark"          # Email client
       "repo-prompt"            # Prompt generation
