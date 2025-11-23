@@ -11,6 +11,7 @@
     cargo-binstall         # Binary installation for rust projects
     cmake                  # Cross-platform make
     claude-code
+    claude-code-acp
     claude-monitor
     # devbox - not in nixpkgs
     # devpod - not in nixpkgs
@@ -143,6 +144,7 @@
     # vfkit - not in nixpkgs
     virtualenv             # Python virtual environments
     wget                   # File retriever
+    qutebrowser 
 
     # Fonts
     #nerdfonts
