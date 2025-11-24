@@ -23,7 +23,6 @@ plugins=(
     zsh-vi-mode
 )
 
-source ~/.oh-my-zsh/oh-my-zsh.sh
 
 # ~/.zshrc
 
