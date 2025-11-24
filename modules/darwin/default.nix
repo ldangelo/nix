@@ -27,6 +27,7 @@
     ./homebrew.nix      # Migrated from Brewfile
     ./services.nix      # Launchd services (kanata, karabiner, etc.)
     ./sops.nix          # sops-nix secrets management
+    ./pam.nix           # Touch ID and Apple Watch for sudo
   ];
 
 
