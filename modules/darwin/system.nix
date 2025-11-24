@@ -14,6 +14,15 @@
 
         # Automatically hide and show the menu bar
         _HIHideMenuBar = false;
+
+        # Tab between form controls and F-row that behaves as F1-F12
+        AppleKeyboardUIMode = 3;
+        "com.apple.keyboard.fnState" = true;
+
+        # Key repeat settings (lower = faster)
+        # Normal minimum is 2, but we can go lower for very fast repeat
+        KeyRepeat = 1;              # 15ms between repeats (very fast!)
+        InitialKeyRepeat = 15;      # 225ms delay before repeat starts (fast)
       };
 
       dock = {
@@ -34,12 +43,6 @@
       finder = {
         AppleShowAllExtensions = true;
         _FXShowPosixPathInTitle = true;
-      };
-
-      # Tab between form controls and F-row that behaves as F1-F12
-      NSGlobalDomain = {
-        AppleKeyboardUIMode = 3;
-        "com.apple.keyboard.fnState" = true;
       };
     };
   };
