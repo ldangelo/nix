@@ -1,9 +1,15 @@
 local wezterm = require("wezterm")
 local utils = require("utils")
 local keybinds = require("keybinds")
-local scheme = wezterm.get_builtin_color_schemes()["nord"]
 local gpus = wezterm.gui.enumerate_gpus()
 require("on")
+
+---------------------------------------------------------------
+--- Plugins
+---------------------------------------------------------------
+local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
+local workspace_switcher = wezterm.plugin.require("https://github.com/MLFlexer/smart_workspace_switcher.wezterm")
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 
 -- /etc/ssh/sshd_config
 -- AcceptEnv TERM_PROGRAM_VERSION COLORTERM TERM TERM_PROGRAM WEZTERM_REMOTE_PANE
@@ -110,33 +116,34 @@ local config = {
 	-- https://github.com/wez/wezterm/issues/1772
 	-- https://github.com/wez/wezterm/issues/5103
 	-- enable_wayland = false,
-	color_scheme = "tokyonight_night",
-	color_scheme_dirs = { os.getenv("HOME") .. "/.config/wezterm/colors/" },
-	window_background_opacity = 6.0,
-	hide_tab_bar_if_only_one_tab = false,
+	-- Catppuccin Mocha theme (matches qutebrowser)
+	color_scheme = "Catppuccin Mocha",
+
+	-- Minimal UI (matches qutebrowser's tabs.show = "multiple" and statusbar.show = "in-mode")
+	hide_tab_bar_if_only_one_tab = true,
+	use_fancy_tab_bar = false,
+	tab_bar_at_bottom = true,
+	tab_max_width = 32,
+	show_tab_index_in_tab_bar = false,
+	show_new_tab_button_in_tab_bar = false,
+
+	-- Window styling
+	window_decorations = "RESIZE",
 	adjust_window_size_when_changing_font_size = false,
-	selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%",
+	window_background_opacity = 1.0,
+	macos_window_background_blur = 0,
+
+	-- Subtle padding (clean look)
 	window_padding = {
-		left = 0,
-		right = 0,
-		top = 0,
-		bottom = 0,
+		left = 8,
+		right = 8,
+		top = 8,
+		bottom = 8,
 	},
-	use_fancy_tab_bar = true,
-	colors = {
-		tab_bar = {
-			background = scheme.background,
-			new_tab = { bg_color = "#2e3440", fg_color = scheme.ansi[8], intensity = "Bold" },
-			new_tab_hover = { bg_color = scheme.ansi[1], fg_color = scheme.brights[8], intensity = "Bold" },
-			-- format - tab - title,
-			-- active_tab = { bg_color = "#121212", fg_color = "#FCE8C3" },
-			-- inactive_tab = { bg_color = scheme.background, fg_color = "#FCE8C3" },
-			-- inactive_tab_hover = { bg_color = scheme.ansi[1], fg_color = "#FCE8C3" },
-		},
-	},
+
+	selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%",
 	exit_behavior = "CloseOnCleanExit",
-	tab_bar_at_bottom = false,
-	window_close_confirmation = "AlwaysPrompt",
+	window_close_confirmation = "NeverPrompt",
 	-- window_background_opacity = 0.8,
 	disable_default_key_bindings = true,
 	-- visual_bell = {
@@ -259,6 +266,110 @@ config.keys = utils.merge_lists(config.keys, {
 })
 
 --require("plugins/ai_helper")
+
+---------------------------------------------------------------
+--- Plugin Setup
+---------------------------------------------------------------
+
+-- Tabline setup (Catppuccin theme, minimal style)
+tabline.setup({
+	options = {
+		theme = "Catppuccin Mocha",
+		section_separators = { left = "", right = "" },
+		component_separators = { left = "", right = "" },
+		tab_separators = { left = "", right = "" },
+	},
+	sections = {
+		tabline_a = { "workspace" },
+		tabline_b = {},
+		tabline_c = {},
+		tab_active = { "index", { "cwd", padding = 1 } },
+		tab_inactive = { "index", { "process", padding = 1 } },
+		tabline_x = {},
+		tabline_y = { "datetime" },
+		tabline_z = { "hostname" },
+	},
+})
+tabline.apply_to_config(config)
+
+-- Resurrect plugin setup (session management)
+resurrect.periodic_save({
+	interval_seconds = 300, -- Save every 5 minutes
+	save_tabs = true,
+	save_windows = true,
+	save_workspaces = true,
+})
+
+-- Workspace switcher setup (uses zoxide for smart directory picking)
+workspace_switcher.zoxide_path = "/etc/profiles/per-user/ldangelo/bin/zoxide"
+
+-- Plugin keybindings (using LEADER key: Ctrl+Shift+Space)
+config.keys = utils.merge_lists(config.keys, {
+	-- Resurrect: Save state
+	{
+		key = "S",
+		mods = "LEADER",
+		action = wezterm.action_callback(function(win, pane)
+			resurrect.save_state(resurrect.workspace_state.get_workspace_state())
+			win:toast_notification("WezTerm", "Session saved!", nil, 2000)
+		end),
+	},
+	-- Resurrect: Load state
+	{
+		key = "R",
+		mods = "LEADER",
+		action = wezterm.action_callback(function(win, pane)
+			resurrect.fuzzy_load(win, pane, function(id, label)
+				local state = resurrect.load_state(id, "workspace")
+				resurrect.workspace_state.restore_workspace(state, {
+					relative = true,
+					restore_text = true,
+					on_pane_restore = resurrect.tab_state.default_on_pane_restore,
+				})
+			end, {
+				title = "Load Session",
+				fuzzy_description = "Search sessions: ",
+			})
+		end),
+	},
+	-- Resurrect: Delete state
+	{
+		key = "D",
+		mods = "LEADER",
+		action = wezterm.action_callback(function(win, pane)
+			resurrect.fuzzy_load(win, pane, function(id)
+				resurrect.delete_state(id)
+				win:toast_notification("WezTerm", "Session deleted!", nil, 2000)
+			end, {
+				title = "Delete Session",
+				fuzzy_description = "Search sessions to delete: ",
+				is_fuzzy = true,
+			})
+		end),
+	},
+	-- Workspace switcher
+	{
+		key = "w",
+		mods = "LEADER",
+		action = workspace_switcher.switch_workspace(),
+	},
+	-- Workspace switcher: Create new workspace
+	{
+		key = "W",
+		mods = "LEADER",
+		action = wezterm.action.PromptInputLine({
+			description = "Enter new workspace name:",
+			action = wezterm.action_callback(function(window, pane, line)
+				if line then
+					window:perform_action(
+						wezterm.action.SwitchToWorkspace({ name = line }),
+						pane
+					)
+				end
+			end),
+		}),
+	},
+})
 
 local merged_config = utils.merge_tables(config, local_config)
 return utils.merge_tables(merged_config, create_ssh_domain_from_ssh_config(merged_config.ssh_domains))
