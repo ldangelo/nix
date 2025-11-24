@@ -119,7 +119,7 @@
           source ~/.config/zsh/rc/unset.zsh
           source ~/.config/zsh/rc/misc.zsh
           source ~/.config/zsh/rc/comp.zsh
-          source ~/.config/zsh/rc/java.zsh
+#          source ~/.config/zsh/rc/java.zsh
           source ~/.config/zsh/rc/rbenv.zsh
           source ~/.config/zsh/rc/fzf-tab.zsh
           source ~/.config/zsh/rc/binds.zsh
@@ -127,7 +127,7 @@
           source ~/.config/zsh/rc/starship.zsh
 if [[ -z "$INSIDE_EMACS" ]]; then
 #          source ~/.config/zsh/rc/zsh-autosuggestions.zsh
-          source ~/.config/zsh/rc/zsh-syntax-highlighting.zsh
+#          source ~/.config/zsh/rc/zsh-syntax-highlighting.zsh
           source ~/.config/zsh/rc/ohmyzsh.zsh
 fi
 
