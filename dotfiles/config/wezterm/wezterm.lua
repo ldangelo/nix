@@ -293,12 +293,13 @@ tabline.setup({
 tabline.apply_to_config(config)
 
 -- Resurrect plugin setup (session management)
-resurrect.periodic_save({
-	interval_seconds = 300, -- Save every 5 minutes
-	save_tabs = true,
-	save_windows = true,
-	save_workspaces = true,
-})
+-- Note: periodic_save is not available in current version of resurrect plugin
+-- resurrect.periodic_save({
+-- 	interval_seconds = 300, -- Save every 5 minutes
+-- 	save_tabs = true,
+-- 	save_windows = true,
+-- 	save_workspaces = true,
+-- })
 
 -- Workspace switcher setup (uses zoxide for smart directory picking)
 workspace_switcher.zoxide_path = "/etc/profiles/per-user/ldangelo/bin/zoxide"
