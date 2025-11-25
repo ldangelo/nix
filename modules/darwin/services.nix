@@ -53,9 +53,10 @@
      };
   };
 
-  # Kanata - Advanced keyboard remapper (user-level agent)
+  # Kanata - Advanced keyboard remapper (system-level daemon)
   # https://github.com/jtroo/kanata
-  launchd.agents.kanata = {
+  # Must be a daemon (not agent) to run as root - agents ignore UserName
+  launchd.daemons.kanata = {
     serviceConfig = {
       Label = "com.ldangelo.kanata";
       ProgramArguments = [
@@ -65,14 +66,13 @@
       ];
       KeepAlive = true;
       RunAtLoad = true;
-      StandardOutPath = "${config.users.users.ldangelo.home}/Library/Logs/kanata.out.log";
-      StandardErrorPath = "${config.users.users.ldangelo.home}/Library/Logs/kanata.err.log";
+      StandardOutPath = "/var/log/kanata.out.log";
+      StandardErrorPath = "/var/log/kanata.err.log";
       ProcessType = "Interactive";
       Nice = -20;
-      InitGroups = true;
       UserName = "root";
       GroupName = "wheel";
-     };
+    };
   };
 
   # Jankyboarders: enable
