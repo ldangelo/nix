@@ -6,6 +6,7 @@
     ./nvim              # Neovim configuration
     ./emacs
     ./wezterm.nix       # WezTerm configuration
+    ./qutebrowser       # Qutebrowser configuration
     ./programs.nix      # Other program configs (fzf, direnv, starship)
     ./packages.nix      # Migrated from Brewfile
 
