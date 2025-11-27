@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# modules/home-manager/qutebrowser/scripts/org-capture
+# Capture current page to Emacs org-mode
+
+TITLE="$QUTE_TITLE"
+URL="$QUTE_URL"
+
+# Use emacsclient to capture
+emacsclient -e "(org-capture-string \"* [[${URL}][${TITLE}]]\" \"w\")" \
+    || echo "message-error 'Failed to capture to org-mode'" >> "$QUTE_FIFO"
+
+echo "message-info 'Captured: ${TITLE}'" >> "$QUTE_FIFO"
