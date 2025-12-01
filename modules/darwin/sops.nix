@@ -18,6 +18,12 @@
     mode = "0400";
   };
 
+  sops.secrets."github/fortium" = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
+
+
   sops.secrets.anthropic_api_key = {
     owner = "ldangelo";
     mode = "0400";
