@@ -113,6 +113,8 @@
   home.file.".envrc".text = ''
     # API keys loaded from sops secrets
     export ANTHROPIC_API_KEY="$(cat /run/secrets/anthropic_api_key 2>/dev/null || echo "")"
+    export GITHUB_TOKEN="$(cat /run/secrets/github/token 2>/dev/null || echo "")"
+    export GITHUB_FORTIUM_TOKEN="$(cat /run/secrets/github/fortium 2>/dev/null || echo "")"
   '';
 
   # To figure this out (in-case it changes) you can comment out the line and see what version it expected.
