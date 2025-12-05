@@ -22,7 +22,7 @@
         # Key repeat settings (lower = faster)
         # Normal minimum is 2, but we can go lower for very fast repeat
         KeyRepeat = 3;              # 15ms between repeats (very fast!)
-        InitialKeyRepeat = 15;      # 225ms delay before repeat starts (fast)
+        InitialKeyRepeat = 20;      # 225ms delay before repeat starts (fast)
       };
 
       dock = {
