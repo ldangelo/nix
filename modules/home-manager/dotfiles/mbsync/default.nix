@@ -5,8 +5,8 @@
     package = pkgs.isync;  # TODO: isync-oauth2 doesn't exist in nixpkgs, may need custom overlay for OAuth2 support
     extraConfig = ''
      # Keeps timestamp mased message sorting intactt
-     CopyArrivalDate = yes;
-     SyncState = *
+     CopyArrivalDate yes
+     SyncState *
 '';
   };
 
@@ -33,7 +33,8 @@
         passwordCommand = "op item get mbsync-icloud --fields password";
         mbsync = {
           enable = true;
-          create = "maildir";
+          create = "both";
+          expunge = "both";
         };
         notmuch.enable = true;
         msmtp.enable = true;
