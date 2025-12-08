@@ -80,11 +80,13 @@
         cd "./$(git rev-parse --show-cdup)/$dir"
       }
 
-          # Rebind fzf-cd to a sane key
-          source <(/etc/profiles/per-user/ldangelo/bin/fzf --zsh)
+          # FZF initialization (only in interactive shells)
+          if [[ -o interactive ]]; then
+            source <(/etc/profiles/per-user/ldangelo/bin/fzf --zsh)
 
-          bindkey '\eC' fzf-cd-widget
-          bindkey '\ec' capitalize-word
+            bindkey '\eC' fzf-cd-widget
+            bindkey '\ec' capitalize-word
+          fi
 
           # Restore Alt-L behaviour overridden by Oh-My-Zsh (https://github.com/ohmyzsh/ohmyzsh/issues/5071)
           bindkey '^[l' down-case-word
@@ -103,9 +105,17 @@
 
           ZSH_BASH_COMPLETIONS_FALLBACK_PATH=/opt/homebrew/share/bash-completion
 
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+  # NVM initialization (only in interactive shells)
+  if [[ -o interactive ]]; then
+        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+          path=($DOTNET_ROOT $path)
+          path=('/Users/ldangelo/.dotnet/tools' $path)
+          export PATH
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+ 
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
           bindkey -v
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
@@ -113,28 +123,27 @@
 #          eval "$(oh-my-posh init zsh)"
           source ~/.config/zsh/rc/alias.zsh
           source ~/.config/zsh/rc/homebrew.zsh
-          source ~/.config/zsh/rc/atuin.zsh
           source ~/.config/zsh/rc/modules.zsh
           source ~/.config/zsh/rc/set.zsh
           source ~/.config/zsh/rc/unset.zsh
           source ~/.config/zsh/rc/misc.zsh
-          source ~/.config/zsh/rc/comp.zsh
 #          source ~/.config/zsh/rc/java.zsh
           source ~/.config/zsh/rc/rbenv.zsh
-          source ~/.config/zsh/rc/fzf-tab.zsh
           source ~/.config/zsh/rc/binds.zsh
-          source ~/.config/zsh/rc/vterm.zsh
-          source ~/.config/zsh/rc/starship.zsh
-if [[ -z "$INSIDE_EMACS" ]]; then
-#          source ~/.config/zsh/rc/zsh-autosuggestions.zsh
-#          source ~/.config/zsh/rc/zsh-syntax-highlighting.zsh
-          source ~/.config/zsh/rc/ohmyzsh.zsh
-fi
 
-          path=($DOTNET_ROOT $path)
-          path=('/Users/ldangelo/.dotnet/tools' $path)
-          export PATH
-          eval "$(/opt/homebrew/bin/brew shellenv)"
+          # Only load interactive plugins in interactive mode
+            source ~/.config/zsh/rc/atuin.zsh
+            source ~/.config/zsh/rc/comp.zsh
+            source ~/.config/zsh/rc/fzf-tab.zsh
+            source ~/.config/zsh/rc/vterm.zsh
+            source ~/.config/zsh/rc/starship.zsh
+            
+            if [[ -z "$INSIDE_EMACS" ]]; then
+#             source ~/.config/zsh/rc/zsh-autosuggestions.zsh
+#             source ~/.config/zsh/rc/zsh-syntax-highlighting.zsh
+              source ~/.config/zsh/rc/ohmyzsh.zsh
+            fi
+      #
       # Setup ROS 2 auto completion for nix-direnv environments
       eval "$(${pkgs.python3Packages.argcomplete}/bin/register-python-argcomplete ros2)"
       eval "$(${pkgs.python3Packages.argcomplete}/bin/register-python-argcomplete colcon)"
@@ -143,6 +152,8 @@ fi
       (( $+aliases[run-help] )) && unalias run-help
       autoload -Uz run-help run-help-nix
 
-     '';
+fi
+
+    '';
   };
 }
