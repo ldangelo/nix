@@ -8,7 +8,7 @@
     antigravity
     zellij
     tmux
-    ghostty
+    ghostty-bin
 
     # aider - not in nixpkgs, available via brew
     ast-grep               # Code searching, linting, rewriting
