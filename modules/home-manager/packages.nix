@@ -5,7 +5,11 @@
     # Development Tools
     atuin
     act                    # Run GitHub Actions locally
-    antigravity-fhs
+    antigravity
+    zellij
+    tmux
+    ghostty
+
     # aider - not in nixpkgs, available via brew
     ast-grep               # Code searching, linting, rewriting
     # basedpyright - not in nixpkgs
