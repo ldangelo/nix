@@ -19,13 +19,6 @@ let my-emacs = pkgs.emacs-macport.override {
   );
 in
 {
-  programs.emacs = {
-    enable = true;
-    package = my-emacs-with-packages;
-  };
-
-
-
   home.file.".config/emacs" = {
       source=../../../dotfiles/config/emacs;
       recursive=true;
@@ -36,14 +29,4 @@ in
     recursive=true;
   };
 
-  home.packages = with pkgs; [
-    emacs-all-the-icons-fonts
-    (aspellWithDicts (d: [d.en d.sv]))
-    ghostscript
-    shellcheck
-    # tetex # Does not build properly (2024-03-09)
-    poppler
-    mu
-    wordnet
-  ];
 }

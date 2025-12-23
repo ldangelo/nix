@@ -31,6 +31,11 @@ in
 
     # Other tools
     "userscripts".source = "${dotfilesPath}/config/userscripts";
+
+# Doom
+    #
+#    "emacs".source = "${dotfilesPath}/config/emacs";
+# fs    "doom".source = "${dotfilesPath}/config/doom";
   };
 
   # Top-level dotfiles

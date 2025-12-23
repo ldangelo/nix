@@ -52,7 +52,7 @@
           export DOTNET_ROOT=/Users/ldangelo/.dotnet
 
           path=('/Users/ldangelo/.local/bin' $path)
-          path="~/Library/Application\ Support/JetBrains/Toolbox/scripts":$path
+          path=("$HOME/Library/Application Support/JetBrains/Toolbox/scripts" $path)
           path=('/Users/ldangelo/.npm-global/bin' $path)
           path=('/Users/ldangelo/.cargo/bin' $path)
           path=('/Users/ldangelo/.config/emacs/bin' $path)

@@ -90,6 +90,7 @@
       pkgs.just
     ];
   };
+
   catppuccin = {
     enable = true;
     atuin.enable = true;
