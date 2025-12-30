@@ -135,6 +135,7 @@
       "readdle-spark"          # Email client
       "repo-prompt"            # Prompt generation
       "rider"
+      "rize"
       "setapp"
       "sf-symbols"
 #      "shortcat"               # Keyboard navigation
