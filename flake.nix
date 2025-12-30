@@ -23,7 +23,6 @@
 
     # flake-parts
     flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
 
     # nur: nix User Repository
     nur.url = "github:nix-community/NUR";
