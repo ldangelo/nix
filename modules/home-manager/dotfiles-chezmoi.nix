@@ -35,7 +35,7 @@ in
 # Doom
     #
 #    "emacs".source = "${dotfilesPath}/config/emacs";
-# fs    "doom".source = "${dotfilesPath}/config/doom";
+#    "doom".source = "${dotfilesPath}/config/doom";
   };
 
   # Top-level dotfiles
