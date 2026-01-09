@@ -23,6 +23,7 @@
     devenv
     gradle                 # Build automation tool
     google-chrome
+    graphite-cli
     helix
     # jdtls - use jdt-language-server
     jankyborders
