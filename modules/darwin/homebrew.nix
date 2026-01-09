@@ -110,9 +110,9 @@
 #      "hammerspoon"            # Desktop automation
 #      "homerow"                # Keyboard shortcuts
 #      "hookmark"               # Link and retrieve info
-#      "iterm2"
-##      "itermai"                # AI for iTerm2
-#      "itermbrowserplugin"     # Browser in iTerm2
+      "iterm2"
+      "itermai"                # AI for iTerm2
+      "itermbrowserplugin"     # Browser in iTerm2
       "jetbrains-toolbox"
       "karabiner-elements"     # Keyboard customizer
       "launchcontrol"          # Service manager
