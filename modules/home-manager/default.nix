@@ -25,6 +25,7 @@
 #    ./spacevim.nix
     ./borders
     #     ./sketchybar
+    ./zoxide.nix
   ];
 
 
