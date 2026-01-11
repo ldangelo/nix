@@ -16,6 +16,7 @@
       "nikitabobko/tap"
       "charmbracelet/tap"
       "bakks/bakks"
+      "steveyegge/beads"
     ];
 
     # Brew formulae not easily available in nixpkgs
@@ -23,6 +24,7 @@
       # Development Tools (not in nixpkgs)
       "aider"                          # AI pair programming
       "basedpyright"                   # Pyright fork with improvements
+      "bd"
 #      "devbox"                         # Development environments
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
