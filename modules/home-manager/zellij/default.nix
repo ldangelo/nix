@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  programs.zoxide = {
+  programs.zellij = {
     enable = true;
     enableZshIntegration = true;
     

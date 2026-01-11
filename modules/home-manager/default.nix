@@ -26,6 +26,7 @@
     ./borders
     #     ./sketchybar
     ./zoxide.nix
+    ./zellij
   ];
 
 
