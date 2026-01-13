@@ -1,0 +1,10 @@
+layout {
+  pane split_direction="horizontal"  {
+    pane command="nvim" {
+      args "."
+    }
+    pane command="claude" {
+      args "--continue"
+    }
+  }
+}
