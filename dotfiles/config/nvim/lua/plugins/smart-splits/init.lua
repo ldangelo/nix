@@ -8,11 +8,15 @@ return {
           return true
         end
         return false
-      end, require("smart-splits").setup({})
+      end, require("smart-splits").setup({
+        -- Multiplexer integration (auto-detects Zellij, Tmux, Wezterm, Kitty)
+        multiplexer_integration = nil, -- nil = auto-detect, 'zellij' to force Zellij
+        -- Disable multiplexer when in certain terminals if needed
+        -- multiplexer_integration = 'zellij',
+      })
     --
-    -- recommended mappings
-    -- resizing splits
-    -- these keymaps will also accept a range,
-    -- for example `10<A-h>` will `resize_left` by `(10 * config.default_amount)`
+    -- Keymaps are configured in lua/config/keymaps.lua:
+    -- Ctrl+hjkl for navigation (seamless with Zellij via vim-zellij-navigator)
+    -- Alt+hjkl for resizing (works in Neovim, requires locked mode in Zellij)
   end,
 }

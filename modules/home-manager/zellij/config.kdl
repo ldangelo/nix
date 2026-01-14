@@ -18,7 +18,7 @@ keybinds clear-defaults=true {
         bind "l" { MoveFocus "right"; }
         bind "n" { NewPane; SwitchToMode "normal"; }
         bind "p" { SwitchFocus; }
-        bind "Ctrl p" { SwitchToMode "normal"; }
+        bind "Ctrl Space" { SwitchToMode "normal"; }
         bind "r" { NewPane "right"; SwitchToMode "normal"; }
         bind "s" { NewPane "stacked"; SwitchToMode "normal"; }
         bind "w" { ToggleFloatingPanes; SwitchToMode "normal"; }
@@ -133,31 +133,68 @@ keybinds clear-defaults=true {
             SwitchToMode "normal"
         }
     }
+    // Quick shortcuts and seamless Neovim navigation
     shared_except "locked" {
-        bind "Alt left" { MoveFocusOrTab "left"; }
-        bind "Alt down" { MoveFocus "down"; }
-        bind "Alt up" { MoveFocus "up"; }
-        bind "Alt right" { MoveFocusOrTab "right"; }
-        bind "Alt +" { Resize "Increase"; }
-        bind "Alt -" { Resize "Decrease"; }
-        bind "Alt =" { Resize "Increase"; }
-        bind "Alt [" { PreviousSwapLayout; }
-        bind "Alt ]" { NextSwapLayout; }
-        bind "Alt f" { ToggleFloatingPanes; }
+        // Seamless Neovim integration via vim-zellij-navigator
+        // Ctrl+hjkl navigates between Zellij panes AND Neovim splits seamlessly
+        bind "Ctrl h" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "left";
+                move_mod "ctrl";
+            };
+        }
+        bind "Ctrl j" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "down";
+                move_mod "ctrl";
+            };
+        }
+        bind "Ctrl k" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "up";
+                move_mod "ctrl";
+            };
+        }
+        bind "Ctrl l" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "right";
+                move_mod "ctrl";
+            };
+        }
+
+        // Pane operations - Ctrl+Shift combinations
+        bind "Ctrl Shift n" { NewPane; SwitchToMode "normal"; }
+        bind "Ctrl Shift d" { NewPane "down"; SwitchToMode "normal"; }
+        bind "Ctrl Shift r" { NewPane "right"; SwitchToMode "normal"; }
+        bind "Ctrl Shift x" { CloseFocus; SwitchToMode "normal"; }
+        bind "Ctrl Shift f" { ToggleFocusFullscreen; SwitchToMode "normal"; }
+        bind "Ctrl Shift w" { ToggleFloatingPanes; SwitchToMode "normal"; }
+        bind "Ctrl Shift e" { TogglePaneEmbedOrFloating; SwitchToMode "normal"; }
+
+        // Tab operations
+        bind "Ctrl Shift t" { NewTab; SwitchToMode "normal"; }
+        bind "Ctrl Shift q" { CloseTab; SwitchToMode "normal"; }
+        bind "Ctrl Shift Left" { GoToPreviousTab; }
+        bind "Ctrl Shift Right" { GoToNextTab; }
+        bind "Ctrl Shift Space" { ToggleTab; }
+
+        // Quick navigation (pane focus only, no tab switching)
+        bind "Ctrl Shift h" { MoveFocus "left"; }
+        bind "Ctrl Shift j" { MoveFocus "down"; }
+        bind "Ctrl Shift k" { MoveFocus "up"; }
+        bind "Ctrl Shift l" { MoveFocus "right"; }
+
+        // Layout switching
+        bind "Ctrl Shift [" { PreviousSwapLayout; }
+        bind "Ctrl Shift ]" { NextSwapLayout; }
+
+        // System shortcuts
         bind "Ctrl g" { SwitchToMode "locked"; }
-        bind "Alt h" { MoveFocusOrTab "left"; }
-        bind "Alt i" { MoveTab "left"; }
-        bind "Alt j" { MoveFocus "down"; }
-        bind "Alt k" { MoveFocus "up"; }
-        bind "Alt l" { MoveFocusOrTab "right"; }
-        bind "Alt n" { NewPane; }
-        bind "Alt o" { MoveTab "right"; }
-        bind "Alt p" { TogglePaneInGroup; }
-        bind "Alt Shift p" { ToggleGroupMarking; }
         bind "Ctrl q" { Quit; }
-    }
-    shared_except "locked" "move" {
-        bind "Ctrl h" { SwitchToMode "move"; }
     }
     shared_except "locked" "session" {
         bind "Ctrl o" { SwitchToMode "session"; }
@@ -172,7 +209,7 @@ keybinds clear-defaults=true {
         bind "Ctrl t" { SwitchToMode "tab"; }
     }
     shared_except "locked" "pane" {
-        bind "Ctrl p" { SwitchToMode "pane"; }
+        bind "Ctrl Space" { SwitchToMode "pane"; }
     }
     shared_except "locked" "resize" {
         bind "Ctrl n" { SwitchToMode "resize"; }
@@ -301,12 +338,12 @@ theme "cattupuccin-macchiato"
 // The name of the default layout to load on startup
 // Default: "default"
 // 
-// default_layout "compact"
+default_layout "default"
  
 // The folder in which Zellij will look for layouts
 // (Requires restart)
 // 
-// layout_dir "/tmp"
+layout_dir "layouts"
  
 // The folder in which Zellij will look for themes
 // (Requires restart)
