@@ -87,7 +87,7 @@
       "aldente"                # Battery charge limiter
 #      "alt-tab"                # Windows-like alt-tab
       "apparency"              # App inspector
-      "amazon-q"               # AI assistant
+      "kiro-cli"               # AI assistant
 #      "ammonite"               # Tag visualizer
       "appcleaner"
       "arc"                    # Chromium browser
