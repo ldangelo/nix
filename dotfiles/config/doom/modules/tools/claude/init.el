@@ -15,5 +15,9 @@
                  ( :prefix-map ("c" . "Claude Code")
                                :desc "Claude code " "c" #'claude-code-ide-menu))))
   ;;(setq claude-code-program "/Users/ldangelo/.claude/local/claude")
-  
+  (defun my/setup-claude-fontset ()
+    (set-fontset-font t '(#x23FA . #x23FA) "STIX Two Math"))
+  (my/setup-claude-fontset)
+  (add-hook 'after-setting-font-hook #'my/setup-claude-fontset) 
+
   (claude-code-ide-emacs-tools-setup))
