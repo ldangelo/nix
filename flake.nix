@@ -67,6 +67,7 @@
                 # Home-manager configuration as a nix-darwin module
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
+                home-manager.backupFileExtension = "bak";
                 home-manager.sharedModules = [ catppuccin.homeModules.catppuccin ];
                 home-manager.users.ldangelo = import ./modules/home-manager/default.nix;
               }
