@@ -8,6 +8,11 @@
   :config (setq claude-code-ide-terminal-backend 'vterm  ;; vterm has an annoying flashing
 
                 )
+  (dolist (range '((#x23FA . #x23FA)   ; ⏺ bullet
+                   (#x2700 . #x27BF)   ; Dingbats (spinner chars ✢✳✻✽)
+                   (#x2200 . #x22FF))) ; Math operators (∗)
+    (set-char-table-range char-width-table range 1))
+
   (map!
    (:leader
     ;; leaderkey bindings
