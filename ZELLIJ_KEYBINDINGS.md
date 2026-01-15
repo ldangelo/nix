@@ -72,6 +72,7 @@ All hjkl navigation and single-key commands within modes remain unchanged.
 
 - **In a shell/app**: Moves between Zellij panes
 - **Inside Neovim**: Automatically navigates Neovim splits
+- **In ANY Zellij mode**: Always switches panes (except locked mode)
 - **No mode switching needed** - The plugin intelligently detects context!
 
 **Powered by:**
@@ -83,7 +84,10 @@ All hjkl navigation and single-key commands within modes remain unchanged.
 Press `Ctrl+h` to move left:
 - **In shell**: Focuses left Zellij pane
 - **In Neovim**: Moves to left Neovim split
+- **In any mode** (pane, tab, resize, etc.): Always navigates panes
 - **At edge**: Stays in place (no wrapping)
+
+**Key Feature**: `Ctrl+hjkl` works in ALL Zellij modes except locked mode. This means you can always navigate between panes, even when you're in pane mode, tab mode, resize mode, etc. You never get "stuck" unable to switch panes!
 
 **Resizing** (Neovim only):
 - `Alt+hjkl` resizes Neovim splits
@@ -149,7 +153,10 @@ Choose your preferred method:
 - [ ] **In Neovim**: `Ctrl+hjkl` navigates between Neovim splits
 - [ ] **Shell to Neovim**: Create 2 panes (shell + nvim), use `Ctrl+h/l` to switch between them
 - [ ] **Inside Neovim**: Create splits with `:split` and `:vsplit`, use `Ctrl+hjkl` to navigate
-- [ ] **Seamless feel**: Navigation feels smooth and predictable in both contexts
+- [ ] **In pane mode**: Press `Ctrl+Space`, then `Ctrl+hjkl` should still navigate panes (not just hjkl)
+- [ ] **In tab mode**: Press `Ctrl+t`, then `Ctrl+hjkl` should still navigate panes
+- [ ] **In resize mode**: Press `Ctrl+n`, then `Ctrl+hjkl` should still navigate panes (not resize)
+- [ ] **Seamless feel**: Navigation feels smooth and predictable in both contexts and all modes
 
 ### System Integration
 - [ ] `Alt+hjkl` moves between application windows (Aerospace, not captured by Zellij)
