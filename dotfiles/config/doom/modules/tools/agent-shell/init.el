@@ -10,8 +10,8 @@
   (setq agent-shell-term-term-name "eterm-color")
   (setq agent-shell-term-program "/bin/bash")
   (setq agent-shell-term-args '("-c" "exec bash"))
-  (setq agent-shell-anothropic-autentication (agent-shell-anthropic-make-authentication :api-key (lambda () (get-env "ANTOPIC_API_KEY"))))
   :config
+  (setq agent-shell-anothropic-autentication (agent-shell-anthropic-make-authentication :api-key (lambda () (get-env "ANTOPIC_API_KEY"))))
   (agent-shell-mode 1)
   ;; Optional: Enable acp for auto-completion in agent shells
   (use-package acp

@@ -19,6 +19,7 @@
 ;;
 ;;; Code:
 (use-package! wakatime-mode
+  :disabled
   :ensure t
   :config
   (setq wakatime-api-key (getenv "WAKATIME_API_KEY"))

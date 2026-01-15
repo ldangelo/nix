@@ -19,11 +19,11 @@ let my-emacs = pkgs.emacs-macport.override {
   );
 in
 {
-  home.file.".config/emacs" = {
-      source=../../../dotfiles/config/emacs;
-      recursive=true;
-  };
-
+  # home.file.".config/emacs" = {
+  #     source=../../../dotfiles/config/emacs;
+  #     recursive=true;
+  # };
+  #
   home.file.".config/doom" = {
     source=../../../dotfiles/config/doom;
     recursive=true;
