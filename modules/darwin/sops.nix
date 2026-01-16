@@ -28,4 +28,9 @@
     owner = "ldangelo";
     mode = "0400";
   };
+
+  sops.secrets.openrouter_api_key = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
 }
