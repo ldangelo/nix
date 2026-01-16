@@ -47,7 +47,7 @@
       pkgs.devbox
       pkgs.bat
 #      pkgs.devpod
-      pgks.pizauth
+      pkgs.pizauth
       pkgs.helix
       pkgs.raycast
 #      pkgs.warp-terminal

@@ -1,14 +1,14 @@
 { pkgs, environment, ... }: {
   # output .mbsyncrc file
-  programs.mbsync = {
-    enable = true;
-    package = pkgs.isync;  # TODO: isync-oauth2 doesn't exist in nixpkgs, may need custom overlay for OAuth2 support
-    extraConfig = ''
-     # Keeps timestamp mased message sorting intactt
-     CopyArrivalDate yes
-     SyncState *
-'';
-  };
+   programs.mbsync = {
+     enable = true;
+     package = pkgs.isync-oauth2;  # TODO: isync-oauth2 doesn't exist in nixpkgs, may need custom overlay for OAuth2 support
+     extraConfig = ''
+      # Keeps timestamp mased message sorting intactt
+      CopyArrivalDate yes
+      SyncState *
+ '';
+   };
 
   programs.msmtp.enable = true;
   programs.notmuch = {
