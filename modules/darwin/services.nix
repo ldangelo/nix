@@ -75,6 +75,25 @@
     };
   };
 
+  # pizauth: authentication proxy
+  launchd.daemons.pizauth = {
+    serviceConfig = {
+      Label = "com.ldangelo.pizauth";
+      ProgramArguments = [
+        "pizauth"
+        "serve"
+      ];
+      KeepAlive = true;
+      RunAtLoad = true;
+      StandardOutPath = "/var/log/pizauth.out.log";
+      StandardErrorPath = "/var/log/pizauth.err.log";
+      ProcessType = "Interactive";
+      Nice = -20;
+      UserName = "root";
+      GroupName = "wheel";
+    };
+  };
+
   # Jankyboarders: enable
   services.jankyborders = {
       enable = true;
@@ -83,4 +102,6 @@
       active_color =  "0xffe2e2e3";
       inactive_color = "0xff414550";
     };
+
+
 }
