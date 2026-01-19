@@ -1,235 +1,351 @@
-# Zellij Keybinding Changes
+# Zellij Keybindings Reference
+
+## Leader Key System (Ctrl+A)
+
+Zellij uses a **leader key system** similar to tmux/screen. Press `Ctrl+A` followed by a command key to perform operations. This frees up most Ctrl keys for shell and terminal use.
+
+### Core Concepts
+
+- **Leader**: `Ctrl+A` - Entry point for all Zellij operations
+- **Seamless Navigation**: `Ctrl+hjkl` - Navigate between Zellij panes AND Neovim splits without entering a mode
+- **Essential Shortcuts**: `Ctrl+G` (lock), `Ctrl+S` (scroll), `Ctrl+Q` (quit) - Frequently used, remain as direct Ctrl shortcuts
+
+---
+
+## Quick Reference Card
+
+### Essential Direct Shortcuts (No Leader)
+
+| Keybinding | Action | Description |
+|-----------|--------|-------------|
+| `Ctrl+h/j/k/l` | Navigate | Seamless navigation (works in Zellij AND Neovim) |
+| `Ctrl+G` | Lock mode | Passthrough mode - send all keys to underlying app |
+| `Ctrl+S` | Scroll mode | Enter scrollback mode |
+| `Ctrl+Q` | Quit | Quit Zellij |
+
+### Leader Key Operations (Ctrl+A + key)
+
+After pressing `Ctrl+A`, press one of these keys:
+
+#### Pane Operations
+| Key | Action | Description |
+|-----|--------|-------------|
+| `n` | New pane | Create horizontal pane |
+| `d` | New pane down | Create pane below |
+| `r` | New pane right | Create pane to the right |
+| `x` | Close pane | Close focused pane |
+| `f` | Fullscreen | Toggle pane fullscreen |
+| `z` | Zoom | Toggle pane fullscreen (tmux compat) |
+| `w` | Float | Toggle floating panes |
+| `e` | Embed/Float | Toggle pane embed/floating |
+| `p` | Pane mode | Enter pane mode for more operations |
+| `h/j/k/l` | Quick focus | Focus left/down/up/right pane |
+| `"` | Split down | Create pane below (tmux compat) |
+| `%` | Split right | Create pane right (tmux compat) |
+
+#### Tab Operations
+| Key | Action | Description |
+|-----|--------|-------------|
+| `t` | New tab | Create new tab |
+| `c` | New tab | Create new tab (tmux compat) |
+| `,` | Rename tab | Rename current tab |
+| `Tab` | Tab mode | Enter tab mode for more operations |
+
+#### Mode Entries
+| Key | Action | Description |
+|-----|--------|-------------|
+| `R` | Resize mode | Enter resize mode (capital R) |
+| `M` | Move mode | Enter move mode (capital M) |
+| `S` | Session mode | Enter session mode (capital S) |
+| `[` | Scroll mode | Enter scroll mode (tmux compat) |
+
+#### Layout & Session
+| Key | Action | Description |
+|-----|--------|-------------|
+| `Space` | Next layout | Cycle to next swap layout |
+| `D` | Detach | Detach from session (capital D) |
+
+#### Special
+| Key | Action | Description |
+|-----|--------|-------------|
+| `Ctrl+A` | Literal Ctrl+A | Sends literal Ctrl+A to terminal |
+| `Esc` | Cancel | Exit leader mode |
+
+---
+
+## Detailed Mode Documentation
+
+### Normal Mode (Default)
+
+This is the default mode. Only essential shortcuts are active:
+- `Ctrl+hjkl` - Seamless navigation
+- `Ctrl+G` - Lock mode
+- `Ctrl+S` - Scroll mode  
+- `Ctrl+Q` - Quit
+- `Ctrl+A` - Enter leader mode
+
+### Locked Mode (Ctrl+G)
+
+Passthrough mode - all keys go to the underlying application.
+
+**Purpose**: Useful when you need to use an application that conflicts with Zellij bindings (e.g., another terminal multiplexer, vim in insert mode with ctrl mappings).
+
+**Exit**: `Ctrl+G`
+
+### Leader Mode (Ctrl+A)
+
+Entry point for all Zellij operations. See "Leader Key Operations" table above.
+
+**Exit**: `Esc` or `Ctrl+A`
+
+### Pane Mode (Ctrl+A p)
+
+Advanced pane management operations.
+
+| Key | Action |
+|-----|--------|
+| `h/j/k/l` or arrows | Focus pane |
+| `n` | New pane (horizontal) |
+| `d` | New pane down |
+| `r` | New pane right |
+| `s` | New pane stacked |
+| `x` | Close focused pane |
+| `f` | Toggle fullscreen |
+| `w` | Toggle floating panes |
+| `e` | Toggle pane embed/floating |
+| `i` | Toggle pane pinned |
+| `z` | Toggle pane frames |
+| `c` | Rename pane |
+| `p` | Switch focus between panes |
+| `Esc` / `Ctrl+A` | Exit to normal mode |
+
+### Tab Mode (Ctrl+A Tab)
+
+Advanced tab management operations.
+
+| Key | Action |
+|-----|--------|
+| `h/j/k/l` or arrows | Navigate tabs |
+| `1-9` | Go to tab 1-9 |
+| `n` | New tab |
+| `x` | Close tab |
+| `r` | Rename tab |
+| `s` | Toggle active sync tab |
+| `b` / `[` / `]` | Break pane operations |
+| `Tab` | Toggle between last two tabs |
+| `Esc` / `Ctrl+A` | Exit to normal mode |
+
+### Resize Mode (Ctrl+A R)
+
+Resize panes using hjkl keys.
+
+| Key | Action |
+|-----|--------|
+| `h/j/k/l` or arrows | Increase size in direction |
+| `H/J/K/L` | Decrease size in direction (uppercase) |
+| `+` / `=` | Increase size |
+| `-` | Decrease size |
+| `Esc` / `Ctrl+A` | Exit to normal mode |
+
+**Tip**: Hold keys to continuously resize
+
+### Move Mode (Ctrl+A M)
+
+Move panes to different positions.
+
+| Key | Action |
+|-----|--------|
+| `h/j/k/l` or arrows | Move pane in direction |
+| `n` / `Tab` | Move pane (cycling) |
+| `p` | Move pane backwards |
+| `Esc` / `Ctrl+A` | Exit to normal mode |
+
+### Scroll Mode (Ctrl+S or Ctrl+A [)
+
+Navigate through scrollback buffer.
+
+| Key | Action |
+|-----|--------|
+| `h/j/k/l` or arrows | Scroll |
+| `u` / `d` | Half-page up/down |
+| `Ctrl+B` / `Ctrl+F` | Page up/down |
+| `PageUp` / `PageDown` | Page navigation |
+| `s` | Enter search mode |
+| `e` | Edit scrollback in $EDITOR |
+| `Ctrl+C` | Scroll to bottom and exit |
+| `Ctrl+S` | Exit to normal mode |
+
+### Search Mode (From scroll mode: s)
+
+Search within scrollback buffer.
+
+| Key | Action |
+|-----|--------|
+| `n` | Search down (next) |
+| `p` | Search up (previous) |
+| `c` | Toggle case sensitivity |
+| `w` | Toggle whole word |
+| `o` | Toggle options |
+| `Esc` | Back to scroll mode |
+| `Ctrl+C` | Scroll to bottom and exit |
+
+### Session Mode (Ctrl+A S)
+
+Session management and plugins.
+
+| Key | Action |
+|-----|--------|
+| `w` | Session manager (welcome screen) |
+| `a` | About plugin |
+| `c` | Configuration plugin |
+| `p` | Plugin manager |
+| `s` | Share session plugin |
+| `d` | Detach from session |
+| `Esc` / `Ctrl+A` | Exit to normal mode |
+
+---
+
+## Integration with Other Tools
+
+### Neovim Integration (vim-zellij-navigator)
+
+**Seamless Navigation**: `Ctrl+hjkl` works across both Zellij panes and Neovim splits without any mode switching. The vim-zellij-navigator plugin (v0.3.0) handles this intelligently.
+
+**How it works**:
+- When at the edge of a Neovim split, `Ctrl+h/j/k/l` moves to the adjacent Zellij pane
+- When in a Zellij pane without Neovim, it navigates between panes normally
+- No configuration needed - it just works!
+
+### Shell History (Atuin)
+
+**No conflicts!** 
+- Atuin uses `Ctrl+P` for history search
+- Zellij no longer uses `Ctrl+P` (moved to leader key system)
+- Zellij no longer uses `Ctrl+N` (freed for shell use)
+
+### WezTerm Terminal
+
+WezTerm handles:
+- `Cmd+hjkl` - WezTerm pane resizing
+- `Cmd+Space` - WezTerm leader key
+- `Cmd+t` - New WezTerm tab
+
+Zellij handles:
+- `Ctrl+A` - Zellij leader key
+- `Ctrl+hjkl` - Seamless navigation
+- Pane/tab operations through leader key
+
+**No conflicts** - Clean separation of concerns.
+
+### AeroSpace Window Manager
+
+AeroSpace uses Alt key for all window management, leaving Ctrl completely free for Zellij and terminal operations.
+
+**No conflicts** - Perfect coexistence.
+
+---
+
+## Conflict Resolution History
+
+### Why Leader Key (Ctrl+A)?
+
+**Problems with modal Ctrl keys** (old system):
+- `Ctrl+N` - Conflicted with zsh history navigation
+- `Ctrl+P` - Conflicted with Atuin shell history
+- `Ctrl+T` - Conflicted with terminal expectations
+- `Ctrl+Space` - Generic, not memorable
+- `Ctrl+O` - Vim jumplist conflict
+- `Ctrl+B` - Scroll conflict
+
+**Solution**: Leader key system
+- **Only ONE Ctrl key used**: `Ctrl+A`
+- All other Ctrl keys free for shell, vim, terminal
+- Mnemonic second keys (n=new, r=resize, etc.)
+- Familiar to tmux/screen users
+
+### Why Ctrl+A (not Ctrl+B)?
+
+- `Ctrl+B` is tmux default (we have tmux compat mode anyway)
+- `Ctrl+A` is screen default and more ergonomic (left pinky)
+- `Ctrl+A` + `Ctrl+A` sends literal Ctrl+A if needed
+- More natural for left-handed leader key
+
+---
+
+## Tips & Tricks
+
+### Quick Pane Creation
+`Ctrl+A d` - New pane below (mnemonic: **d**own)
+`Ctrl+A r` - New pane right (mnemonic: **r**ight)
+
+### Fullscreen Toggle
+`Ctrl+A f` - Quickly maximize a pane, then exit back (mnemonic: **f**ullscreen)
+
+### Tab Navigation
+`Ctrl+A 1-9` - Jump directly to tab 1-9
+
+### Emergency Exit
+`Ctrl+Q` - Quick quit without confirmation
+
+### Literal Ctrl+A
+`Ctrl+A Ctrl+A` - Sends literal Ctrl+A to shell (for bash/zsh beginning-of-line)
+
+### Tmux Users
+Most tmux bindings work! Just use `Ctrl+A` instead of `Ctrl+B`:
+- `Ctrl+A "` - Split down (like tmux)
+- `Ctrl+A %` - Split right (like tmux)
+- `Ctrl+A c` - New tab (like tmux)
+- `Ctrl+A ,` - Rename tab (like tmux)
+- `Ctrl+A [` - Scroll mode (like tmux)
+
+---
+
+## Default Layout
+
+The default layout launches:
+- **Left pane**: Neovim (`nvim .`)
+- **Right pane**: Claude CLI (`claude --continue`)
+- **Split**: Horizontal
+
+---
+
+## Configuration Files
+
+- **Main config**: `/Users/ldangelo/nix/modules/home-manager/zellij/config.kdl`
+- **Default layout**: `/Users/ldangelo/nix/modules/home-manager/zellij/layouts/default.kdl`
+- **This documentation**: `/Users/ldangelo/nix/ZELLIJ_KEYBINDINGS.md`
+
+---
+
+## Theme
+
+**Catppuccin Macchiato** - Matches your Neovim and WezTerm theme for visual consistency.
+
+---
+
+## Plugin System
+
+Loaded plugins:
+- `vim-zellij-navigator` (v0.3.0) - Seamless Neovim/Zellij navigation
+- `about` - About dialog
+- `compact-bar` - Minimal status bar
+- `configuration` - Runtime configuration
+- `plugin-manager` - Plugin management
+- `session-manager` - Session persistence
+- `status-bar` - Status information
+- `strider` - File picker
+- `tab-bar` - Tab display
+- `welcome-screen` - Welcome/session manager
+
+---
 
 ## Summary
 
-All Alt key bindings have been removed from Zellij to eliminate conflicts with Aerospace window manager. The configuration now uses a hybrid approach with:
-- **Seamless Neovim navigation** via vim-zellij-navigator (Ctrl+hjkl)
-- **Ctrl-based modal system** for advanced operations (Ctrl+Space for pane mode)
-- **Ctrl+Shift quick shortcuts** for common actions
-- **Atuin integration** - Ctrl+P now works for shell history (pane mode moved to Ctrl+Space)
+**Philosophy**: 
+- **One leader key** (`Ctrl+A`) for all operations
+- **Seamless navigation** (`Ctrl+hjkl`) works everywhere
+- **Essential shortcuts** remain direct (`Ctrl+G`, `Ctrl+S`, `Ctrl+Q`)
+- **Zero conflicts** with shell, vim, terminal, window manager
+- **Mnemonic keys** after leader (intuitive, easy to remember)
 
-## What Changed
-
-### Removed (Conflicted with Aerospace)
-- `Alt+hjkl` / `Alt+arrows` - Navigation (now exclusively Aerospace)
-- `Alt+f` - Toggle floating (now exclusively Aerospace fullscreen)
-- `Alt+o/i` - Move tabs (conflicted with Aerospace workspaces)
-- `Alt+n` - New pane (conflicted with Aerospace workspace N)
-- `Alt+p` - Toggle pane group (conflicted with Aerospace workspace P)
-- `Alt+Shift+p` - Toggle group marking (conflicted with Aerospace)
-- `Alt+[/]` - Swap layouts (avoided future conflicts)
-- `Alt++/-/=` - Resize (avoided future conflicts)
-
-### Added (New Quick Shortcuts)
-
-**Pane Operations:**
-- `Ctrl+Shift+n` - New pane
-- `Ctrl+Shift+d` - New pane down
-- `Ctrl+Shift+r` - New pane right
-- `Ctrl+Shift+x` - Close focused pane
-- `Ctrl+Shift+f` - Toggle fullscreen
-- `Ctrl+Shift+w` - Toggle floating panes
-- `Ctrl+Shift+e` - Toggle pane embed/floating
-
-**Tab Operations:**
-- `Ctrl+Shift+t` - New tab
-- `Ctrl+Shift+q` - Close tab
-- `Ctrl+Shift+Left` - Previous tab
-- `Ctrl+Shift+Right` - Next tab
-- `Ctrl+Shift+Space` - Toggle last tab
-
-**Quick Navigation:**
-- `Ctrl+Shift+h` - Focus left pane
-- `Ctrl+Shift+j` - Focus down pane
-- `Ctrl+Shift+k` - Focus up pane
-- `Ctrl+Shift+l` - Focus right pane
-
-**Layout:**
-- `Ctrl+Shift+[` - Previous layout
-- `Ctrl+Shift+]` - Next layout
-
-### Preserved (No Changes)
-
-**Modal System (Ctrl-based):**
-- `Ctrl+Space` → Pane mode (changed from Ctrl+P to avoid Atuin conflict)
-- `Ctrl+t` → Tab mode
-- `Ctrl+n` → Resize mode
-- `Ctrl+h` → Move mode (removed, use pane mode instead)
-- `Ctrl+s` → Scroll mode
-- `Ctrl+b` → Tmux compatibility mode
-- `Ctrl+o` → Session mode
-- `Ctrl+g` → Locked mode (pass-through)
-- `Ctrl+q` → Quit
-
-**Within-Mode Bindings:**
-All hjkl navigation and single-key commands within modes remain unchanged.
-
-## ⭐ Seamless Neovim Integration (NEW!)
-
-### The Magic: Ctrl+hjkl Works Everywhere!
-
-**`Ctrl+h/j/k/l`** now provides seamless navigation across Zellij and Neovim:
-
-- **In a shell/app**: Moves between Zellij panes
-- **Inside Neovim**: Automatically navigates Neovim splits
-- **In ANY Zellij mode**: Always switches panes (except locked mode)
-- **No mode switching needed** - The plugin intelligently detects context!
-
-**Powered by:**
-- **Zellij**: [vim-zellij-navigator v0.3.0](https://github.com/hiasr/vim-zellij-navigator)
-- **Neovim**: [smart-splits.nvim](https://github.com/mrjones2014/smart-splits.nvim)
-
-### How It Works
-
-Press `Ctrl+h` to move left:
-- **In shell**: Focuses left Zellij pane
-- **In Neovim**: Moves to left Neovim split
-- **In any mode** (pane, tab, resize, etc.): Always navigates panes
-- **At edge**: Stays in place (no wrapping)
-
-**Key Feature**: `Ctrl+hjkl` works in ALL Zellij modes except locked mode. This means you can always navigate between panes, even when you're in pane mode, tab mode, resize mode, etc. You never get "stuck" unable to switch panes!
-
-**Resizing** (Neovim only):
-- `Alt+hjkl` resizes Neovim splits
-- Works when Neovim has focus (Neovim captures keys before Aerospace)
-
-## Atuin Integration (Shell History)
-
-### Ctrl+P Conflict Resolution
-
-**Problem**: Atuin uses `Ctrl+P` for history navigation (up arrow equivalent), which conflicted with Zellij's pane mode.
-
-**Solution**: Moved Zellij pane mode to **`Ctrl+Space`** instead.
-
-**Why Ctrl+Space?**
-- ✅ Industry standard for leader/prefix keys (tmux, Spacemacs)
-- ✅ No conflicts with shell commands or Atuin
-- ✅ Ergonomic and easy to press
-- ✅ Keeps your Atuin muscle memory intact
-
-**Your Atuin workflow now works perfectly**:
-- `Ctrl+P` → Atuin history (up)
-- `Ctrl+N` → Atuin history (down)
-- `Ctrl+R` → Atuin search
-- No need to enter locked mode!
-
-## New Workflow
-
-### System-Level Navigation (Aerospace)
-Use `Alt+hjkl` to move between application windows - this now works everywhere without conflicts.
-
-### Terminal-Level Navigation (Zellij)
-Choose your preferred method:
-
-**Option 1: Quick Shortcuts (One Keystroke)**
-- `Ctrl+Shift+hjkl` - Jump between panes immediately
-- `Ctrl+Shift+n` - Create new pane immediately
-- `Ctrl+Shift+f` - Toggle fullscreen immediately
-
-**Option 2: Modal System (More Operations)**
-- `Ctrl+Space` then `hjkl` - Navigate panes
-- `Ctrl+Space` then `n` - New pane
-- `Ctrl+Space` then `f` - Toggle fullscreen
-- `Esc` or `Enter` - Return to normal mode
-
-### Special Cases
-- **Locked Mode**: `Ctrl+g` - Pass all keys through to underlying application (for nvim, htop, etc.)
-- **Tmux Mode**: `Ctrl+b` - Tmux-compatible keybindings
-
-## Conflict Resolution
-
-| Key Combination | Layer | Purpose |
-|----------------|-------|---------|
-| `Alt+hjkl` | System (Aerospace) | Window focus navigation |
-| `Ctrl+hjkl` | **Seamless (Zellij + Neovim)** | **Smart navigation across panes and splits** |
-| `Ctrl+Shift+hjkl` | Terminal (Zellij) | Direct pane focus (no Neovim integration) |
-| `Alt+hjkl` | Application (Neovim) | Split resizing |
-| `Ctrl+Space/t/n/s/b/o` | Terminal (Zellij) | Mode switches |
-
-## Testing Checklist
-
-### Seamless Navigation (Priority)
-- [ ] **In shell**: `Ctrl+hjkl` navigates between Zellij panes
-- [ ] **In Neovim**: `Ctrl+hjkl` navigates between Neovim splits
-- [ ] **Shell to Neovim**: Create 2 panes (shell + nvim), use `Ctrl+h/l` to switch between them
-- [ ] **Inside Neovim**: Create splits with `:split` and `:vsplit`, use `Ctrl+hjkl` to navigate
-- [ ] **In pane mode**: Press `Ctrl+Space`, then `Ctrl+hjkl` should still navigate panes (not just hjkl)
-- [ ] **In tab mode**: Press `Ctrl+t`, then `Ctrl+hjkl` should still navigate panes
-- [ ] **In resize mode**: Press `Ctrl+n`, then `Ctrl+hjkl` should still navigate panes (not resize)
-- [ ] **Seamless feel**: Navigation feels smooth and predictable in both contexts and all modes
-
-### System Integration
-- [ ] `Alt+hjkl` moves between application windows (Aerospace, not captured by Zellij)
-- [ ] `Alt+f` toggles fullscreen (Aerospace, works everywhere)
-- [ ] Aerospace workspace switches work (`Alt+1`, `Alt+d`, `Alt+c`, etc.)
-
-### Zellij Quick Shortcuts
-- [ ] `Ctrl+Shift+hjkl` navigates between Zellij panes (direct, no Neovim integration)
-- [ ] `Ctrl+Shift+n` creates new Zellij pane
-- [ ] `Ctrl+Shift+t` creates new tab
-- [ ] `Ctrl+Shift+f` toggles fullscreen
-
-### Modal System
-- [ ] `Ctrl+Space` then `hjkl` navigates in pane mode
-- [ ] `Ctrl+t` then `hjkl` navigates tabs
-- [ ] `Ctrl+n` then `hjkl` resizes panes
-- [ ] `Esc` or `Enter` exits modes
-
-### Neovim Resizing
-- [ ] Inside Neovim: `Alt+hjkl` resizes splits
-- [ ] Resizing works when Neovim has focus
-
-### Atuin Integration
-- [ ] `Ctrl+P` triggers Atuin history (up) - not captured by Zellij
-- [ ] `Ctrl+N` triggers Atuin history (down) - not captured by Zellij
-- [ ] `Ctrl+R` triggers Atuin search - works normally
-- [ ] Atuin keybindings work in all panes without entering locked mode
-
-### Edge Cases
-- [ ] `Ctrl+g` enters locked mode (all keys pass through)
-- [ ] No double-triggers or unexpected behavior
-- [ ] No conflicts between different keybinding layers
-
-## Files Modified
-
-- `modules/home-manager/zellij/config.kdl` - Added vim-zellij-navigator integration and keybindings
-- `dotfiles/config/nvim/lua/plugins/smart-splits/init.lua` - Enabled multiplexer integration
-- `dotfiles/config/nvim/lua/config/keymaps.lua` - Already configured with Ctrl+hjkl navigation
-
-## Configuration Location
-
-The active Zellij configuration is loaded from:
-```
-/Users/ldangelo/.config/zellij/config.kdl
-```
-
-## Rebuilding After Changes
-
-If you modify the nix configuration, rebuild with:
-```bash
-just deploy  # or sudo darwin-rebuild switch --flake .#Leos-MacBook-Pro
-```
-
-## Reverting Changes
-
-If needed, revert by:
-```bash
-git checkout HEAD~1 modules/home-manager/zellij/config.kdl
-just deploy
-```
-
-## Future Enhancements
-
-Consider these optional improvements:
-
-1. **WezTerm Cleanup**: Remove Alt bindings from WezTerm to match Zellij pattern
-2. **Cheat Sheet**: Create visual reference for muscle memory
-3. **Fine-tuning**: Adjust quick shortcuts based on usage patterns after 2-4 weeks
-4. **Custom Layouts**: Optimize default layout for your workflow
-
-## Reference
-
-- Implementation Plan: `~/.claude/plans/tranquil-crunching-sketch.md`
-- Aerospace Config: `dotfiles/config/aerospace/aerospace.toml`
-- Neovim Keymaps: `dotfiles/config/nvim/lua/config/keymaps.lua`
-- WezTerm Keybinds: `dotfiles/config/wezterm/keybinds.lua`
+**Result**: Clean, conflict-free, ergonomic terminal multiplexer that plays nicely with your entire workflow.
