@@ -20,11 +20,9 @@
     ./user.nix
     ./alias.nix
     ./nix-search-tv.nix
+    ./home.nix
     #     ./trash
-#    ./spacemacs.nix
-#    ./spacevim.nix
     ./borders
-    #     ./sketchybar
     ./zoxide.nix
     ./zellij
   ];
@@ -114,17 +112,19 @@
   fonts.fontconfig.enable = true;
 
   # Create .envrc file with API keys from sops secrets
-  home.file.".envrc".text = ''
-    # API keys loaded from sops secrets
-    export ANTHROPIC_API_KEY="$(cat /run/secrets/anthropic_api_key 2>/dev/null || echo "")"
-    #
-    # Commenting these out to use the gh auth workflow instead.
-    #
-    #
-    #export GITHUB_TOKEN="$(cat /run/secrets/github/token 2>/dev/null || echo "")"
-    #export GITHUB_FORTIUM_TOKEN="$(cat /run/secrets/github/fortium 2>/dev/null || echo "")"
-  '';
-
+#   home.file.".envrc".text = ''
+#     # API keys loaded from sops secrets
+#     export ANTHROPIC_API_KEY="$(cat /run/secrets/anthropic_api_key 2>/dev/null || echo "")"
+#     export OPENROUTER_API_KEY="$(cat /run/secrets/openrouter_api_key 2>/dev/null || echo "")"
+#     export SOPS_AGE_KEY_FIlE=~/.config/sops/age/keys.txt
+# #
+#     # Commenting these out to use the gh auth workflow instead.
+#     #
+#     #
+#     #export GITHUB_TOKEN="$(cat /run/secrets/github/token 2>/dev/null || echo "")"
+#     #export GITHUB_FORTIUM_TOKEN="$(cat /run/secrets/github/fortium 2>/dev/null || echo "")"
+#   '';
+#
   # To figure this out (in-case it changes) you can comment out the line and see what version it expected.
   home.stateVersion = "22.11";
 
