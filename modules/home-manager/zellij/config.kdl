@@ -154,9 +154,16 @@ keybinds clear-defaults=true {
             }
             SwitchToMode "normal"
         }
-        bind "d" { Detach; }
+//        bind "d" { Detach; }
         bind "Ctrl a" { SwitchToMode "normal"; }
         bind "esc" { SwitchToMode "normal"; }
+        bind "Ctrl h"  { MoveFocus "Left"; }
+        bind "Ctrl j"  { MoveFocus "Down"; }
+        bind "Ctrl k"  { MoveFocus "Up"; }
+        bind "Ctrl l"  { MoveFocus "Down"; }
+        bind "Super |"  { NewPane "Right"; SwitchToMode "normal"; }
+        bind "Super -"  { NewPane "down"; SwitchToMode "normal";  }
+        bind "Super M"  { ToggleFocusFullscreen; SwitchToMode "normal"; }
     }
 
     // =============================================================================
