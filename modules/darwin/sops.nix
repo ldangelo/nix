@@ -33,4 +33,9 @@
     owner = "ldangelo";
     mode = "0400";
   };
+
+  sops.secrets.mac_mail_key = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
 }

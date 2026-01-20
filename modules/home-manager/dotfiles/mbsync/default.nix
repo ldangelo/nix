@@ -30,7 +30,8 @@
         address = "ldangelo@mac.com";
         imap.host = "imap.mail.me.com";
         userName = "ldangelo@mac.com";
-        passwordCommand = "op item get mbsync-icloud --fields password";
+#        passwordCommand = "op item get mbsync-icloud --fields password";
+        passwordCommand = "cat /run/secrets/mac_mail_key";
         mbsync = {
           enable = true;
           create = "both";

@@ -38,14 +38,62 @@
     LazyVim = {
       url = "github:matadaniel/LazyVim-module";
       inputs.nixpkgs.follows = "nixpkgs";
-   };
+    };
 
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
     sops-nix.url = "github:Mic92/sops-nix";
   };
 
-  outputs = inputs@{ self, nixpkgs, catppuccin,nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv,... }:
-     flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv,... }:
+    let
+      common-overlays = [
+
+      (self: super: {
+        cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
+          pname = "cyrus-sasl-xoauth2";
+          version = "master";
+
+          src = super.pkgs.fetchFromGitHub {
+            owner = "moriyoshi";
+            repo = "cyrus-sasl-xoauth2";
+            rev = "master";
+            sha256 = "sha256-OlmHuME9idC0fWMzT4kY+YQ43GGch53snDq3w5v/cgk=";
+          };
+
+          nativeBuildInputs =
+            [ super.pkg-config super.automake super.autoconf super.libtool ];
+          propagatedBuildInputs = [ super.cyrus_sasl ];
+
+          buildPhase = ''
+            ./autogen.sh
+            ./configure
+          '';
+
+          installPhase = ''
+            make DESTDIR="$out" install
+          '';
+
+          meta = with super.pkgs.lib; {
+            homepage = "https://github.com/moriyoshi/cyrus-sasl-xoauth2";
+            description = "XOAUTH2 mechanism plugin for cyrus-sasl";
+          };
+        };
+
+        # https://github.com/NixOS/nixpkgs/issues/108480#issuecomment-1115108802
+        isync-oauth2 = super.buildEnv {
+          name = "isync-oauth2";
+          paths = [ super.isync ];
+          pathsToLink = [ "/bin" ];
+          nativeBuildInputs = [ super.makeWrapper ];
+          postBuild = ''
+            wrapProgram "$out/bin/mbsync" \
+              --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
+          '';
+        };
+      })
+      ];
+    in
+    flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "aarch64-darwin" ];
 
       perSystem = { system, pkgs, ... }: { };
@@ -64,6 +112,7 @@
               ./modules/darwin/default.nix
               home-manager.darwinModules.home-manager
               {
+                nixpkgs.overlays = common-overlays;
                 # Home-manager configuration as a nix-darwin module
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
@@ -79,17 +128,18 @@
         # --- Home Manager Standalone Config (optional) ---
         homeConfigurations = {
           "ldangelo" = home-manager.lib.homeManagerConfiguration {
-            pkgs = import nixpkgs;
+            pkgs = import nixpkgs { system = "aarch64-darwin"; };
             modules = [
               catppuccin.homeModules.catppuccin
               ./modules/home-manager/default.nix
               ./overlays
+              {
+                home.username = "ldangelo";
+                home.homeDirectory = "/Users/ldangelo";
+              }
             ];
-            home.username = "ldangelo";
-            home.homeDirectory = "/Users/ldangelo";
           };
         };
       };
     };
-    }
-
+}
