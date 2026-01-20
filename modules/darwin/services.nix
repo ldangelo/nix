@@ -81,7 +81,7 @@
       Label = "com.ldangelo.pizauth";
       ProgramArguments = [
         "pizauth"
-        "serve"
+        "server"
       ];
       KeepAlive = true;
       RunAtLoad = true;
