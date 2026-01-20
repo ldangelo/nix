@@ -33,6 +33,7 @@
     # lazyjj - not in nixpkgs yet
     maven                  # Java project management
     neovim
+    nil # nix lsp server
     # nuget - not in standard nixpkgs
     # openapi-generator - not directly available, use openapi-generator-cli
     openapi-generator-cli  # Generate clients/servers from OpenAPI
