@@ -441,8 +441,19 @@ Initialize dap for dotnet
 ;; the API key is stored in my authinfo
 (use-package! gptel
   :config
+  (setq openrouter (gptel-make-openai "OpenRouter"               ;Any name you want
+                     :host "openrouter.ai"
+                     :endpoint "/api/v1/chat/completions"
+                     :stream t
+                     :key "your-api-key"                   ;can be a function that returns the key
+                     :models '(openai/gpt-3.5-turbo
+                               mistralai/mixtral-8x7b-instruct
+                               meta-llama/codellama-34b-instruct
+                               codellama/codellama-70b-instruct
+                               google/palm-2-codechat-bison-32k
+                               google/gemini-pro)))
   (gptel-make-anthropic "Claude" :stream t :key (getenv "ANTHROPIC_API_KEY"))
-  (setq gptel-backend (gptel-make-anthropic "Claude" :stream t :key (getenv "ANTHROPIC_API_KEY"))))
+  (setq gptel-backend openrouter))
 #+end_src
 *** Elysium
 #+begin_src emacs-lisp :tangle no
