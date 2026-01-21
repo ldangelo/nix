@@ -320,8 +320,9 @@ plugins {
 
 // Plugins to load in the background when a new session starts
 load_plugins {
-  status-bar
-  tab-bar
+  strider { path "strider"; }
+  compact-bar { path "compact-bar"; }
+  session-manager { path "session-manager"; }
 }
 
 web_client {
@@ -329,5 +330,4 @@ web_client {
 }
 
 theme "catppuccin-macchiato"
-default_layout "default"
-layout_dir "layouts"
+scrollback_editor "/etc/proIles/per-user/ldangelo/bin/nvim"
