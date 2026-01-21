@@ -211,11 +211,19 @@ keybinds clear-defaults=true {
         // Session operations
         bind "D" { Detach; }  // Capital D for detach
 
-        // Workspace operations
-        bind "y" {
-            LaunchOrFocusPlugin "zellij-workspace" {
-                floating true
-                move_to_focused_tab true
+        // Layout operations - direct loading without plugin
+        bind "1" { NewTab { layout "simple"; name "simple"; }; SwitchToMode "normal"; }
+        bind "2" { NewTab { layout "editor"; name "editor"; }; SwitchToMode "normal"; }
+        bind "3" { NewTab { layout "dev"; name "dev"; }; SwitchToMode "normal"; }
+        bind "4" { NewTab { layout "claude_default"; name "claude"; }; SwitchToMode "normal"; }
+        bind "5" { NewTab { layout "monitor"; name "monitor"; }; SwitchToMode "normal"; }
+
+        // Layout help menu
+        bind "?" {
+            NewPane "down" {
+                command "sh"
+                args "-c" "printf '\n  ╔════════════════════════════════════════════╗\n  ║    ZELLIJ LAYOUT SHORTCUTS (Ctrl+A ...)   ║\n  ╠════════════════════════════════════════════╣\n  ║  1  →  Simple      Single shell pane      ║\n  ║  2  →  Editor      Neovim only            ║\n  ║  3  →  Dev         Editor + Git/Terminal  ║\n  ║  4  →  Claude      Neovim + Claude        ║\n  ║  5  →  Monitor     System monitoring      ║\n  ╠════════════════════════════════════════════╣\n  ║  ?  →  This help menu                     ║\n  ╚════════════════════════════════════════════╝\n\n  Press ENTER or ESC to close...\n' && read"
+                close_on_exit true
             }
             SwitchToMode "normal"
         }
@@ -324,10 +332,6 @@ plugins {
     tab-bar location="zellij:tab-bar"
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
-    }
-    zellij-workspace location="https://github.com/vdbulcke/zellij-workspace/releases/latest/download/zellij-workspace.wasm" {
-        replace_current_session false
-        debug false
     }
 }
 
