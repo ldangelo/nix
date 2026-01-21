@@ -320,12 +320,14 @@ plugins {
 
 // Plugins to load in the background when a new session starts
 load_plugins {
+  status-bar
+  tab-bar
 }
 
 web_client {
     font "monospace"
 }
 
-theme "cattupuccin-macchiato"
+theme "catppuccin-macchiato"
 default_layout "default"
 layout_dir "layouts"
