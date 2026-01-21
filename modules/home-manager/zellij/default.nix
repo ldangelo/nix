@@ -10,14 +10,14 @@
     # Zellij Workspace Configuration
     # This is the default workspace file for your home directory
     # Create project-specific .zellij-workspace files in your project roots
-    # Paths should be absolute (starting with /) or relative to where Zellij is launched
+    # Paths must be RELATIVE to where Zellij is launched (current working directory)
 
-    # Standard layouts (absolute paths work from anywhere)
-    ${config.home.homeDirectory}/.config/zellij/layouts/simple.kdl
-    ${config.home.homeDirectory}/.config/zellij/layouts/editor.kdl
-    ${config.home.homeDirectory}/.config/zellij/layouts/dev.kdl
-    ${config.home.homeDirectory}/.config/zellij/layouts/claude_default.kdl
-    ${config.home.homeDirectory}/.config/zellij/layouts/monitor.kdl
+    # Standard layouts - relative paths from home directory
+    .config/zellij/layouts/simple.kdl
+    .config/zellij/layouts/editor.kdl
+    .config/zellij/layouts/dev.kdl
+    .config/zellij/layouts/claude_default.kdl
+    .config/zellij/layouts/monitor.kdl
   '';
 
   programs.zellij = {
