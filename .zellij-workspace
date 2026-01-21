@@ -1,9 +1,10 @@
 # Zellij Workspace Configuration for nix project
-# Paths to available layouts - use absolute paths for reliability
+# Paths must be RELATIVE to the directory where Zellij was launched
 
 # Standard layouts from ~/.config/zellij/layouts/
-/Users/ldangelo/.config/zellij/layouts/claude_default.kdl
-/Users/ldangelo/.config/zellij/layouts/simple.kdl
-/Users/ldangelo/.config/zellij/layouts/editor.kdl
-/Users/ldangelo/.config/zellij/layouts/dev.kdl
-/Users/ldangelo/.config/zellij/layouts/monitor.kdl
+# These paths are relative from /Users/ldangelo/nix
+../.config/zellij/layouts/claude_default.kdl
+../.config/zellij/layouts/simple.kdl
+../.config/zellij/layouts/editor.kdl
+../.config/zellij/layouts/dev.kdl
+../.config/zellij/layouts/monitor.kdl

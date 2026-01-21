@@ -1,14 +1,17 @@
 # Zellij Workspace Configuration
 # This file defines which layouts are available in the workspace selector (Ctrl+A y)
 # Place this file as `.zellij-workspace` in your project directory
-# Each line should contain a relative path to a layout file
+# IMPORTANT: Paths must be RELATIVE to where you launch Zellij (your CWD)
 
-# Standard layouts (from ~/.config/zellij/layouts/)
-.config/zellij/layouts/simple.kdl
-.config/zellij/layouts/editor.kdl
-.config/zellij/layouts/dev.kdl
-.config/zellij/layouts/claude_default.kdl
-.config/zellij/layouts/monitor.kdl
+# Example 1: If you launch Zellij from your HOME directory (/Users/username)
+# .config/zellij/layouts/simple.kdl
+# .config/zellij/layouts/dev.kdl
 
-# Project-specific layouts (create these in your project)
+# Example 2: If you launch Zellij from a subdirectory (e.g., ~/projects/myapp)
+# Use ../ to go up to home, then navigate to layouts
+# ../../.config/zellij/layouts/simple.kdl
+# ../../.config/zellij/layouts/dev.kdl
+
+# Example 3: Project-specific layouts in your project
 # .zellij/my-project-layout.kdl
+# layouts/custom-layout.kdl
