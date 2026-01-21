@@ -211,6 +211,15 @@ keybinds clear-defaults=true {
         // Session operations
         bind "D" { Detach; }  // Capital D for detach
 
+        // Workspace operations
+        bind "y" {
+            LaunchOrFocusPlugin "zellij-workspace" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "normal"
+        }
+
         // Exit leader mode
         bind "Ctrl a" { Write 2; SwitchToMode "normal"; }  // Ctrl+A Ctrl+A sends literal Ctrl+A
         bind "esc" { SwitchToMode "normal"; }
@@ -315,6 +324,10 @@ plugins {
     tab-bar location="zellij:tab-bar"
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
+    }
+    zellij-workspace location="https://github.com/vdbulcke/zellij-workspace/releases/latest/download/zellij-workspace.wasm" {
+        replace_current_session false
+        debug false
     }
 }
 
