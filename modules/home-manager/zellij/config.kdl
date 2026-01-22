@@ -176,7 +176,7 @@ keybinds clear-defaults=true {
         bind "r" { NewPane "right"; SwitchToMode "normal"; }
         bind "x" { CloseFocus; SwitchToMode "normal"; }
         bind "f" {
-            Run "sh" "-c" "file=$(fd --type f --hidden --exclude .git | fzf --height 100% --bind 'ctrl-n:down,ctrl-p:up' --preview 'bat --color=always --style=numbers --line-range=:500 {}' --preview-window 'right:60%:wrap') || exit 0; if [ -n \"$file\" ]; then (sleep 0.1; zellij action write-chars \"nvim \\\"$file\\\"\"; zellij action write 13) & fi; exit 0" {
+            Run "sh" "-c" "chosen=$(mktemp); yazi --chooser-file=\"$chosen\"; if [ -f \"$chosen\" ]; then file=$(cat \"$chosen\"); rm -f \"$chosen\"; if [ -n \"$file\" ]; then (sleep 0.1; zellij action write-chars \"nvim \\\"$file\\\"\"; zellij action write 13) &; fi; fi; exit 0" {
                 floating true
                 x "10%"
                 y "10%"
@@ -232,7 +232,7 @@ keybinds clear-defaults=true {
         bind "?" {
             NewPane "down" {
                 command "sh"
-                args "-c" "printf '\n  ╔══════════════════════════════════════════════════╗\n  ║    ZELLIJ SHORTCUTS (Ctrl+Space ...)            ║\n  ╠══════════════════════════════════════════════════╣\n  ║  1  →  Simple      Single shell pane            ║\n  ║  2  →  Editor      Neovim only                  ║\n  ║  3  →  Dev         Editor + Git/Terminal        ║\n  ║  4  →  Claude      Neovim + Claude              ║\n  ║  5  →  Monitor     System monitoring            ║\n  ║  f  →  Files       fzf picker (Ctrl-N/P nav)    ║\n  ╠══════════════════════════════════════════════════╣\n  ║  Direct: Ctrl+O (sessions), Ctrl+S (scroll)     ║\n  ║  ?  →  This help menu                           ║\n  ╚══════════════════════════════════════════════════╝\n\n  Press ENTER or ESC to close...\n' && read"
+                args "-c" "printf '\n  ╔══════════════════════════════════════════════════╗\n  ║    ZELLIJ SHORTCUTS (Ctrl+Space ...)            ║\n  ╠══════════════════════════════════════════════════╣\n  ║  1  →  Simple      Single shell pane            ║\n  ║  2  →  Editor      Neovim only                  ║\n  ║  3  →  Dev         Editor + Git/Terminal        ║\n  ║  4  →  Claude      Neovim + Claude              ║\n  ║  5  →  Monitor     System monitoring            ║\n  ║  f  →  Files       Yazi file manager (hjkl)     ║\n  ╠══════════════════════════════════════════════════╣\n  ║  Direct: Ctrl+O (sessions), Ctrl+S (scroll)     ║\n  ║  ?  →  This help menu                           ║\n  ╚══════════════════════════════════════════════════╝\n\n  Press ENTER or ESC to close...\n' && read"
                 close_on_exit true
             }
             SwitchToMode "normal"

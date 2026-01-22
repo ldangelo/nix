@@ -60,6 +60,7 @@
     fd                     # Simple alternative to find
     fzf                    # Fuzzy finder
     htop                   # Process viewer
+    yazi                   # Modern terminal file manager
     # ifstat - not in nixpkgs
     starship               # Cross-shell prompt
     terminal-notifier      # macOS notifications from CLI
