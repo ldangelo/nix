@@ -2,8 +2,8 @@
 	yazi-plugins = pkgs.fetchFromGitHub {
 		owner = "yazi-rs";
 		repo = "plugins";
-		rev = "...";
-		hash = "sha256-...";
+		rev = "de339764c315059014245a8f5245298a2d29f7e3";
+		hash = "sha256-60xxQZlXsKs7F/TJdRkhgZpTXas6rUvJUb0rvwZIozo=";
 	};
 in {
 	programs.yazi = {
@@ -28,8 +28,8 @@ in {
 			starship = pkgs.fetchFromGitHub {
 				owner = "Rolv-Apneseth";
 				repo = "starship.yazi";
-				rev = "...";
-				sha256 = "sha256-...";
+				rev = "eca186171c5f2011ce62712f95f699308251c749";
+				sha256 = "sha256-xcz2+zepICZ3ji0Hm0SSUBSaEpabWUrIdG7JmxUl/ts=";
 			};
 		};
 
