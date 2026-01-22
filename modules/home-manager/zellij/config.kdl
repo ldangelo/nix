@@ -176,13 +176,12 @@ keybinds clear-defaults=true {
         bind "r" { NewPane "right"; SwitchToMode "normal"; }
         bind "x" { CloseFocus; SwitchToMode "normal"; }
         bind "f" {
-            Run "sh" "-c" "chosen=$(mktemp); yazi --chooser-file=\"$chosen\"; if [ -f \"$chosen\" ]; then file=$(cat \"$chosen\"); rm -f \"$chosen\"; if [ -n \"$file\" ]; then (sleep 0.1; zellij action write-chars \"nvim \\\"$file\\\"\"; zellij action write 13) &; fi; fi; exit 0" {
+            Run "zsh" "-c" "chosen=$(mktemp); yazi --chooser-file=\"$chosen\"; if [ -s \"$chosen\" ]; then file=$(cat \"$chosen\"); rm -f \"$chosen\"; zellij action write-chars \"nvim \\\"$file\\\"\"; zellij action write 13; else rm -f \"$chosen\"; fi" {
                 floating true
                 x "10%"
                 y "10%"
                 width "80%"
                 height "80%"
-                close_on_exit true
             }
             SwitchToMode "normal"
         }
