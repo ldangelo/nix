@@ -16,6 +16,7 @@
       "nikitabobko/tap"
       "charmbracelet/tap"
       "bakks/bakks"
+      "steipete/tap"
       "steveyegge/beads"
     ];
 
@@ -28,6 +29,8 @@
 #      "devbox"                         # Development environments
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
+      "steipete/tap/imsg"              # iMessage/SMS CLI
+      "ical-buddy"                     # Calendar CLI
       "igrep"                          # Interactive grep
       "jql"                            # JSON query language
       "lazyjj"                         # TUI for Jujutsu
@@ -60,7 +63,6 @@
           "with-no-frame-refocus"
         ];
       }
-
       # Window/UI management
       "felixkratz/formulae/borders"    # Window border system
 
@@ -72,11 +74,15 @@
 
       # Additional utilities
       "cask"                           # Emacs dependency management
+      "dockutil"                       # Dock management (Swift build broken in nixpkgs)
+      "marksman"                       # Markdown language server (depends on .NET/Swift in nixpkgs)
       "dotnet@6"                       # .NET 6
-      "dotnet@8"                       # .NET 8 (supplement to nix)
+      "dotnet@8"                       # .NET 8 (Swift build broken in nixpkgs)
+      "mpv"                            # Media player (Swift build broken in nixpkgs)
       "fisher"                         # Fish shell plugin manager
       "haskell-stack"                  # Haskell development
       "nvm"                            # Node version manager
+      "watch"
     ];
 
     # macOS applications (casks) not in nixpkgs or better via homebrew
@@ -109,6 +115,7 @@
       "google-chrome"
       "gotomeeting"
       "grammarly-desktop"
+      "granola"                # AI meeting notes
 #      "hammerspoon"            # Desktop automation
 #      "homerow"                # Keyboard shortcuts
 #      "hookmark"               # Link and retrieve info
@@ -155,6 +162,10 @@
       "witsy"                  # BYOK AI assistant
       "zed"                    # Code editor
       "zoom"
+      #
+      # yubi key
+      "yubico-authenticator"
+      #      "yubico-yubikey-manager"
     ];
 
     # Mac App Store applications

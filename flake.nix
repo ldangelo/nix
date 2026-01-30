@@ -79,6 +79,11 @@
           };
         };
 
+        # Himalaya with OAuth2 support for Microsoft 365
+        himalaya = super.himalaya.overrideAttrs (oldAttrs: {
+          cargoBuildFeatures = (oldAttrs.cargoBuildFeatures or []) ++ [ "oauth2" ];
+        });
+
         # https://github.com/NixOS/nixpkgs/issues/108480#issuecomment-1115108802
         isync-oauth2 = super.buildEnv {
           name = "isync-oauth2";

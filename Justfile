@@ -35,10 +35,10 @@ repl:
 
 clean: up
   # remove all generations older than 7 days
-  sudo nix profile wipe-history --profile /nix/var/nix/profiles/system  --older-than 7d
+  sudo nix profile wipe-history --profile /nix/var/nix/profiles/system  --older-than 3d
 
 gc:
   # garbage collect all unused nix store entries
-  nix-collect-garbage --delete-older-than 14d
+  nix-collect-garbage --delete-older-than 3d
 
 real-clean: clean gc

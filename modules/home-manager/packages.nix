@@ -18,6 +18,7 @@
     claude-code
     claude-code-acp
     claude-monitor
+    telegram-desktop
     # devbox - not in nixpkgs
     # devpod - not in nixpkgs
     devenv
@@ -60,7 +61,6 @@
     fd                     # Simple alternative to find
     fzf                    # Fuzzy finder
     htop                   # Process viewer
-    yazi                   # Modern terminal file manager
     # ifstat - not in nixpkgs
     starship               # Cross-shell prompt
     terminal-notifier      # macOS notifications from CLI
@@ -72,7 +72,7 @@
     # igrep - not in nixpkgs
     jq                     # JSON processor
     # jql - not in nixpkgs
-    marksman               # Markdown language server
+    # marksman               # Markdown language server - using Homebrew (depends on .NET/Swift)
     multimarkdown          # Markdown converter
     pandoc                 # Document converter
     ripgrep                # Fast search
@@ -80,6 +80,7 @@
 
     # Email & Communication
     # alot - Linux only, not available on macOS
+    himalaya               # CLI email client (IMAP/SMTP)
     mu                     # Email search tool
     msmtp                  # SMTP client
     neomutt                # Email client
@@ -88,6 +89,7 @@
 
     # Cloud & Infrastructure
     awscli2                # AWS CLI (v2)
+    cloudflared            # Cloudflare Tunnel client
     docker-credential-helpers
 #    flyctl                 # Fly.io CLI
     gitlab-runner          # GitLab CI runner
@@ -98,7 +100,7 @@
     terraform              # Infrastructure as code
 
     # Programming Languages & Runtimes
-    dotnet-sdk_8           # .NET Core 8
+    # dotnet-sdk_8           # .NET Core 8 - using Homebrew (Swift build broken in nixpkgs)
     elixir                 # Elixir language
     openjdk                # Java
     openjdk21              # Java 21
@@ -132,9 +134,10 @@
 
     # Media & Graphics
     chafa                  # Graphics renderer
-    mpv                    # Media player
+    # mpv                    # Media player - using Homebrew (Swift build broken in nixpkgs)
     viu                    # Terminal image viewer
     w3m                    # Text browser
+    yt-dlp                 # YouTube downloader & transcript extractor
     # xpdf - marked as insecure, use brew or alternative
 
     # Utilities
@@ -162,7 +165,7 @@
     # aldente - not in nixpkgs, use cask
     # apparency - not in nixpkgs
     discord
-    dockutil              # Dock management
+    # dockutil              # Dock management - using Homebrew (Swift build broken in nixpkgs)
     duti                  # Default apps manager
     # mysides - not in nixpkgs
     # raycast - use cask
