@@ -2,7 +2,7 @@
   # output .mbsyncrc file
    programs.mbsync = {
      enable = true;
-     package = pkgs.isync-oauth2;  # TODO: isync-oauth2 doesn't exist in nixpkgs, may need custom overlay for OAuth2 support
+     package = pkgs.isync-oauth2;  # Custom overlay with OAuth2 support via cyrus-sasl-xoauth2
      extraConfig = ''
       # Keeps timestamp mased message sorting intactt
       CopyArrivalDate yes
