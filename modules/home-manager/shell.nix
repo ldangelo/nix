@@ -7,6 +7,8 @@
     defaultKeymap = "emacs";
     shellAliases = {
       ag    = "ag --color-line-number='0;33' --color-path='0;32'";
+      cc    = "claude";
+      ccc   = "claude --continue";
       cp    = "nocorrect cp"; # no spelling correction on cp
       gm    = "git machete";
       grep  = "grep --color";
@@ -73,6 +75,24 @@
             local dir
             dir=$(dirs -l -p | fzf +m) &&
             cd $dir
+          }
+
+          # Claude Code session picker with fzf
+          cccs() {
+            local session
+            session=$(
+              for project_dir in ~/.claude/projects/*/; do
+                project_name=$(basename "$project_dir" | sed 's/^-//' | tr '-' '/')
+                for session_file in "$project_dir"*.jsonl; do
+                  [ -f "$session_file" ] || continue
+                  session_id=$(basename "$session_file" .jsonl)
+                  first_msg=$(grep '"type":"user"' "$session_file" 2>/dev/null | head -1 | jq -r '.message.content // empty' 2>/dev/null | head -c 80 | tr '\n' ' ')
+                  timestamp=$(grep '"type":"user"' "$session_file" 2>/dev/null | head -1 | jq -r '.timestamp // empty' 2>/dev/null | cut -d'T' -f1)
+                  [ -n "$first_msg" ] && echo -e "$session_id\t$timestamp\t$project_name\t$first_msg"
+                done
+              done | sort -t$'\t' -k2 -r | fzf --delimiter='\t' --with-nth=2,3,4 --preview-window=hidden
+            )
+            [ -n "$session" ] && claude --resume "$(echo "$session" | cut -f1)"
           }
 
       gcd() {

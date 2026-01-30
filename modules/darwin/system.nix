@@ -12,6 +12,9 @@
         # Show all file extensions
         AppleShowAllExtensions = true;
 
+        # Show hidden files in Open/Save dialogs
+        AppleShowAllFiles = true;
+
         # Automatically hide and show the menu bar
         _HIHideMenuBar = false;
 
@@ -42,7 +45,10 @@
 
       finder = {
         AppleShowAllExtensions = true;
+        AppleShowAllFiles = true;  # Show hidden files
         _FXShowPosixPathInTitle = true;
+        ShowPathbar = true;
+        ShowStatusBar = true;
       };
     };
   };

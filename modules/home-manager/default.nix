@@ -25,6 +25,9 @@
     ./borders
     ./zoxide.nix
     ./zellij
+    ./yazi.nix
+    ./streamdeck.nix
+    ./streamdeck-config.nix
   ];
 
 
@@ -56,14 +59,14 @@
       pkgs.apparency
       #      pkgs.apple-sdk
       pkgs.binutils
-      pkgs.dockutil
+      # pkgs.dockutil  # using Homebrew (Swift build broken in nixpkgs)
       pkgs.duti
       #      pkgs.macfuse
       #pkgs.mas
       pkgs.mysides
       #      pkgs.openwith
       pkgs.shortcat
-      pkgs.swiftdefaultapps
+      # pkgs.swiftdefaultapps  # using Homebrew (Swift build broken in nixpkgs)
       #      pkgs.trash
       #      pkgs.utm
       #      pkgs.xcode
@@ -108,6 +111,8 @@
     vscode.enable = true;
     zsh-syntax-highlighting.enable = true;
     qutebrowser.enable = true;
+    zellij.enable = true;
+    yazi.enable = true;
   };
   fonts.fontconfig.enable = true;
 
