@@ -6,6 +6,7 @@
 {
   programs.streamdeck = {
     enable = true;
+    autoRestart = true;  # Restart Stream Deck after deployment
 
     # Device info from existing profile
     deviceId = "@(1)[4057/128/DL51K1A60852]";
@@ -23,6 +24,7 @@
               name = "Apps";
               type = "folder";
               title = "Apps";
+              targetPage = "apps";
               # icon = ./icons/folder.png;
             };
 
@@ -30,6 +32,7 @@
               name = "Links";
               type = "folder";
               title = "Links";
+              targetPage = "links";
             };
 
             "2,0" = {
@@ -39,17 +42,19 @@
               keys = [ "cmd" "shift" "4" ];
             };
 
-            # Row 1: Meeting Controls
+            # Row 1: Meeting Controls (placeholder folders - pages not defined yet)
             "0,1" = {
               name = "Tutorials";
               type = "folder";
               title = "Tutorials";
+              # targetPage = "tutorials";  # uncomment when tutorials page exists
             };
 
             "1,1" = {
               name = "Emojis";
               type = "folder";
               title = "Emojis";
+              # targetPage = "emojis";  # uncomment when emojis page exists
             };
 
             "2,1" = {
@@ -238,31 +243,35 @@
             name = "Slack";
             type = "open";
             path = "/Applications/Slack.app";
-            # icon = ./icons/slack.png;
+            icon = ./streamdeck/icons/slack.png;
           };
 
           "1,0" = {
             name = "Zoom";
             type = "open";
             path = "/Applications/zoom.us.app";
+            icon = ./streamdeck/icons/zoom.png;
           };
 
           "2,0" = {
             name = "Teams";
             type = "open";
             path = "/Applications/Microsoft Teams.app";
+            icon = ./streamdeck/icons/teams.png;
           };
 
           "3,0" = {
             name = "Mail";
             type = "open";
             path = "/System/Applications/Mail.app";
+            icon = ./streamdeck/icons/mail.png;
           };
 
           "4,0" = {
             name = "Calendar";
             type = "open";
             path = "/Applications/Fantastical.app";
+            icon = ./streamdeck/icons/fantastical.png;
           };
 
           # Row 1: Development
@@ -289,6 +298,7 @@
             type = "website";
             url = "obsidian://open?vault=Curantis";
             openInBrowser = false;
+            icon = ./streamdeck/icons/obsidian.png;
           };
 
           "4,1" = {

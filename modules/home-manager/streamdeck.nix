@@ -128,7 +128,7 @@ let
   };
 
   # Build settings for different action types
-  buildSettings = button:
+  buildSettings = profileName: button:
     if button.type == "hotkey" then
       {
         Coalesce = true;
@@ -147,7 +147,14 @@ let
         path = button.url;
       }
     else if button.type == "folder" then
-      { ProfileUUID = button.targetProfile or ""; }
+      { 
+        # If targetPage is set, auto-generate UUID (lowercase to match Stream Deck format)
+        ProfileUUID = 
+          if button.targetPage != null then 
+            makeUUID "${profileName}-${button.targetPage}"
+          else if button.targetProfile != null then button.targetProfile
+          else ""; 
+      }
     else if button.type == "multimedia" then
       { actionIdx = button.actionIdx or 0; }
     else
@@ -159,34 +166,37 @@ let
       actionId = makeUUID "${profileName}-${pos}-${button.name}";
       uuid = actionUUIDs.${button.type} or button.type;
       pluginName = pluginNames.${button.type} or button.name;
+      # Use custom title if set, otherwise use button name
+      displayName = if button.title != null then button.title else button.name;
+      hasCustomTitle = button.title != null;
+      # Build complete state with all required styling attributes
+      stateAttrs = {
+        FontFamily = "";
+        FontSize = button.fontSize;
+        FontStyle = "";
+        FontUnderline = false;
+        OutlineThickness = 2;
+        ShowTitle = button.showTitle;
+        TitleAlignment = button.titleAlignment;
+        TitleColor = button.titleColor;
+      }
+        // (optionalAttrs (button.icon != null) { Image = "Images/${button.name}.png"; })
+        // (optionalAttrs hasCustomTitle { Title = displayName; });
     in
     {
       ActionID = actionId;
-      LinkedTitle = true;
-      Name = pluginName;
+      LinkedTitle = !hasCustomTitle;  # false if we have custom title
+      Name = displayName;
+      # Plugin block is required for Stream Deck to recognize the action
       Plugin = {
         Name = pluginName;
         UUID = uuid;
         Version = "1.0";
       };
       Resources = null;
-      Settings = buildSettings button;
+      Settings = buildSettings profileName button;
       State = 0;
-      States = [
-        ({
-          FontFamily = "";
-          FontSize = button.fontSize or 12;
-          FontStyle = "";
-          FontUnderline = false;
-          OutlineThickness = 2;
-          ShowTitle = button.showTitle or true;
-          Title = button.title or button.name;
-          TitleAlignment = button.titleAlignment or "bottom";
-          TitleColor = button.titleColor or "#ffffff";
-        } // (optionalAttrs (button.icon != null) {
-          Image = "Images/${button.name}.png";
-        }))
-      ];
+      States = [ stateAttrs ];
       UUID = uuid;
     };
 
@@ -208,7 +218,11 @@ let
   buildRootManifest = profile:
     let
       pageIds = attrNames profile.pages;
-      defaultPage = if pageIds == [ ] then "" else builtins.head pageIds;
+      # Prefer "default" page, otherwise fall back to first alphabetically
+      defaultPage = 
+        if pageIds == [ ] then "" 
+        else if builtins.elem "default" pageIds then "default"
+        else builtins.head pageIds;
     in
     {
       Device = {
@@ -327,7 +341,14 @@ let
       targetProfile = mkOption {
         type = types.nullOr types.str;
         default = null;
-        description = "UUID of target profile for folder action";
+        description = "UUID of target profile for folder action (use targetPage for same-profile navigation)";
+      };
+
+      targetPage = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "apps";
+        description = "Target page name within the same profile (auto-generates UUID)";
       };
 
       # For multimedia type
@@ -452,42 +473,195 @@ in
     activationScript = mkOption {
       type = types.bool;
       default = true;
-      description = "Generate activation script to restart Stream Deck app";
+      description = "Generate activation script to write Stream Deck profiles";
+    };
+
+    autoRestart = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Automatically restart Stream Deck app after writing profiles";
     };
   };
 
-  config = mkIf cfg.enable {
-    # Generate all profile files plus debug output
-    home.file = lib.foldl
-      (acc: profileName:
+  config = mkIf cfg.enable (
+    let
+      # Generate JSON content for all profiles (for use in activation script)
+      allProfilesJson = lib.mapAttrs (profileName: profile:
         let
-          profile = cfg.profiles.${profileName};
-          # Convert single-page buttons shorthand to pages
+          effectiveProfile =
+            if profile.pages != { } then profile
+            else profile // { pages = { default = { buttons = profile.buttons; name = ""; }; }; };
+          profileId = makeUUID profileName;
+        in {
+          id = profileId;
+          manifest = buildRootManifest effectiveProfile;
+          pages = lib.mapAttrs (pageName: page: {
+            id = makeUUID "${effectiveProfile.name}-${pageName}";
+            manifest = buildPageManifest effectiveProfile.name pageName page;
+          }) effectiveProfile.pages;
+        }
+      ) cfg.profiles;
+
+      # Collect all icons from all profiles for staging
+      allIcons = lib.flatten (lib.mapAttrsToList (profileName: profile:
+        let
           effectiveProfile =
             if profile.pages != { } then profile
             else profile // { pages = { default = { buttons = profile.buttons; name = ""; }; }; };
         in
-        acc // (generateProfileFiles profileName effectiveProfile))
-      {
-        # Debug output - write parsed configuration
-        ".config/streamdeck/debug.json".text = builtins.toJSON {
-          deviceId = cfg.deviceId;
-          deviceModel = cfg.deviceModel;
-          profileNames = attrNames cfg.profiles;
-        };
-      }
-      (attrNames cfg.profiles);
+        lib.flatten (lib.mapAttrsToList (pageName: page:
+          lib.mapAttrsToList (pos: button:
+            if button.icon != null then {
+              name = button.name;
+              source = button.icon;
+              profile = profileName;
+              page = pageName;
+            } else null
+          ) page.buttons
+        ) effectiveProfile.pages)
+      ) cfg.profiles);
 
-    # Activation script to restart Stream Deck
+      iconsList = builtins.filter (x: x != null) allIcons;
+
+      # Generate icon staging files
+      iconFiles = lib.listToAttrs (map (icon: {
+        name = ".config/streamdeck/icons/${icon.profile}/${icon.page}/${icon.name}.png";
+        value = { source = icon.source; };
+      }) iconsList);
+
+    in {
+    # Write debug config, profiles JSON, and stage icons
+    home.file = {
+      ".config/streamdeck/debug.json".text = builtins.toJSON {
+        deviceId = cfg.deviceId;
+        deviceModel = cfg.deviceModel;
+        profileNames = attrNames cfg.profiles;
+      };
+      # Write profile JSON to staging area for activation script to use
+      ".config/streamdeck/profiles.json".text = builtins.toJSON allProfilesJson;
+    } // iconFiles;
+
+    # Activation script to create and import Stream Deck profiles
     home.activation = mkIf cfg.activationScript {
-      streamdeckRestart = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        # Restart Stream Deck app to pick up new profiles
-        if pgrep -x "Stream Deck" > /dev/null 2>&1; then
-          $DRY_RUN_CMD osascript -e 'quit app "Stream Deck"' || true
-          $DRY_RUN_CMD sleep 2
-          $DRY_RUN_CMD open -a "Elgato Stream Deck" || true
+      streamdeckImport = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        STAGING_FILE="$HOME/.config/streamdeck/profiles.json"
+        EXPORT_DIR="$HOME/.config/streamdeck/exports"
+        PROFILES_DIR="$HOME/Library/Application Support/com.elgato.StreamDeck/ProfilesV3"
+        
+        if [ -f "$STAGING_FILE" ]; then
+          echo "Creating Stream Deck profiles..."
+          $DRY_RUN_CMD mkdir -p "$EXPORT_DIR"
+          $DRY_RUN_CMD mkdir -p "$PROFILES_DIR"
+          
+          # Process each profile from staging JSON
+          for PROFILE_KEY in $(${pkgs.jq}/bin/jq -r 'keys[]' "$STAGING_FILE"); do
+            PROFILE_ID=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".id" "$STAGING_FILE")
+            PROFILE_NAME=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".manifest.Name" "$STAGING_FILE")
+            PROFILE_MANIFEST=$(${pkgs.jq}/bin/jq -c ".\"$PROFILE_KEY\".manifest" "$STAGING_FILE")
+            
+            # Get profile ID in uppercase for folder name
+            PROFILE_ID_UPPER=$(echo "$PROFILE_ID" | tr '[:lower:]' '[:upper:]')
+            
+            echo "Creating profile: $PROFILE_NAME ($PROFILE_ID_UPPER)"
+            
+            # === Direct write to ProfilesV3 ===
+            DIRECT_PATH="$PROFILES_DIR/$PROFILE_ID_UPPER.sdProfile"
+            $DRY_RUN_CMD mkdir -p "$DIRECT_PATH/Profiles"
+            
+            # Write profile manifest (keep lowercase UUIDs in manifest, use device UUID)
+            echo "$PROFILE_MANIFEST" > "$DIRECT_PATH/manifest.json"
+            
+            # Process each page
+            for PAGE_KEY in $(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages | keys[]" "$STAGING_FILE"); do
+              PAGE_ID=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".id" "$STAGING_FILE")
+              PAGE_MANIFEST=$(${pkgs.jq}/bin/jq -c ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".manifest" "$STAGING_FILE")
+              
+              # Folder names are uppercase, but manifest references stay lowercase
+              PAGE_ID_UPPER=$(echo "$PAGE_ID" | tr '[:lower:]' '[:upper:]')
+              PAGE_PATH="$DIRECT_PATH/Profiles/$PAGE_ID_UPPER"
+              $DRY_RUN_CMD mkdir -p "$PAGE_PATH/Images"
+              
+              # Write page manifest
+              echo "$PAGE_MANIFEST" | ${pkgs.jq}/bin/jq '.' > "$PAGE_PATH/manifest.json"
+              
+              # Copy staged icons for this page
+              ICONS_STAGING="$HOME/.config/streamdeck/icons/$PROFILE_KEY/$PAGE_KEY"
+              if [ -d "$ICONS_STAGING" ]; then
+                echo "  Copying icons for page: $PAGE_KEY"
+                cp "$ICONS_STAGING"/*.png "$PAGE_PATH/Images/" 2>/dev/null || true
+              fi
+            done
+            
+            echo "  Written to: $DIRECT_PATH"
+            
+            # === Also create portable export (.streamDeckProfile) ===
+            TEMP_DIR=$(mktemp -d)
+            EXPORT_PATH="$TEMP_DIR/Profiles/$PROFILE_ID_UPPER.sdProfile"
+            mkdir -p "$EXPORT_PATH/Profiles"
+            
+            # Write package.json for export
+            cat > "$TEMP_DIR/package.json" << PKGJSON
+{
+  "AppVersion": "7.1.1.22340",
+  "DeviceModel": "${cfg.deviceModel}",
+  "DeviceSettings": null,
+  "FormatVersion": 1,
+  "OSType": "macOS",
+  "OSVersion": "26.2.0",
+  "RequiredPlugins": [
+    "com.elgato.streamdeck.system.open",
+    "com.elgato.streamdeck.system.hotkey",
+    "com.elgato.streamdeck.system.website",
+    "com.elgato.streamdeck.system.multimedia",
+    "com.elgato.streamdeck.profile.openchild",
+    "com.elgato.streamdeck.profile.backtoparent",
+    "com.elgato.streamdeck.page"
+  ]
+}
+PKGJSON
+            
+            # For export, use generic device UUID so it can be imported on any device
+            echo "$PROFILE_MANIFEST" | ${pkgs.jq}/bin/jq '.Device.UUID = "a3848928-c425-4653-b20c-d2578efeac88"' > "$EXPORT_PATH/manifest.json"
+            
+            # Copy pages to export
+            for PAGE_KEY in $(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages | keys[]" "$STAGING_FILE"); do
+              PAGE_ID=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".id" "$STAGING_FILE")
+              PAGE_MANIFEST=$(${pkgs.jq}/bin/jq -c ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".manifest" "$STAGING_FILE")
+              PAGE_ID_UPPER=$(echo "$PAGE_ID" | tr '[:lower:]' '[:upper:]')
+              PAGE_PATH="$EXPORT_PATH/Profiles/$PAGE_ID_UPPER"
+              mkdir -p "$PAGE_PATH/Images"
+              echo "$PAGE_MANIFEST" | ${pkgs.jq}/bin/jq '.' > "$PAGE_PATH/manifest.json"
+              
+              # Copy staged icons to export
+              ICONS_STAGING="$HOME/.config/streamdeck/icons/$PROFILE_KEY/$PAGE_KEY"
+              if [ -d "$ICONS_STAGING" ]; then
+                cp "$ICONS_STAGING"/*.png "$PAGE_PATH/Images/" 2>/dev/null || true
+              fi
+            done
+            
+            # Create zip export
+            EXPORT_FILE="$EXPORT_DIR/$PROFILE_KEY.streamDeckProfile"
+            (cd "$TEMP_DIR" && ${pkgs.zip}/bin/zip -qr "$EXPORT_FILE" .)
+            rm -rf "$TEMP_DIR"
+            
+            echo "  Export: $EXPORT_FILE"
+          done
+          
+          echo ""
+          echo "Stream Deck profiles written to: $PROFILES_DIR"
+          echo "Portable exports in: $EXPORT_DIR"
+          ${if cfg.autoRestart then ''
+          echo "Restarting Stream Deck..."
+          killall 'Elgato Stream Deck' 2>/dev/null || true
+          sleep 1
+          /usr/bin/open -a 'Elgato Stream Deck'
+          '' else ''
+          echo ""
+          echo "Restart Stream Deck to load changes:"
+          echo "  killall 'Elgato Stream Deck' 2>/dev/null; sleep 1; open -a 'Elgato Stream Deck'"
+          ''}
         fi
       '';
     };
-  };
+  });
 }
