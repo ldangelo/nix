@@ -316,30 +316,35 @@
             name = "Prev";
             type = "hotkey";
             keys = [ "f7" ];
+            icon = ./streamdeck/icons/prev.png;
           };
 
           "1,2" = {
             name = "Play";
             type = "hotkey";
             keys = [ "f8" ];
+            icon = ./streamdeck/icons/play.png;
           };
 
           "2,2" = {
             name = "Next";
             type = "hotkey";
             keys = [ "f9" ];
+            icon = ./streamdeck/icons/next.png;
           };
 
           "3,2" = {
             name = "Mute";
             type = "multimedia";
             actionIdx = 4;
+            icon = ./streamdeck/icons/mute.png;
           };
 
           "4,2" = {
             name = "Lock";
             type = "hotkey";
             keys = [ "ctrl" "cmd" "q" ];
+            icon = ./streamdeck/icons/lock.png;
           };
         };
       };
