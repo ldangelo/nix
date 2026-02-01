@@ -239,40 +239,41 @@
       pages = {
         default = {
           buttons = {
-          # Row 0: Communication
+          # Row 0: Communication & Meetings
           "0,0" = {
+            name = "Meetings";
+            type = "folder";
+            title = "Meetings";
+            targetPage = "meetings";
+            icon = ./streamdeck/icons/meetings.png;
+          };
+
+          "1,0" = {
             name = "Slack";
             type = "open";
             path = "/Applications/Slack.app";
             icon = ./streamdeck/icons/slack.png;
           };
 
-          "1,0" = {
-            name = "Zoom";
-            type = "open";
-            path = "/Applications/zoom.us.app";
-            icon = ./streamdeck/icons/zoom.png;
-          };
-
           "2,0" = {
-            name = "Teams";
-            type = "open";
-            path = "/Applications/Microsoft Teams.app";
-            icon = ./streamdeck/icons/teams.png;
-          };
-
-          "3,0" = {
             name = "Mail";
             type = "open";
             path = "/System/Applications/Mail.app";
             icon = ./streamdeck/icons/mail.png;
           };
 
-          "4,0" = {
+          "3,0" = {
             name = "Calendar";
             type = "open";
             path = "/Applications/Fantastical.app";
             icon = ./streamdeck/icons/fantastical.png;
+          };
+
+          "4,0" = {
+            name = "Todoist";
+            type = "website";
+            url = "https://todoist.com/app";
+            icon = ./streamdeck/icons/todoist.png;
           };
 
           # Row 1: Development
@@ -306,11 +307,9 @@
           };
 
           "4,1" = {
-            name = "Meetings";
-            type = "folder";
-            title = "Meetings";
-            targetPage = "meetings";
-            icon = ./streamdeck/icons/meetings.png;
+            name = "Chrome";
+            type = "open";
+            path = "/Applications/Google Chrome.app";
           };
 
           # Row 2: Media & Navigation
