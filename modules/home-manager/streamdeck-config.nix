@@ -276,10 +276,10 @@
 
           # Row 1: Development
           "0,1" = {
-            name = "Ghostty";
+            name = "iTerm";
             type = "open";
-            path = "/Users/ldangelo/Applications/Home Manager Apps/Ghostty.app";
-            icon = ./streamdeck/icons/ghostty.png;
+            path = "/Applications/iTerm.app";
+            icon = ./streamdeck/icons/iterm.png;
           };
 
           "1,1" = {
