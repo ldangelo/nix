@@ -542,114 +542,137 @@ in
     } // iconFiles;
 
     # Activation script to create and import Stream Deck profiles
+    # Uses Python instead of jq to properly handle JSON with control characters in strings
     home.activation = mkIf cfg.activationScript {
       streamdeckImport = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         STAGING_FILE="$HOME/.config/streamdeck/profiles.json"
         EXPORT_DIR="$HOME/.config/streamdeck/exports"
         PROFILES_DIR="$HOME/Library/Application Support/com.elgato.StreamDeck/ProfilesV3"
+        ICONS_BASE="$HOME/.config/streamdeck/icons"
+        DEVICE_MODEL="${cfg.deviceModel}"
+        AUTO_RESTART="${if cfg.autoRestart then "true" else "false"}"
         
         if [ -f "$STAGING_FILE" ]; then
           echo "Creating Stream Deck profiles..."
           $DRY_RUN_CMD mkdir -p "$EXPORT_DIR"
           $DRY_RUN_CMD mkdir -p "$PROFILES_DIR"
           
-          # Process each profile from staging JSON
-          for PROFILE_KEY in $(${pkgs.jq}/bin/jq -r 'keys[]' "$STAGING_FILE"); do
-            PROFILE_ID=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".id" "$STAGING_FILE")
-            PROFILE_NAME=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".manifest.Name" "$STAGING_FILE")
-            PROFILE_MANIFEST=$(${pkgs.jq}/bin/jq -c ".\"$PROFILE_KEY\".manifest" "$STAGING_FILE")
-            
-            # Get profile ID in uppercase for folder name
-            PROFILE_ID_UPPER=$(echo "$PROFILE_ID" | tr '[:lower:]' '[:upper:]')
-            
-            echo "Creating profile: $PROFILE_NAME ($PROFILE_ID_UPPER)"
-            
-            # === Direct write to ProfilesV3 ===
-            DIRECT_PATH="$PROFILES_DIR/$PROFILE_ID_UPPER.sdProfile"
-            $DRY_RUN_CMD mkdir -p "$DIRECT_PATH/Profiles"
-            
-            # Write profile manifest (keep lowercase UUIDs in manifest, use device UUID)
-            echo "$PROFILE_MANIFEST" > "$DIRECT_PATH/manifest.json"
-            
-            # Process each page
-            for PAGE_KEY in $(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages | keys[]" "$STAGING_FILE"); do
-              PAGE_ID=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".id" "$STAGING_FILE")
-              PAGE_MANIFEST=$(${pkgs.jq}/bin/jq -c ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".manifest" "$STAGING_FILE")
-              
-              # Folder names are uppercase, but manifest references stay lowercase
-              PAGE_ID_UPPER=$(echo "$PAGE_ID" | tr '[:lower:]' '[:upper:]')
-              PAGE_PATH="$DIRECT_PATH/Profiles/$PAGE_ID_UPPER"
-              $DRY_RUN_CMD mkdir -p "$PAGE_PATH/Images"
-              
-              # Write page manifest
-              echo "$PAGE_MANIFEST" | ${pkgs.jq}/bin/jq '.' > "$PAGE_PATH/manifest.json"
-              
-              # Copy staged icons for this page
-              ICONS_STAGING="$HOME/.config/streamdeck/icons/$PROFILE_KEY/$PAGE_KEY"
-              if [ -d "$ICONS_STAGING" ]; then
-                echo "  Copying icons for page: $PAGE_KEY"
-                cp "$ICONS_STAGING"/*.png "$PAGE_PATH/Images/" 2>/dev/null || true
-              fi
-            done
-            
-            echo "  Written to: $DIRECT_PATH"
-            
-            # === Also create portable export (.streamDeckProfile) ===
-            TEMP_DIR=$(mktemp -d)
-            EXPORT_PATH="$TEMP_DIR/Profiles/$PROFILE_ID_UPPER.sdProfile"
-            mkdir -p "$EXPORT_PATH/Profiles"
-            
-            # Write package.json for export
-            cat > "$TEMP_DIR/package.json" << PKGJSON
-{
-  "AppVersion": "7.1.1.22340",
-  "DeviceModel": "${cfg.deviceModel}",
-  "DeviceSettings": null,
-  "FormatVersion": 1,
-  "OSType": "macOS",
-  "OSVersion": "26.2.0",
-  "RequiredPlugins": [
-    "com.elgato.streamdeck.system.open",
-    "com.elgato.streamdeck.system.hotkey",
-    "com.elgato.streamdeck.system.website",
-    "com.elgato.streamdeck.system.multimedia",
-    "com.elgato.streamdeck.profile.openchild",
-    "com.elgato.streamdeck.profile.backtoparent",
-    "com.elgato.streamdeck.page"
-  ]
-}
-PKGJSON
-            
-            # For export, use generic device UUID so it can be imported on any device
-            echo "$PROFILE_MANIFEST" | ${pkgs.jq}/bin/jq '.Device.UUID = "a3848928-c425-4653-b20c-d2578efeac88"' > "$EXPORT_PATH/manifest.json"
-            
-            # Copy pages to export
-            for PAGE_KEY in $(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages | keys[]" "$STAGING_FILE"); do
-              PAGE_ID=$(${pkgs.jq}/bin/jq -r ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".id" "$STAGING_FILE")
-              PAGE_MANIFEST=$(${pkgs.jq}/bin/jq -c ".\"$PROFILE_KEY\".pages.\"$PAGE_KEY\".manifest" "$STAGING_FILE")
-              PAGE_ID_UPPER=$(echo "$PAGE_ID" | tr '[:lower:]' '[:upper:]')
-              PAGE_PATH="$EXPORT_PATH/Profiles/$PAGE_ID_UPPER"
-              mkdir -p "$PAGE_PATH/Images"
-              echo "$PAGE_MANIFEST" | ${pkgs.jq}/bin/jq '.' > "$PAGE_PATH/manifest.json"
-              
-              # Copy staged icons to export
-              ICONS_STAGING="$HOME/.config/streamdeck/icons/$PROFILE_KEY/$PAGE_KEY"
-              if [ -d "$ICONS_STAGING" ]; then
-                cp "$ICONS_STAGING"/*.png "$PAGE_PATH/Images/" 2>/dev/null || true
-              fi
-            done
-            
-            # Create zip export
-            EXPORT_FILE="$EXPORT_DIR/$PROFILE_KEY.streamDeckProfile"
-            (cd "$TEMP_DIR" && ${pkgs.zip}/bin/zip -qr "$EXPORT_FILE" .)
-            rm -rf "$TEMP_DIR"
-            
-            echo "  Export: $EXPORT_FILE"
-          done
+          # Use Python for JSON handling - properly handles control characters in strings
+          ${pkgs.python3}/bin/python3 << 'PYTHON_SCRIPT'
+import json
+import os
+import shutil
+import tempfile
+import zipfile
+
+staging_file = os.path.expanduser("~/.config/streamdeck/profiles.json")
+export_dir = os.path.expanduser("~/.config/streamdeck/exports")
+profiles_dir = os.path.expanduser("~/Library/Application Support/com.elgato.StreamDeck/ProfilesV3")
+icons_base = os.path.expanduser("~/.config/streamdeck/icons")
+device_model = os.environ.get("DEVICE_MODEL", "20GBA9901")
+
+with open(staging_file) as f:
+    profiles = json.load(f)
+
+for profile_key, profile_data in profiles.items():
+    profile_id = profile_data['id'].upper()
+    profile_name = profile_data['manifest']['Name']
+    profile_path = f"{profiles_dir}/{profile_id}.sdProfile"
+    
+    print(f"Creating profile: {profile_name} ({profile_id})")
+    
+    # === Direct write to ProfilesV3 ===
+    os.makedirs(f"{profile_path}/Profiles", exist_ok=True)
+    
+    # Write profile manifest
+    with open(f"{profile_path}/manifest.json", 'w') as f:
+        json.dump(profile_data['manifest'], f)
+    
+    # Process each page
+    for page_key, page_data in profile_data['pages'].items():
+        page_id = page_data['id'].upper()
+        page_path = f"{profile_path}/Profiles/{page_id}"
+        os.makedirs(f"{page_path}/Images", exist_ok=True)
+        
+        # Write page manifest
+        with open(f"{page_path}/manifest.json", 'w') as f:
+            json.dump(page_data['manifest'], f)
+        
+        # Copy staged icons
+        icons_staging = f"{icons_base}/{profile_key}/{page_key}"
+        if os.path.isdir(icons_staging):
+            for icon_file in os.listdir(icons_staging):
+                if icon_file.endswith('.png'):
+                    shutil.copy2(f"{icons_staging}/{icon_file}", f"{page_path}/Images/")
+            print(f"  Copied icons for page: {page_key}")
+    
+    print(f"  Written to: {profile_path}")
+    
+    # === Create portable export (.streamDeckProfile) ===
+    temp_dir = tempfile.mkdtemp()
+    export_profile_path = f"{temp_dir}/Profiles/{profile_id}.sdProfile"
+    os.makedirs(f"{export_profile_path}/Profiles", exist_ok=True)
+    
+    # Write package.json
+    package_json = {
+        "AppVersion": "7.1.1.22340",
+        "DeviceModel": device_model,
+        "DeviceSettings": None,
+        "FormatVersion": 1,
+        "OSType": "macOS",
+        "OSVersion": "26.2.0",
+        "RequiredPlugins": [
+            "com.elgato.streamdeck.system.open",
+            "com.elgato.streamdeck.system.hotkey",
+            "com.elgato.streamdeck.system.website",
+            "com.elgato.streamdeck.system.multimedia",
+            "com.elgato.streamdeck.profile.openchild",
+            "com.elgato.streamdeck.profile.backtoparent",
+            "com.elgato.streamdeck.page"
+        ]
+    }
+    with open(f"{temp_dir}/package.json", 'w') as f:
+        json.dump(package_json, f, indent=2)
+    
+    # Write export manifest with generic device UUID
+    export_manifest = profile_data['manifest'].copy()
+    export_manifest['Device']['UUID'] = "a3848928-c425-4653-b20c-d2578efeac88"
+    with open(f"{export_profile_path}/manifest.json", 'w') as f:
+        json.dump(export_manifest, f)
+    
+    # Copy pages to export
+    for page_key, page_data in profile_data['pages'].items():
+        page_id = page_data['id'].upper()
+        page_path = f"{export_profile_path}/Profiles/{page_id}"
+        os.makedirs(f"{page_path}/Images", exist_ok=True)
+        
+        with open(f"{page_path}/manifest.json", 'w') as f:
+            json.dump(page_data['manifest'], f)
+        
+        # Copy icons to export
+        icons_staging = f"{icons_base}/{profile_key}/{page_key}"
+        if os.path.isdir(icons_staging):
+            for icon_file in os.listdir(icons_staging):
+                if icon_file.endswith('.png'):
+                    shutil.copy2(f"{icons_staging}/{icon_file}", f"{page_path}/Images/")
+    
+    # Create zip export
+    export_file = f"{export_dir}/{profile_key}.streamDeckProfile"
+    with zipfile.ZipFile(export_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for root, dirs, files in os.walk(temp_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arc_name = os.path.relpath(file_path, temp_dir)
+                zf.write(file_path, arc_name)
+    
+    shutil.rmtree(temp_dir)
+    print(f"  Export: {export_file}")
+
+print()
+print(f"Stream Deck profiles written to: {profiles_dir}")
+print(f"Portable exports in: {export_dir}")
+PYTHON_SCRIPT
           
-          echo ""
-          echo "Stream Deck profiles written to: $PROFILES_DIR"
-          echo "Portable exports in: $EXPORT_DIR"
           ${if cfg.autoRestart then ''
           echo "Restarting Stream Deck..."
           killall 'Elgato Stream Deck' 2>/dev/null || true
