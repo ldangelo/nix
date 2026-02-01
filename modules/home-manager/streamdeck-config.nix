@@ -236,8 +236,9 @@
     profiles.work = {
       name = "Work Profile";
 
-      pages.default = {
-        buttons = {
+      pages = {
+        default = {
+          buttons = {
           # Row 0: Communication
           "0,0" = {
             name = "Slack";
@@ -305,10 +306,11 @@
           };
 
           "4,1" = {
-            name = "Todoist";
-            type = "website";
-            url = "https://todoist.com/app";
-            icon = ./streamdeck/icons/todoist.png;
+            name = "Meetings";
+            type = "folder";
+            title = "Meetings";
+            targetPage = "meetings";
+            icon = ./streamdeck/icons/meetings.png;
           };
 
           # Row 2: Media & Navigation
@@ -347,7 +349,117 @@
             icon = ./streamdeck/icons/lock.png;
           };
         };
-      };
-    };
-  };
+      };  # closes default page
+
+        # Meetings page - Zoom & Teams controls
+        meetings = {
+          name = "Meeting Controls";
+          buttons = {
+            # Back button
+            "0,0" = {
+              name = "Back";
+              type = "backToParent";
+            };
+
+            # === ZOOM CONTROLS (Row 0) ===
+            "1,0" = {
+              name = "ZoomMute";
+              type = "hotkey";
+              title = "Mute\n(Zoom)";
+              keys = [ "cmd" "shift" "a" ];
+              icon = ./streamdeck/icons/mic-off.png;
+            };
+
+            "2,0" = {
+              name = "ZoomVideo";
+              type = "hotkey";
+              title = "Video\n(Zoom)";
+              keys = [ "cmd" "shift" "v" ];
+              icon = ./streamdeck/icons/video-off.png;
+            };
+
+            "3,0" = {
+              name = "ZoomShare";
+              type = "hotkey";
+              title = "Share\n(Zoom)";
+              keys = [ "cmd" "shift" "s" ];
+              icon = ./streamdeck/icons/screen-share.png;
+            };
+
+            "4,0" = {
+              name = "ZoomLeave";
+              type = "hotkey";
+              title = "Leave\n(Zoom)";
+              keys = [ "cmd" "w" ];
+              icon = ./streamdeck/icons/leave.png;
+            };
+
+            # === TEAMS CONTROLS (Row 1) ===
+            "0,1" = {
+              name = "Zoom";
+              type = "open";
+              path = "/Applications/zoom.us.app";
+              icon = ./streamdeck/icons/zoom.png;
+            };
+
+            "1,1" = {
+              name = "TeamsMute";
+              type = "hotkey";
+              title = "Mute\n(Teams)";
+              keys = [ "cmd" "shift" "m" ];
+              icon = ./streamdeck/icons/mic-off.png;
+            };
+
+            "2,1" = {
+              name = "TeamsVideo";
+              type = "hotkey";
+              title = "Video\n(Teams)";
+              keys = [ "cmd" "shift" "o" ];
+              icon = ./streamdeck/icons/video-off.png;
+            };
+
+            "3,1" = {
+              name = "TeamsShare";
+              type = "hotkey";
+              title = "Share\n(Teams)";
+              keys = [ "cmd" "shift" "e" ];
+              icon = ./streamdeck/icons/screen-share.png;
+            };
+
+            "4,1" = {
+              name = "TeamsLeave";
+              type = "hotkey";
+              title = "Leave\n(Teams)";
+              keys = [ "cmd" "shift" "b" ];
+              icon = ./streamdeck/icons/leave.png;
+            };
+
+            # === EXTRAS (Row 2) ===
+            "0,2" = {
+              name = "Teams";
+              type = "open";
+              path = "/Applications/Microsoft Teams.app";
+              icon = ./streamdeck/icons/teams.png;
+            };
+
+            "1,2" = {
+              name = "ZoomHand";
+              type = "hotkey";
+              title = "Hand\n(Zoom)";
+              keys = [ "option" "y" ];
+              icon = ./streamdeck/icons/hand-raise.png;
+            };
+
+            "2,2" = {
+              name = "TeamsHand";
+              type = "hotkey";
+              title = "Hand\n(Teams)";
+              keys = [ "cmd" "shift" "k" ];
+              icon = ./streamdeck/icons/hand-raise.png;
+            };
+          };
+        };
+      };  # closes pages
+    };  # closes profiles.work
+  };  # closes programs.streamdeck
 }
