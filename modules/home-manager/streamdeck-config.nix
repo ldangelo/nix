@@ -276,21 +276,24 @@
 
           # Row 1: Development
           "0,1" = {
-            name = "Terminal";
+            name = "Ghostty";
             type = "open";
-            path = "/Applications/Ghostty.app";
+            path = "/Users/ldangelo/Applications/Home Manager Apps/Ghostty.app";
+            icon = ./streamdeck/icons/ghostty.png;
           };
 
           "1,1" = {
             name = "Cursor";
             type = "open";
             path = "/Applications/Cursor.app";
+            icon = ./streamdeck/icons/cursor.png;
           };
 
           "2,1" = {
             name = "GitHub";
             type = "website";
             url = "https://github.com";
+            icon = ./streamdeck/icons/github.png;
           };
 
           "3,1" = {
@@ -305,6 +308,7 @@
             name = "Todoist";
             type = "website";
             url = "https://todoist.com/app";
+            icon = ./streamdeck/icons/todoist.png;
           };
 
           # Row 2: Media & Navigation
