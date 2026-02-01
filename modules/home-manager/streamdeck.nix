@@ -140,7 +140,7 @@ let
         ];
       }
     else if button.type == "open" then
-      { path = "\"${button.path}\""; }
+      { path = button.path; }
     else if button.type == "website" then
       {
         openInBrowser = button.openInBrowser or true;
