@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   sops.gnupg.sshKeyPaths = [];
@@ -35,6 +35,16 @@
   };
 
   sops.secrets.mac_mail_key = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
+
+  sops.secrets.openclaw_gateway_token = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
+
+  sops.secrets.opeanai_api_key = {
     owner = "ldangelo";
     mode = "0400";
   };

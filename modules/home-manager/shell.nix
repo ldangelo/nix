@@ -1,4 +1,4 @@
-{ pkgs, misc, ... }: {
+{ pkgs,  ... }: {
   programs.zsh = {
     enable = true;
     enableCompletion = true;

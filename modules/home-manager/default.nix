@@ -26,8 +26,8 @@
     ./zoxide.nix
     ./zellij
     ./yazi.nix
-    ./streamdeck.nix
-    ./streamdeck-config.nix
+    #    ./streamdeck.nix
+    #./streamdeck-config.nix
   ];
 
 
