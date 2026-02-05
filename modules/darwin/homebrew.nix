@@ -30,6 +30,7 @@
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
       "steipete/tap/imsg"              # iMessage/SMS CLI
+      "steipete/tap/peekaboo"          # macOS UI automation CLI
       "ical-buddy"                     # Calendar CLI
       "igrep"                          # Interactive grep
       "jql"                            # JSON query language
@@ -49,7 +50,8 @@
       "kanata"                         # Keyboard remapper
       "switchaudio-osx"                # Change audio source CLI
       "vfkit"                          # Virtualization framework CLI
-
+      "openclaw-cli"
+      "tailscale"
       # Email (not available on macOS via nix)
       "alot"                           # Notmuch mail client
       "notmuch"                        # Email indexing
@@ -136,6 +138,7 @@
       "mouseless@preview"      # Mouse control via keyboard
       "obsidian"
       "ollama-app"             # Local LLMs
+      "openclaw"
       "postgres-unofficial"    # Postgres.app
       "postman"
       "postman-cli"
@@ -153,6 +156,7 @@
 #      "stats"                  # System monitor
       "superhuman"             # Email client
 #      "tabtab"                 # Window/tab manager
+      "tailscale-app"
       "todoist-app"
       "tradingview"
 #      "vscodium"               # VS Code without telemetry
