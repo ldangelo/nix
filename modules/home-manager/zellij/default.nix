@@ -3,6 +3,7 @@
 {
   xdg.configFile."zellij/config.kdl".source = ./config.kdl;
   xdg.configFile."zellij/layouts".source = ./layouts;
+  xdg.configFile."zellij/plugins/vim-zellij-navigator.wasm".source = ./plugins/vim-zellij-navigator.wasm;
 
   # Deploy default workspace configuration to home directory
   # Users can override this by creating .zellij-workspace in project directories
