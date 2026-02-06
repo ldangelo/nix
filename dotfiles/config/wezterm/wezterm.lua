@@ -141,6 +141,12 @@ local config = {
         bottom = 8,
     },
 
+    -- Dim inactive panes to highlight the active one
+    inactive_pane_hsb = {
+        saturation = 0.7,
+        brightness = 0.6,
+    },
+
     selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%",
     exit_behavior = "CloseOnCleanExit",
     window_close_confirmation = "NeverPrompt",
