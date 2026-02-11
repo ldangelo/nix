@@ -23,7 +23,7 @@
     # devpod - not in nixpkgs
     devenv
     gradle                 # Build automation tool
-    google-chrome
+    #    google-chrome
     graphite-cli
     helix
     # jdtls - use jdt-language-server
@@ -137,7 +137,7 @@
     # mpv                    # Media player - using Homebrew (Swift build broken in nixpkgs)
     viu                    # Terminal image viewer
     w3m                    # Text browser
-    yt-dlp                 # YouTube downloader & transcript extractor
+    # yt-dlp - curl-impersonate build broken on macOS 15 (AppleIDN check fails), use brew
     # xpdf - marked as insecure, use brew or alternative
 
     # Utilities

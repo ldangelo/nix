@@ -157,6 +157,8 @@
             source ~/.config/zsh/rc/fzf-tab.zsh
             source ~/.config/zsh/rc/vterm.zsh
             source ~/.config/zsh/rc/starship.zsh
+            test -e "$HOME/.iterm2_shell_integration.zsh" && source "$HOME/.iterm2_shell_integration.zsh"
+            test -d "$HOME/.iterm2" && export PATH="$HOME/.iterm2:$PATH"
             
             if [[ -z "$INSIDE_EMACS" ]]; then
 #             source ~/.config/zsh/rc/zsh-autosuggestions.zsh

@@ -44,7 +44,7 @@
     mode = "0400";
   };
 
-  sops.secrets.opeanai_api_key = {
+  sops.secrets.openai_api_key = {
     owner = "ldangelo";
     mode = "0400";
   };

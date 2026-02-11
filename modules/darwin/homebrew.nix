@@ -85,6 +85,7 @@
       "haskell-stack"                  # Haskell development
       "nvm"                            # Node version manager
       "watch"
+      "yt-dlp"                         # YouTube downloader (curl-impersonate broken in nixpkgs on macOS 15)
     ];
 
     # macOS applications (casks) not in nixpkgs or better via homebrew

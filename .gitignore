@@ -3,3 +3,4 @@
 # sops-nix secrets (keep encrypted versions, ignore unencrypted)
 secrets/*.yaml
 !secrets/*.yaml.example
+.todos/
