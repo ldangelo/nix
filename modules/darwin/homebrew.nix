@@ -11,6 +11,7 @@
 #      "homebrew/core"
 #      "homebrew/bundle"
 #      "homebrew/services"
+      "marcus/tap"
       "d12frosted/emacs-plus"
       "felixkratz/formulae"
       "nikitabobko/tap"
@@ -43,6 +44,12 @@
       # Shell & System Tools
       "bakks/bakks/butterfish"         # LLM command-line tool
       "charmbracelet/tap/crush"        # Terminal AI assistant
+
+      # https://github.com/marcus/sidecar
+      "sidecar"
+      "td"
+
+
       "choose-gui"                     # Dotfile manager
       "evil-helix"                     # Helix soft fork
       "fileql"                         # SQL-like queries on files
