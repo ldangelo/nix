@@ -26,8 +26,8 @@
       # Development Tools (not in nixpkgs)
       "aider"                          # AI pair programming
       "basedpyright"                   # Pyright fork with improvements
-      "bd"
-#      "devbox"                         # Development environments
+      #      "bd"
+      "devbox"                         # Development environments
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
       "steipete/tap/imsg"              # iMessage/SMS CLI
@@ -44,6 +44,9 @@
       # Shell & System Tools
       "bakks/bakks/butterfish"         # LLM command-line tool
       "charmbracelet/tap/crush"        # Terminal AI assistant
+
+      # golang
+      "golang"
 
       # https://github.com/marcus/sidecar
       "sidecar"
