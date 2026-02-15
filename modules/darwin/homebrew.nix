@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, isWorkstation ? true, ... }:
 
 {
   # Homebrew configuration for packages not available in nixpkgs
@@ -54,7 +54,6 @@
 
 
       "choose-gui"                     # Dotfile manager
-      "evil-helix"                     # Helix soft fork
       "fileql"                         # SQL-like queries on files
       "ifstat"                         # Interface statistics
       "kanata"                         # Keyboard remapper
@@ -100,8 +99,18 @@
 
     # macOS applications (casks) not in nixpkgs or better via homebrew
     casks = [
+      # Common casks (both machines)
       "1password"
       "1password-cli"
+      "claude-code"            # Terminal AI assistant
+      "font-cantarell"
+      "font-fira-code"
+      "font-fira-code-nerd-font"
+      "font-source-code-pro"
+      "git-credential-manager"
+      "tailscale-app"
+    ] ++ lib.optionals isWorkstation [
+      # Workstation-only casks (MacBook Pro)
       "aerospace"              # i3-like tiling window manager
       "aldente"                # Battery charge limiter
 #      "alt-tab"                # Windows-like alt-tab
@@ -112,7 +121,6 @@
       "arc"                    # Chromium browser
       "block-goose"            # AI agent
 #      "felixkratz/formulae/borders"
-      "claude-code"            # Terminal AI assistant
       "davmail-app"            # Exchange mail/calendar client
       "docker-desktop"
       "elgato-camera-hub"
@@ -120,11 +128,6 @@
       "elgato-stream-deck"
       "elgato-wave-link"
       "fantastical"            # Calendar
-      "font-cantarell"
-      "font-fira-code"
-      "font-fira-code-nerd-font"
-      "font-source-code-pro"
-      "git-credential-manager"
       "google-chrome"
       "gotomeeting"
       "grammarly-desktop"
@@ -167,7 +170,6 @@
 #      "stats"                  # System monitor
       "superhuman"             # Email client
 #      "tabtab"                 # Window/tab manager
-      "tailscale-app"
       "todoist-app"
       "tradingview"
 #      "vscodium"               # VS Code without telemetry
