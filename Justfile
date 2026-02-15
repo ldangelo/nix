@@ -1,5 +1,5 @@
 # just is a command runner, Justfile is very similar to Makefile, but simpler.
-# 
+#
 ############################################################################
 ############################################################################
 #
@@ -7,17 +7,19 @@
 #
 ############################################################################
 
+host := "Leos-MacBook-Pro"
+
 deploy-nc:
-  darwin-rebuild switch --flake .#Leos-MacBook-Pro --option eval-cache false
+  darwin-rebuild switch --flake .#{{host}} --option eval-cache false
 
 deploy-rebuild:
-  darwin-rebuild switch --rebuild --flake .#Leos-MacBook-Pro
+  darwin-rebuild switch --rebuild --flake .#{{host}}
 
 deploy:
-  darwin-rebuild switch --flake .#Leos-MacBook-Pro
+  darwin-rebuild switch --flake .#{{host}}
 
 debug:
-  darwin-rebuild switch --flake .#Leos-MacBook-Pro --show-trace --verbose
+  darwin-rebuild switch --flake .#{{host}} --show-trace --verbose
 
 up:
   nix flake update

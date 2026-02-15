@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, isWorkstation ? true, ... }:
 
 {
   # Launchd Services Configuration
@@ -20,7 +20,7 @@
 
   # Karabiner VirtualHIDDevice Daemon (system-level)
   # Manages the virtual HID device driver
-  launchd.daemons.karabiner-vhiddaemon = {
+  launchd.daemons.karabiner-vhiddaemon = lib.mkIf isWorkstation {
     serviceConfig = {
       Label = "com.ldangelo.karabiner-vhiddaemon";
       ProgramArguments = [
@@ -37,7 +37,7 @@
 
   # Karabiner VirtualHIDDevice Manager (system-level)
   # Activates the virtual HID device
-  launchd.daemons.karabiner-vhidmanager = {
+  launchd.daemons.karabiner-vhidmanager = lib.mkIf isWorkstation {
     serviceConfig = {
       Label = "com.ldangelo.karabiner-vhidmanager";
       ProgramArguments = [
@@ -56,7 +56,7 @@
   # Kanata - Advanced keyboard remapper (system-level daemon)
   # https://github.com/jtroo/kanata
   # Must be a daemon (not agent) to run as root - agents ignore UserName
-  launchd.daemons.kanata = {
+  launchd.daemons.kanata = lib.mkIf isWorkstation {
     serviceConfig = {
       Label = "com.ldangelo.kanata";
       ProgramArguments = [
@@ -95,7 +95,7 @@
   };
 
   # Jankyboarders: enable
-  services.jankyborders = {
+  services.jankyborders = lib.mkIf isWorkstation {
       enable = true;
       width = 6.0;
       hidpi = false;

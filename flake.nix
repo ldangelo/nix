@@ -103,30 +103,39 @@
 
       perSystem = { system, pkgs, ... }: { };
 
-      flake = {
+      flake = let
+        # Shared modules for all darwin configurations
+        darwinModules = [
+          ({ ... }: {
+            # Let Determinate Nix handle Nix configuration
+            nix.enable = false;
+          })
+          sops-nix.darwinModules.sops
+          ./modules/darwin/default.nix
+          home-manager.darwinModules.home-manager
+          {
+            nixpkgs.overlays = common-overlays;
+            # Home-manager configuration as a nix-darwin module
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "bak";
+            home-manager.sharedModules = [ catppuccin.homeModules.catppuccin ];
+            home-manager.users.ldangelo = import ./modules/home-manager/default.nix;
+          }
+        ];
+      in {
         # --- nix-darwin Configuration ---
         darwinConfigurations = {
           "Leos-MacBook-Pro" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
-            modules = [
-              ({ ... }: {
-                # Let Determinate Nix handle Nix configuration
-                nix.enable = false;
-              })
-              sops-nix.darwinModules.sops
-              ./modules/darwin/default.nix
-              home-manager.darwinModules.home-manager
-              {
-                nixpkgs.overlays = common-overlays;
-                # Home-manager configuration as a nix-darwin module
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.backupFileExtension = "bak";
-                home-manager.sharedModules = [ catppuccin.homeModules.catppuccin ];
-                home-manager.users.ldangelo = import ./modules/home-manager/default.nix;
-              }
-            ];
-            specialArgs = { inherit inputs; };
+            modules = darwinModules;
+            specialArgs = { inherit inputs; isWorkstation = true; };
+          };
+
+          "leos-mac-mini" = nix-darwin.lib.darwinSystem {
+            system = "aarch64-darwin";
+            modules = darwinModules;
+            specialArgs = { inherit inputs; isWorkstation = false; };
           };
         };
 
