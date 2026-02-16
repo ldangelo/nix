@@ -9,14 +9,12 @@ return {
                 end
                 return false
             end, require("smart-splits").setup({
-                -- Multiplexer integration (auto-detects Zellij, Tmux, Wezterm, Kitty)
-                multiplexer_integration = nil, -- nil = auto-detect, 'zellij' to force Zellij
-                -- Disable multiplexer when in certain terminals if needed
-                -- multiplexer_integration = 'zellij',
+                -- Multiplexer integration (auto-detects Tmux, Wezterm, Kitty)
+                multiplexer_integration = nil, -- nil = auto-detect, 'tmux' to force tmux
             })
         --
         -- Keymaps are configured in lua/config/keymaps.lua:
-        -- Ctrl+hjkl for navigation (seamless with Zellij via vim-zellij-navigator)
+        -- Ctrl+hjkl for navigation (seamless with tmux via vim-tmux-navigator)
         -- Cmd+hjkl for resizing (matches WezTerm, avoids AeroSpace conflict)
     end,
 }
