@@ -6,7 +6,6 @@
     atuin
     act                    # Run GitHub Actions locally
     antigravity
-    zellij
     tmux
     ghostty-bin
 

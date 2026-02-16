@@ -68,7 +68,7 @@ nix/
 │       ├── git.nix           # Git settings
 │       ├── nvim/             # Neovim configuration
 │       ├── emacs/            # Emacs configuration
-│       ├── zellij/           # Zellij terminal multiplexer
+│       ├── tmux/             # tmux terminal multiplexer
 │       └── qutebrowser/      # Qutebrowser browser
 ├── overlays/
 │   ├── sketchybar-lua/       # Custom package overlay
@@ -103,7 +103,7 @@ nix/
 - VSCode (with Catppuccin theme)
 
 **Terminal Environment**:
-- Zellij multiplexer with seamless Neovim navigation (Ctrl+hjkl)
+- tmux multiplexer with seamless Neovim navigation (Ctrl+hjkl via vim-tmux-navigator)
 - Ghostty terminal emulator
 - Starship prompt
 - Zsh with Oh My Zsh
@@ -140,11 +140,10 @@ nix/
 
 ### Active Focus Areas (Last 3 Months)
 
-1. **Terminal Multiplexer Migration**: Transitioned from tmux to Zellij with Aerospace integration
-   - Resolved Alt+hjkl conflicts between Zellij and Aerospace window manager
-   - Implemented seamless Neovim-Zellij navigation (vim-zellij-navigator)
-   - Fixed Atuin Ctrl+P conflict by moving pane mode to Ctrl+Space
-   - See: `ZELLIJ_KEYBINDINGS.md` for complete keybinding documentation
+1. **Terminal Multiplexer Migration**: Migrated back to tmux (Sidecar compatibility)
+   - Ctrl+Space prefix, vi mode, Catppuccin theme
+   - Seamless Neovim-tmux navigation via vim-tmux-navigator (Ctrl+hjkl)
+   - Layout scripts in `~/.local/bin/tmux-{simple,editor,dev,monitor,claude}`
 
 2. **Editor Configuration Evolution**: Doom Emacs → Standalone Emacs + Neovim dual setup
    - Removed Doom Emacs from repository
@@ -204,7 +203,7 @@ nix/
 **High-priority context to retain**:
 - Current flake inputs and versions (see `flake.lock`)
 - Active launchd services (kanata, karabiner - see `modules/darwin/services.nix`)
-- Zellij keybinding conflicts with Aerospace (documented in ZELLIJ_KEYBINDINGS.md)
+- tmux configuration with Ctrl+Space prefix (see `modules/home-manager/tmux/`)
 - Secrets management via sops-nix (never suggest plaintext API keys)
 
 **Low-priority context** (reference as needed):
@@ -374,7 +373,7 @@ nix eval .#darwinConfigurations."Leos-MacBook-Pro".config.system.build.toplevel
 
 - `BREWFILE_MIGRATION.md`: Historical package migration from Homebrew
 - `CHEZMOI_MIGRATION.md`: Dotfiles migration from chezmoi
-- `ZELLIJ_KEYBINDINGS.md`: Complete Zellij keybinding reference and Aerospace integration
+- tmux layout scripts: `modules/home-manager/tmux/layouts/` (session startup scripts)
 - `docs/PRD/`: Product requirements documents
 - `docs/TRD/`: Technical requirements documents
 - `Justfile`: All available commands and recipes
@@ -388,5 +387,5 @@ nix eval .#darwinConfigurations."Leos-MacBook-Pro".config.system.build.toplevel
 
 ---
 
-Last Updated: 2026-01-15
+Last Updated: 2026-02-16
 Configuration Version: 25.11.3bda9f6

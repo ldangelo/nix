@@ -24,7 +24,7 @@
     #     ./trash
     ./borders
     ./zoxide.nix
-    ./zellij
+    ./tmux
     ./yazi.nix
     #    ./streamdeck.nix
     #./streamdeck-config.nix
@@ -111,7 +111,7 @@
     vscode.enable = true;
     zsh-syntax-highlighting.enable = true;
     qutebrowser.enable = true;
-    zellij.enable = true;
+    tmux.enable = true;
     yazi.enable = true;
   };
   fonts.fontconfig.enable = true;
