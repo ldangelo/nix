@@ -132,7 +132,7 @@
             specialArgs = { inherit inputs; isWorkstation = true; };
           };
 
-          "leos-mac-mini" = nix-darwin.lib.darwinSystem {
+          "Leos-Mac-mini" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             modules = darwinModules;
             specialArgs = { inherit inputs; isWorkstation = false; };
