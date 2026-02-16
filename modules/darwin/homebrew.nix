@@ -27,7 +27,6 @@
       "aider"                          # AI pair programming
       "basedpyright"                   # Pyright fork with improvements
       #      "bd"
-      "devbox"                         # Development environments
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
       "steipete/tap/imsg"              # iMessage/SMS CLI
@@ -48,22 +47,20 @@
       # golang
       "golang"
 
+      "alot"                           # Notmuch mail client
+      "notmuch"                        # Email indexing
+
+      "xpdf"                           # PDF viewer (insecure in nix)
+      "cask"                           # Emacs dependency management
+      "dockutil"                       # Dock management (Swift build broken in nixpkgs)
+      "marksman"                       # Markdown language server (depends on .NET/Swift in nixpkgs)
+      "dotnet@6"                       # .NET 6
+      "openclaw-cli"
+     ] ++ lib.optionals isWorkstation [
+      "devbox"                         # Development environments
       # https://github.com/marcus/sidecar
       "sidecar"
       "td"
-
-
-      "choose-gui"                     # Dotfile manager
-      "fileql"                         # SQL-like queries on files
-      "ifstat"                         # Interface statistics
-      "kanata"                         # Keyboard remapper
-      "switchaudio-osx"                # Change audio source CLI
-      "vfkit"                          # Virtualization framework CLI
-      "openclaw-cli"
-      "tailscale"
-      # Email (not available on macOS via nix)
-      "alot"                           # Notmuch mail client
-      "notmuch"                        # Email indexing
 
       # Special packages with build requirements
       {
@@ -77,18 +74,22 @@
       # Window/UI management
       "felixkratz/formulae/borders"    # Window border system
 
+
+      "choose-gui"                     # Dotfile manager
+      "fileql"                         # SQL-like queries on files
+      "ifstat"                         # Interface statistics
+      "kanata"                         # Keyboard remapper
+      "switchaudio-osx"                # Change audio source CLI
+      "vfkit"                          # Virtualization framework CLI
+      "tailscale"
+      # Email (not available on macOS via nix)
       # Packages from original config
       "podman"                         # Container management
       "docker-compose"                 # Docker compose
       "chart-testing"                  # Helm chart testing
-      "xpdf"                           # PDF viewer (insecure in nix)
 
       # Additional utilities
-      "cask"                           # Emacs dependency management
-      "dockutil"                       # Dock management (Swift build broken in nixpkgs)
-      "marksman"                       # Markdown language server (depends on .NET/Swift in nixpkgs)
-      "dotnet@6"                       # .NET 6
-      "dotnet@8"                       # .NET 8 (Swift build broken in nixpkgs)
+     "dotnet@8"                       # .NET 8 (Swift build broken in nixpkgs)
       "mpv"                            # Media player (Swift build broken in nixpkgs)
       "fisher"                         # Fish shell plugin manager
       "haskell-stack"                  # Haskell development
@@ -109,6 +110,7 @@
       "font-source-code-pro"
       "git-credential-manager"
       "tailscale-app"
+      "block-goose"            # AI agent
     ] ++ lib.optionals isWorkstation [
       # Workstation-only casks (MacBook Pro)
       "aerospace"              # i3-like tiling window manager
@@ -119,7 +121,6 @@
 #      "ammonite"               # Tag visualizer
       "appcleaner"
       "arc"                    # Chromium browser
-      "block-goose"            # AI agent
 #      "felixkratz/formulae/borders"
       "davmail-app"            # Exchange mail/calendar client
       "docker-desktop"
