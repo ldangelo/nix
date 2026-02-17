@@ -3,6 +3,7 @@
 {
   programs.tmux = {
     enable = true;
+    tmuxinator.enable = true;
     prefix = "C-Space";
     mouse = true;
     terminal = "tmux-256color";
@@ -23,6 +24,22 @@
           set -g @catppuccin_window_default_text "#W"
           set -g @catppuccin_window_current_text "#W"
           set -g @catppuccin_status_modules_right "session date_time"
+        '';
+      }
+      {
+        plugin = pkgs.tmuxPlugins.mkTmuxPlugin {
+          pluginName = "command-palette";
+          version = "unstable-2025-01-01";
+          src = pkgs.fetchFromGitHub {
+            owner = "lost-melody";
+            repo = "tmux-command-palette";
+            rev = "main";
+            hash = "sha256-zkQhWRd4AiH9XjfRausvB2MNR3xXirYJA13OtvQ4oGQ=";
+          };
+        };
+        extraConfig = ''
+          set -g @cmdpalette-key-prefix 'prefix ?'
+          set -g @cmdpalette-key-root 'prefix BSpace'
         '';
       }
     ];
@@ -62,6 +79,46 @@
 
       # Focus events for Neovim autoread
       set -g focus-events on
+
+      # Override vim-tmux-navigator bindings to pass keys through to apps that
+      # need them. Sidecar runs claude/bash in the outer pane, so we match those
+      # process names too. The pane_current_command check is faster than ps.
+      is_passthrough="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf|sidecar|claude|claude-code)(diff)?(-wrapped)?$'"
+      bind-key -T root C-h  if-shell "$is_passthrough" "send-keys C-h"  "select-pane -L"
+      bind-key -T root C-j  if-shell "$is_passthrough" "send-keys C-j"  "select-pane -D"
+      bind-key -T root C-k  if-shell "$is_passthrough" "send-keys C-k"  "select-pane -U"
+      bind-key -T root C-l  if-shell "$is_passthrough" "send-keys C-l"  "select-pane -R"
+      bind-key -T root C-\\ if-shell "$is_passthrough" "send-keys C-\\\\" "select-pane -l"
+    '';
+  };
+
+  # Tmuxinator project: dev workspace (lazygit, yazi, nvim+claude)
+  xdg.configFile."tmuxinator/dev.yml".text = ''
+    name: dev
+    root: .
+    windows:
+      - claude:
+          layout: even-horizontal
+          panes:
+            - nvim .
+            - claude --continue
+      - tasks:
+          panes:
+            - td monitor .
+      - git:
+          panes:
+            - lazyjj .
+      - files:
+          panes:
+            - yazi .
+  '';
+
+  # sudo askpass helper — shows macOS GUI dialog when no TTY is available
+  home.file.".local/bin/sudo-askpass" = {
+    executable = true;
+    text = ''
+      #!/bin/bash
+      /usr/bin/osascript -e 'display dialog "sudo password:" default answer "" with hidden answer with title "sudo"' -e 'text returned of result' 2>/dev/null
     '';
   };
 

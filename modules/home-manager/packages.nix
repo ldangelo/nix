@@ -14,9 +14,9 @@
     # basedpyright - not in nixpkgs
     cargo-binstall         # Binary installation for rust projects
     cmake                  # Cross-platform make
-    claude-code
-    claude-code-acp
-    claude-monitor
+    # claude-code - installed via Homebrew
+    # claude-code-acp - install via npm (@zed-industries/claude-code-acp)
+    # claude-monitor - install via npm (claude-code-monitor)
     telegram-desktop
     # devbox - not in nixpkgs
     # devpod - not in nixpkgs
@@ -170,7 +170,7 @@
     # raycast - use cask
     # shortcat - not in nixpkgs
     # swiftdefaultapps - not in nixpkgs
-    vscode
+    # vscode - removed, not used
     # warp-terminal - use cask
 
     # Already in default.nix, kept for reference

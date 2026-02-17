@@ -82,7 +82,7 @@
       pkgs.gnupg
       pkgs.fzf
       pkgs.ripgrep
-      pkgs.vscode
+#      pkgs.vscode
       pkgs.just
       pkgs.silver-searcher
       pkgs.jq
@@ -108,7 +108,7 @@
     starship.enable = true;
     wezterm.enable = true;
     nvim.enable = true;
-    vscode.enable = true;
+    # vscode.enable = true;
     zsh-syntax-highlighting.enable = true;
     qutebrowser.enable = true;
     tmux.enable = true;

@@ -50,6 +50,9 @@
 
           EDITOR='nvim'
           export EDITOR
+
+          # sudo askpass helper for non-TTY contexts (e.g. Claude Code)
+          export SUDO_ASKPASS="$HOME/.local/bin/sudo-askpass"
 ##
           export DOTNET_ROOT=/Users/ldangelo/.dotnet
 
