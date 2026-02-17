@@ -57,10 +57,7 @@
       "dotnet@6"                       # .NET 6
       "openclaw-cli"
      ] ++ lib.optionals isWorkstation [
-      "devbox"                         # Development environments
       # https://github.com/marcus/sidecar
-      "sidecar"
-      "td"
 
       # Special packages with build requirements
       {
@@ -107,6 +104,7 @@
       "font-cantarell"
       "font-fira-code"
       "font-fira-code-nerd-font"
+      "font-powerline-symbols"
       "font-source-code-pro"
       "git-credential-manager"
       "tailscale-app"
