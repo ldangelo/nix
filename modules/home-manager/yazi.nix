@@ -11,6 +11,14 @@ in {
 		enableZshIntegration = true;
 		shellWrapperName = "y";
 
+		# Preview dependencies
+		package = pkgs.yazi;
+		extraPackages = with pkgs; [
+			ffmpegthumbnailer  # video thumbnails
+			poppler-utils      # PDF previews
+			_7zz               # archive previews
+		];
+
 		settings = {
 			mgr = {
 				show_hidden = true;
