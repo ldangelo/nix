@@ -8,6 +8,7 @@
     antigravity
     tmux
     ghostty-bin
+    glow                   # Terminal markdown viewer
 
     # aider - not in nixpkgs, available via brew
     ast-grep               # Code searching, linting, rewriting

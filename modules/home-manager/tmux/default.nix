@@ -14,8 +14,45 @@
     sensibleOnTop = true;
 
     plugins = with pkgs.tmuxPlugins; [
-      vim-tmux-navigator
+      {
+        plugin = vim-tmux-navigator;
+        extraConfig = ''
+          # Ensure Nix paths are available to plugin run-shell commands
+          set-environment -g PATH "/etc/profiles/per-user/ldangelo/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        '';
+      }
       yank
+      {
+        plugin = resurrect;
+        extraConfig = ''
+          set -g @resurrect-capture-pane-contents 'on'
+          set -g @resurrect-strategy-nvim 'session'
+        '';
+      }
+      {
+        plugin = continuum;
+        extraConfig = ''
+          set -g @continuum-restore 'on'
+          set -g @continuum-save-interval '10'
+        '';
+      }
+      tmux-thumbs
+      fzf-tmux-url
+      extrakto
+      {
+        plugin = tmux-toggle-popup;
+        extraConfig = ''
+          set -g @popup-autostart on
+          # Prefix t — general popup shell (75% size)
+          bind t run "#{@popup-toggle} -w75% -h75% -Ed'#{pane_current_path}'"
+          # Prefix g — lazygit popup (90% size)
+          bind g run "#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=lazygit lazygit"
+          # Prefix D — deploy popup (just deploy)
+          bind D run "#{@popup-toggle} -w80% -h60% -Ed'#{pane_current_path}' --name=deploy just deploy"
+          # Prefix h — tmux user guide
+          bind h run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
+        '';
+      }
       {
         plugin = catppuccin;
         extraConfig = ''
@@ -36,6 +73,11 @@
             rev = "main";
             hash = "sha256-zkQhWRd4AiH9XjfRausvB2MNR3xXirYJA13OtvQ4oGQ=";
           };
+          # macOS BSD getopt lacks long option support; patch to use GNU getopt
+          postInstall = ''
+            substituteInPlace $target/scripts/env.sh \
+              --replace-fail 'getopt' '${pkgs.getopt}/bin/getopt'
+          '';
         };
         extraConfig = ''
           set -g @cmdpalette-key-prefix 'prefix ?'
@@ -89,10 +131,34 @@
       bind-key -T root C-k  if-shell "$is_passthrough" "send-keys C-k"  "select-pane -U"
       bind-key -T root C-l  if-shell "$is_passthrough" "send-keys C-l"  "select-pane -R"
       bind-key -T root C-\\ if-shell "$is_passthrough" "send-keys C-\\\\" "select-pane -l"
+
+      # UX tweaks
+      set -g display-time 2000
+      set -g detach-on-destroy off
+      set -g pane-border-status top
+      set -g pane-border-format " #{pane_index}: #{pane_current_command} "
     '';
   };
 
-  # Tmuxinator project: dev workspace (lazygit, yazi, nvim+claude)
+  # Tmuxinator workspaces
+  xdg.configFile."tmuxinator/simple.yml".text = ''
+    name: simple
+    root: .
+    windows:
+      - shell:
+          panes:
+            - ""
+  '';
+
+  xdg.configFile."tmuxinator/editor.yml".text = ''
+    name: editor
+    root: .
+    windows:
+      - editor:
+          panes:
+            - nvim .
+  '';
+
   xdg.configFile."tmuxinator/dev.yml".text = ''
     name: dev
     root: .
@@ -113,6 +179,30 @@
             - yazi .
   '';
 
+  xdg.configFile."tmuxinator/monitor.yml".text = ''
+    name: monitor
+    root: .
+    windows:
+      - dashboard:
+          layout: tiled
+          panes:
+            - htop
+            - watch -n 2 df -h
+            - watch -n 2 netstat -an
+            - ""
+  '';
+
+  xdg.configFile."tmuxinator/claude.yml".text = ''
+    name: claude
+    root: .
+    windows:
+      - pair:
+          layout: even-horizontal
+          panes:
+            - nvim .
+            - claude --continue
+  '';
+
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available
   home.file.".local/bin/sudo-askpass" = {
     executable = true;
@@ -120,27 +210,5 @@
       #!/bin/bash
       /usr/bin/osascript -e 'display dialog "sudo password:" default answer "" with hidden answer with title "sudo"' -e 'text returned of result' 2>/dev/null
     '';
-  };
-
-  # Deploy layout scripts
-  home.file.".local/bin/tmux-simple" = {
-    source = ./layouts/simple.sh;
-    executable = true;
-  };
-  home.file.".local/bin/tmux-editor" = {
-    source = ./layouts/editor.sh;
-    executable = true;
-  };
-  home.file.".local/bin/tmux-dev" = {
-    source = ./layouts/dev.sh;
-    executable = true;
-  };
-  home.file.".local/bin/tmux-monitor" = {
-    source = ./layouts/monitor.sh;
-    executable = true;
-  };
-  home.file.".local/bin/tmux-claude" = {
-    source = ./layouts/claude.sh;
-    executable = true;
   };
 }

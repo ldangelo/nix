@@ -5,7 +5,8 @@
       "Bash(echo:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
