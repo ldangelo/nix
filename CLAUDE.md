@@ -104,7 +104,7 @@ nix/
 
 **Terminal Environment**:
 - tmux multiplexer with seamless Neovim navigation (Ctrl+hjkl via vim-tmux-navigator)
-- Ghostty terminal emulator
+- iTerm terminal emulator
 - Starship prompt
 - Zsh with Oh My Zsh
 - Atuin (shell history)
