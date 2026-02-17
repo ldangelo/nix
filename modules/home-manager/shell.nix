@@ -23,6 +23,7 @@
       lsa   = "ls -ld .*"; # List only file beginning with "."
       lsd   = "ls -ld *(-/DN)"; # List only directories and symbolic links that point to directories
       mkdir = "nocorrect mkdir"; # no spelling correction on mkdir
+      mux   = "tmuxinator";
       mv    = "nocorrect mv"; # no spelling correction on mv
       o     = "octave -f --no-gui";
       r     = "ranger_cd";
@@ -38,13 +39,36 @@
 
 # Set .envrc variables for common API keys (github, openrouter, anthropic, openai, etc...)
     oh-my-zsh.enable = true;
-    oh-my-zsh.plugins = [ "systemd" ];
+    oh-my-zsh.plugins = [
+      "aws"
+      "docker"
+      "fzf"
+      "gh"
+      "git"
+      "kubectl"
+      "ruby"
+      "terraform"
+      "tmuxinator"
+      "zoxide"
+    ];
     initContent = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
       # Where to look for autoloaded function definitions
       fpath=(~/.zfunc $fpath)
+
+      # Tool completions (not covered by oh-my-zsh plugins)
+      source <(jj util completion zsh 2>/dev/null)
+      source <(helm completion zsh 2>/dev/null)
+      source <(just --completions zsh 2>/dev/null)
+      source <(glab completion -s zsh 2>/dev/null)
+      source <(starship completions zsh 2>/dev/null)
+      source <(atuin gen-completions --shell zsh 2>/dev/null)
+      source <(git-town completions zsh 2>/dev/null)
+      source <(uv generate-shell-completion zsh 2>/dev/null)
+      eval "$(fd --gen-completions zsh 2>/dev/null)"
+      eval "$(rg --generate complete-zsh 2>/dev/null)"
  
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 

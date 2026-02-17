@@ -109,9 +109,9 @@
       set -g focus-events on
 
       # Override vim-tmux-navigator bindings to pass keys through to apps that
-      # need them. Sidecar runs claude/bash in the outer pane, so we match those
-      # process names too. The pane_current_command check is faster than ps.
-      is_passthrough="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf|sidecar|claude|claude-code)(diff)?(-wrapped)?$'"
+      # need them (Neovim, fzf). Claude Code is excluded — it treats C-h as
+      # backspace, so we let tmux handle pane navigation instead.
+      is_passthrough="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf|sidecar)(diff)?(-wrapped)?$'"
       bind-key -T root C-h  if-shell "$is_passthrough" "send-keys C-h"  "select-pane -L"
       bind-key -T root C-j  if-shell "$is_passthrough" "send-keys C-j"  "select-pane -D"
       bind-key -T root C-k  if-shell "$is_passthrough" "send-keys C-k"  "select-pane -U"
