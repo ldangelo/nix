@@ -125,8 +125,6 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 | Key | Action |
 |-----|--------|
 | `Prefix r` | Reload config |
-| `Prefix ?` | Command palette |
-| `Prefix Backspace` | Command palette (root) |
 
 ---
 
@@ -185,6 +183,16 @@ Popups open in the current pane's working directory. Press the same key again to
 - `Prefix D` → kick off a deploy, dismiss, keep coding, toggle back to check
 - `Prefix g` → quick git operations without leaving your workflow
 - `Prefix t` → ad-hoc shell for anything
+
+### tmux-which-key — Keybinding Discovery
+
+Shows a popup menu of available keybindings after pressing the prefix. If you forget a shortcut, just wait — the menu appears and you can navigate it to find and execute the action you need.
+
+| Key | Action |
+|-----|--------|
+| `Prefix Space` | Open which-key menu |
+
+Supports nested submenus (e.g., select "Windows" to see all window-related shortcuts).
 
 ### Catppuccin Theme
 
@@ -327,3 +335,4 @@ tmux attach -t dev # reconnect
 | `Prefix t` | Popup shell |
 | `Prefix g` | Popup lazygit |
 | `Prefix D` | Popup deploy (`just deploy`) |
+| `Prefix Space` | Which-key menu |

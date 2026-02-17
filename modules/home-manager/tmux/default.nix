@@ -54,6 +54,13 @@
         '';
       }
       {
+        plugin = tmux-which-key;
+        extraConfig = ''
+          set -g @tmux-which-key-xdg-enable 1
+          set -g @tmux-which-key-disable-autobuild 1
+        '';
+      }
+      {
         plugin = catppuccin;
         extraConfig = ''
           set -g @catppuccin_flavor "mocha"
@@ -61,27 +68,6 @@
           set -g @catppuccin_window_default_text "#W"
           set -g @catppuccin_window_current_text "#W"
           set -g @catppuccin_status_modules_right "session date_time"
-        '';
-      }
-      {
-        plugin = pkgs.tmuxPlugins.mkTmuxPlugin {
-          pluginName = "command-palette";
-          version = "unstable-2025-01-01";
-          src = pkgs.fetchFromGitHub {
-            owner = "lost-melody";
-            repo = "tmux-command-palette";
-            rev = "main";
-            hash = "sha256-zkQhWRd4AiH9XjfRausvB2MNR3xXirYJA13OtvQ4oGQ=";
-          };
-          # macOS BSD getopt lacks long option support; patch to use GNU getopt
-          postInstall = ''
-            substituteInPlace $target/scripts/env.sh \
-              --replace-fail 'getopt' '${pkgs.getopt}/bin/getopt'
-          '';
-        };
-        extraConfig = ''
-          set -g @cmdpalette-key-prefix 'prefix ?'
-          set -g @cmdpalette-key-root 'prefix BSpace'
         '';
       }
     ];
@@ -141,6 +127,145 @@
   };
 
   # Tmuxinator workspaces
+  # tmux-which-key configuration
+  xdg.configFile."tmux-which-key/config.yaml".text = ''
+    command_alias_start_index: 200
+    keybindings:
+      prefix_table: Space
+    title:
+      style: align=centre,bold
+      prefix: tmux
+      prefix_style: fg=green,align=centre,bold
+    position:
+      x: C
+      y: S
+    macros:
+      - name: reload-config
+        commands:
+          - source-file ~/.config/tmux/tmux.conf
+          - display "Config reloaded"
+    items:
+      - name: Run
+        key: space
+        command: command-prompt
+      - name: Last window
+        key: tab
+        command: last-window
+      - separator: true
+      - name: +Windows
+        key: w
+        menu:
+          - name: Last
+            key: tab
+            command: last-window
+          - name: Choose
+            key: w
+            command: choose-tree -Zw
+          - name: Previous
+            key: p
+            command: previous-window
+          - name: Next
+            key: n
+            command: next-window
+          - name: New
+            key: c
+            command: "neww -c #{pane_current_path}"
+          - separator: true
+          - name: Split |
+            key: /
+            command: "splitw -h -c #{pane_current_path}"
+          - name: Split -
+            key: "-"
+            command: "splitw -v -c #{pane_current_path}"
+          - separator: true
+          - name: Rename
+            key: R
+            command: command-prompt -I "#W" "renamew -- \"%%\""
+          - name: Kill
+            key: X
+            command: confirm -p "Kill window #W? (y/n)" killw
+      - name: +Panes
+        key: p
+        menu:
+          - name: Last
+            key: tab
+            command: lastp
+          - name: Choose
+            key: p
+            command: displayp -d 0
+          - separator: true
+          - name: Zoom
+            key: z
+            command: resizep -Z
+          - name: +Resize
+            key: r
+            menu:
+              - name: Left
+                key: h
+                command: resizep -L 5
+                transient: true
+              - name: Down
+                key: j
+                command: resizep -D 5
+                transient: true
+              - name: Up
+                key: k
+                command: resizep -U 5
+                transient: true
+              - name: Right
+                key: l
+                command: resizep -R 5
+                transient: true
+          - separator: true
+          - name: Break to window
+            key: "!"
+            command: break-pane
+          - name: Kill
+            key: X
+            command: confirm -p "Kill pane #P? (y/n)" killp
+      - name: +Sessions
+        key: s
+        menu:
+          - name: Choose
+            key: s
+            command: choose-tree -Zs
+          - name: New
+            key: N
+            command: new
+          - name: Rename
+            key: r
+            command: rename
+          - name: Detach
+            key: d
+            command: detach
+      - name: Copy mode
+        key: c
+        command: copy-mode
+      - separator: true
+      - name: +Popups
+        key: t
+        menu:
+          - name: Shell
+            key: t
+            command: "run \"#{@popup-toggle} -w75% -h75% -Ed'#{pane_current_path}'\""
+          - name: Lazygit
+            key: g
+            command: "run \"#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=lazygit lazygit\""
+          - name: Deploy
+            key: d
+            command: "run \"#{@popup-toggle} -w80% -h60% -Ed'#{pane_current_path}' --name=sudo -H deploy just deploy\""
+          - name: Help
+            key: h
+            command: "run \"#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}\""
+      - separator: true
+      - name: Reload config
+        key: R
+        macro: reload-config
+      - name: Keys
+        key: "?"
+        command: list-keys -N
+  '';
+
   xdg.configFile."tmuxinator/simple.yml".text = ''
     name: simple
     root: .
