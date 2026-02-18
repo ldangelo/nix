@@ -52,8 +52,6 @@
           set -g @sessionx-preview-enabled 'true'
         '';
       }
-      battery
-
       {
         plugin = tmux-toggle-popup;
         extraConfig = ''
@@ -87,17 +85,16 @@
     ];
 
     extraConfig = ''
-      # True color support
-      set -ag terminal-overrides ",xterm-256color:RGB"
-      set -ag terminal-overrides ",ghostty:RGB"
-
-      # Status line (catppuccin v2 requires explicit status-right setup)
+      # Status line — must come after catppuccin plugin sets up variables.
       set -g status-right-length 100
       set -g status-left-length 100
       set -g status-left ""
-      set -g status-right "#{E:@catppuccin_status_battery}"
-      set -ag status-right "#{E:@catppuccin_status_session}"
+      set -g status-right "#{E:@catppuccin_status_session}"
       set -ag status-right "#{E:@catppuccin_status_date_time}"
+
+      # True color support
+      set -ag terminal-overrides ",xterm-256color:RGB"
+      set -ag terminal-overrides ",ghostty:RGB"
 
       # Renumber windows when one is closed
       set -g renumber-windows on
