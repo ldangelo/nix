@@ -4,12 +4,14 @@
   programs.git = {
     enable = true;
 
-    userName = "Leo A. D'Angelo";
-    userEmail = "ldangelo@mac.com";
+    settings = {
+      user = {
+        name = "Leo A. D'Angelo";
+        email = "ldangelo@mac.com";
+      };
 
-    extraConfig = {
       core = {
-        editor = "emacs";
+        editor = "nvim";
         excludesfile = "${config.home.homeDirectory}/.gitignore_global";
         autocrlf = "input";
       };
