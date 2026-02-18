@@ -77,7 +77,7 @@
         plugin = catppuccin;
         extraConfig = ''
           set -g @catppuccin_flavor "mocha"
-          set -g @catppuccin_window_status_style "rounded"
+          set -g @catppuccin_window_status_style "slanted"
           set -g @catppuccin_window_default_text "#W"
           set -g @catppuccin_window_current_text "#W"
         '';
@@ -115,14 +115,31 @@
       # Vi-style copy mode
       bind -T copy-mode-vi v send-keys -X begin-selection
       bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"
+      bind -T copy-mode-vi C-v send-keys -X rectangle-toggle
+      bind -T copy-mode-vi H send-keys -X start-of-line
+      bind -T copy-mode-vi L send-keys -X end-of-line
+      bind Enter copy-mode
+
+      # Window navigation
+      bind Tab last-window
+      bind BTab switch-client -l
+
+      # Window reordering
+      bind -r "<" swap-window -d -t -1
+      bind -r ">" swap-window -d -t +1
+
+      # Mouse toggle
+      bind m set -g mouse \; display "Mouse: #{?mouse,ON,OFF}"
+
+      # Activity monitoring (highlight windows with new output)
+      set -g monitor-activity on
+      set -g visual-activity off
 
       # Reload config
       bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
 
       # Switch sessions
       bind S choose-session
-
-      # Pane zoom toggle (already prefix+z by default)
 
       # Focus events for Neovim autoread
       set -g focus-events on
