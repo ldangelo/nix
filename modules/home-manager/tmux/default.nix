@@ -53,7 +53,7 @@
         '';
       }
       battery
-      prefix-highlight
+
       {
         plugin = tmux-toggle-popup;
         extraConfig = ''
@@ -82,7 +82,6 @@
           set -g @catppuccin_window_status_style "rounded"
           set -g @catppuccin_window_default_text "#W"
           set -g @catppuccin_window_current_text "#W"
-          set -g @catppuccin_status_modules_right "battery session date_time"
         '';
       }
     ];
@@ -91,6 +90,14 @@
       # True color support
       set -ag terminal-overrides ",xterm-256color:RGB"
       set -ag terminal-overrides ",ghostty:RGB"
+
+      # Status line (catppuccin v2 requires explicit status-right setup)
+      set -g status-right-length 100
+      set -g status-left-length 100
+      set -g status-left ""
+      set -g status-right "#{E:@catppuccin_status_battery}"
+      set -ag status-right "#{E:@catppuccin_status_session}"
+      set -ag status-right "#{E:@catppuccin_status_date_time}"
 
       # Renumber windows when one is closed
       set -g renumber-windows on
@@ -302,7 +309,7 @@
     windows:
       - editor:
           panes:
-            - nvim .
+            - nvim 
   '';
 
   xdg.configFile."tmuxinator/dev.yml".text = ''
@@ -312,7 +319,7 @@
       - claude:
           layout: even-horizontal
           panes:
-            - nvim .
+            - nvim 
             - claude --continue
       - tasks:
           panes:
@@ -345,8 +352,20 @@
       - pair:
           layout: even-horizontal
           panes:
-            - nvim .
+            - nvim 
             - claude --continue
+  '';
+
+  xdg.configFile."tmuxinator/notes.yml".text = ''
+    name: notes
+    root: ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo
+    windows:
+      - editor:
+          panes:
+            - nvim .
+      - shell:
+          panes:
+            - ""
   '';
 
   xdg.configFile."tmuxinator/ops.yml".text = ''

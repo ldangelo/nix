@@ -29,6 +29,8 @@
       sudo  = "nocorrect sudo";
       touch = "nocorrect touch";
       which = "nocorrect which";
+      vault = "cd ~/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/ldangelo && nvim .";
+      ot    = "nvim ~/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/ldangelo/Daily\\ Notes/$(date +%Y-%m-%d).md";
     };
 
 # Set .envrc variables for common API keys (github, openrouter, anthropic, openai, etc...)
@@ -122,6 +124,7 @@
             [ -n "$session" ] && claude --resume "$(echo "$session" | cut -f1)"
           }
 
+      unalias gcd 2>/dev/null
       gcd() {
         local dir="$(git ls-tree -d -r --name-only --full-name HEAD $(git rev-parse --show-cdup) | fzf +m -0)" &&
         cd "./$(git rev-parse --show-cdup)/$dir"

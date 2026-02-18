@@ -70,6 +70,9 @@
     jq                     # JSON processor
     # jql - not in nixpkgs
     # marksman               # Markdown language server - using Homebrew (depends on .NET/Swift)
+    markdownlint-cli       # Markdown linter
+    markdownlint-cli2      # Markdown linter (used by LazyVim markdown extra)
+    markdown-toc           # Markdown TOC generator (used by LazyVim markdown extra)
     multimarkdown          # Markdown converter
     pandoc                 # Document converter
     ripgrep                # Fast search
