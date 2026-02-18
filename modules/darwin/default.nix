@@ -31,8 +31,11 @@
   ];
 
 
-#  system.activationScripts.postUserActivation.text = ''
-    # Following line should allow us to avoid a logout/login cycle
-#    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-#  '';
+  # Upgrade all Homebrew packages (including dependencies) during deploy
+  system.activationScripts.postActivation.text = ''
+    if [ -f "/opt/homebrew/bin/brew" ]; then
+      echo >&2 "Upgrading all Homebrew packages (including dependencies)..."
+      PATH="/opt/homebrew/bin:$PATH" sudo --preserve-env=PATH --user=ldangelo --set-home env brew upgrade 2>&1 || true
+    fi
+  '';
 }
