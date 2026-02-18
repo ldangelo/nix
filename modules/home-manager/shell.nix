@@ -4,34 +4,28 @@
     enableCompletion = true;
     history.path = "$HOME/.history";
     history.share = false;
-    defaultKeymap = "emacs";
+    defaultKeymap = "viins";
     shellAliases = {
       ag    = "ag --color-line-number='0;33' --color-path='0;32'";
       cc    = "claude";
       ccc   = "claude --continue";
-      cp    = "nocorrect cp"; # no spelling correction on cp
+      cp    = "nocorrect cp";
       gm    = "git machete";
       grep  = "grep --color";
       gst   = "git status";
       j     = "julia --project --thread=auto";
-      jc    = "journalctl";
-      l     = "exa -la --group --header";
-      lg    = "exa -la --group --header --git";
-      ln    = "nocorrect ln"; # no spelling correction on ln
+      l     = "eza --all --header --long --group";
+      lg    = "eza --all --header --long --group --git";
+      ll    = "eza --all --header --long";
+      llm   = "eza --all --header --long --sort=modified";
+      lt    = "eza --tree";
+      tree  = "eza --tree";
+      ln    = "nocorrect ln";
       lnr   = "nocorrect ln -s --relative";
-      ls    = "ls --color=auto";
-      lsa   = "ls -ld .*"; # List only file beginning with "."
-      lsd   = "ls -ld *(-/DN)"; # List only directories and symbolic links that point to directories
-      mkdir = "nocorrect mkdir"; # no spelling correction on mkdir
+      mkdir = "nocorrect mkdir";
       mux   = "tmuxinator";
-      mv    = "nocorrect mv"; # no spelling correction on mv
-      o     = "octave -f --no-gui";
-      r     = "ranger_cd";
-      sc    = "systemctl";
+      mv    = "nocorrect mv";
       scp   = "${pkgs.rsync}/bin/rsync -aP --inplace";
-      scs   = "systemctl status";
-      scu   = "systemctl --user";
-      scus  = "scu status";
       sudo  = "nocorrect sudo";
       touch = "nocorrect touch";
       which = "nocorrect which";
@@ -40,15 +34,23 @@
 # Set .envrc variables for common API keys (github, openrouter, anthropic, openai, etc...)
     oh-my-zsh.enable = true;
     oh-my-zsh.plugins = [
+      "1password"
+      "alias-finder"
       "aws"
       "docker"
+      "docker-compose"
+      "dotnet"
+      "eza"
       "fzf"
       "gh"
       "git"
       "kubectl"
       "ruby"
+      "ssh"
+      "sudo"
       "terraform"
       "tmuxinator"
+      "vi-mode"
       "zoxide"
     ];
     initContent = ''
@@ -78,17 +80,15 @@
           # sudo askpass helper for non-TTY contexts (e.g. Claude Code)
           export SUDO_ASKPASS="$HOME/.local/bin/sudo-askpass"
 ##
-          export DOTNET_ROOT=/Users/ldangelo/.dotnet
+          export DOTNET_ROOT="$HOME/.dotnet"
 
-          path=('/Users/ldangelo/.local/bin' $path)
+          path=("$HOME/.local/bin" $path)
           path=("$HOME/Library/Application Support/JetBrains/Toolbox/scripts" $path)
-          path=('/Users/ldangelo/.npm-global/bin' $path)
-          path=('/Users/ldangelo/.cargo/bin' $path)
-          path=('/Users/ldangelo/.config/emacs/bin' $path)
-          path=('/Users/ldangelo/Development/omnisharp' $path)
+          path=("$HOME/.npm-global/bin" $path)
+          path=("$HOME/.cargo/bin" $path)
+          path=("$HOME/.config/emacs/bin" $path)
           path=('/opt/homebrew/bin' $path)
-          path=('/Users/ldangelo/bin' $path)
-          path=('/Users/ldangelo/.config/doom/bin' $path)
+          path=("$HOME/bin" $path)
           path=('/opt/homebrew/opt/python@3.13/bin/' $path)
           eval "$(/usr/libexec/path_helper)"
           path=("/opt/homebrew/opt/postgresql@17/bin" $path)
@@ -156,7 +156,7 @@
   if [[ -o interactive ]]; then
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
           path=($DOTNET_ROOT $path)
-          path=('/Users/ldangelo/.dotnet/tools' $path)
+          path=("$HOME/.dotnet/tools" $path)
           export PATH
           eval "$(/opt/homebrew/bin/brew shellenv)"
  
@@ -164,11 +164,9 @@
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-          bindkey -v
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
           # vterm (emacs) related functions for prompt tracking, etc...
 #          eval "$(oh-my-posh init zsh)"
-          source ~/.config/zsh/rc/alias.zsh
           source ~/.config/zsh/rc/homebrew.zsh
           source ~/.config/zsh/rc/modules.zsh
           source ~/.config/zsh/rc/set.zsh
@@ -187,10 +185,15 @@
             test -e "$HOME/.iterm2_shell_integration.zsh" && source "$HOME/.iterm2_shell_integration.zsh"
             test -d "$HOME/.iterm2" && export PATH="$HOME/.iterm2:$PATH"
             
+          # alias-finder configuration
+          zstyle ':omz:plugins:alias-finder' autoload yes
+          zstyle ':omz:plugins:alias-finder' longer yes
+          zstyle ':omz:plugins:alias-finder' exact yes
+          zstyle ':omz:plugins:alias-finder' cheaper yes
+
             if [[ -z "$INSIDE_EMACS" ]]; then
-#             source ~/.config/zsh/rc/zsh-autosuggestions.zsh
-#             source ~/.config/zsh/rc/zsh-syntax-highlighting.zsh
-              source ~/.config/zsh/rc/ohmyzsh.zsh
+              source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+              source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
             fi
       #
       # Setup ROS 2 auto completion for nix-direnv environments

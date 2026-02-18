@@ -27,12 +27,25 @@ in {
 				max_width = 1000;
 				max_height = 1000;
 			};
+			plugin = {
+				prepend_fetchers = [
+					{ id = "git"; name = "*"; run = "git"; }
+					{ id = "git"; name = "*/"; run = "git"; }
+				];
+			};
 		};
 
 		plugins = {
 			chmod = "${yazi-plugins}/chmod.yazi";
 			full-border = "${yazi-plugins}/full-border.yazi";
 			toggle-pane = "${yazi-plugins}/toggle-pane.yazi";
+			smart-filter = "${yazi-plugins}/smart-filter.yazi";
+			jump-to-char = "${yazi-plugins}/jump-to-char.yazi";
+			git = "${yazi-plugins}/git.yazi";
+			diff = "${yazi-plugins}/diff.yazi";
+			smart-enter = "${yazi-plugins}/smart-enter.yazi";
+			smart-paste = "${yazi-plugins}/smart-paste.yazi";
+			mactag = "${yazi-plugins}/mactag.yazi";
 			starship = pkgs.fetchFromGitHub {
 				owner = "Rolv-Apneseth";
 				repo = "starship.yazi";
@@ -44,6 +57,7 @@ in {
 		initLua = ''
 			require("full-border"):setup()
 			require("starship"):setup()
+			require("git"):setup()
 		'';
 
 		keymap = {
@@ -57,6 +71,36 @@ in {
 					on = ["c" "m"];
 					run = "plugin chmod";
 					desc = "Chmod on selected files";
+				}
+				{
+					on = "f";
+					run = "plugin smart-filter";
+					desc = "Smart filter";
+				}
+				{
+					on = "F";
+					run = "plugin jump-to-char";
+					desc = "Jump to char";
+				}
+				{
+					on = "l";
+					run = "plugin smart-enter";
+					desc = "Open file or enter directory";
+				}
+				{
+					on = "p";
+					run = "plugin smart-paste";
+					desc = "Smart paste";
+				}
+				{
+					on = ["d" "f"];
+					run = "plugin diff";
+					desc = "Diff selected file";
+				}
+				{
+					on = ["c" "t"];
+					run = "plugin mactag";
+					desc = "macOS tag management";
 				}
 			];
 		};
