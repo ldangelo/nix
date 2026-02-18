@@ -6,7 +6,8 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "WebFetch(domain:github.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(nix search:*)"
     ],
     "deny": [],
     "ask": []
