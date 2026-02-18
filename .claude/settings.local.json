@@ -7,7 +7,12 @@
       "Bash(grep:*)",
       "WebFetch(domain:github.com)",
       "WebSearch",
-      "Bash(nix search:*)"
+      "Bash(nix search:*)",
+      "Bash(jj diff:*)",
+      "Bash(jj split:*)",
+      "Bash(jj status:*)",
+      "Bash(jj describe:*)",
+      "Bash(jj log:*)"
     ],
     "deny": [],
     "ask": []
