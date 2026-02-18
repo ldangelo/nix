@@ -3,7 +3,6 @@
 {
   home.packages = with pkgs; [
     # Development Tools
-    atuin
     act                    # Run GitHub Actions locally
     antigravity
     tmux
@@ -52,12 +51,10 @@
 
     # Shell & Terminal Tools
     atuin                  # Improved shell history
-    autojump               # Jump to frequently used directories
     btop                   # Resource monitor
     coreutils              # GNU utilities
     direnv                 # Load/unload env vars based on pwd
     eza                    # Modern ls replacement
-    fasd                   # Quick access to files/directories
     fd                     # Simple alternative to find
     fzf                    # Fuzzy finder
     htop                   # Process viewer

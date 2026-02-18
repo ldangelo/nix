@@ -36,9 +36,24 @@
           set -g @continuum-save-interval '10'
         '';
       }
-      tmux-thumbs
+      {
+        plugin = tmux-thumbs;
+        extraConfig = ''
+          set -g @thumbs-key F
+        '';
+      }
       fzf-tmux-url
       extrakto
+      {
+        plugin = tmux-sessionx;
+        extraConfig = ''
+          set -g @sessionx-bind 'o'
+          set -g @sessionx-filter-current 'false'
+          set -g @sessionx-preview-enabled 'true'
+        '';
+      }
+      battery
+      prefix-highlight
       {
         plugin = tmux-toggle-popup;
         extraConfig = ''
@@ -67,7 +82,7 @@
           set -g @catppuccin_window_status_style "rounded"
           set -g @catppuccin_window_default_text "#W"
           set -g @catppuccin_window_current_text "#W"
-          set -g @catppuccin_status_modules_right "session date_time"
+          set -g @catppuccin_status_modules_right "battery session date_time"
         '';
       }
     ];
@@ -223,12 +238,18 @@
           - name: Kill
             key: X
             command: confirm -p "Kill pane #P? (y/n)" killp
+          - name: Sync panes
+            key: "Y"
+            command: setw synchronize-panes
       - name: +Sessions
         key: s
         menu:
           - name: Choose
             key: s
             command: choose-tree -Zs
+          - name: Sessionx
+            key: x
+            command: "display 'Use Prefix+o for sessionx'"
           - name: New
             key: N
             command: new
@@ -326,6 +347,18 @@
           panes:
             - nvim .
             - claude --continue
+  '';
+
+  xdg.configFile."tmuxinator/ops.yml".text = ''
+    name: ops
+    root: .
+    windows:
+      - shell:
+          panes:
+            - ""
+      - logs:
+          panes:
+            - ""
   '';
 
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available
