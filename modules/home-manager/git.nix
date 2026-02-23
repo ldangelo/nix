@@ -14,6 +14,21 @@
         editor = "nvim";
         excludesfile = "${config.home.homeDirectory}/.gitignore_global";
         autocrlf = "input";
+        pager = "delta";
+      };
+
+      interactive = {
+        diffFilter = "delta --color-only";
+      };
+
+      delta = {
+        navigate = true;
+        side-by-side = true;
+        line-numbers = true;
+      };
+
+      merge = {
+        conflictstyle = "zdiff3";
       };
 
       difftool = {
