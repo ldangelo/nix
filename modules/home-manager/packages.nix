@@ -47,6 +47,7 @@
     git
     git-town               # High-level Git interface
     glab                   # GitLab CLI
+    delta                  # Syntax-highlighting pager for git
     jujutsu                # Jujutsu version control (package name is jujutsu not jj)
 
     # Shell & Terminal Tools

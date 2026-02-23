@@ -12,6 +12,8 @@
 
       ui = {
         editor = "nvim";
+        pager = "delta";
+        diff-formater = ":git";
       };
 
       merge-tools = {
