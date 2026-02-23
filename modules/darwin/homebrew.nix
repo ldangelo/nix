@@ -26,7 +26,8 @@
       # Development Tools (not in nixpkgs)
       "aider"                          # AI pair programming
       "basedpyright"                   # Pyright fork with improvements
-      #      "bd"
+      "steveyegge/beads/bd"             # Git-backed graph issue tracker for AI agents
+      "dolt"                           # Version-controlled SQL database (beads dependency)
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
       "steipete/tap/imsg"              # iMessage/SMS CLI
@@ -37,6 +38,7 @@
       "lazyjj"                         # TUI for Jujutsu
       "nuget"                          # .NET package manager
       "opencode"                       # AI coding agent
+      "pi-coding-agent"                # Pi AI coding agent
       "repomix"                        # Pack repo into AI-friendly file
       "swagger-codegen"                # OpenAPI code generator
 
