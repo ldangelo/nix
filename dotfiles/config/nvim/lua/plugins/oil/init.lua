@@ -26,7 +26,7 @@ return {
       ["g?"] = "actions.show_help",
       ["<CR>"] = "actions.select",
       ["<C-s>"] = "actions.select_vsplit",
-      ["<C-h>"] = "actions.select_split",
+      ["<C-v>"] = "actions.select_split",  -- moved from <C-h> to avoid pane nav conflict
       ["<C-t>"] = "actions.select_tab",
       ["-"] = "actions.parent",
       ["_"] = "actions.open_cwd",
@@ -37,7 +37,12 @@ return {
       ["g."] = "actions.toggle_hidden",
       ["g\\"] = "actions.toggle_trash",
       ["<C-p>"] = "actions.preview",
-      ["<C-l>"] = "actions.refresh",
+      ["<C-r>"] = "actions.refresh",       -- moved from <C-l> to avoid pane nav conflict
+      -- Pane navigation (smart-splits compatible)
+      ["<C-h>"] = function() require("smart-splits").move_cursor_left() end,
+      ["<C-j>"] = function() require("smart-splits").move_cursor_down() end,
+      ["<C-k>"] = function() require("smart-splits").move_cursor_up() end,
+      ["<C-l>"] = function() require("smart-splits").move_cursor_right() end,
     },
   },
 }
