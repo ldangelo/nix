@@ -9,6 +9,13 @@ return {
     scope = { enabled = true },
     explorer = { enabled = true },
     words = { enabled = true },
+    picker = {
+      sources = {
+        files = {
+          hidden = true, -- show hidden files (e.g. .gitignore, .env)
+        },
+      },
+    },
   },
   keys = {
     { "<leader>z", function() Snacks.zen() end, desc = "Zen Mode" },
