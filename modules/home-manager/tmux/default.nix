@@ -1,5 +1,19 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
+let
+  # tmux-notify: monitors panes and sends macOS notifications when processes finish
+  # Not in nixpkgs — built from source (rickstaa/tmux-notify)
+  tmux-notify = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "tmux-notify";
+    version = "unstable-2026-03-05";
+    src = pkgs.fetchFromGitHub {
+      owner = "rickstaa";
+      repo = "tmux-notify";
+      rev = "b713320af05837c3b44e4d51167ff3062dbeae4b";
+      sha256 = "sha256-wOmq2stWXAFmYrRuIqf9IPATYXJ+OFoYXnJdHUnJQxY=";
+    };
+  };
+in
 {
   programs.tmux = {
     enable = true;
@@ -70,7 +84,15 @@
         plugin = tmux-which-key;
         extraConfig = ''
           set -g @tmux-which-key-xdg-enable 1
-          set -g @tmux-which-key-disable-autobuild 1
+        '';
+      }
+      {
+        plugin = tmux-notify;
+        extraConfig = ''
+          # Use macOS native notifications via terminal-notifier
+          set -g @tnotify-verbose 'on'
+          set -g @tnotify-sleep-duration '5'
+          set -g @tnotify-verbose-msg '#S:#W — process finished'
         '';
       }
       {
@@ -82,14 +104,44 @@
           set -g @catppuccin_window_current_text "#W"
         '';
       }
+      {
+        plugin = cpu;
+        extraConfig = ''
+          set -g @cpu_low_icon "▁"
+          set -g @cpu_medium_icon "▄"
+          set -g @cpu_high_icon "█"
+          set -g @cpu_percentage_format "%3.1f%%"
+        '';
+      }
+      {
+        plugin = battery;
+        extraConfig = ''
+          set -g @batt_icon_charge_tier8 "█"
+          set -g @batt_icon_charge_tier7 "▇"
+          set -g @batt_icon_charge_tier6 "▆"
+          set -g @batt_icon_charge_tier5 "▅"
+          set -g @batt_icon_charge_tier4 "▄"
+          set -g @batt_icon_charge_tier3 "▃"
+          set -g @batt_icon_charge_tier2 "▂"
+          set -g @batt_icon_charge_tier1 "▁"
+          set -g @batt_icon_status_charged "⚡"
+          set -g @batt_icon_status_charging "↑"
+          set -g @batt_icon_status_discharging ""
+          set -g @batt_color_status_primary_charged "#a6e3a1"
+          set -g @batt_color_status_primary_charging "#f9e2af"
+          set -g @batt_color_status_primary_discharging "#cdd6f4"
+        '';
+      }
     ];
 
     extraConfig = ''
       # Status line — must come after catppuccin plugin sets up variables.
-      set -g status-right-length 100
+      set -g status-right-length 150
       set -g status-left-length 100
       set -g status-left ""
       set -g status-right "#{E:@catppuccin_status_session}"
+      set -ag status-right " #[fg=#89b4fa] #{cpu_icon} #{cpu_percentage}"
+      set -ag status-right " #[fg=#{@batt_color_status_primary}]#{batt_icon_status} #{batt_percentage}"
       set -ag status-right "#{E:@catppuccin_status_date_time}"
 
       # True color support
@@ -135,6 +187,14 @@
       set -g monitor-activity on
       set -g visual-activity off
 
+      # Bell monitoring — Claude Code and other agents send terminal bells
+      # when waiting for input. This highlights the window and triggers
+      # a macOS notification via terminal-notifier.
+      set -g monitor-bell on
+      set -g visual-bell off
+      set -g bell-action other
+      set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
+
       # Reload config
       bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
 
@@ -157,14 +217,15 @@
       # UX tweaks
       set -g display-time 2000
       set -g detach-on-destroy off
+      set -g set-clipboard on
       set -g pane-border-status top
-      set -g pane-border-format " #{pane_index}: #{pane_current_command} "
+      set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
     '';
   };
 
   # Tmuxinator workspaces
   # tmux-which-key configuration
-  xdg.configFile."tmux-which-key/config.yaml".text = ''
+  xdg.configFile."tmux/plugins/tmux-which-key/config.yaml".text = ''
     command_alias_start_index: 200
     keybindings:
       prefix_table: Space
@@ -175,6 +236,9 @@
     position:
       x: C
       y: S
+    custom_variables:
+      - name: log_info
+        value: "#[fg=green,italics] [info]#[default]#[italics]"
     macros:
       - name: reload-config
         commands:
@@ -270,7 +334,7 @@
             command: choose-tree -Zs
           - name: Sessionx
             key: x
-            command: "display 'Use Prefix+o for sessionx'"
+            command: "display Use Prefix+o for sessionx"
           - name: New
             key: N
             command: new
@@ -289,13 +353,13 @@
         menu:
           - name: Shell
             key: t
-            command: "run \"#{@popup-toggle} -w75% -h75% -Ed'#{pane_current_path}'\""
+            command: "run \"#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path}\""
           - name: Lazygit
             key: g
-            command: "run \"#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=lazygit lazygit\""
+            command: "run \"#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=lazygit lazygit\""
           - name: Deploy
             key: d
-            command: "run \"#{@popup-toggle} -w80% -h60% -Ed'#{pane_current_path}' --name=sudo -H deploy just deploy\""
+            command: "run \"#{@popup-toggle} -w80% -h60% -Ed#{pane_current_path} --name=deploy just deploy\""
           - name: Help
             key: h
             command: "run \"#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}\""
@@ -372,7 +436,7 @@
 
   xdg.configFile."tmuxinator/notes.yml".text = ''
     name: notes
-    root: ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo
+    root: <%= ENV.fetch('OBSIDIAN_VAULT', File.expand_path('~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo')) %>
     windows:
       - editor:
           panes:
@@ -392,6 +456,36 @@
       - logs:
           panes:
             - ""
+  '';
+
+  # Multi-agent layout: run several Claude Code sessions in parallel
+  xdg.configFile."tmuxinator/agents.yml".text = ''
+    name: agents
+    root: .
+    windows:
+      - agent-1:
+          panes:
+            - claude --continue
+      - agent-2:
+          panes:
+            - claude --continue
+      - agent-3:
+          panes:
+            - claude --continue
+      - overview:
+          layout: tiled
+          panes:
+            - td monitor .
+            - lazyjj .
+            - ""
+  '';
+
+  # Ensure which-key's generated init.tmux is writable after each deploy.
+  # The plugin regenerates this file on every tmux start; if it's read-only
+  # (e.g. from a previous umask or macOS quarantine attribute), the plugin
+  # silently fails and prefix+Space reverts to next-layout.
+  home.activation.fixWhichKeyPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    chmod -f u+w "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux" || true
   '';
 
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available

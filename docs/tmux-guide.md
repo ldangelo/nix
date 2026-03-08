@@ -1,6 +1,6 @@
 # tmux User Guide
 
-**Last Updated**: 2026-02-17
+\*\*Last Updated\*\*: 2026-03-05
 **Prefix Key**: `Ctrl+Space`
 **Configuration**: `modules/home-manager/tmux/default.nix`
 
@@ -143,11 +143,11 @@ Saved data includes: window layouts, pane positions, working directories, and ru
 
 ### tmux-thumbs — Quick Copy
 
-Press `Prefix Space` to activate hint mode. Letters appear next to copyable text (URLs, paths, hashes, IPs). Press the letter to copy that text to the clipboard.
+Press `Prefix F` to activate hint mode. Letters appear next to copyable text (URLs, paths, hashes, IPs). Press the letter to copy that text to the clipboard.
 
 | Key | Action |
 |-----|--------|
-| `Prefix Space` | Activate thumbs hint mode |
+| `Prefix F` | Activate thumbs hint mode |
 
 ### tmux-fzf-url — Open URLs
 
@@ -186,17 +186,30 @@ Popups open in the current pane's working directory. Press the same key again to
 
 ### tmux-which-key — Keybinding Discovery
 
-Shows a popup menu of available keybindings after pressing the prefix. If you forget a shortcut, just wait — the menu appears and you can navigate it to find and execute the action you need.
+Shows a popup menu of available keybindings after pressing the prefix. If you forget a shortcut, just press `Prefix Space` — the menu appears and you can navigate it to find and execute the action you need.
 
 | Key | Action |
 |-----|--------|
 | `Prefix Space` | Open which-key menu |
+| `Prefix h` | Open this help guide in a popup |
 
 Supports nested submenus (e.g., select "Windows" to see all window-related shortcuts).
 
 ### Catppuccin Theme
 
-Mocha variant with rounded window status. Status bar shows session name and date/time on the right.
+Mocha variant with slanted window status. Status bar (right side) shows:
+- **Session name** — current tmux session
+- **CPU** — live CPU percentage with load icon
+- **Battery** — charge percentage with charging/discharging indicator
+- **Date/time** — current date and time
+
+### tmux-notify — Process Completion Alerts
+
+Monitors panes and sends a macOS notification when a long-running process finishes (after 5+ seconds).
+
+| Key | Action |
+|-----|--------|
+| *(automatic)* | Notification when monitored process finishes |
 
 ---
 
@@ -213,6 +226,9 @@ Tmuxinator manages predefined tmux layouts. All workspaces use the current direc
 | `dev` | `tmuxinator start dev` | Full dev environment: nvim+claude, tasks, git, files |
 | `monitor` | `tmuxinator start monitor` | 4-pane dashboard: htop, disk, network, shell |
 | `claude` | `tmuxinator start claude` | Side-by-side: nvim + claude --continue |
+| `agents` | `tmuxinator start agents` | 3 parallel Claude agents + overview (tasks, git, shell) |
+| `notes` | `tmuxinator start notes` | Obsidian vault in nvim + shell |
+| `ops` | `tmuxinator start ops` | Ops shell + logs windows |
 
 ### Workspace Details
 
@@ -233,6 +249,16 @@ Tmuxinator manages predefined tmux layouts. All workspaces use the current direc
 - empty shell for ad-hoc commands
 
 **claude** — Focused AI pairing session with nvim and claude --continue side-by-side.
+
+**agents** — Multi-agent workspace with 3 Claude Code windows running in parallel:
+1. **agent-1/2/3** — independent claude --continue sessions
+4. **overview** — tiled coordination pane (task monitor, lazyjj, free shell)
+
+> Set `OBSIDIAN_VAULT` env var to override the default vault path.
+
+**notes** — Obsidian vault editing in nvim. Root defaults to `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo`. Override with `OBSIDIAN_VAULT` env var.
+
+**ops** — Minimal ops session: shell + logs windows.
 
 ### Managing Workspaces
 
@@ -327,7 +353,7 @@ tmux attach -t dev # reconnect
 | `Prefix [` | Copy mode (vi keys) |
 | `Prefix Ctrl+s` | Save session |
 | `Prefix Ctrl+r` | Restore session |
-| `Prefix Space` | Thumbs (quick copy) |
+| `Prefix F` | Thumbs (quick copy — hint mode) |
 | `Prefix u` | URL picker |
 | `Prefix Tab` | Extract text |
 | `Prefix ?` | Command palette |
@@ -335,4 +361,5 @@ tmux attach -t dev # reconnect
 | `Prefix t` | Popup shell |
 | `Prefix g` | Popup lazygit |
 | `Prefix D` | Popup deploy (`just deploy`) |
+| `Prefix h` | Popup help guide |
 | `Prefix Space` | Which-key menu |
