@@ -13,3 +13,13 @@ secrets/*.yaml
 .sidecar-start.sh
 .sidecar-base
 .td-root
+
+# bv (beads viewer) local config and caches
+.bv/
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
+
+# NTM agent mesh local state
+.ntm/
