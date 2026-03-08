@@ -23,3 +23,10 @@ secrets/*.yaml
 
 # NTM agent mesh local state
 .ntm/
+
+# Gas Town (added by gt)
+.beads/
+.runtime/
+.claude/
+.logs/
+__pycache__/
