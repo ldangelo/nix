@@ -6,7 +6,9 @@
     history.share = false;
     defaultKeymap = "viins";
     shellAliases = {
+      #am    = "cd ~/mcp_agent_mail; scripts/run_server_with_token.sh";
       ag    = "ag --color-line-number='0;33' --color-path='0;32'";
+      #      bd    = "br";
       cc    = "claude";
       ccc   = "claude --continue";
       cp    = "nocorrect cp";
@@ -33,7 +35,9 @@
       ot    = "nvim ~/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/ldangelo/Daily\\ Notes/$(date +%Y-%m-%d).md";
     };
 
-# Set .envrc variables for common API keys (github, openrouter, anthropic, openai, etc...)
+
+      #
+      #  Set .envrc variables for common API keys (github, openrouter, anthropic, openai, etc...)
     oh-my-zsh.enable = true;
     oh-my-zsh.plugins = [
       "1password"
@@ -58,6 +62,13 @@
     initContent = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
+
+      [[ -f "/Users/ldangelo/.config/gastown/shell-hook.sh" ]] && source "/Users/ldangelo/.config/gastown/shell-hook.sh"
+
+      # ntm (Named Tmux Manager) shell integration
+      command -v ntm &>/dev/null && eval "$(ntm shell zsh)"
+
 
       # Where to look for autoloaded function definitions
       fpath=(~/.zfunc $fpath)
@@ -84,16 +95,19 @@
 ##
           export DOTNET_ROOT="$HOME/.dotnet"
 
-          path=("$HOME/.local/bin" $path)
+          # Let path_helper establish the base system PATH first (/usr/bin, /bin, etc.)
+          # so that custom entries prepended below take priority over system paths.
+          eval "$(/usr/libexec/path_helper)"
           path=("$HOME/Library/Application Support/JetBrains/Toolbox/scripts" $path)
           path=("$HOME/.npm-global/bin" $path)
           path=("$HOME/.cargo/bin" $path)
           path=("$HOME/.config/emacs/bin" $path)
           path=('/opt/homebrew/bin' $path)
+          path=('/opt/homebrew/opt/gnu-tar/libexec/gnubin' $path)
           path=("$HOME/bin" $path)
           path=('/opt/homebrew/opt/python@3.13/bin/' $path)
-          eval "$(/usr/libexec/path_helper)"
           path=("/opt/homebrew/opt/postgresql@17/bin" $path)
+          path=("$HOME/.local/bin" $path)
 
           DIRSTACKSIZE=100
 
@@ -206,6 +220,22 @@
       # Integrate run-nix-help (https://github.com/NixOS/nix/blob/master/misc/zsh/run-help-nix#L14)
       (( $+aliases[run-help] )) && unalias run-help
       autoload -Uz run-help run-help-nix
+
+      # Re-assert priority paths last — brew shellenv (called above) internally
+      # re-invokes path_helper which pushes /usr/bin and /bin back to the front.
+      path=(
+        '/opt/homebrew/opt/postgresql@17/bin'
+        '/opt/homebrew/opt/python@3.13/bin'
+        "$HOME/bin"
+        '/opt/homebrew/bin'
+        "$HOME/.config/emacs/bin"
+        "$HOME/.cargo/bin"
+        "$HOME/.npm-global/bin"
+        "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+        "$HOME/.local/bin"
+        $path
+      )
+      export PATH
 
 fi
 
