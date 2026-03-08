@@ -12,7 +12,9 @@
       "Bash(jj split:*)",
       "Bash(jj status:*)",
       "Bash(jj describe:*)",
-      "Bash(jj log:*)"
+      "Bash(jj log:*)",
+      "Bash(gh api:*)",
+      "Bash(gh repo:*)"
     ],
     "deny": [],
     "ask": []
