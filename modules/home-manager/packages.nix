@@ -21,9 +21,10 @@
     # devbox - not in nixpkgs
     # devpod - not in nixpkgs
     devenv
+    process-compose        # Process orchestrator (like docker-compose for local services)
     gradle                 # Build automation tool
     #    google-chrome
-    graphite-cli
+    #    graphite-cli
     helix
     # jdtls - use jdt-language-server
     jankyborders
@@ -53,13 +54,16 @@
     # Shell & Terminal Tools
     atuin                  # Improved shell history
     btop                   # Resource monitor
+    bun                    # Fast JavaScript/TypeScript runtime and package manager
     coreutils              # GNU utilities
     direnv                 # Load/unload env vars based on pwd
     eza                    # Modern ls replacement
     fd                     # Simple alternative to find
     fzf                    # Fuzzy finder
+    git-lfs                # Git large file storage
     htop                   # Process viewer
     # ifstat - not in nixpkgs
+    lsd                    # Modern ls with icons and colors
     starship               # Cross-shell prompt
     terminal-notifier      # macOS notifications from CLI
     zoxide                 # Smarter cd command
@@ -91,6 +95,7 @@
     # Cloud & Infrastructure
     awscli2                # AWS CLI (v2)
     cloudflared            # Cloudflare Tunnel client
+    # localstack           # Using Homebrew (nix build broken)
     docker-credential-helpers
 #    flyctl                 # Fly.io CLI
     gitlab-runner          # GitLab CI runner
@@ -174,6 +179,11 @@
     # swiftdefaultapps - not in nixpkgs
     # vscode - removed, not used
     # warp-terminal - use cask
+
+    # ACFS tools (from overlay)
+    ntm              # Multi-agent tmux coordinator (Go TUI)
+    ubs              # Ultimate Bug Scanner shell meta-runner
+    mcp-agent-mail   # Async MCP coordination server (Python)
 
     # Already in default.nix, kept for reference
     # cyrus-sasl-xoauth2 (from overlay)

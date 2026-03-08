@@ -15,10 +15,12 @@
       "d12frosted/emacs-plus"
       "felixkratz/formulae"
       "nikitabobko/tap"
+      "dicklesworthstone/tap"
       "charmbracelet/tap"
       "bakks/bakks"
       "steipete/tap"
       "steveyegge/beads"
+      "manaflow-ai/cmux"
     ];
 
     # Brew formulae not easily available in nixpkgs
@@ -26,7 +28,8 @@
       # Development Tools (not in nixpkgs)
       "aider"                          # AI pair programming
       "basedpyright"                   # Pyright fork with improvements
-      "steveyegge/beads/bd"             # Git-backed graph issue tracker for AI agents
+      #"steveyegge/beads/bd"             # Git-backed graph issue tracker for AI agents
+      #"gastown"                        # Go-based agentic task runner (steveyegge)
       "dolt"                           # Version-controlled SQL database (beads dependency)
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
@@ -41,6 +44,7 @@
       "pi-coding-agent"                # Pi AI coding agent
       "repomix"                        # Pack repo into AI-friendly file
       "swagger-codegen"                # OpenAPI code generator
+      "localstack"                     # Local AWS cloud emulator
 
       # Shell & System Tools
       "bakks/bakks/butterfish"         # LLM command-line tool
@@ -95,6 +99,22 @@
       "nvm"                            # Node version manager
       "watch"
       "yt-dlp"                         # YouTube downloader (curl-impersonate broken in nixpkgs on macOS 15)
+          
+
+        # Dicklesworthstone flywheel tools (via dicklesworthstone/tap)
+        "bv"                           # Beads Viewer TUI
+        "caam"                         # Coding Agent Account Manager
+        "cass"                         # Coding Agent Session Search
+        "cm"                           # CASS Memory System
+        "ru"                           # Repo Updater
+        "slb"                          # Simultaneous Launch Button (two-person auth)
+        # "dcg" - Destructive Command Guard: install manually via curl (tap checksum issues)
+        #   curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/destructive_command_guard/main/install.sh?$(date +%s)" | bash -s -- --easy-mode && dcg install
+        # "giil" - Get Image from Internet Link: install manually via curl (not in tap)
+        #   curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/giil/main/install.sh?$(date +%s)" | bash
+        # "csctf" - Chat Shared Conversation to File: install manually via curl (not in tap)
+        #   curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/chat_shared_conversation_to_file/main/install.sh?$(date +%s)" | bash
+        # ntm, ubs, mcp-agent-mail: managed via Nix overlay in overlays/acfs.nix
     ];
 
     # macOS applications (casks) not in nixpkgs or better via homebrew
@@ -177,6 +197,7 @@
       "wakatime"
 #      "warp-terminal"          # Terminal with AI
       "wezterm"
+      "cmux"                   # AI terminal multiplexer (manaflow-ai)
       "witsy"                  # BYOK AI assistant
       "zed"                    # Code editor
       "zoom"
