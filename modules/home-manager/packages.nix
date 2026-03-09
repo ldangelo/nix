@@ -180,10 +180,6 @@
     # vscode - removed, not used
     # warp-terminal - use cask
 
-    # ACFS tools (from overlay)
-    ntm              # Multi-agent tmux coordinator (Go TUI)
-    ubs              # Ultimate Bug Scanner shell meta-runner
-    mcp-agent-mail   # Async MCP coordination server (Python)
 
     # Already in default.nix, kept for reference
     # cyrus-sasl-xoauth2 (from overlay)

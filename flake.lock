@@ -357,8 +357,7 @@
         "nixpkgs": "nixpkgs_3",
         "nur": "nur",
         "shell-flake": "shell-flake",
-        "sops-nix": "sops-nix",
-        "ubs": "ubs"
+        "sops-nix": "sops-nix"
       }
     },
     "shell-flake": {
@@ -420,26 +419,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
-        "type": "github"
-      }
-    },
-    "ubs": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772855901,
-        "narHash": "sha256-eWnt4dflBzHIMN9f+CuAXBPsaP1uv1lAXCu5fE71Fjw=",
-        "owner": "Dicklesworthstone",
-        "repo": "ultimate_bug_scanner",
-        "rev": "f85babebb081a34c8ecf7db2e192d3e9c9fa61ec",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Dicklesworthstone",
-        "repo": "ultimate_bug_scanner",
         "type": "github"
       }
     }

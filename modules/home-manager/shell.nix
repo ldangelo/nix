@@ -66,8 +66,6 @@
 
       [[ -f "/Users/ldangelo/.config/gastown/shell-hook.sh" ]] && source "/Users/ldangelo/.config/gastown/shell-hook.sh"
 
-      # ntm (Named Tmux Manager) shell integration
-      command -v ntm &>/dev/null && eval "$(ntm shell zsh)"
 
 
       # Where to look for autoloaded function definitions
