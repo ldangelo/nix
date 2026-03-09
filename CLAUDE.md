@@ -1,14 +1,18 @@
 # nix-darwin System Configuration
 
-## MANDATORY: Use td for Task Management
+## Task Management: Beads (bd/br)
 
-Run td usage --new-session at conversation start (or after /clear). This tells you what to work on next.
+This project uses **beads** (`bd`/`br`) for issue tracking. When working as a polecat via `gt sling`:
 
-Sessions are automatic (based on terminal/agent context). Optional:
-- td session "name" to label the current session
-- td session --new to force a new session in the same context
+1. Run `gt prime` at session start to see your hooked work
+2. Check your hook: `gt hook` shows your assigned bead
+3. Work the bead — read the description for what to do
+4. Complete via `gt done` when finished
 
-Use td usage -q after first read.
+Key commands:
+- `bd show <id>` — View issue details
+- `bd ready` — Find available work
+- `bd close <id>` — Mark complete
 
 ## Project Overview
 
