@@ -43,14 +43,12 @@
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
     sops-nix.url = "github:Mic92/sops-nix";
 
-    ubs.url = "github:Dicklesworthstone/ultimate_bug_scanner";
-    ubs.inputs.nixpkgs.follows = "nixpkgs";
+
   };
 
-  outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ubs, ... }:
+  outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ... }:
     let
       common-overlays = [
-        (import ./overlays/acfs.nix inputs)
 
       (self: super: {
         cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
