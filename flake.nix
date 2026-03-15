@@ -81,6 +81,11 @@
           };
         };
 
+        # ast-grep: skip failing test_scan_invalid_rule_id (Illegal byte sequence in sandbox)
+        ast-grep = super.ast-grep.overrideAttrs (oldAttrs: {
+          doCheck = false;
+        });
+
         # Himalaya with OAuth2 support for Microsoft 365
         himalaya = super.himalaya.overrideAttrs (oldAttrs: {
           cargoBuildFeatures = (oldAttrs.cargoBuildFeatures or []) ++ [ "oauth2" ];

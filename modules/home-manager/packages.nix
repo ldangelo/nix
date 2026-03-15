@@ -45,6 +45,7 @@
 
     # Git Tools
     gh                     # GitHub CLI
+    jira-cli-go            # Interactive Jira CLI
     git
     git-town               # High-level Git interface
     glab                   # GitLab CLI

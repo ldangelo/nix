@@ -100,12 +100,13 @@
           path=("$HOME/.npm-global/bin" $path)
           path=("$HOME/.cargo/bin" $path)
           path=("$HOME/.config/emacs/bin" $path)
+          path=("$HOME/.bun/bin" $path)
+          path=("$HOME/bin" $path)
+          path=("$HOME/.local/bin" $path)
           path=('/opt/homebrew/bin' $path)
           path=('/opt/homebrew/opt/gnu-tar/libexec/gnubin' $path)
-          path=("$HOME/bin" $path)
           path=('/opt/homebrew/opt/python@3.13/bin/' $path)
           path=("/opt/homebrew/opt/postgresql@17/bin" $path)
-          path=("$HOME/.local/bin" $path)
 
           DIRSTACKSIZE=100
 
