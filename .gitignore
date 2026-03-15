@@ -24,10 +24,23 @@ secrets/*.yaml
 # NTM agent mesh local state
 .ntm/
 
-# Gas Town (added by gt)
-.beads/
-.runtime/
+# Gas Town runtime
 .claude/
 !.claude/settings.local.json
+.runtime/
 .logs/
 __pycache__/
+.env
+mayor/
+refinery/
+witness/
+polecats/
+storage.sqlite3*
+
+# MCP server configs (generated per-IDE)
+cline.mcp.json
+codex.mcp.json
+cursor.mcp.json
+gemini.mcp.json
+opencode.json
+windsurf.mcp.json
