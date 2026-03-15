@@ -21,6 +21,7 @@
       "steipete/tap"
       "steveyegge/beads"
       "manaflow-ai/cmux"
+      "acsandmann/tap"
     ];
 
     # Brew formulae not easily available in nixpkgs
@@ -76,6 +77,7 @@
       }
       # Window/UI management
       "felixkratz/formulae/borders"    # Window border system
+      "acsandmann/tap/rift"            # Rust tiling window manager
 
 
       "choose-gui"                     # Dotfile manager
