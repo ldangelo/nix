@@ -24,9 +24,21 @@
       "Bash(jj describe:*)",
       "Bash(jj log:*)",
       "Bash(gh api:*)",
-      "Bash(gh repo:*)"
+      "Bash(gh repo:*)",
+      "Bash(jj cat:*)",
+      "Bash(jj file:*)",
+      "Bash(jj squash:*)"
     ],
     "deny": [],
     "ask": []
+  },
+  "mcpServers": {
+    "mcp-agent-mail": {
+      "type": "http",
+      "url": "http://127.0.0.1:8765/api/",
+      "headers": {
+        "Authorization": "Bearer 9a95c870b4c7ceee77e698fa47cce732ad2eff5e93d2e31fed521338b910584e"
+      }
+    }
   }
 }
