@@ -27,7 +27,8 @@
       "Bash(gh repo:*)",
       "Bash(jj cat:*)",
       "Bash(jj file:*)",
-      "Bash(jj squash:*)"
+      "Bash(jj squash:*)",
+      "Bash(jj resolve:*)"
     ],
     "deny": [],
     "ask": []
