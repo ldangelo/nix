@@ -11,6 +11,7 @@ in
   xdg.configFile = {
     # Window managers
     "aerospace".source = "${dotfilesPath}/config/aerospace";
+    "rift".source = "${dotfilesPath}/config/rift";
     "yabai".source = "${dotfilesPath}/config/yabai";
     "skhd".source = "${dotfilesPath}/config/skhd";
 

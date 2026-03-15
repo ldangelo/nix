@@ -1,0 +1,262 @@
+# Rift Config - Leo D'Angelo
+# Translated from AeroSpace config
+# Place at: ~/.config/rift/config.toml
+
+# ============================================================
+# Settings
+# ============================================================
+[settings]
+animate = true
+animation_duration = 0.2
+animation_fps = 100.0
+
+# Mouse behavior
+mouse_follows_focus = true
+mouse_hides_on_focus = false
+focus_follows_mouse = false
+
+# Hot reload config on save
+hot_reload = true
+
+# Don't let system apps steal focus
+auto_focus_blacklist = [
+  "com.apple.Spotlight",
+  "com.apple.dock",
+  "com.apple.systemuiserver",
+  "com.apple.SecurityAgent",
+  "com.raycast.macos",
+]
+
+# ============================================================
+# Layout
+# ============================================================
+[settings.layout]
+# Default layout — i3-style containers
+mode = "traditional"
+
+# Master-stack settings (used by Communication workspace)
+[settings.layout.master_stack]
+master_ratio = 0.5
+master_count = 1
+master_side = "right"               # Mail on the right
+new_window_placement = "stack"      # Chat apps stack on the left
+
+# Stack settings
+[settings.layout.stack]
+stack_offset = 30.0                 # Matches your accordion-padding = 30
+default_orientation = "perpendicular"
+
+# Scrolling layout settings (available if you want to try it)
+[settings.layout.scrolling]
+column_width_ratio = 0.7
+min_column_width_ratio = 0.3
+max_column_width_ratio = 0.9
+alignment = "center"
+focus_navigation_style = "niri"
+
+# ============================================================
+# Gaps — matches your AeroSpace gaps
+# ============================================================
+[settings.layout.gaps.outer]
+top = 10
+left = 10
+bottom = 10
+right = 10
+
+[settings.layout.gaps.inner]
+horizontal = 10
+vertical = 10
+
+# ============================================================
+# UI
+# ============================================================
+[settings.ui.menu_bar]
+enabled = true
+show_empty = false
+mode = "all"
+active_label = "name"
+display_style = "layout"
+
+[settings.ui.stack_line]
+enabled = true
+thickness = 3.0
+horiz_placement = "top"
+vert_placement = "left"
+spacing = 1.0
+
+# ============================================================
+# Gestures
+# ============================================================
+[settings.gestures]
+enabled = true
+fingers = 3
+skip_empty = true
+haptics_enabled = true
+
+# ============================================================
+# Virtual Workspaces
+# ============================================================
+[virtual_workspaces]
+enabled = true
+default_workspace_count = 5
+auto_assign_windows = true
+preserve_focus_per_workspace = true
+workspace_auto_back_and_forth = true    # Matches your alt-tab behavior
+
+workspace_names = [
+  "Home",           # 0 — Terminal, general
+  "Development",    # 1 — IntelliJ, editors
+  "Communication",  # 2 — Slack, Discord, Telegram, Messages, Mail
+  "Organization",   # 3 — Fantastical, Obsidian
+  "Trading",        # 4 — TradingView
+]
+
+# Per-workspace layout overrides
+workspace_rules = [
+  # Communication: master_stack — Mail on right, chat apps stacked on left
+  { workspace = "Communication", layout = "master_stack" },
+
+  # Everything else: traditional i3-style
+  # (uncomment to experiment)
+  # { workspace = "Development", layout = "traditional" },
+  # { workspace = "Organization", layout = "traditional" },
+  # { workspace = "Trading", layout = "bsp" },
+]
+
+# ============================================================
+# App Rules — auto-assign apps to workspaces
+# ============================================================
+app_rules = [
+  # Home (workspace 0)
+  { app_id = "com.googlecode.iterm2", workspace = "Home" },
+
+  # Development (workspace 1)
+  { app_id = "com.jetbrains.intellij", workspace = "Development" },
+
+  # Communication (workspace 2) — master_stack layout
+  # Mail goes to master (right), everything else stacks (left)
+  { app_id = "com.tinyspeck.slackmacgap", workspace = "Communication" },
+  { app_id = "com.hnc.Discord", workspace = "Communication" },
+  { app_id = "ru.keepcoder.Telegram", workspace = "Communication" },
+  { app_id = "com.apple.MobileSMS", workspace = "Communication" },
+  { app_id = "com.apple.mail", workspace = "Communication" },
+  { app_id = "us.zoom.xos", workspace = "Communication" },
+  { app_id = "com.logmein.goto", workspace = "Communication" },
+
+  # Organization (workspace 3)
+  { app_id = "com.flexibits.fantastical2.mac", workspace = "Organization" },
+  { app_id = "md.obsidian", workspace = "Organization" },
+
+  # Trading (workspace 4)
+  { app_id = "com.tradingview.tradingviewapp.desktop", workspace = "Trading" },
+
+  # Float/unmanage system apps
+  { app_id = "com.apple.systempreferences", floating = true },
+  { app_id = "com.apple.SystemPreferences", floating = true },
+  { app_id = "com.electron.dockerdesktop", floating = true },
+
+  # Float any "Preferences" window
+  { title_substring = "Preferences", floating = true },
+]
+
+# ============================================================
+# Modifier Combinations
+# ============================================================
+[modifier_combinations]
+comb1 = "Alt + Shift"
+comb2 = "Ctrl + Alt"
+
+# ============================================================
+# Key Bindings
+# ============================================================
+[keys]
+
+# --- Layout ---
+"Alt + Slash" = "toggle_orientation"                # Was: layout tiles horizontal vertical
+"Alt + Comma" = "toggle_stack"                      # Was: layout accordion horizontal vertical
+
+# --- Fullscreen ---
+"Alt + F" = "toggle_fullscreen"                     # Same as AeroSpace
+"comb1 + F" = "toggle_fullscreen_within_gaps"       # NEW: fullscreen but keep gaps
+
+# --- Focus (vim-style + arrows) ---
+"Alt + H" = { move_focus = "left" }
+"Alt + Left" = { move_focus = "left" }
+"Alt + J" = { move_focus = "down" }
+"Alt + K" = { move_focus = "up" }
+"Alt + L" = { move_focus = "right" }
+"Alt + Right" = { move_focus = "right" }
+
+# --- Focus cycle ---
+"Alt + N" = "next_window"                           # Was: focus dfs-next
+"comb1 + N" = "prev_window"                         # Was: focus dfs-prev
+
+# --- Move windows ---
+"comb1 + H" = { move_node = "left" }
+"comb1 + J" = { move_node = "down" }
+"comb1 + K" = { move_node = "up" }
+"comb1 + L" = { move_node = "right" }
+
+# --- Join windows (merge into adjacent container) ---
+# NEW: AeroSpace needed service mode for this
+"comb1 + Left" = { join_window = "left" }
+"comb1 + Right" = { join_window = "right" }
+"comb1 + Up" = { join_window = "up" }
+"comb1 + Down" = { join_window = "down" }
+"comb2 + E" = "unjoin_windows"
+
+# --- Resize ---
+"comb1 + Minus" = "resize_window_shrink"            # Was: resize smart -50
+"comb1 + Equal" = "resize_window_grow"              # Was: resize smart +50
+
+# --- Switch workspaces ---
+"Alt + 1" = { switch_to_workspace = 0 }             # Home
+"Alt + D" = { switch_to_workspace = 1 }             # Development
+"Alt + C" = { switch_to_workspace = 2 }             # Communication
+"Alt + O" = { switch_to_workspace = 3 }             # Organization
+"Alt + T" = { switch_to_workspace = 4 }             # Trading
+
+# --- Move window to workspace ---
+"comb1 + 1" = { move_window_to_workspace = 0 }      # Home
+"comb1 + D" = { move_window_to_workspace = 1 }      # Development
+"comb1 + C" = { move_window_to_workspace = 2 }      # Communication
+"comb1 + O" = { move_window_to_workspace = 3 }      # Organization
+"comb1 + T" = { move_window_to_workspace = 4 }      # Trading
+
+# --- Workspace navigation ---
+"Alt + Tab" = "switch_to_last_workspace"            # Was: workspace-back-and-forth
+
+# --- Floating ---
+"comb1 + Space" = "toggle_window_floating"          # Was: service mode → f
+"comb2 + Space" = "toggle_focus_floating"           # NEW: bring floating windows to front
+
+# --- Switch layout on the fly ---
+# NEW: change workspace layout mode with a keybinding
+"comb2 + 1" = { set_workspace_layout = { mode = "traditional" } }
+"comb2 + 2" = { set_workspace_layout = { mode = "bsp" } }
+"comb2 + 3" = { set_workspace_layout = { mode = "master_stack" } }
+"comb2 + 4" = { set_workspace_layout = { mode = "scrolling" } }
+"comb2 + 5" = { set_workspace_layout = { mode = "stack" } }
+
+# --- Master-stack controls ---
+# Only active when workspace is in master_stack mode
+# NOTE: Uncomment these once you've confirmed they work in your Rift version
+# "comb2 + Equal" = { adjust_master_ratio = 0.05 }    # Grow master area
+# "comb2 + Minus" = { adjust_master_ratio = -0.05 }   # Shrink master area
+# "comb2 + Return" = "promote_to_master"               # Swap focused window into master
+# "comb2 + N" = { adjust_master_count = 1 }            # Add a master slot
+# "comb2 + M" = { adjust_master_count = -1 }           # Remove a master slot
+
+# --- Activate/Deactivate Space ---
+# NOTE: bare Alt+key produces special chars on macOS (e.g. Alt+Z = Ω)
+# Use Ctrl+Alt or run: rift-cli execute toggle-space-activated
+"Ctrl + Alt + Z" = "toggle_space_activated"           # Activate rift on current space
+
+# --- Utilities ---
+"Alt + Enter" = { exec = ["/bin/bash", "-c", "open -a iTerm"] }
+"comb1 + Semicolon" = "debug"                        # Print layout tree (was: service mode)
+"comb2 + Q" = "save_and_exit"
+
+# --- Tree navigation ---
+"Alt + U" = "ascend"                                 # NEW: move focus up the tree
+"Alt + I" = "descend"                                # NEW: move focus down the tree
