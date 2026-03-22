@@ -1,24 +1,14 @@
 # nix-darwin System Configuration
 
-## Task Management: Beads (bd/br)
+Get the task management instructions.
 
-This project uses **beads** (`bd`/`br`) for issue tracking. When working as a polecat via `gt sling`:
-
-1. Run `gt prime` at session start to see your hooked work
-2. Check your hook: `gt hook` shows your assigned bead
-3. Work the bead — read the description for what to do
-4. Complete via `gt done` when finished
-
-Key commands:
-- `bd show <id>` — View issue details
-- `bd ready` — Find available work
-- `bd close <id>` — Mark complete
+READ AGENTS.md
 
 ## Project Overview
 
 Personal macOS system configuration using Nix flakes, nix-darwin, and home-manager. Manages development environment, applications, dotfiles, and system settings declaratively across a complete macOS workstation setup.
 
-**Installation Method**: Determinate Nix Installer (https://docs.determinate.systems/)
+**Installation Method**: Determinate Nix Installer (<https://docs.determinate.systems/>)
 **Target System**: macOS (aarch64-darwin)
 **User**: ldangelo
 
@@ -87,12 +77,14 @@ nix/
 ### Technology Stack
 
 **Core Infrastructure**:
+
 - Nix flakes (unstable channel)
 - nix-darwin (system management)
 - home-manager (user environment)
 - flake-parts (modular flake organization)
 
 **Key Integrations**:
+
 - sops-nix (secrets encryption)
 - catppuccin (theming across tools)
 - emacs-overlay (latest Emacs builds)
@@ -102,11 +94,13 @@ nix/
 ### Development Tools
 
 **Primary Editor Stack**:
+
 - Neovim (LazyVim configuration)
 - Emacs (managed via nix, config separate)
 - VSCode (with Catppuccin theme)
 
 **Terminal Environment**:
+
 - tmux multiplexer with seamless Neovim navigation (Ctrl+hjkl via vim-tmux-navigator)
 - iTerm terminal emulator
 - Starship prompt
@@ -115,6 +109,7 @@ nix/
 - Zoxide (smart cd)
 
 **Version Control**:
+
 - Git + GitHub CLI (gh)
 - GitLab CLI (glab)
 - Jujutsu (jj)
@@ -123,6 +118,7 @@ nix/
 - Lazygit (TUI)
 
 **Cloud & Infrastructure**:
+
 - AWS CLI v2
 - kubectl + Helm
 - Terraform
@@ -131,6 +127,7 @@ nix/
 - Kubernetes tooling
 
 **Languages & Runtimes**:
+
 - Node.js (via nvm from Homebrew)
 - Python 3 + uv/pipx
 - Ruby + rbenv
@@ -187,17 +184,20 @@ nix/
 ### Project-Specific Patterns
 
 **When modifying configurations**:
+
 1. Read the existing module file first (never assume structure)
 2. Preserve existing patterns (e.g., commented packages)
 3. Test with `just deploy-nc` to avoid cache issues
 4. Document breaking changes in commit messages
 
 **Secrets workflow**:
+
 - Never commit plaintext secrets
 - Use `./edit_secrets.sh` to modify encrypted secrets
 - Reference secrets via sops paths: `/run/secrets/<key>`
 
 **Package additions**:
+
 - Check nixpkgs availability before adding
 - Document unavailable packages (e.g., "# aider - not in nixpkgs, available via brew")
 - Use overlays for custom builds (see `overlays/sketchybar-lua/`)
@@ -205,12 +205,14 @@ nix/
 ### Memory Management
 
 **High-priority context to retain**:
+
 - Current flake inputs and versions (see `flake.lock`)
 - Active launchd services (kanata, karabiner - see `modules/darwin/services.nix`)
 - tmux configuration with Ctrl+Space prefix (see `modules/home-manager/tmux/`)
 - Secrets management via sops-nix (never suggest plaintext API keys)
 
 **Low-priority context** (reference as needed):
+
 - Historical Brewfile entries (already migrated)
 - Commented-out configurations (kept for reference)
 - Deprecated modules (spacemacs.nix, spacevim.nix)
@@ -218,17 +220,20 @@ nix/
 ## Output Preferences
 
 ### Code Style
+
 - Nix: 2-space indentation, attribute sets aligned
 - Comments: Inline for context, block for major sections
 - Imports: Group by category (system, user, programs)
 
 ### Communication Style
+
 - Be concise and technical
 - Reference file paths with line numbers (e.g., `modules/home-manager/packages.nix:18`)
 - Use code blocks for commands and configurations
 - Explain "why" for non-obvious changes (especially macOS defaults)
 
 ### Workflow Preferences
+
 - Use `just` commands over raw `darwin-rebuild`
 - Test changes with `just deploy-nc` when modifying flake inputs
 - Suggest `just debug` for troubleshooting
@@ -333,6 +338,7 @@ just real-clean
 ### IDE Configuration
 
 **Emacs Integration**:
+
 - Connected via `claude-code-ide.el`
 - LSP via xref (find references, definitions)
 - Tree-sitter syntax analysis
@@ -340,6 +346,7 @@ just real-clean
 - Flycheck/Flymake diagnostics
 
 **Coordinate System**:
+
 - Lines: 1-based (line 1 = first line)
 - Columns: 0-based (column 0 = first character)
 - Example: First character in file is at line 1, column 0
@@ -352,6 +359,7 @@ just real-clean
 ### Suggested Workflows
 
 **Exploring package availability**:
+
 ```bash
 # Use nix-search-tv (installed)
 nix-search-tv <package-name>
@@ -361,6 +369,7 @@ nix search nixpkgs <package-name>
 ```
 
 **Validating Nix expressions**:
+
 ```bash
 # Check flake
 nix flake check
@@ -370,8 +379,9 @@ nix eval .#darwinConfigurations."Leos-MacBook-Pro".config.system.build.toplevel
 ```
 
 **Finding configuration options**:
-- home-manager: https://nix-community.github.io/home-manager/options.xhtml
-- nix-darwin: https://daiderd.com/nix-darwin/manual/index.html
+
+- home-manager: <https://nix-community.github.io/home-manager/options.xhtml>
+- nix-darwin: <https://daiderd.com/nix-darwin/manual/index.html>
 
 ## Related Documentation
 
@@ -384,10 +394,10 @@ nix eval .#darwinConfigurations."Leos-MacBook-Pro".config.system.build.toplevel
 
 ## Notes
 
-- **Nix Learning Resources**: https://zero-to-nix.com/, https://nix.dev/
-- **Darwin Options**: https://daiderd.com/nix-darwin/manual/index.html
-- **Home Manager**: https://nix-community.github.io/home-manager/
-- **Flakes Reference**: https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake.html
+- **Nix Learning Resources**: <https://zero-to-nix.com/>, <https://nix.dev/>
+- **Darwin Options**: <https://daiderd.com/nix-darwin/manual/index.html>
+- **Home Manager**: <https://nix-community.github.io/home-manager/>
+- **Flakes Reference**: <https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake.html>
 
 ---
 

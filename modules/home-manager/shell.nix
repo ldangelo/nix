@@ -9,8 +9,8 @@
       #am    = "cd ~/mcp_agent_mail; scripts/run_server_with_token.sh";
       ag    = "ag --color-line-number='0;33' --color-path='0;32'";
       #      bd    = "br";
-      cc    = "claude";
-      ccc   = "claude --continue";
+      cc    = "claude --chrome";
+      ccc   = "claude --continue --chrome";
       cp    = "nocorrect cp";
       gm    = "git machete";
       grep  = "grep --color";
@@ -64,7 +64,7 @@
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
 
-      [[ -f "/Users/ldangelo/.config/gastown/shell-hook.sh" ]] && source "/Users/ldangelo/.config/gastown/shell-hook.sh"
+#      [[ -f "/Users/ldangelo/.config/gastown/shell-hook.sh" ]] && source "/Users/ldangelo/.config/gastown/shell-hook.sh"
 
 
 

@@ -214,6 +214,20 @@ in
       bind-key -T root C-l  if-shell "$is_passthrough" "send-keys C-l"  "select-pane -R"
       bind-key -T root C-\\ if-shell "$is_passthrough" "send-keys C-\\\\" "select-pane -l"
 
+      # Session shortcuts (no prefix needed)
+      # M-t = new session in current dir; M-1..9 = switch to Nth session by list order
+      # Map CMD+t → Esc+t and CMD+[1-9] → Esc+[1-9] in your terminal to use CMD keys
+      bind -n M-t new-session -c "#{pane_current_path}"
+      bind -n M-1 run-shell "tmux list-sessions -F '##S' | sed -n '1p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-2 run-shell "tmux list-sessions -F '##S' | sed -n '2p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-3 run-shell "tmux list-sessions -F '##S' | sed -n '3p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-4 run-shell "tmux list-sessions -F '##S' | sed -n '4p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-5 run-shell "tmux list-sessions -F '##S' | sed -n '5p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-6 run-shell "tmux list-sessions -F '##S' | sed -n '6p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-7 run-shell "tmux list-sessions -F '##S' | sed -n '7p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-8 run-shell "tmux list-sessions -F '##S' | sed -n '8p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-9 run-shell "tmux list-sessions -F '##S' | sed -n '9p' | xargs -I{} tmux switch-client -t '{}'"
+
       # UX tweaks
       set -g display-time 2000
       set -g detach-on-destroy off
@@ -334,13 +348,13 @@ in
             command: choose-tree -Zs
           - name: Sessionx
             key: x
-            command: "display Use Prefix+o for sessionx"
+            command: display-message "Use Prefix+o for sessionx"
           - name: New
             key: N
-            command: new
+            command: new-session -c "#{pane_current_path}"
           - name: Rename
             key: r
-            command: rename
+            command: command-prompt -I "#S" "rename-session -- \"%%\""
           - name: Detach
             key: d
             command: detach
@@ -394,17 +408,19 @@ in
     name: dev
     root: .
     windows:
-      - claude:
+      - development:
           layout: even-horizontal
           panes:
             - nvim 
             - claude --continue
-      - tasks:
+      - runtime:
+          layout: even-vertical   
           panes:
-            - td monitor .
+            - bv
+            - foreman
       - git:
           panes:
-            - lazyjj .
+            - lazygit 
       - files:
           panes:
             - yazi .
