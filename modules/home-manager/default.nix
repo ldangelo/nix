@@ -25,6 +25,7 @@
     ./borders
     ./zoxide.nix
     ./tmux
+    ./ghostty.nix
     ./yazi.nix
     #    ./streamdeck.nix
     #./streamdeck-config.nix

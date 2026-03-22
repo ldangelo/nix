@@ -63,6 +63,7 @@
       "marksman"                       # Markdown language server (depends on .NET/Swift in nixpkgs)
       "dotnet@6"                       # .NET 6
       "openclaw-cli"
+      "flyctl"                         # Fly.io CLI
      ] ++ lib.optionals isWorkstation [
       # https://github.com/marcus/sidecar
 
