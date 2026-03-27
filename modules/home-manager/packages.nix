@@ -30,7 +30,7 @@
     jankyborders
     jdt-language-server    # Java language server
     just                   # Command runner
-    lazygit                # Simple terminal UI for git
+    # lazygit — managed by programs.lazygit in lazygit.nix
     # lazyjj - not in nixpkgs yet
     maven                  # Java project management
     neovim
@@ -57,7 +57,7 @@
     btop                   # Resource monitor
     bun                    # Fast JavaScript/TypeScript runtime and package manager
     coreutils              # GNU utilities
-    direnv                 # Load/unload env vars based on pwd
+    # direnv installed via Homebrew (nixpkgs 2.37.1 build broken on macOS aarch64: CGO + -linkmode=external)
     eza                    # Modern ls replacement
     fd                     # Simple alternative to find
     fzf                    # Fuzzy finder

@@ -23,7 +23,6 @@ in
 
     # Email
     "neomutt".source = "${dotfilesPath}/config/neomutt";
-    "msmtp".source = "${dotfilesPath}/config/msmtp";
 
     # Shell
     "zsh".source = "${dotfilesPath}/config/zsh";
@@ -45,7 +44,6 @@ in
     ".emacs-profiles.el".source = "${dotfilesPath}/emacs-profiles.el";
     ".ideavimrc".source = "${dotfilesPath}/ideavimrc";
     ".mailrc".source = "${dotfilesPath}/mailrc";
-    ".mbsyncrc".source = "${dotfilesPath}/mbsyncrc";
 
     # Oh My Zsh
     ".oh-my-zsh".source = "${dotfilesPath}/oh-my-zsh";

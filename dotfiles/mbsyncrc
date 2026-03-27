@@ -3,10 +3,10 @@ SyncState *
 
 IMAPAccount icloud
 Host imap.mail.me.com
-User ldangelo@mac.com
+User ldangelo
 pipelineDepth 10
 AuthMech LOGIN
-PassCmd "security find-generic-password -a icloud -s mbsync -w"
+PassCmd "cat /run/secrets/mac_mail_key"
 TLSType IMAPS
 
 IMAPStore icloud-remote
@@ -91,16 +91,13 @@ Channel Solo-folders
 
 
 IMAPAccount Curantis
-#Host imap.gmail.com
-Host localhost
-Port 1143
+Host outlook.office365.com
 User leo.dangelo@curantissolutions.com
-Pass reGda6-vahxaw-seqnah
-#PassCmd "pizauth show solo";
-AuthMech LOGIN
-TLSType None
-SystemCertificates yes
-
+PassCmd "pizauth show curantis"
+PipelineDepth 1
+Timeout 120
+AuthMech XOAUTH2
+TLSType IMAPS
 
 IMAPStore Curantis-remote
 Account Curantis
@@ -111,12 +108,10 @@ Path ~/Maildir/Curantis/
 Inbox ~/Maildir/Curantis/Inbox
 Trash ~/Maildir/Curantis/Trash
 
-
 Channel Curantis-folders
 Far :Curantis-remote:
 Near :Curantis-local:
-#Patterns "INBOX" "Archive" "Sent Mail" "Trash"
-Patterns *
+Patterns * !"Conversation History" !"Conversation History/*" !"Sync Issues" !"Sync Issues/*"
 Create Both
 Expunge None
 SyncState *

@@ -4,6 +4,36 @@
   # Ghostty terminal configuration
   # Config lives at ~/Library/Application Support/com.mitchellh.ghostty/config
   home.file."Library/Application Support/com.mitchellh.ghostty/config".text = ''
+    # Theme — matches catppuccin used across tmux, bat, fzf, etc.
+    theme = catppuccin-mocha
+
+    # Font
+    font-thicken = true
+
+    # Window
+    window-show-tab-bar = never
+    window-padding-x = 8
+    window-padding-y = 8
+
+    # Subtle transparency
+    background-opacity = 0.95
+    background-blur = macos-glass-regular
+
+    # Cursor
+    cursor-style = bar
+
+    # Mouse
+    mouse-hide-while-typing = true
+
+    # Clipboard
+    clipboard-trim-trailing-spaces = true
+
+    # URLs
+    link-url = true
+
+    # Option key as Alt/Meta — required for tmux M- bindings (M-t, M-1..9)
+    macos-option-as-alt = true
+
     # tmux session shortcuts — send ESC+key so tmux M- bindings fire
     # CMD+t = new tmux session; CMD+1..9 = switch to Nth tmux session
     # Must use digit_N (physical key) to override Ghostty's goto_tab defaults

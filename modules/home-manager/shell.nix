@@ -170,7 +170,7 @@
 
   # NVM initialization (only in interactive shells)
   if [[ -o interactive ]]; then
-        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+        eval "$(/opt/homebrew/bin/direnv hook zsh)"
           path=($DOTNET_ROOT $path)
           path=("$HOME/.dotnet/tools" $path)
           export PATH

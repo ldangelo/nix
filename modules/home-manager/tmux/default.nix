@@ -74,6 +74,8 @@ in
           bind t run "#{@popup-toggle} -w75% -h75% -Ed'#{pane_current_path}'"
           # Prefix g — lazygit popup (90% size)
           bind g run "#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=lazygit lazygit"
+          # Prefix y — yazi file browser popup (90% size)
+          bind y run "#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=yazi yazi"
           # Prefix D — deploy popup (just deploy)
           bind D run "#{@popup-toggle} -w80% -h60% -Ed'#{pane_current_path}' --name=deploy just deploy"
           # Prefix h — tmux user guide
@@ -171,6 +173,7 @@ in
       bind -T copy-mode-vi H send-keys -X start-of-line
       bind -T copy-mode-vi L send-keys -X end-of-line
       bind Enter copy-mode
+      bind v copy-mode
 
       # Window navigation
       bind Tab last-window
@@ -195,11 +198,18 @@ in
       set -g bell-action other
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
+      # Sessionizer: fuzzy-find project dirs and create/attach tmux sessions
+      # Uses zoxide for smart directory ranking, falls back to find
+      bind f display-popup -E -w80% -h60% "~/.local/bin/tmux-sessionizer"
+
       # Reload config
       bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
 
       # Switch sessions
       bind S choose-session
+
+      # New session named after current directory (falls back to unnamed if duplicate)
+      bind N run-shell "tmux new-session -c '#{pane_current_path}' -s '#{b:pane_current_path}' 2>/dev/null || tmux new-session -c '#{pane_current_path}'"
 
       # Focus events for Neovim autoread
       set -g focus-events on
@@ -217,16 +227,16 @@ in
       # Session shortcuts (no prefix needed)
       # M-t = new session in current dir; M-1..9 = switch to Nth session by list order
       # Map CMD+t → Esc+t and CMD+[1-9] → Esc+[1-9] in your terminal to use CMD keys
-      bind -n M-t new-session -c "#{pane_current_path}"
-      bind -n M-1 run-shell "tmux list-sessions -F '##S' | sed -n '1p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-2 run-shell "tmux list-sessions -F '##S' | sed -n '2p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-3 run-shell "tmux list-sessions -F '##S' | sed -n '3p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-4 run-shell "tmux list-sessions -F '##S' | sed -n '4p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-5 run-shell "tmux list-sessions -F '##S' | sed -n '5p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-6 run-shell "tmux list-sessions -F '##S' | sed -n '6p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-7 run-shell "tmux list-sessions -F '##S' | sed -n '7p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-8 run-shell "tmux list-sessions -F '##S' | sed -n '8p' | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-9 run-shell "tmux list-sessions -F '##S' | sed -n '9p' | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-t run-shell "tmux new-session -c '#{pane_current_path}' -s '#{b:pane_current_path}' 2>/dev/null || tmux new-session -c '#{pane_current_path}'"
+      bind -n M-1 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '1p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-2 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '2p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-3 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '3p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-4 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '4p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-5 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '5p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-6 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '6p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-7 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '7p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-8 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '8p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      bind -n M-9 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '9p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
 
       # UX tweaks
       set -g display-time 2000
@@ -346,6 +356,9 @@ in
           - name: Choose
             key: s
             command: choose-tree -Zs
+          - name: Sessionizer
+            key: f
+            command: "display-popup -E -w80% -h60% ~/.local/bin/tmux-sessionizer"
           - name: Sessionx
             key: x
             command: display-message "Use Prefix+o for sessionx"
@@ -371,6 +384,9 @@ in
           - name: Lazygit
             key: g
             command: "run \"#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=lazygit lazygit\""
+          - name: Yazi
+            key: "y"
+            command: "run \"#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=yazi yazi\""
           - name: Deploy
             key: d
             command: "run \"#{@popup-toggle} -w80% -h60% -Ed#{pane_current_path} --name=deploy just deploy\""
@@ -408,22 +424,17 @@ in
     name: dev
     root: .
     windows:
-      - development:
+      - code:
           layout: even-horizontal
           panes:
-            - nvim 
+            - nvim .
             - claude --continue
-      - runtime:
-          layout: even-vertical   
+      - ops:
+          layout: main-vertical
           panes:
             - bv
-            - foreman
-      - git:
-          panes:
-            - lazygit 
-      - files:
-          panes:
-            - yazi .
+            - foreman status --watch
+            - ""
   '';
 
   xdg.configFile."tmuxinator/monitor.yml".text = ''
@@ -489,10 +500,9 @@ in
           panes:
             - claude --continue
       - overview:
-          layout: tiled
+          layout: even-horizontal
           panes:
-            - td monitor .
-            - lazyjj .
+            - br list --status=open
             - ""
   '';
 
@@ -510,6 +520,56 @@ in
     text = ''
       #!/bin/bash
       /usr/bin/osascript -e 'display dialog "sudo password:" default answer "" with hidden answer with title "sudo"' -e 'text returned of result' 2>/dev/null
+    '';
+  };
+
+  # tmux-sessionizer — fuzzy project picker that creates/attaches tmux sessions
+  home.file.".local/bin/tmux-sessionizer" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      # tmux-sessionizer — fuzzy project picker that creates/attaches tmux sessions
+      # If a tmuxinator config exists for the project, it uses that layout.
+
+      DIRS=(
+        ~/Development
+        ~/nix
+      )
+
+      # Use zoxide for ranked results, fall back to find
+      if command -v zoxide &>/dev/null; then
+        selected=$(zoxide query -l 2>/dev/null | fzf --prompt="project> " --height=100% --reverse)
+      else
+        selected=$(find "''${DIRS[@]}" -mindepth 1 -maxdepth 2 -type d 2>/dev/null | fzf --prompt="project> " --height=100% --reverse)
+      fi
+
+      [[ -z "$selected" ]] && exit 0
+
+      session_name=$(basename "$selected" | tr '.' '_')
+
+      # If not inside tmux, start new session
+      if [[ -z "$TMUX" ]]; then
+        if tmux has-session -t="$session_name" 2>/dev/null; then
+          tmux attach -t "$session_name"
+        else
+          # Check for tmuxinator config
+          if tmuxinator list -n 2>/dev/null | grep -qw "dev"; then
+            cd "$selected" && tmuxinator start dev -n "$session_name" -p ~/.config/tmuxinator/dev.yml
+          else
+            tmux new-session -s "$session_name" -c "$selected"
+          fi
+        fi
+      else
+        if ! tmux has-session -t="$session_name" 2>/dev/null; then
+          # Check for tmuxinator config
+          if tmuxinator list -n 2>/dev/null | grep -qw "dev"; then
+            cd "$selected" && tmuxinator start dev -n "$session_name" -p ~/.config/tmuxinator/dev.yml
+          else
+            tmux new-session -ds "$session_name" -c "$selected"
+          fi
+        fi
+        tmux switch-client -t "$session_name"
+      fi
     '';
   };
 }

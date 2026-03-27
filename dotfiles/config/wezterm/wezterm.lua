@@ -1,14 +1,14 @@
 local wezterm = require("wezterm")
 local utils = require("utils")
 local keybinds = require("keybinds")
+local mux = wezterm.mux
+local act = wezterm.action
 local gpus = wezterm.gui.enumerate_gpus()
 require("on")
 
 ---------------------------------------------------------------
 --- Plugins
 ---------------------------------------------------------------
-local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
-local workspace_switcher = wezterm.plugin.require("https://github.com/MLFlexer/smart_workspace_switcher.wezterm")
 local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 
 -- /etc/ssh/sshd_config
@@ -56,28 +56,9 @@ local function load_local_config(module)
         return {}
     end
     return dofile(m)
-    -- local ok, _ = pcall(require, "local")
-    -- if not ok then
-    -- 	return {}
-    -- end
-    -- return require("local")
 end
 
 local local_config = load_local_config("local")
-
--- local local_config = {
--- 	ssh_domains = {
--- 		{
--- 			-- This name identifies the domain
--- 			name = "my.server",
--- 			-- The address to connect to
--- 			remote_address = "192.168.8.31",
--- 			-- The username to use on the remote host
--- 			username = "katayama",
--- 		},
--- 	},
--- }
--- return local_config
 
 ---------------------------------------------------------------
 --- Config
@@ -87,40 +68,26 @@ local config = {
     -- font_size = 10.0,
     font = wezterm.font("Source Code Pro"),
     font_size = 14,
-    -- cell_width = 1.1,
-    -- line_height = 1.1,
-    -- font_rules = 14{
-    -- 	{
-    -- 		italic = true,
-    -- 		font = wezterm.font("Cica", { italic = true }),
-    -- 	},
-    -- 	{
-    -- 		italic = true,
-    -- 		intensity = "Bold",
-    -- 		font = wezterm.font("Cica", { weight = "Bold", italic = true }),
-    -- 	},
-    -- },
+    -- Launch login shell so Nix-managed PATH is inherited
+    default_prog = { "/bin/zsh", "-l" },
     check_for_updates = false,
     use_ime = true,
     ime_preedit_rendering = "Builtin",
     use_dead_keys = false,
     warn_about_missing_glyphs = false,
-    -- enable_kitty_graphics = false,
     animation_fps = 1,
     cursor_blink_ease_in = "Constant",
     cursor_blink_ease_out = "Constant",
     cursor_blink_rate = 0,
-    -- https://github.com/wez/wezterm/issues/4972
-    -- enable_wayland = enable_wayland(),
     enable_wayland = false,
-    -- https://github.com/wez/wezterm/issues/1772
-    -- https://github.com/wez/wezterm/issues/5103
-    -- enable_wayland = false,
     -- Catppuccin Mocha theme (matches qutebrowser)
     color_scheme = "Catppuccin Mocha",
 
+    -- Use xterm-256color until wezterm terminfo is installed system-wide
+    term = "xterm-256color",
+
     -- Minimal UI (matches qutebrowser's tabs.show = "multiple" and statusbar.show = "in-mode")
-    hide_tab_bar_if_only_one_tab = true,
+    hide_tab_bar_if_only_one_tab = false,
     use_fancy_tab_bar = false,
     tab_bar_at_bottom = true,
     tab_max_width = 32,
@@ -128,7 +95,7 @@ local config = {
     show_new_tab_button_in_tab_bar = false,
 
     -- Window styling
-    window_decorations = "RESIZE",
+    window_decorations = "TITLE|RESIZE",
     adjust_window_size_when_changing_font_size = false,
     window_background_opacity = 1.0,
     macos_window_background_blur = 0,
@@ -150,18 +117,9 @@ local config = {
     selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%",
     exit_behavior = "CloseOnCleanExit",
     window_close_confirmation = "NeverPrompt",
-    -- window_background_opacity = 0.8,
     disable_default_key_bindings = true,
-    -- visual_bell = {
-    -- 	fade_in_function = "EaseIn",
-    -- 	fade_in_duration_ms = 150,
-    -- 	fade_out_function = "EaseOut",
-    -- 	fade_out_duration_ms = 150,
-    -- },
     -- separate <Tab> <C-i>
     enable_csi_u_key_encoding = true,
-    -- Leader key: Cmd+Space (ergonomic, doesn't conflict with Spotlight in terminal)
-    leader = { key = "Space", mods = "CMD" },
     keys = keybinds.create_keybinds(),
     key_tables = keybinds.key_tables,
     mouse_bindings = keybinds.mouse_bindings,
@@ -169,15 +127,6 @@ local config = {
     webgpu_preferred_adapter = gpus[1],
     front_end = "OpenGL",
 }
-
--- https://github.com/wez/wezterm/commit/1e552d764349522dabffeb240feb5b2728eff3d8
--- for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
--- 	if gpu.backend == "Vulkan" and gpu.device_type == "IntegratedGpu" then
--- 		config.webgpu_preferred_adapter = gpu
--- 		config.front_end = "WebGpu"
--- 		break
--- 	end
--- end
 
 config.hyperlink_rules = {
     -- Matches: a URL in parens: (URL)
@@ -225,53 +174,6 @@ table.insert(config.hyperlink_rules, {
     format = "https://github.com/$1/$3",
 })
 
-local w = require("wezterm")
-
--- if you are *NOT* lazy-loading smart-splits.nvim (recommended)
-local function is_vim(pane)
-    -- this is set by the plugin, and unset on ExitPre in Neovim
-    return pane:get_user_vars().IS_NVIM == "true"
-end
-
-local direction_keys = {
-    h = "Left",
-    j = "Down",
-    k = "Up",
-    l = "Right",
-}
-
-local function split_nav(resize_or_move, key)
-    return {
-        key = key,
-        mods = resize_or_move == "resize" and "META" or "CTRL",
-        action = w.action_callback(function(win, pane)
-            if is_vim(pane) then
-                -- pass the keys through to vim/nvim
-                win:perform_action({
-                    SendKey = { key = key, mods = resize_or_move == "resize" and "META" or "CTRL" },
-                }, pane)
-            else
-                if resize_or_move == "resize" then
-                    win:perform_action({ AdjustPaneSize = { direction_keys[key], 3 } }, pane)
-                else
-                    win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
-                end
-            end
-        end),
-    }
-end
-
-config.keys = utils.merge_lists(config.keys, {
-    split_nav("resize", "h"),
-    split_nav("resize", "j"),
-    split_nav("resize", "k"),
-    split_nav("resize", "l"),
-    split_nav("move", "h"),
-    split_nav("move", "j"),
-    split_nav("move", "k"),
-    split_nav("move", "l"),
-})
-
 --require("plugins/ai_helper")
 
 ---------------------------------------------------------------
@@ -299,85 +201,9 @@ tabline.setup({
 })
 tabline.apply_to_config(config)
 
--- Resurrect plugin setup (session management)
--- Note: periodic_save is not available in current version of resurrect plugin
--- resurrect.periodic_save({
--- 	interval_seconds = 300, -- Save every 5 minutes
--- 	save_tabs = true,
--- 	save_windows = true,
--- 	save_workspaces = true,
--- })
-
--- Workspace switcher setup (uses zoxide for smart directory picking)
-workspace_switcher.zoxide_path = "/etc/profiles/per-user/ldangelo/bin/zoxide"
-
--- Plugin keybindings (using LEADER key: Cmd+Space)
-config.keys = utils.merge_lists(config.keys, {
-    -- Resurrect: Save state
-    {
-        key = "S",
-        mods = "LEADER",
-        action = wezterm.action_callback(function(win, pane)
-            resurrect.save_state(resurrect.workspace_state.get_workspace_state())
-            win:toast_notification("WezTerm", "Session saved!", nil, 2000)
-        end),
-    },
-    -- Resurrect: Load state
-    {
-        key = "R",
-        mods = "LEADER",
-        action = wezterm.action_callback(function(win, pane)
-            resurrect.fuzzy_load(win, pane, function(id, label)
-                local state = resurrect.load_state(id, "workspace")
-                resurrect.workspace_state.restore_workspace(state, {
-                    relative = true,
-                    restore_text = true,
-                    on_pane_restore = resurrect.tab_state.default_on_pane_restore,
-                })
-            end, {
-                title = "Load Session",
-                fuzzy_description = "Search sessions: ",
-            })
-        end),
-    },
-    -- Resurrect: Delete state
-    {
-        key = "D",
-        mods = "LEADER",
-        action = wezterm.action_callback(function(win, pane)
-            resurrect.fuzzy_load(win, pane, function(id)
-                resurrect.delete_state(id)
-                win:toast_notification("WezTerm", "Session deleted!", nil, 2000)
-            end, {
-                title = "Delete Session",
-                fuzzy_description = "Search sessions to delete: ",
-                is_fuzzy = true,
-            })
-        end),
-    },
-    -- Workspace switcher
-    {
-        key = "w",
-        mods = "LEADER",
-        action = workspace_switcher.switch_workspace(),
-    },
-    -- Workspace switcher: Create new workspace
-    {
-        key = "W",
-        mods = "LEADER",
-        action = wezterm.action.PromptInputLine({
-            description = "Enter new workspace name:",
-            action = wezterm.action_callback(function(window, pane, line)
-                if line then
-                    window:perform_action(
-                        wezterm.action.SwitchToWorkspace({ name = line }),
-                        pane
-                    )
-                end
-            end),
-        }),
-    },
-})
+-- Re-apply settings that tabline.apply_to_config may override
+config.window_decorations = "TITLE | RESIZE"
+config.hide_tab_bar_if_only_one_tab = false
 
 local merged_config = utils.merge_tables(config, local_config)
 return utils.merge_tables(merged_config, create_ssh_domain_from_ssh_config(merged_config.ssh_domains))

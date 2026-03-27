@@ -1,7 +1,7 @@
 { pkgs, misc, ... }: {
-  programs.direnv.enable = true;
-  programs.direnv.enableZshIntegration = false;  # Manual integration in shell.nix with interactive check
-  programs.direnv.stdlib = ''
+  # direnv binary comes from Homebrew; stdlib configured via xdg.configFile
+  # (programs.direnv.enable pulls in broken nixpkgs direnv-2.37.1 on macOS aarch64)
+  xdg.configFile."direnv/direnvrc".text = ''
     : ''${XDG_CACHE_HOME:=$HOME/.cache}
     declare -A direnv_layout_dirs
     direnv_layout_dir() {
