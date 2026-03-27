@@ -39,13 +39,13 @@ port 587
 
 #### Curantis ####
 account Curantis
-host localhost
+host smtp-mail.outlook.com
 from leo.dangelo@curantissolutions.com
 tls on
-auth on
+auth xoauth2
 user leo.dangelo@curantissolutions.com
-password reGda6-vahxaw-seqnah
-port 1025
+passwordeval "pizauth show curantis"
+port 587
 
 
 account default: icloud

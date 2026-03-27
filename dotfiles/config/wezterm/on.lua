@@ -1,8 +1,7 @@
 local wezterm = require("wezterm")
 local utils = require("utils")
-local keybinds = require("keybinds")
+local mux = wezterm.mux
 local scheme = wezterm.get_builtin_color_schemes()["nord"]
-local act = wezterm.action
 
 -- selene: allow(unused_variable)
 ---@diagnostic disable-next-line: unused-local
@@ -32,6 +31,20 @@ end
 ---------------------------------------------------------------
 --- wezterm on
 ---------------------------------------------------------------
+
+-- Dynamic window title: "workspace : directory — process"
+-- Shows in Zoom window picker, Mission Control, and Cmd+Tab
+wezterm.on("format-window-title", function(tab, pane, tabs, panes, config)
+	local workspace = mux.get_active_workspace()
+	local cwd = pane.current_working_dir
+	local dir = cwd and cwd.file_path:match("([^/]+)/?$") or ""
+	local process = utils.basename(pane.foreground_process_name or "")
+	if process == "" then
+		return workspace .. " : " .. dir
+	end
+	return workspace .. " : " .. dir .. " — " .. process
+end)
+
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
 	local title = create_tab_title(tab, tabs, panes, config, hover, max_width)
 
@@ -144,64 +157,3 @@ wezterm.on("update-right-status", function(window, pane)
 	window:set_right_status(wezterm.format(status))
 end)
 
--- selene: allow(unused_variable)
----@diagnostic disable-next-line: unused-local
-wezterm.on("toggle-tmux-keybinds", function(window, pane)
-	local overrides = window:get_config_overrides() or {}
-	if not overrides.window_background_opacity then
-		overrides.window_background_opacity = 0.95
-		overrides.keys = keybinds.default_keybinds
-	else
-		overrides.window_background_opacity = nil
-		overrides.keys = utils.merge_lists(keybinds.default_keybinds, keybinds.tmux_keybinds)
-	end
-	window:set_config_overrides(overrides)
-end)
-
-local io = require("io")
-local os = require("os")
-
-wezterm.on("trigger-nvim-with-scrollback", function(window, pane)
-	local scrollback = pane:get_lines_as_text()
-	local name = os.tmpname()
-	local f = io.open(name, "w+")
-	if f == nil then
-		return
-	end
-	f:write(scrollback)
-	f:flush()
-	f:close()
-	window:perform_action(
-		act({
-			SpawnCommandInNewTab = {
-				args = { os.getenv("HOME") .. "/.local/share/zsh/zinit/polaris/bin/nvim", name },
-			},
-		}),
-		pane
-	)
-	wezterm.sleep_ms(1000)
-	os.remove(name)
-end)
-
--- https://github.com/wez/wezterm/issues/2979#issuecomment-1447519267
-local hacky_user_commands = {
-	-- selene: allow(unused_variable)
-	---@diagnostic disable-next-line: unused-local
-	["scroll-up"] = function(window, pane, cmd_context)
-		window:perform_action(wezterm.action({ ScrollByPage = -1 }), pane)
-		-- wezterm.action({ ScrollByPage = -1 })
-	end,
-	-- selene: allow(unused_variable)
-	---@diagnostic disable-next-line: unused-local
-	["scroll-down"] = function(window, pane, cmd_context)
-		window:perform_action(wezterm.action({ ScrollByPage = 1 }), pane)
-	end,
-}
-
-wezterm.on("user-var-changed", function(window, pane, name, value)
-	if name == "hacky-user-command" then
-		local cmd_context = wezterm.json_parse(value)
-		hacky_user_commands[cmd_context.cmd](window, pane, cmd_context)
-		return
-	end
-end)

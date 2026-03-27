@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  home.packages = [ pkgs.direnv ];
+  # direnv installed via Homebrew (nixpkgs direnv-2.37.1 fails: CGO not available in nix sandbox on macOS)
 
   # Create .envrc file that reads from sops secrets
   home.file.".envrc".text = ''

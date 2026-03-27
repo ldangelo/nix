@@ -18,19 +18,20 @@
       "new"
     ];
     hooks = {
-      preNew = "mbsync -all";
-      postNew = "afew --tag --new";
+      preNew = "mbsync -a";
+      postNew = "~/Development/crush-mail/crush-mail tag && ~/Development/crush-mail/crush-mail move";
     };
   };
 
   accounts = {
 
     email = {
+      maildirBasePath = "Maildir";
+
       accounts.icloud = {
         address = "ldangelo@mac.com";
         imap.host = "imap.mail.me.com";
-        userName = "ldangelo@mac.com";
-#        passwordCommand = "op item get mbsync-icloud --fields password";
+        userName = "ldangelo";
         passwordCommand = "cat /run/secrets/mac_mail_key";
         mbsync = {
           enable = true;
@@ -50,8 +51,12 @@
           '';
           showSignature = "append";
         };
-        smtp = { host = "smtp.mail.me.com"; };
+        smtp = {
+          host = "smtp.mail.me.com";
+          port = 587;
+        };
       };
+
       accounts.fortium = {
         address = "leo.dangelo@fortiumpartners.com";
         imap.host = "imap.gmail.com";
@@ -65,12 +70,64 @@
           extraConfig.account = { AuthMechs = "XOAUTH2"; };
         };
         msmtp.enable = true;
+        msmtp.extraConfig = {
+          auth = "xoauth2";
+          tls_starttls = "on";
+        };
         notmuch.enable = true;
         primary = false;
         realName = "Leo A. D'Angelo";
+        signature = {
+          text = ''
+            Leo D'Angelo
+            Partner
+            Fortium Partners
+            Mobile: (972) 979-0116
+          '';
+          showSignature = "append";
+        };
         smtp = {
-          host = "localhost";
-          port = 1465;
+          host = "smtp.gmail.com";
+          port = 587;
+          tls.enable = true;
+        };
+      };
+
+      accounts.curantis = {
+        address = "leo.dangelo@curantissolutions.com";
+        imap.host = "outlook.office365.com";
+        imap.tls.enable = true;
+        userName = "leo.dangelo@curantissolutions.com";
+        passwordCommand = "pizauth show curantis";
+        mbsync = {
+          enable = true;
+          create = "both";
+          expunge = "none";
+          extraConfig.account = { AuthMechs = "XOAUTH2"; };
+          patterns = [ "*" "!Conversation History" "!Conversation History/*" "!Sync Issues" "!Sync Issues/*" ];
+        };
+        msmtp.enable = true;
+        msmtp.extraConfig = {
+          auth = "xoauth2";
+          tls_starttls = "on";
+        };
+        notmuch.enable = true;
+        primary = false;
+        realName = "Leo D'Angelo";
+        signature = {
+          text = ''
+            Leo D'Angelo
+            Chief Technology Officer
+            Curantis Solutions
+            3939 Belt Line Rd. | Suite 350 | Addison, TX 75001
+            Mobile: (972) 979-0116
+          '';
+          showSignature = "append";
+        };
+        smtp = {
+          host = "smtp-mail.outlook.com";
+          port = 587;
+          tls.enable = true;
         };
       };
     };

@@ -1,52 +1,82 @@
-# tmux User Guide
+# Terminal Workspace Guide
 
-\*\*Last Updated\*\*: 2026-03-05
+**Last Updated**: 2026-03-27
+**Architecture**: WezTerm (dumb terminal) + tmux (multiplexer) + tmuxinator (layouts) + sessionizer (project switching)
 **Prefix Key**: `Ctrl+Space`
-**Configuration**: `modules/home-manager/tmux/default.nix`
+**Configuration**: `modules/home-manager/tmux/default.nix`, `dotfiles/config/wezterm/`
 
 ---
 
-## Core Concepts
-
-tmux is a terminal multiplexer — it lets you run multiple terminal sessions inside a single window, detach from them, and reattach later.
+## Architecture Overview
 
 ```
-Session (named group of windows)
-  └── Window (like a browser tab)
-        └── Pane (split within a window)
+WezTerm (terminal emulator)
+  └── tmux (multiplexer — owns all windows, panes, sessions)
+        ├── Session: "foreman" (tmuxinator dev layout)
+        │     ├── Window 1: "code"     ← tab in status bar
+        │     │     ├── Pane: nvim
+        │     │     └── Pane: claude --continue
+        │     └── Window 2: "ops"      ← tab in status bar
+        │           ├── Pane: bv
+        │           ├── Pane: foreman status
+        │           └── Pane: shell
+        ├── Session: "curantis" (another project)
+        │     └── ...
+        └── Popups (floating, toggleable)
+              ├── lazygit    (Prefix g)
+              ├── yazi       (Prefix y)
+              └── shell      (Prefix t)
 ```
 
-- **Sessions** persist even when you close your terminal
-- **Windows** are full-screen views within a session
-- **Panes** are splits within a window
+**WezTerm** handles: font rendering, colors, clipboard (Cmd+C/V), window chrome.
+**tmux** handles: everything else — sessions, windows, panes, copy mode, popups, navigation.
+
+Only tmux windows appear as "tabs" in the status bar. Lazygit and yazi are floating popups that toggle on/off without taking a tab slot.
 
 ---
 
 ## Getting Started
 
-### The Prefix Key
-
-Almost every tmux command starts with the **prefix key**: `Ctrl+Space`.
-
-Press `Ctrl+Space`, release, then press the action key. For example:
-- `Ctrl+Space` then `c` → new window
-- `Ctrl+Space` then `|` → split horizontally
-
-### Starting tmux
+### First Time
 
 ```bash
-# Start a new session
-tmux new -s work
+# Start tmux
+tmux
 
-# Attach to existing session
-tmux attach -t work
+# Launch the sessionizer to pick a project
+# Prefix f  (Ctrl+Space, then f)
 
-# List sessions
-tmux ls
-
-# Use a tmuxinator workspace (recommended)
+# Or launch a dev workspace directly
+cd ~/Development/Fortium/foreman
 tmuxinator start dev
 ```
+
+### Daily Workflow
+
+1. Open WezTerm
+2. `Prefix f` to open the sessionizer — pick your project
+3. The `dev` layout starts automatically: code + ops windows
+4. `Prefix g` for lazygit, `Prefix y` for yazi (popups — no extra tabs)
+5. `Prefix d` to detach when done (session keeps running)
+6. Tomorrow: open WezTerm, `tmux attach` or `Prefix f` again
+
+---
+
+## Sessionizer (Prefix f)
+
+The sessionizer is a fuzzy project picker. It creates or attaches to a tmux session per project, using the `dev` tmuxinator layout.
+
+| Key | Action |
+|-----|--------|
+| `Prefix f` | Open sessionizer (fzf project picker) |
+
+How it works:
+1. Queries zoxide for your most-used directories (ranked by frequency)
+2. Shows them in fzf for fuzzy selection
+3. If a tmux session already exists for that project → switches to it
+4. If not → creates a new session using the `dev` tmuxinator layout
+
+This means each project gets its own isolated tmux session with the full dev workspace, and you switch between projects instantly.
 
 ---
 
@@ -54,17 +84,30 @@ tmuxinator start dev
 
 All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix needed).
 
+### Discovering Keybindings
+
+| Key | Action |
+|-----|--------|
+| `Prefix Space` | **Which-key menu** — browse all keybindings interactively |
+| `Prefix h` | Open this help guide in a popup |
+| `Prefix ?` | List all keybindings (raw) |
+
+If you forget a shortcut, press `Prefix Space` — the which-key menu shows everything organized by category.
+
 ### Sessions
 
 | Key | Action |
 |-----|--------|
+| `Prefix f` | **Sessionizer** — fuzzy project picker |
+| `Prefix o` | **SessionX** — interactive session picker with preview |
+| `Prefix S` | Choose session (built-in picker) |
+| `Prefix N` | New session in current directory |
 | `Prefix d` | Detach from session |
-| `Prefix S` | Choose session (interactive picker) |
-| `Prefix $` | Rename session |
-| `Prefix (` | Previous session |
-| `Prefix )` | Next session |
+| `Prefix BTab` | Switch to last session |
+| `M-t` | New session in current dir (no prefix) |
+| `M-1` to `M-9` | Switch to Nth session by creation order (no prefix) |
 
-### Windows
+### Windows (tabs in the status bar)
 
 | Key | Action |
 |-----|--------|
@@ -74,7 +117,10 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 | `Prefix n` | Next window |
 | `Prefix p` | Previous window |
 | `Prefix 1-9` | Jump to window by number |
-| `Prefix w` | Window picker |
+| `Prefix w` | Window/session tree picker |
+| `Prefix Tab` | Last window (toggle) |
+| `Prefix <` | Move window left |
+| `Prefix >` | Move window right |
 
 ### Panes
 
@@ -83,21 +129,23 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 | `Prefix \|` | Split horizontally |
 | `Prefix -` | Split vertically |
 | `Prefix x` | Close pane |
-| `Prefix z` | Toggle pane zoom (fullscreen) |
-| `Prefix q` | Show pane numbers |
+| `Prefix z` | **Zoom pane** (toggle fullscreen — very useful) |
+| `Prefix q` | Show pane numbers (press number to jump) |
 | `Prefix {` | Swap pane left |
 | `Prefix }` | Swap pane right |
-| `Prefix Space` | Cycle layouts |
+| `Prefix !` | Break pane into its own window |
 
 ### Pane Navigation (root — no prefix)
 
 | Key | Action |
 |-----|--------|
-| `Ctrl+h` | Move left (works across Neovim splits) |
+| `Ctrl+h` | Move left (seamless with Neovim splits) |
 | `Ctrl+j` | Move down |
 | `Ctrl+k` | Move up |
 | `Ctrl+l` | Move right |
 | `Ctrl+\` | Last pane |
+
+These work seamlessly across tmux panes and Neovim splits via vim-tmux-navigator. Claude Code is excluded — `Ctrl+h` acts as backspace in Claude Code panes.
 
 ### Pane Resizing
 
@@ -108,23 +156,41 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 | `Prefix K` | Resize up 5 cells |
 | `Prefix L` | Resize right 5 cells |
 
+### Popups (floating, toggleable)
+
+Popups are floating windows that persist in the background. Press the key once to open, press again to dismiss (the process keeps running). Toggle back anytime to check on it.
+
+| Key | Action | Size |
+|-----|--------|------|
+| `Prefix g` | **lazygit** — git operations | 90% |
+| `Prefix y` | **yazi** — file browser | 90% |
+| `Prefix t` | General shell | 75% |
+| `Prefix D` | Deploy (`just deploy`) | 80x60% |
+| `Prefix h` | This help guide | 90% |
+
+Popups open in the current pane's working directory.
+
 ### Copy Mode (vi keys)
 
 | Key | Action |
 |-----|--------|
-| `Prefix [` | Enter copy mode |
+| `Prefix Enter` or `Prefix v` | Enter copy mode |
 | `v` | Begin selection |
-| `y` | Copy selection (to system clipboard) |
+| `V` | Select line |
+| `Ctrl+v` | Rectangle selection |
+| `y` | Copy selection (to system clipboard via pbcopy) |
 | `q` | Exit copy mode |
 | `/` | Search forward |
-| `?` | Search backward |
 | `n` / `N` | Next / previous match |
+| `H` | Start of line |
+| `L` | End of line |
 
 ### Utility
 
 | Key | Action |
 |-----|--------|
-| `Prefix r` | Reload config |
+| `Prefix r` | Reload tmux config |
+| `Prefix m` | Toggle mouse on/off |
 
 ---
 
@@ -132,149 +198,124 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 
 ### Session Persistence: resurrect + continuum
 
-Sessions are automatically saved every 10 minutes and restored on tmux start.
+Sessions auto-save every 10 minutes and restore on tmux start.
 
 | Key | Action |
 |-----|--------|
 | `Prefix Ctrl+s` | Save session manually |
 | `Prefix Ctrl+r` | Restore session manually |
 
-Saved data includes: window layouts, pane positions, working directories, and running commands. Neovim sessions are restored via `:mksession`.
+Saved data: window layouts, pane positions, working directories, running commands. Neovim sessions restored via `:mksession`.
 
 ### tmux-thumbs — Quick Copy
 
-Press `Prefix F` to activate hint mode. Letters appear next to copyable text (URLs, paths, hashes, IPs). Press the letter to copy that text to the clipboard.
-
 | Key | Action |
 |-----|--------|
-| `Prefix F` | Activate thumbs hint mode |
+| `Prefix F` | Activate hint mode — letters appear next to copyable text (URLs, paths, hashes). Press the letter to copy. |
 
 ### tmux-fzf-url — Open URLs
 
-Scans the visible scrollback for URLs and presents them in an fzf picker. Select one to open in your browser.
-
 | Key | Action |
 |-----|--------|
-| `Prefix u` | Fuzzy-find URLs in scrollback |
+| `Prefix u` | Fuzzy-find URLs in scrollback, select to open in browser |
 
 ### extrakto — Extract Text
 
-Opens an fzf picker with all words, paths, and URLs from the current pane. Select to insert at cursor or copy to clipboard.
-
 | Key | Action |
 |-----|--------|
-| `Prefix Tab` | Extract text from pane |
-
-### tmux-yank — System Clipboard
-
-Automatically integrates copy mode with macOS `pbcopy`. Selections made with `y` in copy mode go straight to the system clipboard.
-
-### tmux-toggle-popup — Floating Popups
-
-Toggleable floating popup windows that persist in the background. Each named popup gets its own tmux session — dismiss it and it keeps running, toggle it back to check on it.
-
-| Key | Action |
-|-----|--------|
-| `Prefix t` | Toggle a general shell popup (75% size) |
-| `Prefix g` | Toggle lazygit popup (90% size) |
-| `Prefix D` | Toggle deploy popup (`just deploy`, 80x60%) |
-
-Popups open in the current pane's working directory. Press the same key again to dismiss (the process keeps running). Great for:
-- `Prefix D` → kick off a deploy, dismiss, keep coding, toggle back to check
-- `Prefix g` → quick git operations without leaving your workflow
-- `Prefix t` → ad-hoc shell for anything
-
-### tmux-which-key — Keybinding Discovery
-
-Shows a popup menu of available keybindings after pressing the prefix. If you forget a shortcut, just press `Prefix Space` — the menu appears and you can navigate it to find and execute the action you need.
-
-| Key | Action |
-|-----|--------|
-| `Prefix Space` | Open which-key menu |
-| `Prefix h` | Open this help guide in a popup |
-
-Supports nested submenus (e.g., select "Windows" to see all window-related shortcuts).
-
-### Catppuccin Theme
-
-Mocha variant with slanted window status. Status bar (right side) shows:
-- **Session name** — current tmux session
-- **CPU** — live CPU percentage with load icon
-- **Battery** — charge percentage with charging/discharging indicator
-- **Date/time** — current date and time
+| `Prefix Tab` | Extract words, paths, URLs from pane into fzf picker |
 
 ### tmux-notify — Process Completion Alerts
 
-Monitors panes and sends a macOS notification when a long-running process finishes (after 5+ seconds).
+Monitors panes and sends a macOS notification when a process finishes (after 5+ seconds). Bell signals from Claude Code also trigger notifications — if an agent needs attention, you'll get a macOS alert showing the session and window name.
 
-| Key | Action |
-|-----|--------|
-| *(automatic)* | Notification when monitored process finishes |
+### Catppuccin Theme
+
+Mocha variant with slanted window status. Status bar shows:
+- **Session name** — current tmux session
+- **CPU** — live percentage with load icon
+- **Battery** — charge with charging/discharging indicator
+- **Date/time**
 
 ---
 
 ## Tmuxinator Workspaces
 
-Tmuxinator manages predefined tmux layouts. All workspaces use the current directory as root by default.
+Tmuxinator manages predefined layouts. All workspaces use the current directory as root.
 
 ### Available Workspaces
 
 | Workspace | Command | Description |
 |-----------|---------|-------------|
-| `simple` | `tmuxinator start simple` | Single shell window |
+| `dev` | `tmuxinator start dev` | **Primary** — code (nvim+claude) + ops (bv+foreman+shell) |
+| `claude` | `tmuxinator start claude` | Focused AI pairing: nvim + claude side-by-side |
+| `agents` | `tmuxinator start agents` | 3 parallel Claude agents + overview |
+| `simple` | `tmuxinator start simple` | Single shell |
 | `editor` | `tmuxinator start editor` | Neovim fullscreen |
-| `dev` | `tmuxinator start dev` | Full dev environment: nvim+claude, tasks, git, files |
-| `monitor` | `tmuxinator start monitor` | 4-pane dashboard: htop, disk, network, shell |
-| `claude` | `tmuxinator start claude` | Side-by-side: nvim + claude --continue |
-| `agents` | `tmuxinator start agents` | 3 parallel Claude agents + overview (tasks, git, shell) |
-| `notes` | `tmuxinator start notes` | Obsidian vault in nvim + shell |
-| `ops` | `tmuxinator start ops` | Ops shell + logs windows |
+| `monitor` | `tmuxinator start monitor` | System dashboard: htop, disk, network |
+| `notes` | `tmuxinator start notes` | Obsidian vault in nvim |
+| `ops` | `tmuxinator start ops` | Shell + logs |
 
-### Workspace Details
+### dev (primary workspace)
 
-**simple** — Minimal session with a single shell. Good starting point when you just need a terminal.
+```
+Window 1: "code" (even-horizontal)
+  ├── nvim .
+  └── claude --continue
 
-**editor** — Opens Neovim in the current directory. Use when you just want to edit without extra tooling.
+Window 2: "ops" (main-vertical)
+  ├── bv (beads viewer)
+  ├── foreman status --watch
+  └── shell
 
-**dev** — Full development workspace with 4 windows:
-1. **claude** — nvim + claude side-by-side (even-horizontal)
-2. **tasks** — td task monitor
-3. **git** — lazyjj for version control
-4. **files** — yazi file manager
+Popups (not windows — no tab clutter):
+  Prefix g → lazygit
+  Prefix y → yazi
+  Prefix t → shell
+```
 
-**monitor** — System monitoring dashboard (tiled layout):
-- htop (processes)
-- disk usage (df -h, refreshes every 2s)
-- network connections (netstat, refreshes every 2s)
-- empty shell for ad-hoc commands
+Only 2 tabs in the status bar. Lazygit and yazi are a keypress away as popups.
 
-**claude** — Focused AI pairing session with nvim and claude --continue side-by-side.
+### agents (multi-agent workspace)
 
-**agents** — Multi-agent workspace with 3 Claude Code windows running in parallel:
-1. **agent-1/2/3** — independent claude --continue sessions
-4. **overview** — tiled coordination pane (task monitor, lazyjj, free shell)
+```
+Window 1-3: "agent-1/2/3" — independent claude --continue sessions
+Window 4: "overview" — br list + shell (even-horizontal)
+```
 
-> Set `OBSIDIAN_VAULT` env var to override the default vault path.
+### notes
 
-**notes** — Obsidian vault editing in nvim. Root defaults to `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo`. Override with `OBSIDIAN_VAULT` env var.
-
-**ops** — Minimal ops session: shell + logs windows.
+Root defaults to Obsidian vault at `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo`. Override with `OBSIDIAN_VAULT` env var.
 
 ### Managing Workspaces
 
 ```bash
-# List all workspaces
-tmuxinator list
-
-# Start a workspace
-tmuxinator start dev
-
-# Start in a specific directory
-tmuxinator start dev --project-root ~/projects/myapp
-
-# Stop a workspace (kills the session)
-tmuxinator stop dev
+tmuxinator list                              # List all workspaces
+tmuxinator start dev                         # Start in current directory
+tmuxinator start dev --project-root ~/myapp  # Start in specific directory
+tmuxinator stop dev                          # Kill the session
 ```
+
+---
+
+## WezTerm (what it still does)
+
+WezTerm is now a thin terminal emulator. It handles:
+
+| Key | Action |
+|-----|--------|
+| `Cmd+C` | Copy to clipboard |
+| `Cmd+V` | Paste from clipboard |
+| `Cmd+Q` | Quit WezTerm |
+| `Cmd+T` | New WezTerm tab (rarely needed — use tmux windows instead) |
+| `Cmd+1-9` | Switch WezTerm tabs |
+| `Cmd+=` / `Cmd+-` | Font size up/down |
+| `Cmd+0` | Reset font size |
+| `Shift+Enter` | Send escaped Enter (for Claude Code) |
+| `Cmd+Shift+D` | Debug overlay |
+| `Cmd+Shift+P` | Command palette |
+
+Everything else (splits, panes, sessions, copy mode, search) is handled by tmux.
 
 ---
 
@@ -283,56 +324,48 @@ tmuxinator stop dev
 ### Starting a Coding Session
 
 ```bash
-# Navigate to your project
-cd ~/projects/myapp
-
-# Start the dev workspace
-tmuxinator start dev
-
-# You get: nvim+claude, task monitor, lazyjj, yazi
-# Switch windows with Prefix+1-4
+# Open WezTerm, then:
+Prefix f          # Sessionizer — pick your project
+                  # dev layout starts automatically
+Prefix 1          # Switch to code window (nvim + claude)
+Prefix 2          # Switch to ops window (bv + foreman)
+Prefix g          # Toggle lazygit popup
+Prefix y          # Toggle yazi popup
 ```
 
-### Claude Pairing
+### Switching Between Projects
 
 ```bash
-cd ~/projects/myapp
-tmuxinator start claude
-
-# Left pane: nvim for editing
-# Right pane: claude for AI assistance
-# Ctrl+h/l to move between panes
+Prefix f          # Sessionizer — pick another project
+                  # Each project is its own tmux session
+M-1 through M-9   # Quick-switch between sessions (Alt+number)
+Prefix o          # SessionX interactive picker with preview
 ```
 
-### System Monitoring
+### Quick Git Operations
 
 ```bash
-tmuxinator start monitor
-
-# 4-pane tiled view of system health
-# Bottom-right pane is free for running commands
+Prefix g          # lazygit popup opens
+                  # Stage, commit, push, etc.
+Prefix g          # Press again to dismiss (keeps running)
 ```
 
-### Session Persistence
-
-Sessions auto-save every 10 minutes (via continuum). If tmux crashes or you reboot:
+### Detach and Resume
 
 ```bash
-# Just start tmux — continuum auto-restores
-tmux
-
-# Or manually restore
-# Prefix Ctrl+r
+Prefix d          # Detach — everything keeps running
+# Close terminal, go home, come back tomorrow
+tmux attach       # Everything is exactly where you left it
 ```
 
-### Detach and Reattach
+### Multi-Agent Development
 
 ```bash
-# Detach: Prefix d (or close the terminal — session survives)
-
-# Later, reattach:
-tmux ls            # see what's running
-tmux attach -t dev # reconnect
+cd ~/Development/Fortium/foreman
+tmuxinator start agents
+# Window 1-3: three Claude Code sessions working in parallel
+# Window 4: overview with task list
+# Each agent works independently, check overview for progress
 ```
 
 ---
@@ -342,24 +375,21 @@ tmux attach -t dev # reconnect
 | Key | Action |
 |-----|--------|
 | `Ctrl+Space` | **Prefix key** (start of every command) |
+| `Prefix Space` | **Which-key menu** (discover all shortcuts) |
+| `Prefix f` | **Sessionizer** (pick project, auto-layout) |
 | `Ctrl+h/j/k/l` | Navigate panes (no prefix, works with Neovim) |
+| `Prefix g` | Toggle lazygit popup |
+| `Prefix y` | Toggle yazi popup |
+| `Prefix t` | Toggle shell popup |
+| `Prefix z` | Zoom pane (toggle fullscreen) |
 | `Prefix c` | New window |
 | `Prefix 1-9` | Switch to window N |
 | `Prefix \|` | Split horizontal |
 | `Prefix -` | Split vertical |
-| `Prefix z` | Zoom pane (toggle fullscreen) |
 | `Prefix d` | Detach |
-| `Prefix S` | Session picker |
-| `Prefix [` | Copy mode (vi keys) |
-| `Prefix Ctrl+s` | Save session |
-| `Prefix Ctrl+r` | Restore session |
-| `Prefix F` | Thumbs (quick copy — hint mode) |
+| `Prefix o` | SessionX session picker |
+| `Prefix h` | This help guide (popup) |
+| `Prefix F` | Thumbs (quick copy) |
 | `Prefix u` | URL picker |
-| `Prefix Tab` | Extract text |
-| `Prefix ?` | Command palette |
 | `Prefix r` | Reload config |
-| `Prefix t` | Popup shell |
-| `Prefix g` | Popup lazygit |
-| `Prefix D` | Popup deploy (`just deploy`) |
-| `Prefix h` | Popup help guide |
-| `Prefix Space` | Which-key menu |
+| `M-1` to `M-9` | Switch to Nth session (no prefix) |

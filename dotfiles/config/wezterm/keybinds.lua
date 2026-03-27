@@ -7,23 +7,9 @@ local utils = require("utils")
 --- keybinds
 ---------------------------------------------------------------
 M.tmux_keybinds = {
-    { key = "k", mods = "ALT",      action = act({ SpawnTab = "CurrentPaneDomain" }) },
-    { key = "j", mods = "ALT",      action = act({ CloseCurrentTab = { confirm = true } }) },
-    { key = "h", mods = "ALT",      action = act({ ActivateTabRelative = -1 }) },
-    { key = "l", mods = "ALT",      action = act({ ActivateTabRelative = 1 }) },
-    { key = "h", mods = "ALT|CTRL", action = act({ MoveTabRelative = -1 }) },
-    { key = "l", mods = "ALT|CTRL", action = act({ MoveTabRelative = 1 }) },
-    --{ key = "k", mods = "ALT|CTRL", action = act.ActivateCopyMode },
-    {
-        key = "k",
-        mods = "ALT|CTRL",
-        action = act.Multiple({ act.CopyMode("ClearSelectionMode"), act.ActivateCopyMode, act.ClearSelection }),
-    },
     -- this is for claude code
     { key = "Enter", mods = "SHIFT",    action = wezterm.action({ SendString = "\x1b\r" }) },
-    { key = "j",     mods = "ALT|CTRL", action = act({ PasteFrom = "PrimarySelection" }) },
     { key = "q",     mods = "CMD",      action = wezterm.action.QuitApplication },
-    { key = "q",     mods = "ALT",      action = wezterm.action.CloseCurrentTab({ confirm = true }) },
     { key = "t",     mods = "CMD",      action = act.SpawnTab("CurrentPaneDomain") },
     { key = "1",     mods = "CMD",      action = act({ ActivateTab = 0 }) },
     { key = "2",     mods = "CMD",      action = act({ ActivateTab = 1 }) },
@@ -34,19 +20,6 @@ M.tmux_keybinds = {
     { key = "7",     mods = "CMD",      action = act({ ActivateTab = 6 }) },
     { key = "8",     mods = "CMD",      action = act({ ActivateTab = 7 }) },
     { key = "9",     mods = "CMD",      action = act({ ActivateTab = 8 }) },
-    { key = "-",     mods = "CMD",      action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
-    { key = "|",     mods = "CMD",      action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }) },
-    { key = "h",     mods = "CTRL",     action = act({ ActivatePaneDirection = "Left" }) },
-    { key = "l",     mods = "CTRL",     action = act({ ActivatePaneDirection = "Right" }) },
-    { key = "k",     mods = "CTRL",     action = act({ ActivatePaneDirection = "Up" }) },
-    { key = "j",     mods = "CTRL",     action = act({ ActivatePaneDirection = "Down" }) },
-    { key = "h",     mods = "CMD",      action = act({ AdjustPaneSize = { "Left", 1 } }) },
-    { key = "l",     mods = "CMD",      action = act({ AdjustPaneSize = { "Right", 1 } }) },
-    { key = "k",     mods = "CMD",      action = act({ AdjustPaneSize = { "Up", 1 } }) },
-    { key = "j",     mods = "CMD",      action = act({ AdjustPaneSize = { "Down", 1 } }) },
-    { key = "m",     mods = "CMD",      action = wezterm.action.TogglePaneZoomState },
-    --	{ key = "Enter", mods = "ALT", action = "QuickSelect" },
-    { key = "/",     mods = "ALT",      action = act.Search("CurrentSelectionOrEmptyString") },
 }
 
 M.default_keybinds = {
@@ -78,6 +51,7 @@ M.default_keybinds = {
     -- Launcher and navigation
     { key = "a",        mods = "CMD|SHIFT", action = wezterm.action.ShowLauncher },
     { key = " ",        mods = "CMD|SHIFT", action = wezterm.action.ShowTabNavigator },
+    { key = "p",        mods = "CMD|SHIFT", action = wezterm.action.ActivateCommandPalette },
 
     -- Resize mode activation
     {
@@ -305,16 +279,6 @@ M.mouse_bindings = {
         mods = "CTRL",
         action = "OpenLinkAtMouseCursor",
     },
-    -- {
-    -- 	event = { Up = { streak = 1, button = 'Middle' } },
-    -- 	mods = 'NONE',
-    -- 	action = act({ PasteFrom = "PrimarySelection" })
-    -- },
-    -- {
-    -- 	event = { Down = { streak = 1, button = 'Middle' } },
-    -- 	mods = 'NONE',
-    -- 	action = act.DisableDefaultAssignment
-    -- },
 }
 
 return M

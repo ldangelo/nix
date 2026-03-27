@@ -7,6 +7,7 @@
     ./emacs
     ./wezterm.nix       # WezTerm configuration
     ./qutebrowser       # Qutebrowser configuration
+    ./lazygit.nix       # Lazygit configuration
     ./programs.nix      # Other program configs (fzf, direnv, starship)
     ./packages.nix      # Migrated from Brewfile
 
@@ -53,7 +54,7 @@
       pkgs.helix
       pkgs.raycast
 #      pkgs.warp-terminal
-      pkgs.lazygit
+      # lazygit — managed by programs.lazygit in lazygit.nix
 #      pkgs.nerd-fonts
       pkgs.source-code-pro
       pkgs.aldente

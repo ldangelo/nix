@@ -75,22 +75,19 @@
     };
   };
 
-  # pizauth: authentication proxy
-  launchd.daemons.pizauth = {
+  # pizauth: authentication proxy (user agent so it can open browser for OAuth)
+  launchd.user.agents.pizauth = {
     serviceConfig = {
       Label = "com.ldangelo.pizauth";
       ProgramArguments = [
-        "pizauth"
+        "/etc/profiles/per-user/ldangelo/bin/pizauth"
         "server"
       ];
       KeepAlive = true;
       RunAtLoad = true;
-      StandardOutPath = "/var/log/pizauth.out.log";
-      StandardErrorPath = "/var/log/pizauth.err.log";
+      StandardOutPath = "/tmp/pizauth.out.log";
+      StandardErrorPath = "/tmp/pizauth.err.log";
       ProcessType = "Interactive";
-      Nice = -20;
-      UserName = "root";
-      GroupName = "wheel";
     };
   };
 
