@@ -137,6 +137,9 @@ in
     ];
 
     extraConfig = ''
+      # Extended keys — required for modified Enter/Tab keys (e.g. Pi, Neovim)
+      set -g extended-keys on
+
       # Status line — must come after catppuccin plugin sets up variables.
       set -g status-right-length 150
       set -g status-left-length 100

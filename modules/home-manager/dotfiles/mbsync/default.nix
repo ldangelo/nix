@@ -4,7 +4,7 @@
      enable = true;
      package = pkgs.isync-oauth2;  # Custom overlay with OAuth2 support via cyrus-sasl-xoauth2
      extraConfig = ''
-      # Keeps timestamp mased message sorting intactt
+      # Keeps timestamp-based message sorting intact
       CopyArrivalDate yes
       SyncState *
  '';
@@ -18,7 +18,7 @@
       "new"
     ];
     hooks = {
-      preNew = "mbsync -a";
+      preNew = "mbsync icloud & mbsync fortium & mbsync curantis & wait";
       postNew = "~/Development/crush-mail/crush-mail tag && ~/Development/crush-mail/crush-mail move";
     };
   };
@@ -37,6 +37,7 @@
           enable = true;
           create = "both";
           expunge = "both";
+          extraConfig.account = { PipelineDepth = 50; };
         };
         notmuch.enable = true;
         msmtp.enable = true;
@@ -67,7 +68,7 @@
           enable = true;
           create = "both";
           expunge = "both";
-          extraConfig.account = { AuthMechs = "XOAUTH2"; };
+          extraConfig.account = { AuthMechs = "XOAUTH2"; PipelineDepth = 50; };
         };
         msmtp.enable = true;
         msmtp.extraConfig = {
@@ -103,7 +104,7 @@
           enable = true;
           create = "both";
           expunge = "none";
-          extraConfig.account = { AuthMechs = "XOAUTH2"; };
+          extraConfig.account = { AuthMechs = "XOAUTH2"; PipelineDepth = 50; };
           patterns = [ "*" "!Conversation History" "!Conversation History/*" "!Sync Issues" "!Sync Issues/*" ];
         };
         msmtp.enable = true;

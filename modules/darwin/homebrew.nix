@@ -63,7 +63,6 @@
       "dockutil"                       # Dock management (Swift build broken in nixpkgs)
       "marksman"                       # Markdown language server (depends on .NET/Swift in nixpkgs)
       "dotnet@6"                       # .NET 6
-      "openclaw-cli"
       "flyctl"                         # Fly.io CLI
      ] ++ lib.optionals isWorkstation [
       # https://github.com/marcus/sidecar
@@ -178,7 +177,6 @@
       "mouseless@preview"      # Mouse control via keyboard
       "obsidian"
       "ollama-app"             # Local LLMs
-      "openclaw"
       "postgres-unofficial"    # Postgres.app
       "postman"
       "postman-cli"

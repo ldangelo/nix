@@ -48,4 +48,9 @@
     owner = "ldangelo";
     mode = "0400";
   };
+
+  sops.secrets.minimax_api_key = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
 }

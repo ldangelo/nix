@@ -53,6 +53,10 @@
      };
   };
 
+  # Place kanata config at /etc so root launchd daemon can access it
+  # (root cannot traverse /Users/ldangelo which has mode 750)
+  environment.etc."kanata/home-row.kbd".source = ../../dotfiles/config/kanata/home-row.kbd;
+
   # Kanata - Advanced keyboard remapper (system-level daemon)
   # https://github.com/jtroo/kanata
   # Must be a daemon (not agent) to run as root - agents ignore UserName
@@ -62,7 +66,7 @@
       ProgramArguments = [
         "/opt/homebrew/bin/kanata"
         "--cfg"
-        "/Users/ldangelo/.config/kanata/home-row.kbd"
+        "/etc/kanata/home-row.kbd"
       ];
       KeepAlive = true;
       RunAtLoad = true;
