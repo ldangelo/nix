@@ -1,188 +1,138 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
+  # Shared package manifest for the active home-manager profile.
   home.packages = with pkgs; [
     # Development Tools
-    act                    # Run GitHub Actions locally
+    act
     antigravity
-    tmux
+    ast-grep
+    cargo-binstall
+    cmake
+    devbox
+    glow
     ghostty-bin
-    glow                   # Terminal markdown viewer
-
-    # aider - not in nixpkgs, available via brew
-    ast-grep               # Code searching, linting, rewriting
-    # basedpyright - not in nixpkgs
-    cargo-binstall         # Binary installation for rust projects
-    cmake                  # Cross-platform make
-    # claude-code - installed via Homebrew
-    # claude-code-acp - install via npm (@zed-industries/claude-code-acp)
-    # claude-monitor - install via npm (claude-code-monitor)
-    telegram-desktop
-    # devbox - not in nixpkgs
-    # devpod - not in nixpkgs
-    devenv
-    process-compose        # Process orchestrator (like docker-compose for local services)
-    gradle                 # Build automation tool
-    #    google-chrome
-    #    graphite-cli
     helix
-    # jdtls - use jdt-language-server
     jankyborders
-    jdt-language-server    # Java language server
-    just                   # Command runner
-    # lazygit — managed by programs.lazygit in lazygit.nix
-    # lazyjj - not in nixpkgs yet
-    maven                  # Java project management
-    neovim
-    nil # nix lsp server
-    # nuget - not in standard nixpkgs
-    # openapi-generator - not directly available, use openapi-generator-cli
-    openapi-generator-cli  # Generate clients/servers from OpenAPI
-    plantuml               # Draw UML diagrams
-    # repomix - not in nixpkgs
-    # swagger-codegen - not in nixpkgs
-    trivy                  # Vulnerability scanner
+    jdt-language-server
+    just
+    maven
+    nil
+    openapi-generator-cli
+    plantuml
+    process-compose
+    telegram-desktop
+    devenv
+    trivy
 
     # Git Tools
-    gh                     # GitHub CLI
-    jira-cli-go            # Interactive Jira CLI
-    git
-    git-town               # High-level Git interface
-    glab                   # GitLab CLI
-    delta                  # Syntax-highlighting pager for git
-    jujutsu                # Jujutsu version control (package name is jujutsu not jj)
+    delta
+    gh
+    git-town
+    glab
+    jira-cli-go
 
     # Shell & Terminal Tools
-    atuin                  # Improved shell history
-    btop                   # Resource monitor
-    bun                    # Fast JavaScript/TypeScript runtime and package manager
-    coreutils              # GNU utilities
-    # direnv installed via Homebrew (nixpkgs 2.37.1 build broken on macOS aarch64: CGO + -linkmode=external)
-    eza                    # Modern ls replacement
-    fd                     # Simple alternative to find
-    fzf                    # Fuzzy finder
-    git-lfs                # Git large file storage
-    htop                   # Process viewer
-    # ifstat - not in nixpkgs
-    lsd                    # Modern ls with icons and colors
-    starship               # Cross-shell prompt
-    terminal-notifier      # macOS notifications from CLI
-    zoxide                 # Smarter cd command
+    atuin
+    bat
+    btop
+    bun
+    coreutils
+    eza
+    fasd
+    fd
+    git-lfs
+    htop
+    jq
+    lsd
+    terminal-notifier
     zsh-autosuggestions
     zsh-syntax-highlighting
 
     # Text Processing & Search
-    # igrep - not in nixpkgs
-    jq                     # JSON processor
-    # jql - not in nixpkgs
-    # marksman               # Markdown language server - using Homebrew (depends on .NET/Swift)
-    markdownlint-cli       # Markdown linter
-    markdownlint-cli2      # Markdown linter (used by LazyVim markdown extra)
-    markdown-toc           # Markdown TOC generator (used by LazyVim markdown extra)
-    multimarkdown          # Markdown converter
-    pandoc                 # Document converter
-    ripgrep                # Fast search
-    silver-searcher        # Code search (ag)
+    markdown-toc
+    markdownlint-cli
+    markdownlint-cli2
+    multimarkdown
+    pandoc
+    ripgrep
+    silver-searcher
 
     # Email & Communication
-    # alot - Linux only, not available on macOS
-    himalaya               # CLI email client (IMAP/SMTP)
-    mu                     # Email search tool
-    msmtp                  # SMTP client
-    neomutt                # Email client
-    notmuch                # Email indexing
-    # notmuch-mutt - included with notmuch
+    afew
+    cyrus_sasl
+    cyrus-sasl-xoauth2
+    himalaya
+    mu
+    neomutt
+    pizauth
 
     # Cloud & Infrastructure
-    awscli2                # AWS CLI (v2)
-    cloudflared            # Cloudflare Tunnel client
-    # localstack           # Using Homebrew (nix build broken)
+    awscli2
+    cloudflared
     docker-credential-helpers
-#    flyctl                 # Fly.io CLI
-    gitlab-runner          # GitLab CI runner
-    kubernetes-helm        # Kubernetes package manager
-    kubectl                # Kubernetes CLI
-    kubeconform            # Kubernetes manifest validator
-    temporal               # Temporal workflow CLI
-    terraform              # Infrastructure as code
+    gitlab-runner
+    kubeconform
+    kubectl
+    kubernetes-helm
+    temporal
+    terraform
 
     # Programming Languages & Runtimes
-    # dotnet-sdk_8           # .NET Core 8 - using Homebrew (Swift build broken in nixpkgs)
-    elixir                 # Elixir language
-    openjdk                # Java
-    openjdk21              # Java 21
-    nodejs                 # Node.js
-    postgresql             # PostgreSQL (use postgresql not postgresql_17)
-    python3                # Python
-    ruby                   # Ruby
-    rustc                  # Rust compiler
-    cargo                  # Rust package manager
+    cargo
+    elixir
+    nodejs
+    openjdk21
+    postgresql
+    python3
+    ruby
+    rustc
 
     # Language Version Managers
-    rbenv                  # Ruby version manager
-    # Note: nvm is shell-based, configure in shell.nix
+    rbenv
 
     # Build Tools & Libraries
     autoconf
     automake
     binutils
-    clang-tools            # For clang-format
-    cyrus_sasl             # SASL library
-    cyrus-sasl-xoauth2     # OAuth2 for SASL (from overlay)
-    graphviz               # Graph visualization
-    harfbuzz               # Text shaping
-    ispell                 # Spell checker
-    libjpeg                # JPEG library
-    # libvterm - not available on macOS
+    clang-tools
+    graphviz
+    harfbuzz
+    ispell
+    libjpeg
     libtool
-    luarocks               # Lua package manager
-    pkg-config             # Package config (not pkgconf)
-    zlib                   # Compression library
+    luarocks
+    pkg-config
+    zlib
 
     # Media & Graphics
-    chafa                  # Graphics renderer
-    # mpv                    # Media player - using Homebrew (Swift build broken in nixpkgs)
-    viu                    # Terminal image viewer
-    w3m                    # Text browser
-    # yt-dlp - curl-impersonate build broken on macOS 15 (AppleIDN check fails), use brew
-    # xpdf - marked as insecure, use brew or alternative
+    chafa
+    viu
+    w3m
 
     # Utilities
-    duf                    # Disk usage utility
-    # fileql - not in nixpkgs
-    gnupg                  # GPG encryption
-    httpie                 # HTTP client
-    hugo                   # Static site generator
-    # kanata - not in standard nixpkgs
-    mas                    # Mac App Store CLI
-    pipx                   # Execute Python packages
-    scc                    # Code counter
-    # switchaudio-osx - not in nixpkgs, use brew
-    uv                     # Fast Python package installer
-    # vfkit - not in nixpkgs
-    virtualenv             # Python virtual environments
-    wget                   # File retriever
-    qutebrowser 
+    choose-gui
+    duf
+    gnupg
+    httpie
+    hugo
+    mas
+    pipx
+    scc
+    uv
+    virtualenv
+    wget
 
     # Fonts
-    #nerdfonts
     source-code-pro
 
-    # GUI Applications (available in nixpkgs)
-    # aldente - not in nixpkgs, use cask
-    # apparency - not in nixpkgs
+    # GUI Applications
+    aldente
+    apparency
     discord
-    # dockutil              # Dock management - using Homebrew (Swift build broken in nixpkgs)
-    duti                  # Default apps manager
-    # mysides - not in nixpkgs
-    # raycast - use cask
-    # shortcat - not in nixpkgs
-    # swiftdefaultapps - not in nixpkgs
-    # vscode - removed, not used
-    # warp-terminal - use cask
-
-
-    # Already in default.nix, kept for reference
-    # cyrus-sasl-xoauth2 (from overlay)
+    duti
+    mysides
+    raycast
+    shortcat
   ];
 }

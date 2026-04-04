@@ -41,6 +41,6 @@ clean: up
 
 gc:
   # garbage collect all unused nix store entries
-  nix-collect-garbage --delete-older-than 3d
+  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH nix-collect-garbage --delete-older-than 3d
 
 real-clean: clean gc

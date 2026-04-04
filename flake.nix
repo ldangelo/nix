@@ -2,29 +2,16 @@
   description = "Leo's Nix Configuration";
 
   inputs = {
-    # Nixpkgs
-    #    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     catppuccin.url = "github:catppuccin/nix";
 
-    #    flake-utils.url = "github:numtide/flake-utils";
-
-    # Home manager
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Darwin
     nix-darwin.url = "github:lnl7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
-    # nixvim
-    #    nixvim.url = "github:nix-community/nixvim";
-    #    nixvim.inputs.nixpkgs.follows = "nixpkgs";
-
-    # flake-parts
     flake-parts.url = "github:hercules-ci/flake-parts";
-
-    # nur: nix User Repository
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -42,14 +29,11 @@
 
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
     sops-nix.url = "github:Mic92/sops-nix";
-
-
   };
 
   outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ... }:
     let
       common-overlays = [
-
       (self: super: {
         cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
           pname = "cyrus-sasl-xoauth2";
@@ -108,13 +92,9 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "aarch64-darwin" ];
 
-      perSystem = { system, pkgs, ... }: { };
-
       flake = let
-        # Shared modules for all darwin configurations
         darwinModules = [
           ({ ... }: {
-            # Let Determinate Nix handle Nix configuration
             nix.enable = false;
           })
           sops-nix.darwinModules.sops
@@ -122,7 +102,6 @@
           home-manager.darwinModules.home-manager
           {
             nixpkgs.overlays = common-overlays;
-            # Home-manager configuration as a nix-darwin module
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bak";
@@ -131,7 +110,6 @@
           }
         ];
       in {
-        # --- nix-darwin Configuration ---
         darwinConfigurations = {
           "Leos-MacBook-Pro" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
@@ -146,11 +124,10 @@
           };
         };
 
-        # --- Home Manager Standalone Config (optional) ---
         homeConfigurations = {
           "ldangelo" = home-manager.lib.homeManagerConfiguration {
-            pkgs = import nixpkgs { 
-              system = "aarch64-darwin"; 
+            pkgs = import nixpkgs {
+              system = "aarch64-darwin";
               config.allowUnfree = true;
               overlays = common-overlays;
             };

@@ -36,7 +36,7 @@ let
       owner = "2KAbhishek";
       repo = "tmux-tea";
       rev = "806aa7186c0344e0c7b2c9fa0c044267d6b3ca9e";
-      sha256 = "sha256-5DVQdtw2BLHqqS75ZZIOQ/X1pKEhYhbZNFxo7U5YZVw=";
+      sha256 = "sha256-Z5IaZG4OJUqERz1P8aZu0CVcuo4v741rqTob9HBaqU8=";
     };
   };
 in
