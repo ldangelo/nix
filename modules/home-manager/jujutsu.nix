@@ -13,10 +13,16 @@
       ui = {
         editor = "nvim";
         pager = "delta";
-        diff-formater = ":git";
+        diff-formatter = ":git";
       };
 
       merge-tools = {
+        delta = {
+          diff-invocation-mode = "file-by-file";
+          diff-args = [ "$left" "$right" ];
+          diff-expected-exit-codes = [ 0 1 ];
+        };
+
         meld = {
           meld = "/opt/homebrew/bin/meld";
           edit-args = [ "--newtab" "$left" "$right" ];
