@@ -13,6 +13,19 @@ let
       sha256 = "sha256-wOmq2stWXAFmYrRuIqf9IPATYXJ+OFoYXnJdHUnJQxY=";
     };
   };
+
+  # treemux: Nvim-Tree/Neo-Tree file explorer as a tmux sidebar
+  # Not in nixpkgs — built from source (kiyoon/treemux)
+  treemux = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "treemux";
+    version = "unstable";
+    src = pkgs.fetchFromGitHub {
+      owner = "kiyoon";
+      repo = "treemux";
+      rev = "bfa5ea669aff98777dcbc7ed871cd859ef81c5ef";
+      sha256 = "sha256-1mCxTv3KqUsCjeI7X02NBMRJJzbL0cE1Gg20FrMDChI=";
+    };
+  };
 in
 {
   programs.tmux = {
@@ -132,6 +145,14 @@ in
           set -g @batt_color_status_primary_charged "#a6e3a1"
           set -g @batt_color_status_primary_charging "#f9e2af"
           set -g @batt_color_status_primary_discharging "#cdd6f4"
+        '';
+      }
+      {
+        plugin = treemux;
+        extraConfig = ''
+          set -g @treemux-tree-client 'nvim-tree'
+          set -g @treemux-tree-nvim-init-file "$HOME/.local/share/tmux/plugins/treemux_init.lua"
+          set -g @treemux-nvim-command 'NVIM_APPNAME=nvim-treemux nvim'
         '';
       }
     ];
@@ -515,6 +536,17 @@ in
   # silently fails and prefix+Space reverts to next-layout.
   home.activation.fixWhichKeyPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
     chmod -f u+w "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux" || true
+  '';
+
+  # treemux init file — copy from nix store to stable location
+  # so the path doesn't change across rebuilds with different store hashes
+  home.activation.installTreemuxInit = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    _treemux_init_src="${treemux}/share/tmux-plugins/treemux/configs/treemux_init.lua"
+    _treemux_init_dst="$HOME/.local/share/tmux/plugins/treemux_init.lua"
+    mkdir -p "$HOME/.local/share/tmux/plugins"
+    if [[ -f "$_treemux_init_src" ]]; then
+      cp -f "$_treemux_init_src" "$_treemux_init_dst"
+    fi
   '';
 
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available
