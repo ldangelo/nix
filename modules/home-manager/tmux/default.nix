@@ -26,6 +26,19 @@ let
       sha256 = "sha256-1mCxTv3KqUsCjeI7X02NBMRJJzbL0cE1Gg20FrMDChI=";
     };
   };
+
+  # tmux-tea: fuzzy tmux session manager (zoxide, fzf, tmuxinator)
+  # Not in nixpkgs — built from source (2KAbhishek/tmux-tea)
+  tmux-tea = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "tmux-tea";
+    version = "unstable";
+    src = pkgs.fetchFromGitHub {
+      owner = "2KAbhishek";
+      repo = "tmux-tea";
+      rev = "806aa7186c0344e0c7b2c9fa0c044267d6b3ca9e";
+      sha256 = "sha256-5DVQdtw2BLHqqS75ZZIOQ/X1pKEhYhbZNFxo7U5YZVw=";
+    };
+  };
 in
 {
   programs.tmux = {
@@ -72,11 +85,13 @@ in
       fzf-tmux-url
       extrakto
       {
-        plugin = tmux-sessionx;
+        plugin = tmux-tea;
         extraConfig = ''
-          set -g @sessionx-bind 'o'
-          set -g @sessionx-filter-current 'false'
-          set -g @sessionx-preview-enabled 'true'
+          set -g @tea-bind 't'
+          set -g @tea-default-command 'nvim .'
+          set -g @tea-find-path "$HOME/Development"
+          set -g @tea-preview-position 'top'
+          set -g @tea-session-name 'basename'
         '';
       }
       {
@@ -222,45 +237,9 @@ in
       set -g bell-action other
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
-      # Sessionizer: fuzzy-find project dirs and create/attach tmux sessions
-      # Uses zoxide for smart directory ranking, falls back to find
-      bind f display-popup -E -w80% -h60% "~/.local/bin/tmux-sessionizer"
 
-      # Reload config
-      bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
-
-      # Switch sessions
-      bind S choose-session
-
-      # New session named after current directory (falls back to unnamed if duplicate)
-      bind N run-shell "tmux new-session -c '#{pane_current_path}' -s '#{b:pane_current_path}' 2>/dev/null || tmux new-session -c '#{pane_current_path}'"
-
-      # Focus events for Neovim autoread
-      set -g focus-events on
-
-      # Override vim-tmux-navigator bindings to pass keys through to apps that
-      # need them (Neovim, fzf). Claude Code is excluded — it treats C-h as
-      # backspace, so we let tmux handle pane navigation instead.
-      is_passthrough="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf|sidecar)(diff)?(-wrapped)?$'"
-      bind-key -T root C-h  if-shell "$is_passthrough" "send-keys C-h"  "select-pane -L"
-      bind-key -T root C-j  if-shell "$is_passthrough" "send-keys C-j"  "select-pane -D"
-      bind-key -T root C-k  if-shell "$is_passthrough" "send-keys C-k"  "select-pane -U"
-      bind-key -T root C-l  if-shell "$is_passthrough" "send-keys C-l"  "select-pane -R"
-      bind-key -T root C-\\ if-shell "$is_passthrough" "send-keys C-\\\\" "select-pane -l"
-
-      # Session shortcuts (no prefix needed)
-      # M-t = new session in current dir; M-1..9 = switch to Nth session by list order
-      # Map CMD+t → Esc+t and CMD+[1-9] → Esc+[1-9] in your terminal to use CMD keys
-      bind -n M-t run-shell "tmux new-session -c '#{pane_current_path}' -s '#{b:pane_current_path}' 2>/dev/null || tmux new-session -c '#{pane_current_path}'"
-      bind -n M-1 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '1p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-2 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '2p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-3 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '3p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-4 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '4p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-5 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '5p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-6 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '6p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-7 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '7p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-8 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '8p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
-      bind -n M-9 run-shell "tmux list-sessions -F '##{session_created} ##S' | sort -n | sed -n '9p' | cut -d' ' -f2- | xargs -I{} tmux switch-client -t '{}'"
+      # Session management via tmux-tea (prefix + t)
+      # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
 
       # UX tweaks
       set -g display-time 2000
@@ -380,21 +359,15 @@ in
           - name: Choose
             key: s
             command: choose-tree -Zs
-          - name: Sessionizer
-            key: f
-            command: "display-popup -E -w80% -h60% ~/.local/bin/tmux-sessionizer"
-          - name: Sessionx
-            key: x
-            command: display-message "Use Prefix+o for sessionx"
-          - name: New
-            key: N
-            command: new-session -c "#{pane_current_path}"
-          - name: Rename
-            key: r
-            command: command-prompt -I "#S" "rename-session -- \"%%\""
-          - name: Detach
-            key: d
-            command: detach
+              - name: Tea
+                key: t
+                command: run "tea"
+              - name: Rename
+                key: r
+                command: command-prompt -I "#S" "rename-session -- \"%%\""
+              - name: Detach
+                key: d
+                command: detach
       - name: Copy mode
         key: c
         command: copy-mode
@@ -548,6 +521,14 @@ in
       cp -f "$_treemux_init_src" "$_treemux_init_dst"
     fi
   '';
+  # tmux-tea: symlink tea.sh from plugin to ~/.local/bin/tea
+  home.activation.installTea = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    _tea_src="${tmux-tea}/share/tmux-plugins/tmux-tea/bin/tea.sh"
+    mkdir -p "$HOME/.local/bin"
+    if [[ -f "$_tea_src" ]]; then
+      ln -sfnv "$_tea_src" "$HOME/.local/bin/tea"
+    fi
+  '';
 
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available
   home.file.".local/bin/sudo-askpass" = {
@@ -558,53 +539,4 @@ in
     '';
   };
 
-  # tmux-sessionizer — fuzzy project picker that creates/attaches tmux sessions
-  home.file.".local/bin/tmux-sessionizer" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      # tmux-sessionizer — fuzzy project picker that creates/attaches tmux sessions
-      # If a tmuxinator config exists for the project, it uses that layout.
-
-      DIRS=(
-        ~/Development
-        ~/nix
-      )
-
-      # Use zoxide for ranked results, fall back to find
-      if command -v zoxide &>/dev/null; then
-        selected=$(zoxide query -l 2>/dev/null | fzf --prompt="project> " --height=100% --reverse)
-      else
-        selected=$(find "''${DIRS[@]}" -mindepth 1 -maxdepth 2 -type d 2>/dev/null | fzf --prompt="project> " --height=100% --reverse)
-      fi
-
-      [[ -z "$selected" ]] && exit 0
-
-      session_name=$(basename "$selected" | tr '.' '_')
-
-      # If not inside tmux, start new session
-      if [[ -z "$TMUX" ]]; then
-        if tmux has-session -t="$session_name" 2>/dev/null; then
-          tmux attach -t "$session_name"
-        else
-          # Check for tmuxinator config
-          if tmuxinator list -n 2>/dev/null | grep -qw "dev"; then
-            cd "$selected" && tmuxinator start dev -n "$session_name" -p ~/.config/tmuxinator/dev.yml
-          else
-            tmux new-session -s "$session_name" -c "$selected"
-          fi
-        fi
-      else
-        if ! tmux has-session -t="$session_name" 2>/dev/null; then
-          # Check for tmuxinator config
-          if tmuxinator list -n 2>/dev/null | grep -qw "dev"; then
-            cd "$selected" && tmuxinator start dev -n "$session_name" -p ~/.config/tmuxinator/dev.yml
-          else
-            tmux new-session -ds "$session_name" -c "$selected"
-          fi
-        fi
-        tmux switch-client -t "$session_name"
-      fi
-    '';
-  };
 }
