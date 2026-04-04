@@ -39,6 +39,19 @@ let
       sha256 = "sha256-Z5IaZG4OJUqERz1P8aZu0CVcuo4v741rqTob9HBaqU8=";
     };
   };
+
+  # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
+  # Not in nixpkgs — built from source (sainnhe/tmux-fzf)
+  tmux-fzf = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "tmux-fzf";
+    version = "unstable";
+    src = pkgs.fetchFromGitHub {
+      owner = "sainnhe";
+      repo = "tmux-fzf";
+      rev = "05af76daa2487575b93a4f604693b00969f19c2f";
+      sha256 = "sha256-ay7z0MkeDCpxdwNTKFrkxi/hUE7a5K7P7oFhfn94aLA=";
+    };
+  };
 in
 {
   programs.tmux = {
@@ -84,6 +97,17 @@ in
       }
       fzf-tmux-url
       extrakto
+      {
+        plugin = tmux-fzf;
+        extraConfig = ''
+          # Launch tmux-fzf with prefix + F (Shift+F)
+          set -g @tmux-fzf-launch-key-assign "F"
+          # Enable preview window
+          set -g @tmux-fzf-preview-enabled "true"
+          # Use popup window for fzf interface (tmux >= 3.2)
+          set -g @tmux-fzf-popup-enable "true"
+        '';
+      }
       {
         plugin = tmux-tea;
         extraConfig = ''
