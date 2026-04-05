@@ -41,14 +41,15 @@
     nushell.enable = true;
     starship.enable = true;
     wezterm.enable = true;
-    nvim.enable = true;
+    nvim = {
+      enable = false;  # LazyVim manages catppuccin directly
+    };
     # vscode.enable = true;
     zsh-syntax-highlighting.enable = true;
     qutebrowser.enable = true;
     tmux.enable = true;
     yazi.enable = true;
   };
-  fonts.fontconfig.enable = true;
   home.stateVersion = "22.11";
 
   programs.home-manager.enable = true;
