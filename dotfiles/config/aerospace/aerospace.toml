@@ -154,6 +154,10 @@ n = ['move-node-to-workspace N', 'mode main']
 # Usage: alt-shift-; then c
 c = ['workspace C', 'focus right', 'layout accordion horizontal', 'mode main']
 
+# 3-column layout: focused window center, others stacked left/right
+# Usage: alt-shift-; then 3
+3 = ['exec-and-forget ~/.config/aerospace/3col-layout.sh', 'mode main']
+
 # ============================================================
 # Window detection rules — auto-assign apps to workspaces
 # ============================================================
