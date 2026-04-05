@@ -127,6 +127,7 @@
       "1password"
       "1password-cli"
       "claude-code"            # Terminal AI assistant
+      "claude-monitor"            # Terminal AI assistant
       "font-cantarell"
       "font-fira-code"
       "font-fira-code-nerd-font"

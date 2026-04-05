@@ -98,27 +98,6 @@ in
       fzf-tmux-url
       extrakto
       {
-        plugin = tmux-fzf;
-        extraConfig = ''
-          # Launch tmux-fzf with prefix + F (Shift+F)
-          set -g @tmux-fzf-launch-key-assign "F"
-          # Enable preview window
-          set -g @tmux-fzf-preview-enabled "true"
-          # Use popup window for fzf interface (tmux >= 3.2)
-          set -g @tmux-fzf-popup-enable "true"
-        '';
-      }
-      {
-        plugin = tmux-tea;
-        extraConfig = ''
-          set -g @tea-bind 't'
-          set -g @tea-default-command 'nvim .'
-          set -g @tea-find-path "$HOME/Development"
-          set -g @tea-preview-position 'top'
-          set -g @tea-session-name 'basename'
-        '';
-      }
-      {
         plugin = tmux-toggle-popup;
         extraConfig = ''
           set -g @popup-autostart on
@@ -138,15 +117,6 @@ in
         plugin = tmux-which-key;
         extraConfig = ''
           set -g @tmux-which-key-xdg-enable 1
-        '';
-      }
-      {
-        plugin = tmux-notify;
-        extraConfig = ''
-          # Use macOS native notifications via terminal-notifier
-          set -g @tnotify-verbose 'on'
-          set -g @tnotify-sleep-duration '5'
-          set -g @tnotify-verbose-msg '#S:#W — process finished'
         '';
       }
       {
@@ -186,17 +156,39 @@ in
           set -g @batt_color_status_primary_discharging "#cdd6f4"
         '';
       }
-      {
-        plugin = treemux;
-        extraConfig = ''
-          set -g @treemux-tree-client 'nvim-tree'
-          set -g @treemux-tree-nvim-init-file "$HOME/.local/share/tmux/plugins/treemux_init.lua"
-          set -g @treemux-nvim-command 'NVIM_APPNAME=nvim-treemux nvim'
-        '';
-      }
     ];
-
+    
     extraConfig = ''
+      # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
+      # Note: plugin uses main.tmux instead of tmux_fzf.tmux
+      set -g @tmux-fzf-launch-key-assign "F"
+      set -g @tmux-fzf-preview-enabled "true"
+      set -g @tmux-fzf-popup-enable "true"
+      run-shell "${tmux-fzf}/share/tmux-plugins/tmux-fzf/main.tmux"
+
+      # tmux-tea: fuzzy tmux session manager
+      # Note: plugin uses tea.tmux instead of tmux_tea.tmux
+      set -g @tea-bind 't'
+      set -g @tea-default-command 'nvim .'
+      set -g @tea-find-path "$HOME/Development"
+      set -g @tea-preview-position 'top'
+      set -g @tea-session-name 'basename'
+      run-shell "${tmux-tea}/share/tmux-plugins/tmux-tea/tea.tmux"
+
+      # treemux: Nvim-Tree/Neo-Tree file explorer as a tmux sidebar
+      # Note: plugin uses sidebar.tmux instead of treemux.tmux
+      set -g @treemux-tree-client 'nvim-tree'
+      set -g @treemux-tree-nvim-init-file "$HOME/.local/share/tmux/plugins/treemux_init.lua"
+      set -g @treemux-nvim-command 'NVIM_APPNAME=nvim-treemux nvim'
+      run-shell "${treemux}/share/tmux-plugins/treemux/sidebar.tmux"
+
+      # tmux-notify: monitors panes and sends macOS notifications when processes finish
+      # Note: plugin uses tnotify.tmux instead of tmux_notify.tmux
+      set -g @tnotify-verbose 'on'
+      set -g @tnotify-sleep-duration '5'
+      set -g @tnotify-verbose-msg '#S:#W — process finished'
+      run-shell "${tmux-notify}/share/tmux-plugins/tmux-notify/tnotify.tmux"
+
       # Extended keys — required for modified Enter/Tab keys (e.g. Pi, Neovim)
       set -g extended-keys on
 
