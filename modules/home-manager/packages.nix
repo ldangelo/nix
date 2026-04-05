@@ -5,9 +5,10 @@
   home.packages = with pkgs; [
     # Development Tools
     act
-    antigravity
+    # antigravity  # removed: preFixup references glibc-nolibgcc, broken on aarch64-darwin
     ast-grep
     cargo-binstall
+    claude-monitor
     cmake
     devbox
     glow
@@ -18,7 +19,7 @@
     just
     maven
     nil
-    openapi-generator-cli
+    # openapi-generator-cli  # nixpkgs hash mismatch on 7.21.0 patch; available via brew
     plantuml
     process-compose
     telegram-desktop
@@ -53,6 +54,7 @@
     markdown-toc
     markdownlint-cli
     markdownlint-cli2
+    marp-cli
     multimarkdown
     pandoc
     ripgrep
@@ -122,9 +124,6 @@
     uv
     virtualenv
     wget
-
-    # Fonts
-    source-code-pro
 
     # GUI Applications
     aldente
