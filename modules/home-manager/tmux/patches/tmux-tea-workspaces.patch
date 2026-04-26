@@ -1,0 +1,71 @@
+--- a/bin/tea.sh
++++ b/bin/tea.sh
+@@ -11,6 +11,7 @@
+ readonly DEFAULT_INCLUDE_SESSIONS="true"
+ 
+ readonly PROMPT='  '
++readonly TMUXINATOR_CONFIG_DIR="$HOME/.config/tmuxinator"
+ readonly MARKER=''
+ readonly BORDER_LABEL='   tmux-tea   '
+ readonly HEADER='^f   ^j   ^s   ^w   ^x '
+@@ -79,17 +80,33 @@
+         { [[ -n "$current_session" ]] && grep -v "^${current_session}$" || cat; }
+ }
+ 
++tmuxinator_config_exists() {
++    local session_name="$1"
++
++    [[ -f "$TMUXINATOR_CONFIG_DIR/$session_name.yml" || -f "$TMUXINATOR_CONFIG_DIR/$session_name.yaml" ]]
++}
++
++get_tmuxinator_projects() {
++    [[ -d "$TMUXINATOR_CONFIG_DIR" ]] || return 0
++
++    for config in "$TMUXINATOR_CONFIG_DIR"/*.yml "$TMUXINATOR_CONFIG_DIR"/*.yaml; do
++        [[ -e "$config" ]] || continue
++        basename "${config%.*}"
++    done | sort -u
++}
++
+ get_zoxide_results() {
+     zoxide query -l | sed -e "$home_replacer"
+ }
+ 
+ get_fzf_results() {
+-    if [[ "$tmux_running" -eq 0 ]]; then
+-        [[ "$include_sessions" == "true" ]] && sessions=$(get_sessions_by_last_used)
+-        [[ "$sessions" ]] && echo "$sessions" && get_zoxide_results || get_zoxide_results
+-    else
++    {
++        if [[ "$tmux_running" -eq 0 && "$include_sessions" == "true" ]]; then
++            get_sessions_by_last_used
++        fi
++        get_tmuxinator_projects
+         get_zoxide_results
+-    fi
++    } | awk 'NF && !seen[$0]++'
+ }
+ 
+ create_and_attach_session() {
+@@ -112,8 +129,10 @@
+     if [[ "$run_type" = "serverless" ]] || ! tmux has-session -t="$session_name" &>/dev/null; then
+         if [[ -e "$result"/.tmuxinator.yml ]] && command -v tmuxinator &>/dev/null; then
+             cd "$result" && tmuxinator local
+-        elif [[ -e "$HOME/.config/tmuxinator/$session_name.yml" ]] && command -v tmuxinator &>/dev/null; then
++            return $?
++        elif tmuxinator_config_exists "$session_name" && command -v tmuxinator &>/dev/null; then
+             tmuxinator "$session_name"
++            return $?
+         else
+             if [[ -n "$default_command" ]]; then
+                 tmux new-session -d -s "$session_name" -c "$result" "$default_command"
+@@ -167,6 +186,9 @@
+     if [[ -d "$arg" ]]; then
+         echo "$arg"
+         return 0
++    elif tmuxinator_config_exists "$arg"; then
++        echo "$arg"
++        return 0
+     elif zoxide query "$arg" &>/dev/null; then
+         zoxide query "$arg"
+         return 0

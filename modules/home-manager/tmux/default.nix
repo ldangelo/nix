@@ -38,6 +38,7 @@ let
       rev = "806aa7186c0344e0c7b2c9fa0c044267d6b3ca9e";
       sha256 = "sha256-Z5IaZG4OJUqERz1P8aZu0CVcuo4v741rqTob9HBaqU8=";
     };
+    patches = [ ./patches/tmux-tea-workspaces.patch ];
   };
 
   # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
@@ -51,6 +52,28 @@ let
       rev = "05af76daa2487575b93a4f604693b00969f19c2f";
       sha256 = "sha256-ay7z0MkeDCpxdwNTKFrkxi/hUE7a5K7P7oFhfn94aLA=";
     };
+  };
+
+  tmuxGuide = ../../../docs/tmux-guide.md;
+  tmuxTeaScript = "${tmux-tea}/share/tmux-plugins/tmux-tea/bin/tea.sh";
+  tmuxFzfScript = "${tmux-fzf}/share/tmux-plugins/tmux-fzf/main.sh";
+  fzfTmuxUrlScript = "${pkgs.tmuxPlugins."fzf-tmux-url"}/share/tmux-plugins/fzf-tmux-url/fzf-url.sh";
+  extraktoOpenScript = "${pkgs.tmuxPlugins.extrakto}/share/tmux-plugins/extrakto/scripts/open.sh";
+  treemuxToggleScript = "${treemux}/share/tmux-plugins/treemux/scripts/toggle.sh";
+  fzfTmuxUrlCommand = "run-shell -b ${fzfTmuxUrlScript}";
+  treemuxCommand = "run-shell \\\"${treemuxToggleScript} \\\\\\\"NVIM_APPNAME=nvim-treemux nvim,$HOME/.local/share/tmux/plugins/treemux_init.lua,,/usr/bin/python3,left,40,top,70%,editor,0.5,2,@treemux-refresh-interval-inactive-window,0,focus,nvim-tree\\\\\\\" \\\\\\\"#{pane_id}\\\\\\\"\\\"";
+  reloadPopupServerCommand = "run-shell \"tmux -L popup source-file ~/.config/tmux/tmux.conf >/dev/null 2>&1 || true\"";
+
+  tmuxKeys = {
+    projectPicker = "f";
+    toolbox = "o";
+    extract = "e";
+    quickCopy = "T";
+    popupShell = "t";
+    popupGit = "g";
+    popupFiles = "y";
+    popupDeploy = "D";
+    popupHelp = "h";
   };
 in
 {
@@ -92,25 +115,25 @@ in
       {
         plugin = tmux-thumbs;
         extraConfig = ''
-          set -g @thumbs-key F
+          set -g @thumbs-key ${tmuxKeys.quickCopy}
         '';
       }
       fzf-tmux-url
-      extrakto
+      {
+        plugin = extrakto;
+        extraConfig = ''
+          set -g @extrakto_key ${tmuxKeys.extract}
+        '';
+      }
       {
         plugin = tmux-toggle-popup;
         extraConfig = ''
           set -g @popup-autostart on
-          # Prefix t — general popup shell (75% size)
-          bind t run "#{@popup-toggle} -w75% -h75% -Ed'#{pane_current_path}'"
-          # Prefix g — lazygit popup (90% size)
-          bind g run "#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=lazygit lazygit"
-          # Prefix y — yazi file browser popup (90% size)
-          bind y run "#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=yazi yazi"
-          # Prefix D — deploy popup (just deploy)
-          bind D run "#{@popup-toggle} -w80% -h60% -Ed'#{pane_current_path}' --name=deploy just deploy"
-          # Prefix h — tmux user guide
-          bind h run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
+          bind -N "Open shell popup" ${tmuxKeys.popupShell} run "#{@popup-toggle} -E -d \"#{pane_current_path}\" -w75% -h75% --name=shell"
+          bind -N "Open lazygit popup" ${tmuxKeys.popupGit} run "#{@popup-toggle} -E -d \"#{pane_current_path}\" -w90% -h90% --name=lazygit lazygit"
+          bind -N "Open Yazi popup" ${tmuxKeys.popupFiles} run "#{@popup-toggle} -E -d \"#{pane_current_path}\" -w90% -h90% --name=yazi yazi"
+          bind -N "Run deploy popup" ${tmuxKeys.popupDeploy} run "#{@popup-toggle} -E -d \"#{pane_current_path}\" -w80% -h60% --name=deploy just deploy"
+          bind -N "Open tmux guide popup" ${tmuxKeys.popupHelp} run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${tmuxGuide}"
         '';
       }
       {
@@ -161,14 +184,16 @@ in
     extraConfig = ''
       # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
       # Note: plugin uses main.tmux instead of tmux_fzf.tmux
-      set -g @tmux-fzf-launch-key-assign "F"
+      set -g @tmux-fzf-launch-key-assign "${tmuxKeys.toolbox}"
       set -g @tmux-fzf-preview-enabled "true"
       set -g @tmux-fzf-popup-enable "true"
       run-shell "${tmux-fzf}/share/tmux-plugins/tmux-fzf/main.tmux"
 
       # tmux-tea: fuzzy tmux session manager
       # Note: plugin uses tea.tmux instead of tmux_tea.tmux
-      set -g @tea-bind 't'
+      unbind-key -n C-t
+      set -g @tea-bind '${tmuxKeys.projectPicker}'
+      set -g @tea-alt-bind 'false'
       set -g @tea-default-command 'nvim .'
       set -g @tea-find-path "$HOME/Development"
       set -g @tea-preview-position 'top'
@@ -191,6 +216,7 @@ in
 
       # Extended keys — required for modified Enter/Tab keys (e.g. Pi, Neovim)
       set -g extended-keys on
+      set -g extended-keys-format csi-u
 
       # Status line — must come after catppuccin plugin sets up variables.
       set -g status-right-length 150
@@ -209,17 +235,17 @@ in
       set -g renumber-windows on
 
       # Split panes with | and -
-      bind | split-window -h -c "#{pane_current_path}"
-      bind - split-window -v -c "#{pane_current_path}"
+      bind -N "Split pane horizontally" | split-window -h -c "#{pane_current_path}"
+      bind -N "Split pane vertically" - split-window -v -c "#{pane_current_path}"
 
       # New window in current path
-      bind c new-window -c "#{pane_current_path}"
+      bind -N "New window in current directory" c new-window -c "#{pane_current_path}"
 
       # Vi-style pane resizing
-      bind -r H resize-pane -L 5
-      bind -r J resize-pane -D 5
-      bind -r K resize-pane -U 5
-      bind -r L resize-pane -R 5
+      bind -N "Resize pane left" -r H resize-pane -L 5
+      bind -N "Resize pane down" -r J resize-pane -D 5
+      bind -N "Resize pane up" -r K resize-pane -U 5
+      bind -N "Resize pane right" -r L resize-pane -R 5
 
       # Vi-style copy mode
       bind -T copy-mode-vi v send-keys -X begin-selection
@@ -227,19 +253,26 @@ in
       bind -T copy-mode-vi C-v send-keys -X rectangle-toggle
       bind -T copy-mode-vi H send-keys -X start-of-line
       bind -T copy-mode-vi L send-keys -X end-of-line
-      bind Enter copy-mode
-      bind v copy-mode
+      bind -N "Enter copy mode" Enter copy-mode
+      bind -N "Enter copy mode" v copy-mode
 
       # Window navigation
-      bind Tab last-window
-      bind BTab switch-client -l
+#      bind Tab last-window
+#      bind BTab switch-client -l
 
       # Window reordering
-      bind -r "<" swap-window -d -t -1
-      bind -r ">" swap-window -d -t +1
+      bind -N "Move window left" -r "<" swap-window -d -t -1
+      bind -N "Move window right" -r ">" swap-window -d -t +1
 
       # Mouse toggle
-      bind m set -g mouse \; display "Mouse: #{?mouse,ON,OFF}"
+      bind -N "Toggle mouse support" m set -g mouse \; display "Mouse: #{?mouse,ON,OFF}"
+
+      # High-signal plugin bindings with explicit descriptions for `Prefix ?`
+      bind -N "Project/session picker" ${tmuxKeys.projectPicker} run-shell ${tmuxTeaScript}
+      bind -N "tmux toolbox (sessions, panes, buffers, processes)" ${tmuxKeys.toolbox} run-shell -b ${tmuxFzfScript}
+      bind -N "Extract text, paths, or URLs from the current pane" ${tmuxKeys.extract} run-shell "\"${extraktoOpenScript}\" \"#{pane_id}\""
+      bind -N "Quick-copy visible text via hints" ${tmuxKeys.quickCopy} thumbs-pick
+      bind -N "Reload tmux config" R source-file ~/.config/tmux/tmux.conf \; ${reloadPopupServerCommand} \; display "Config reloaded"
 
       # Activity monitoring (highlight windows with new output)
       set -g monitor-activity on
@@ -253,16 +286,22 @@ in
       set -g bell-action other
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
-
-      # Session management via tmux-tea (prefix + t)
-      # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
-
       # UX tweaks
       set -g display-time 2000
       set -g detach-on-destroy off
       set -g set-clipboard on
+      # Pane borders — heavy lines, bold active border
+      set -g pane-border-lines double
+      set -g pane-border-style fg=#45475A
+      set -g pane-active-border-style fg=#89B4FA,bold
+
+      # Pane border status bar — show pane index in title strip
       set -g pane-border-status top
-      set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
+      set -g pane-border-format "#{?pane_active,#[fg=#89B4FA bold] #P #[default],#[fg=#45475A] #P #[default]}"
+
+      # Background dimming — inactive panes use Catppuccin Crust, active uses Base
+      set -g window-style "fg=#BAC2DE,bg=#181825"
+      set -g window-active-style "fg=#CDD6F4,bg=#1E1E2E"
     '';
   };
 
@@ -286,21 +325,31 @@ in
       - name: reload-config
         commands:
           - source-file ~/.config/tmux/tmux.conf
+          - ${reloadPopupServerCommand}
           - display "Config reloaded"
     items:
-      - name: Run
-        key: space
-        command: command-prompt
-      - name: Last window
-        key: tab
-        command: last-window
+      - name: Projects
+        key: ${tmuxKeys.projectPicker}
+        command: "run-shell ${tmuxTeaScript}"
+      - name: Toolbox
+        key: ${tmuxKeys.toolbox}
+        command: "run-shell -b ${tmuxFzfScript}"
       - separator: true
+      - name: +Sessions
+        key: s
+        menu:
+          - name: Choose
+            key: s
+            command: choose-tree -Zs
+          - name: Rename
+            key: r
+            command: command-prompt -I "#S" "rename-session -- \"%%\""
+          - name: Detach
+            key: d
+            command: detach-client
       - name: +Windows
         key: w
         menu:
-          - name: Last
-            key: tab
-            command: last-window
           - name: Choose
             key: w
             command: choose-tree -Zw
@@ -327,15 +376,18 @@ in
           - name: Kill
             key: X
             command: confirm -p "Kill window #W? (y/n)" killw
+          - name: Move left
+            key: "<"
+            command: swap-window -d -t -1
+          - name: Move right
+            key: ">"
+            command: swap-window -d -t +1
       - name: +Panes
         key: p
         menu:
-          - name: Last
-            key: tab
-            command: lastp
           - name: Choose
-            key: p
-            command: displayp -d 0
+            key: q
+            command: display-panes
           - separator: true
           - name: Zoom
             key: z
@@ -369,43 +421,43 @@ in
           - name: Sync panes
             key: "Y"
             command: setw synchronize-panes
-      - name: +Sessions
-        key: s
-        menu:
-          - name: Choose
-            key: s
-            command: choose-tree -Zs
-              - name: Tea
-                key: t
-                command: run "tea"
-              - name: Rename
-                key: r
-                command: command-prompt -I "#S" "rename-session -- \"%%\""
-              - name: Detach
-                key: d
-                command: detach
-      - name: Copy mode
+      - name: +Capture
         key: c
-        command: copy-mode
+        menu:
+          - name: Copy mode
+            key: v
+            command: copy-mode
+          - name: Quick copy
+            key: ${tmuxKeys.quickCopy}
+            command: thumbs-pick
+          - name: Extract text
+            key: ${tmuxKeys.extract}
+            command: "run-shell \"${extraktoOpenScript}\" \"#{pane_id}\""
+          - name: Open URL
+            key: u
+            command: "${fzfTmuxUrlCommand}"
+          - name: Treemux sidebar
+            key: "BSpace"
+            command: "${treemuxCommand}"
       - separator: true
       - name: +Popups
         key: t
         menu:
           - name: Shell
-            key: t
-            command: "run \"#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path}\""
+            key: ${tmuxKeys.popupShell}
+            command: "run \"#{@popup-toggle} -E -d \\\"#{pane_current_path}\\\" -w75% -h75% --name=shell\""
           - name: Lazygit
-            key: g
-            command: "run \"#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=lazygit lazygit\""
+            key: ${tmuxKeys.popupGit}
+            command: "run \"#{@popup-toggle} -E -d \\\"#{pane_current_path}\\\" -w90% -h90% --name=lazygit lazygit\""
           - name: Yazi
-            key: "y"
-            command: "run \"#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=yazi yazi\""
+            key: ${tmuxKeys.popupFiles}
+            command: "run \"#{@popup-toggle} -E -d \\\"#{pane_current_path}\\\" -w90% -h90% --name=yazi yazi\""
           - name: Deploy
-            key: d
-            command: "run \"#{@popup-toggle} -w80% -h60% -Ed#{pane_current_path} --name=deploy just deploy\""
+            key: ${tmuxKeys.popupDeploy}
+            command: "run \"#{@popup-toggle} -E -d \\\"#{pane_current_path}\\\" -w80% -h60% --name=deploy just deploy\""
           - name: Help
-            key: h
-            command: "run \"#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}\""
+            key: ${tmuxKeys.popupHelp}
+            command: "run \"#{@popup-toggle} -w90% -h90% --name=help glow -p ${tmuxGuide}\""
       - separator: true
       - name: Reload config
         key: R
@@ -544,6 +596,15 @@ in
     if [[ -f "$_tea_src" ]]; then
       ln -sfnv "$_tea_src" "$HOME/.local/bin/tea"
     fi
+  '';
+
+  # tmuxai configuration — uses OPENAI_API_KEY from .envrc (sops-managed)
+  xdg.configFile."tmuxai/config.yaml".text = ''
+    models:
+      primary:
+        provider: openai
+        model: gpt-4.1-mini
+        api_key: ''${OPENAI_API_KEY}
   '';
 
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available
