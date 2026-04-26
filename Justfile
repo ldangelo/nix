@@ -10,16 +10,16 @@
 host := "Leos-MacBook-Pro"
 
 deploy-nc:
-  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH darwin-rebuild switch --flake .#{{host}} --option eval-cache false
+  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH nix run nix-darwin switch --flake .#{{host}} --option eval-cache false
 
 deploy-rebuild:
-  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH darwin-rebuild switch --rebuild --flake .#{{host}}
+  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH nix run nix-darwin switch --rebuild --flake .#{{host}}
 
 deploy:
-  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH darwin-rebuild switch --flake .#{{host}}
+  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH nix run nix-darwin switch --flake .#{{host}}
 
 debug:
-  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH darwin-rebuild switch --flake .#{{host}} --show-trace --verbose
+  SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH nix run nix-darwin switch --flake .#{{host}} --show-trace --verbose
 
 up:
   nix flake update
