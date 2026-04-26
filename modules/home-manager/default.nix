@@ -5,7 +5,7 @@
     ./nvim
     ./emacs
     ./wezterm.nix
-    ./qutebrowser
+    #    ./qutebrowser
     ./lazygit.nix
     ./programs.nix
     ./packages.nix

@@ -127,7 +127,6 @@
       "1password"
       "1password-cli"
       "claude-code"            # Terminal AI assistant
-      "claude-monitor"            # Terminal AI assistant
       "font-cantarell"
       "font-fira-code"
       "font-fira-code-nerd-font"
@@ -177,6 +176,7 @@
       "microsoft-teams"
       "mouseless@preview"      # Mouse control via keyboard
       "obsidian"
+      "openclaw"              # OpenClaw game
       "ollama-app"             # Local LLMs
       "postgres-unofficial"    # Postgres.app
       "postman"
