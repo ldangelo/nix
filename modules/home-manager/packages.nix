@@ -35,6 +35,7 @@
 
     # Shell & Terminal Tools
     atuin
+    tmuxai
     bat
     btop
     bun
