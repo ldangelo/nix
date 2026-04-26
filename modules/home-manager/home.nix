@@ -12,6 +12,7 @@
     export OPENAI_API_KEY="$(cat /run/secrets/openai_api_key 2>/dev/null || echo "")"
     export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
     export MINIMAX_API_KEY="$(cat /run/secrets/minimax_api_key 2>/dev/null || echo "")"
+    export JIRA_API_TOKEN="$(cat /run/secrets/jira_api_token 2>/dev/null || echo "")"
   '';
 }
 

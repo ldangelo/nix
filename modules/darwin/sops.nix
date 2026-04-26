@@ -53,4 +53,9 @@
     owner = "ldangelo";
     mode = "0400";
   };
+
+  sops.secrets.jira_api_token = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
 }
