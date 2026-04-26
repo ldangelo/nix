@@ -13,13 +13,17 @@
       ui = {
         editor = "nvim";
         pager = "delta";
+        diff-tool = "delta";
         diff-formatter = ":git";
+      };
+
+      lazyjj = {
+        diff-tool = "delta";
       };
 
       merge-tools = {
         delta = {
-          diff-invocation-mode = "file-by-file";
-          diff-args = [ "$left" "$right" ];
+          diff-args = [ "$left" "$right" "--side-by-side" "--line-numbers" ];
           diff-expected-exit-codes = [ 0 1 ];
         };
 
