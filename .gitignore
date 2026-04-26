@@ -27,6 +27,7 @@ secrets/*.yaml
 # Gas Town runtime
 .claude/
 !.claude/settings.local.json
+.omx/
 .runtime/
 .logs/
 __pycache__/
