@@ -1,4 +1,6 @@
-{ ... }: {
+{ pkgs, config, ... }:
+
+{
   imports = [
     ./git.nix
     ./jujutsu.nix
@@ -22,12 +24,11 @@
     ./tmux
     ./ghostty.nix
     ./yazi.nix
-    ./pi-agent.nix
   ];
 
   home = {
     username = "ldangelo";
-    homeDirectory = "/Users/ldangelo";
+    homeDirectory = "/home/ldangelo";
   };
 
   catppuccin = {
@@ -41,14 +42,12 @@
     fish.enable = true;
     nushell.enable = true;
     starship.enable = true;
-    wezterm.enable = true;
     nvim.enable = true;
-    # vscode.enable = true;
-    zsh-syntax-highlighting.enable = true;
     qutebrowser.enable = true;
     tmux.enable = true;
     yazi.enable = true;
   };
+
   fonts.fontconfig.enable = true;
   home.stateVersion = "22.11";
 

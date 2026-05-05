@@ -105,7 +105,10 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bak";
-            home-manager.sharedModules = [ catppuccin.homeModules.catppuccin ];
+            home-manager.sharedModules = [
+              catppuccin.homeModules.catppuccin
+              ./modules/home-manager/pi-agent.nix
+            ];
             home-manager.users.ldangelo = import ./modules/home-manager/default.nix;
           }
         ];
@@ -141,7 +144,43 @@
               }
             ];
           };
+
+          "ldangelo-linux" = home-manager.lib.homeManagerConfiguration {
+            pkgs = import nixpkgs {
+              system = "aarch64-linux";
+              config.allowUnfree = true;
+              overlays = common-overlays;
+            };
+            modules = [
+              catppuccin.homeModules.catppuccin
+              ./modules/linux/home-manager/default.nix
+              ./modules/home-manager/pi-agent.nix
+              {
+                pi-agent.enable = true;
+                pi-agent.settings = {
+                  lastChangelogVersion = "0.72.1";
+                  defaultProvider = "litellm";
+                  defaultModel = "coding";
+                  defaultThinkingLevel = "medium";
+                  packages = [ "npm:pi-powerline-footer" ];
+                  powerline = {
+                    preset = "nerd";
+                  };
+                  workingVibeMode = "file";
+                  workingVibe = "off";
+                  bashMode = {
+                    toggleShortcut = "ctrl+shift+b";
+                    transcriptMaxLines = 2000;
+                    transcriptMaxBytes = 524288;
+                  };
+                };
+                pi-agent.binTools = [
+                  nixpkgs.fd
+                  nixpkgs.ripgrep
+                ];
+              };
+            ];
+          };
         };
       };
     };
-}

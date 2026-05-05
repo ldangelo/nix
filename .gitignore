@@ -44,3 +44,7 @@ cursor.mcp.json
 gemini.mcp.json
 opencode.json
 windsurf.mcp.json
+
+# Pi Agent local state (machine-specific)
+.pi/
+pi-agent-config-backup/
