@@ -79,7 +79,7 @@ in {
       # Programming Languages & Runtimes
       cargo
       elixir
-      nodejs
+      #      nodejs
       openjdk21
       postgresql
       python3
@@ -123,6 +123,7 @@ in {
       source-code-pro
     ]
     ++ lib.optionals isLinux [
+      direnv
       telegram-desktop
     ]
     ++ lib.optionals isDarwin [

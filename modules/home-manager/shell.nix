@@ -1,10 +1,22 @@
-{ pkgs,  ... }: {
+{ pkgs, lib, ... }:
+
+let
+  isDarwin = pkgs.stdenv.isDarwin;
+in {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
     history.path = "$HOME/.history";
     history.share = false;
     defaultKeymap = "viins";
+    envExtra = ''
+      # Make single-user Nix/Home Manager profile tools available before
+      # Oh My Zsh plugins initialize. This matters on Linux login shells.
+      if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+        . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+      fi
+      export PATH="$HOME/.nix-profile/bin:$HOME/.local/bin:$HOME/bin:$PATH"
+    '';
     shellAliases = {
       #am    = "cd ~/mcp_agent_mail; scripts/run_server_with_token.sh";
       ag    = "ag --color-line-number='0;33' --color-path='0;32'";
@@ -40,7 +52,6 @@
       #  Set .envrc variables for common API keys (github, openrouter, anthropic, openai, etc...)
     oh-my-zsh.enable = true;
     oh-my-zsh.plugins = [
-      "1password"
       "alias-finder"
       "aws"
       "docker"
@@ -58,6 +69,8 @@
       "tmuxinator"
       "vi-mode"
       "zoxide"
+    ] ++ lib.optionals isDarwin [
+      "1password"
     ];
     initContent = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
@@ -93,9 +106,11 @@
 ##
           export DOTNET_ROOT="$HOME/.dotnet"
 
-          # Let path_helper establish the base system PATH first (/usr/bin, /bin, etc.)
-          # so that custom entries prepended below take priority over system paths.
-          eval "$(/usr/libexec/path_helper)"
+          # Let macOS path_helper establish base system PATH when available.
+          if [[ -x /usr/libexec/path_helper ]]; then
+            eval "$(/usr/libexec/path_helper)"
+          fi
+          path=("$HOME/.nix-profile/bin" $path)
           path=("$HOME/Library/Application Support/JetBrains/Toolbox/scripts" $path)
           path=("$HOME/.npm-global/bin" $path)
           path=("$HOME/.cargo/bin" $path)
@@ -103,10 +118,12 @@
           path=("$HOME/.bun/bin" $path)
           path=("$HOME/bin" $path)
           path=("$HOME/.local/bin" $path)
-          path=('/opt/homebrew/bin' $path)
-          path=('/opt/homebrew/opt/gnu-tar/libexec/gnubin' $path)
-          path=('/opt/homebrew/opt/python@3.13/bin/' $path)
-          path=("/opt/homebrew/opt/postgresql@17/bin" $path)
+          if [[ "$(uname -s)" == "Darwin" ]]; then
+            path=('/opt/homebrew/bin' $path)
+            path=('/opt/homebrew/opt/gnu-tar/libexec/gnubin' $path)
+            path=('/opt/homebrew/opt/python@3.13/bin/' $path)
+            path=("/opt/homebrew/opt/postgresql@17/bin" $path)
+          fi
 
           DIRSTACKSIZE=100
 
@@ -144,8 +161,8 @@
       }
 
           # FZF initialization (only in interactive shells)
-          if [[ -o interactive ]]; then
-            source <(/etc/profiles/per-user/ldangelo/bin/fzf --zsh)
+          if [[ -o interactive ]] && command -v fzf >/dev/null 2>&1; then
+            source <(fzf --zsh)
 
             bindkey '\eC' fzf-cd-widget
             bindkey '\ec' capitalize-word
@@ -157,7 +174,7 @@
           ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 
           # Source localhost specific settings
-          source ~/.zshrc.local
+          [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
           autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
           add-zsh-hook chpwd chpwd_recent_dirs
@@ -170,11 +187,15 @@
 
   # NVM initialization (only in interactive shells)
   if [[ -o interactive ]]; then
-        eval "$(/opt/homebrew/bin/direnv hook zsh)"
+        if command -v direnv >/dev/null 2>&1; then
+          eval "$(direnv hook zsh)"
+        fi
           path=($DOTNET_ROOT $path)
           path=("$HOME/.dotnet/tools" $path)
           export PATH
-          eval "$(/opt/homebrew/bin/brew shellenv)"
+          if [[ "$(uname -s)" == "Darwin" ]] && [[ -x /opt/homebrew/bin/brew ]]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+          fi
  
     export NVM_DIR="$HOME/.nvm"
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
@@ -183,21 +204,23 @@
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
           # vterm (emacs) related functions for prompt tracking, etc...
 #          eval "$(oh-my-posh init zsh)"
-          source ~/.config/zsh/rc/homebrew.zsh
-          source ~/.config/zsh/rc/modules.zsh
-          source ~/.config/zsh/rc/set.zsh
-          source ~/.config/zsh/rc/unset.zsh
-          source ~/.config/zsh/rc/misc.zsh
-#          source ~/.config/zsh/rc/java.zsh
-          source ~/.config/zsh/rc/rbenv.zsh
-          source ~/.config/zsh/rc/binds.zsh
+          if [[ "$(uname -s)" == "Darwin" ]]; then
+            [[ -f ~/.config/zsh/rc/homebrew.zsh ]] && source ~/.config/zsh/rc/homebrew.zsh
+          fi
+          [[ -f ~/.config/zsh/rc/modules.zsh ]] && source ~/.config/zsh/rc/modules.zsh
+          [[ -f ~/.config/zsh/rc/set.zsh ]] && source ~/.config/zsh/rc/set.zsh
+          [[ -f ~/.config/zsh/rc/unset.zsh ]] && source ~/.config/zsh/rc/unset.zsh
+          [[ -f ~/.config/zsh/rc/misc.zsh ]] && source ~/.config/zsh/rc/misc.zsh
+#          [[ -f ~/.config/zsh/rc/java.zsh ]] && source ~/.config/zsh/rc/java.zsh
+          [[ -f ~/.config/zsh/rc/rbenv.zsh ]] && source ~/.config/zsh/rc/rbenv.zsh
+          [[ -f ~/.config/zsh/rc/binds.zsh ]] && source ~/.config/zsh/rc/binds.zsh
 
           # Only load interactive plugins in interactive mode
-            source ~/.config/zsh/rc/atuin.zsh
-            source ~/.config/zsh/rc/comp.zsh
-            source ~/.config/zsh/rc/fzf-tab.zsh
-            source ~/.config/zsh/rc/vterm.zsh
-            source ~/.config/zsh/rc/starship.zsh
+            [[ -f ~/.config/zsh/rc/atuin.zsh ]] && source ~/.config/zsh/rc/atuin.zsh
+            [[ -f ~/.config/zsh/rc/comp.zsh ]] && source ~/.config/zsh/rc/comp.zsh
+            [[ -f ~/.config/zsh/rc/fzf-tab.zsh ]] && source ~/.config/zsh/rc/fzf-tab.zsh
+            [[ -f ~/.config/zsh/rc/vterm.zsh ]] && source ~/.config/zsh/rc/vterm.zsh
+            [[ -f ~/.config/zsh/rc/starship.zsh ]] && source ~/.config/zsh/rc/starship.zsh
             test -e "$HOME/.iterm2_shell_integration.zsh" && source "$HOME/.iterm2_shell_integration.zsh"
             test -d "$HOME/.iterm2" && export PATH="$HOME/.iterm2:$PATH"
             
@@ -223,10 +246,8 @@
       # Re-assert priority paths last — brew shellenv (called above) internally
       # re-invokes path_helper which pushes /usr/bin and /bin back to the front.
       path=(
-        '/opt/homebrew/opt/postgresql@17/bin'
-        '/opt/homebrew/opt/python@3.13/bin'
+        "$HOME/.nix-profile/bin"
         "$HOME/bin"
-        '/opt/homebrew/bin'
         "$HOME/.config/emacs/bin"
         "$HOME/.cargo/bin"
         "$HOME/.npm-global/bin"
@@ -234,6 +255,14 @@
         "$HOME/.local/bin"
         $path
       )
+      if [[ "$(uname -s)" == "Darwin" ]]; then
+        path=(
+          '/opt/homebrew/opt/postgresql@17/bin'
+          '/opt/homebrew/opt/python@3.13/bin'
+          '/opt/homebrew/bin'
+          $path
+        )
+      fi
       export PATH
 
 fi
