@@ -127,7 +127,7 @@
       "1password"
       "1password-cli"
       "claude-code"            # Terminal AI assistant
-      "claude-monitor"            # Terminal AI assistant
+#      "claude-monitor"            # Terminal AI assistant
       "font-cantarell"
       "font-fira-code"
       "font-fira-code-nerd-font"
@@ -136,9 +136,10 @@
       "git-credential-manager"
       "tailscale-app"
       "block-goose"            # AI agent
+      "aerospace"              # i3-like tiling window manager
+      "raycast"                # Launcher and productivity
     ] ++ lib.optionals isWorkstation [
       # Workstation-only casks (MacBook Pro)
-      "aerospace"              # i3-like tiling window manager
       "aldente"                # Battery charge limiter
 #      "alt-tab"                # Windows-like alt-tab
       "apparency"              # App inspector
@@ -182,7 +183,6 @@
       "postman"
       "postman-cli"
       "proxyman"               # HTTP debugging proxy
-      "raycast"                # Launcher and productivity
       "readdle-spark"          # Email client
       "repo-prompt"            # Prompt generation
       "rider"

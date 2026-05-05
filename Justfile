@@ -7,7 +7,7 @@
 #
 ############################################################################
 
-host := "Leos-MacBook-Pro"
+host := `scutil --get LocalHostName`
 
 deploy-nc:
   SUDO_ASKPASS=~/.local/bin/sudo-askpass sudo -AH darwin-rebuild switch --flake .#{{host}} --option eval-cache false
