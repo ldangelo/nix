@@ -33,14 +33,32 @@
               catppuccin.homeModules.catppuccin
               ./modules/linux/home-manager/default.nix
               ../home-manager/pi-agent.nix
-              ({ pkgs, ... }: {
+              ({ pkgs, ... }:
+              let
+                ensemblePi = pkgs.fetchFromGitHub {
+                  owner = "FortiumPartners";
+                  repo = "ensemble";
+                  rev = "faa88672815559b3739b8da5ec5c50607553eb5d";
+                  hash = "sha256-0jQiNfIWLY0sQP0el6b1WgjvjfT6c9YC0hpzFChka5A=";
+                };
+              in {
                 pi-agent.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
                   defaultProvider = "litellm";
                   defaultModel = "coding";
                   defaultThinkingLevel = "medium";
-                  packages = [ "npm:pi-powerline-footer" ];
+                  packages = [
+                    "npm:pi-powerline-footer"
+                    "npm:pi-mcp-adapter"
+                    {
+                      source = "${ensemblePi}/packages/pi";
+                      # Ensemble currently ships an ask_user extension. We provide
+                      # a Pi-version-compatible ask_user extension separately to
+                      # avoid duplicate/conflicting tool registration.
+                      extensions = [];
+                    }
+                  ];
                   powerline = {
                     preset = "nerd";
                   };
@@ -56,7 +74,18 @@
                   fd
                   ripgrep
                 ];
-                pi-agent.packages = [ "npm:pi-powerline-footer" ];
+                pi-agent.packages = [
+                  "npm:pi-powerline-footer"
+                  "npm:pi-mcp-adapter"
+                ];
+                pi-agent.mcpConfig = {
+                  settings = {
+                    toolPrefix = "server";
+                    idleTimeout = 10;
+                    directTools = false;
+                  };
+                  mcpServers = {};
+                };
               })
             ];
           };

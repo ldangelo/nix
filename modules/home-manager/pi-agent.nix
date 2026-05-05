@@ -55,6 +55,12 @@ in {
       default = [];
       description = "Pi Agent packages to install, e.g. [ \"npm:pi-powerline-footer\" ]";
     };
+
+    mcpConfig = lib.mkOption {
+      type = lib.types.attrs;
+      default = {};
+      description = "Shared MCP configuration written to ~/.config/mcp/mcp.json for pi-mcp-adapter";
+    };
   };
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
@@ -63,6 +69,10 @@ in {
 
       home.file.".pi/agent/settings.json".source =
         pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
+
+      xdg.configFile."mcp/mcp.json" = lib.mkIf (cfg.mcpConfig != {}) {
+        source = pkgs.writeText "mcp.json" (makeSettings cfg.mcpConfig);
+      };
 
       home.file.".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
       home.file.".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
