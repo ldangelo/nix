@@ -87,6 +87,7 @@ in {
       rustc
 
       # Language Version Managers
+      nvm
       rbenv
 
       # Build Tools & Libraries

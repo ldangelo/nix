@@ -13,7 +13,7 @@
     nur.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, ... }:
+  outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, home-manager, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" "aarch64-linux" ];
 

@@ -35,35 +35,21 @@
     let
       common-overlays = [
       (self: super: {
-        cyrus-sasl-xoauth2 = super.pkgs.stdenv.mkDerivation rec {
-          pname = "cyrus-sasl-xoauth2";
-          version = "master";
-
-          src = super.pkgs.fetchFromGitHub {
-            owner = "moriyoshi";
-            repo = "cyrus-sasl-xoauth2";
-            rev = "master";
-            sha256 = "sha256-OlmHuME9idC0fWMzT4kY+YQ43GGch53snDq3w5v/cgk=";
-          };
-
-          nativeBuildInputs =
-            [ super.pkg-config super.automake super.autoconf super.libtool ];
-          propagatedBuildInputs = [ super.cyrus_sasl ];
-
-          buildPhase = ''
-            ./autogen.sh
-            ./configure
-          '';
-
-          installPhase = ''
-            make DESTDIR="$out" install
-          '';
-
-          meta = with super.pkgs.lib; {
-            homepage = "https://github.com/moriyoshi/cyrus-sasl-xoauth2";
-            description = "XOAUTH2 mechanism plugin for cyrus-sasl";
-          };
-        };
+        # NVM - wrapper script that loads the nvm.sh from ~/.nvm
+        nvm = super.writeShellScriptBin "nvm" ''
+          export NVM_DIR="$HOME/.nvm"
+          if [ ! -d "$NVM_DIR" ]; then
+            mkdir -p "$NVM_DIR"
+            git clone --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" 2>/dev/null || true
+          fi
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+          if [ "$1" = "nvm" ]; then
+            shift
+            exec "$0" "$@"
+          fi
+          exec "$@"
+        '';
 
         # ast-grep: skip failing test_scan_invalid_rule_id (Illegal byte sequence in sandbox)
         ast-grep = super.ast-grep.overrideAttrs (oldAttrs: {
@@ -83,7 +69,7 @@
           nativeBuildInputs = [ super.makeWrapper ];
           postBuild = ''
             wrapProgram "$out/bin/mbsync" \
-              --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2:${self.cyrus-sasl-xoauth2}/usr/lib/sasl2"
+              --prefix SASL_PATH : "${super.cyrus_sasl.out.outPath}/lib/sasl2"
           '';
         };
       })
