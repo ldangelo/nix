@@ -90,7 +90,7 @@
       ];
     in
     flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "aarch64-darwin" ];
+      systems = [ "aarch64-darwin" "aarch64-linux" ];
 
       flake = let
         darwinModules = [
@@ -155,7 +155,7 @@
               catppuccin.homeModules.catppuccin
               ./modules/linux/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
-              {
+              ({ pkgs, ... }: {
                 pi-agent.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
@@ -174,13 +174,15 @@
                     transcriptMaxBytes = 524288;
                   };
                 };
-                pi-agent.binTools = [
-                  nixpkgs.fd
-                  nixpkgs.ripgrep
+                pi-agent.binTools = with pkgs; [
+                  fd
+                  ripgrep
                 ];
-              };
+                pi-agent.packages = [ "npm:pi-powerline-footer" ];
+              })
             ];
           };
         };
       };
     };
+}

@@ -2,79 +2,107 @@
 
 let
   cfg = config.pi-agent;
-  piAgentHome = "${config.home.homeDirectory}/.pi/agent";
-  binDir = "${piAgentHome}/bin";
-
-  # Generate settings.json from options
   makeSettings = pkgs.lib.generators.toJSON {};
 
+  installPackageCommands = lib.concatMapStrings (pkg: ''
+    pi_cmd=""
+    if command -v pi >/dev/null 2>&1; then
+      pi_cmd="$(command -v pi)"
+    else
+      for candidate in "$HOME"/.nvm/versions/node/*/bin/pi; do
+        if [ -x "$candidate" ]; then
+          pi_cmd="$candidate"
+          break
+        fi
+      done
+    fi
+
+    if [ -n "$pi_cmd" ]; then
+      export PATH="$(dirname "$pi_cmd"):$PATH"
+      "$pi_cmd" install ${lib.escapeShellArg pkg}
+    else
+      echo "pi not found; skipping package ${lib.escapeShellArg pkg}"
+    fi
+  '') cfg.packages;
 in {
   options.pi-agent = {
-    enable = pkgs.lib.mkOption {
-      type = pkgs.lib.types.bool;
+    enable = lib.mkOption {
+      type = lib.types.bool;
       default = false;
       description = "Enable Pi Agent configuration";
     };
 
-    settings = pkgs.lib.mkOption {
-      type = pkgs.lib.types.attrs;
+    settings = lib.mkOption {
+      type = lib.types.attrs;
       default = {};
       description = "Settings for Pi Agent";
     };
 
-    models = pkgs.lib.mkOption {
-      type = pkgs.lib.types.attrs;
+    models = lib.mkOption {
+      type = lib.types.attrs;
       default = {};
       description = "Models configuration for Pi Agent";
     };
 
-    binTools = pkgs.lib.mkOption {
-      type = pkgs.lib.types.listOf pkgs.lib.types.package;
+    binTools = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
       default = [];
-      description = "Binary tools to include in pi-agent/bin directory";
+      description = "Binary tools to expose in ~/.pi/agent/bin";
     };
 
-    packages = pkgs.lib.mkOption {
-      type = pkgs.lib.types.listOf pkgs.lib.types.str;
+    packages = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
       default = [];
-      description = "Pi Agent packages to install (e.g., [\"npm:pi-powerline-footer\"])";
+      description = "Pi Agent packages to install, e.g. [ \"npm:pi-powerline-footer\" ]";
     };
   };
 
-  config = lib.mkMerge [{
-    home.packages = with pkgs; cfg.binTools;
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      home.packages = cfg.binTools;
 
-    home.file.".pi/agent/settings.json" = {
-      source = pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
-    };
-  }];
+      home.file.".pi/agent/settings.json".source =
+        pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
 
-  # Install pi-agent packages via activation script
-  config = lib.mkIf (cfg.packages != []) {
-    home.activation.installPiAgentPackages = let
-      pkgInstallCommands = lib.concatMapStrings (pkg:
-        "pi-agent package install ${pkg}\n"
-      ) cfg.packages;
-    in ''
-      echo "Installing Pi Agent packages..."
-      ${pkgInstallCommands}
-      echo "Pi Agent packages installed successfully"
-    '';
-  };
+      home.file.".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
+      home.file.".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
+      home.file.".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
+      home.file.".pi/agent/agents" = {
+        recursive = true;
+        source = ./pi-extensions/subagent/agents;
+      };
+      home.file.".pi/agent/prompts" = {
+        recursive = true;
+        source = ./pi-extensions/subagent/prompts;
+      };
+    }
 
-  # Only create bin directory if there are tools to include
-  config = lib.mkIf (cfg.binTools != []) {
-    home.file.".pi/agent/bin" = {
-      target = "${binDir}";
-      recursive = true;
-      executable = true;
-      mode = "755";
-      source = pkgs.runCommandLocal "pi-agent-bin" {
-        buildInputs = cfg.binTools;
-      } ''
-        mkdir -p $out
-        ${lib.concatMapStrings (tool: "cp ${tool}/bin/$(basename ${tool}) $out/\n") cfg.binTools}
-      '';
-    };
-  };
+    (lib.mkIf (cfg.models != {}) {
+      home.file.".pi/agent/models.json".source =
+        pkgs.writeText "pi-agent-models.json" (makeSettings cfg.models);
+    })
+
+    (lib.mkIf (cfg.binTools != []) {
+      home.file.".pi/agent/bin" = {
+        recursive = true;
+        executable = true;
+        source = pkgs.runCommandLocal "pi-agent-bin" {} ''
+          mkdir -p "$out"
+          ${lib.concatMapStrings (tool: ''
+            for bin in ${tool}/bin/*; do
+              ln -s "$bin" "$out/$(basename "$bin")"
+            done
+          '') cfg.binTools}
+        '';
+      };
+    })
+
+    (lib.mkIf (cfg.packages != []) {
+      home.activation.installPiAgentPackages =
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          echo "Installing Pi Agent packages..."
+          ${installPackageCommands}
+        '';
+    })
+  ]);
 }

@@ -2,28 +2,26 @@
 
 {
   imports = [
-    ./git.nix
-    ./jujutsu.nix
-    ./nvim
-    ./emacs
-    ./wezterm.nix
-    ./qutebrowser
-    ./lazygit.nix
-    ./programs.nix
-    ./packages.nix
-    ./dotfiles-chezmoi.nix
-    ./dotfiles
-    ./path.nix
-    ./shell.nix
-    ./user.nix
-    ./alias.nix
-    ./nix-search-tv.nix
-    ./home.nix
-    ./borders
-    ./zoxide.nix
-    ./tmux
-    ./ghostty.nix
-    ./yazi.nix
+    ../../home-manager/git.nix
+    ../../home-manager/jujutsu.nix
+    ../../home-manager/nvim
+    ../../home-manager/emacs
+    ../../home-manager/wezterm.nix
+    ../../home-manager/qutebrowser
+    ../../home-manager/lazygit.nix
+    ../../home-manager/programs.nix
+    ../../home-manager/packages.nix
+    ../../home-manager/dotfiles-chezmoi.nix
+    ../../home-manager/dotfiles
+    ../../home-manager/path.nix
+    ../../home-manager/shell.nix
+    ../../home-manager/user.nix
+    ../../home-manager/alias.nix
+    ../../home-manager/nix-search-tv.nix
+    ../../home-manager/home.nix
+    ../../home-manager/zoxide.nix
+    ../../home-manager/tmux
+    ../../home-manager/yazi.nix
   ];
 
   home = {
