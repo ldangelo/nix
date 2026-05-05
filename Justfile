@@ -74,8 +74,8 @@ up:
 
 # Update specific input
 # usage: just upp i=home-manager
-upp:
-  nix flake lock --update-input {{i?}}
+upp i="":
+  nix flake lock --update-input {{i}}
 
 # GC and cleanup
 gc:
