@@ -127,7 +127,44 @@
             modules = [
               catppuccin.homeModules.catppuccin
               ./modules/home-manager/default.nix
+              ./modules/home-manager/pi-agent.nix
               ./overlays
+              ({ pkgs, ... }:
+              {
+                pi-agent.enable = true;
+                pi-agent.settings = {
+                  lastChangelogVersion = "0.72.1";
+                  defaultProvider = "litellm";
+                  defaultModel = "coding";
+                  defaultThinkingLevel = "medium";
+                  packages = [
+                    "npm:pi-powerline-footer"
+                    "npm:pi-mcp-adapter"
+                  ];
+                  powerline = {
+                    preset = "nerd";
+                  };
+                  workingVibeMode = "file";
+                  workingVibe = "off";
+                  bashMode = {
+                    toggleShortcut = "ctrl+shift+b";
+                    transcriptMaxLines = 2000;
+                    transcriptMaxBytes = 524288;
+                  };
+                };
+                pi-agent.binTools = with pkgs; [
+                  fd
+                  ripgrep
+                ];
+                pi-agent.mcpConfig = {
+                  settings = {
+                    toolPrefix = "server";
+                    idleTimeout = 10;
+                    directTools = false;
+                  };
+                  mcpServers = {};
+                };
+              })
               {
                 home.username = "ldangelo";
                 home.homeDirectory = "/Users/ldangelo";
