@@ -89,7 +89,6 @@ in {
       source <(helm completion zsh 2>/dev/null)
       source <(just --completions zsh 2>/dev/null)
       source <(glab completion -s zsh 2>/dev/null)
-      source <(starship completions zsh 2>/dev/null)
       source <(atuin gen-completions --shell zsh 2>/dev/null)
       source <(git-town completions zsh 2>/dev/null)
       source <(uv generate-shell-completion zsh 2>/dev/null)
@@ -229,7 +228,7 @@ in {
             [[ -f ~/.config/zsh/rc/comp.zsh ]] && source ~/.config/zsh/rc/comp.zsh
             [[ -f ~/.config/zsh/rc/fzf-tab.zsh ]] && source ~/.config/zsh/rc/fzf-tab.zsh
             [[ -f ~/.config/zsh/rc/vterm.zsh ]] && source ~/.config/zsh/rc/vterm.zsh
-            [[ -f ~/.config/zsh/rc/starship.zsh ]] && source ~/.config/zsh/rc/starship.zsh
+            [[ -f ~/.config/zsh/rc/powerlevel10k.zsh ]] && source ~/.config/zsh/rc/powerlevel10k.zsh
             test -e "$HOME/.iterm2_shell_integration.zsh" && source "$HOME/.iterm2_shell_integration.zsh"
             test -d "$HOME/.iterm2" && export PATH="$HOME/.iterm2:$PATH"
             

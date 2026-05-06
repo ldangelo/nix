@@ -46,6 +46,7 @@ in {
       lsd
       zsh-autosuggestions
       zsh-syntax-highlighting
+      zsh-powerlevel10k
 
       # Text Processing & Search
       markdown-toc
