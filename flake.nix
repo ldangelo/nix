@@ -177,6 +177,40 @@
                   };
                   mcpServers = {};
                 };
+                pi-agent.models = {
+                  providers = {
+                    litellm = {
+                      baseUrl = "http://gx10-1:14000/v1";
+                      api = "openai-completions";
+                      apiKey = "sk-35ccf1fb6f67c696eeac9482cfc82fc0693d052c03af8a4f";
+                      compat = {
+                        supportsDeveloperRole = false;
+                        supportsReasoningEffort = false;
+                        supportsStore = false;
+                        supportsStrictMode = false;
+                        supportsUsageInStreaming = true;
+                        maxTokensField = "max_tokens";
+                      };
+                      models = [
+                        { id = "openclaw"; name = "OpenClaw / Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding"; name = "Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding-hard"; name = "Coding Hard / Architecture (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research"; name = "Research Default (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-deep"; name = "Research Deep (Nemotron Super 120B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-fast"; name = "Research Fast (Qwen 35B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "fast-chat"; name = "Fast Chat (Qwen 3B FP16 via LiteLLM)"; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "fast-chat-30b"; name = "Fast Chat 30B (DeepSeek R1 32B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "instant"; name = "Instant (Qwen 1.5 8B Chat via LiteLLM)"; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "multimodal"; name = "Multimodal (Qwen 2.5 V 72B via LiteLLM)"; reasoning = true; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-long"; name = "Research Long (Qwen 3 235B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "uncensored"; name = "Uncensored (DeepSeek R1 671B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "uncensored-gguf"; name = "Uncensored GGUF (DeepSeek R1 70B Q4_K_M via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "uncensored-vllm"; name = "Uncensored vLLM (DeepSeek R1 70B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "vision"; name = "Vision (Qwen 2.5 V 7B via LiteLLM)"; reasoning = false; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      ];
+                    };
+                  };
+                };
               })
               {
                 home.username = "ldangelo";
@@ -243,6 +277,40 @@
                     directTools = false;
                   };
                   mcpServers = {};
+                };
+                pi-agent.models = {
+                  providers = {
+                    litellm = {
+                      baseUrl = "http://gx10-1:14000/v1";
+                      api = "openai-completions";
+                      apiKey = "sk-35ccf1fb6f67c696eeac9482cfc82fc0693d052c03af8a4f";
+                      compat = {
+                        supportsDeveloperRole = false;
+                        supportsReasoningEffort = false;
+                        supportsStore = false;
+                        supportsStrictMode = false;
+                        supportsUsageInStreaming = true;
+                        maxTokensField = "max_tokens";
+                      };
+                      models = [
+                        { id = "openclaw"; name = "OpenClaw / Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding"; name = "Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding-hard"; name = "Coding Hard / Architecture (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research"; name = "Research Default (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-deep"; name = "Research Deep (Nemotron Super 120B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-fast"; name = "Research Fast (Qwen 35B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "fast-chat"; name = "Fast Chat (Qwen 3B FP16 via LiteLLM)"; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "fast-chat-30b"; name = "Fast Chat 30B (DeepSeek R1 32B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "instant"; name = "Instant (Qwen 1.5 8B Chat via LiteLLM)"; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "multimodal"; name = "Multimodal (Qwen 2.5 V 72B via LiteLLM)"; reasoning = true; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-long"; name = "Research Long (Qwen 3 235B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "uncensored"; name = "Uncensored (DeepSeek R1 671B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "uncensored-gguf"; name = "Uncensored GGUF (DeepSeek R1 70B Q4_K_M via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "uncensored-vllm"; name = "Uncensored vLLM (DeepSeek R1 70B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "vision"; name = "Vision (Qwen 2.5 V 7B via LiteLLM)"; reasoning = false; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      ];
+                    };
+                  };
                 };
               })
             ];
