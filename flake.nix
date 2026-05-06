@@ -92,10 +92,14 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bak";
             home-manager.sharedModules = [
-              catppuccin.homeModules.catppuccin
               ./modules/home-manager/pi-agent.nix
             ];
-            home-manager.users.ldangelo = import ./modules/home-manager/default.nix;
+            home-manager.users.ldangelo = {
+              imports = [
+                catppuccin.homeModules.catppuccin
+                ./modules/home-manager/default.nix
+              ];
+            };
           }
         ];
       in {

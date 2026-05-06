@@ -40,7 +40,7 @@
     lazygit.enable = true;
     fish.enable = true;
     nushell.enable = true;
-    starship.enable = true;
+    starship.enable = false;
     wezterm.enable = true;
     nvim.enable = true;
     # vscode.enable = true;
