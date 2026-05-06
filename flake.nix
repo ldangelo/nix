@@ -156,6 +156,19 @@
                   fd
                   ripgrep
                 ];
+                pi-agent.packages = [
+                  "npm:pi-powerline-footer"
+                  "npm:pi-mcp-adapter"
+                  {
+                    source = "${pkgs.fetchFromGitHub {
+                      owner = "FortiumPartners";
+                      repo = "ensemble";
+                      rev = "faa88672815559b3739b8da5ec5c50607553eb5d";
+                      hash = "sha256-0jQiNfIWLY0sQP0el6b1WgjvjfT6c9YC0hpzFChka5A=";
+                    }}/packages/pi";
+                    extensions = [];
+                  }
+                ];
                 pi-agent.mcpConfig = {
                   settings = {
                     toolPrefix = "server";
@@ -222,10 +235,6 @@
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
-                ];
-                pi-agent.packages = [
-                  "npm:pi-powerline-footer"
-                  "npm:pi-mcp-adapter"
                 ];
                 pi-agent.mcpConfig = {
                   settings = {
