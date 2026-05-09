@@ -137,6 +137,7 @@
       "tailscale-app"
       "block-goose"            # AI agent
       "aerospace"              # i3-like tiling window manager
+      "obsidian"
       "raycast"                # Launcher and productivity
     ] ++ lib.optionals isWorkstation [
       # Workstation-only casks (MacBook Pro)
@@ -177,7 +178,6 @@
       "microsoft-auto-update"
       "microsoft-teams"
       "mouseless@preview"      # Mouse control via keyboard
-      "obsidian"
       "ollama-app"             # Local LLMs
       "postgres-unofficial"    # Postgres.app
       "postman"
