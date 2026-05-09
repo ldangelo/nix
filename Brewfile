@@ -9,7 +9,6 @@ tap "hashicorp/tap"
 tap "homebrew/bundle"
 tap "homebrew/core"
 tap "homebrew/services"
-tap "jandedobbeleer/oh-my-posh"
 tap "khanhas/tap"
 tap "koekeishiya/formulae"
 tap "nikitabobko/tap"
@@ -199,8 +198,8 @@ brew "repomix"
 brew "ripgrep"
 # Safe, concurrent, practical language
 brew "rust"
-# Cross-shell prompt for astronauts
-brew "starship"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
 # Generate clients, server stubs, and docs from an OpenAPI spec
 brew "swagger-codegen"
 # Change macOS audio source from the command-line

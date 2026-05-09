@@ -49,6 +49,7 @@
 
       # Shell & System Tools
       "bakks/bakks/butterfish"         # LLM command-line tool
+      "oh-my-posh"                     # Prompt theme engine
       "charmbracelet/tap/crush"        # Terminal AI assistant
 
       # golang

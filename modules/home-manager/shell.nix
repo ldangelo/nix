@@ -211,7 +211,7 @@ in {
 
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
           # vterm (emacs) related functions for prompt tracking, etc...
-#          eval "$(oh-my-posh init zsh)"
+          eval "$(oh-my-posh init zsh)"
           if [[ "$(uname -s)" == "Darwin" ]]; then
             [[ -f ~/.config/zsh/rc/homebrew.zsh ]] && source ~/.config/zsh/rc/homebrew.zsh
           fi
@@ -228,7 +228,7 @@ in {
             [[ -f ~/.config/zsh/rc/comp.zsh ]] && source ~/.config/zsh/rc/comp.zsh
             [[ -f ~/.config/zsh/rc/fzf-tab.zsh ]] && source ~/.config/zsh/rc/fzf-tab.zsh
             [[ -f ~/.config/zsh/rc/vterm.zsh ]] && source ~/.config/zsh/rc/vterm.zsh
-            [[ -f ~/.config/zsh/rc/powerlevel10k.zsh ]] && source ~/.config/zsh/rc/powerlevel10k.zsh
+            # [[ -f ~/.config/zsh/rc/powerlevel10k.zsh ]] && source ~/.config/zsh/rc/powerlevel10k.zsh
             test -e "$HOME/.iterm2_shell_integration.zsh" && source "$HOME/.iterm2_shell_integration.zsh"
             test -d "$HOME/.iterm2" && export PATH="$HOME/.iterm2:$PATH"
             
