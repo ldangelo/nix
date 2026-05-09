@@ -46,17 +46,10 @@ in {
 			smart-enter = "${yazi-plugins}/smart-enter.yazi";
 			smart-paste = "${yazi-plugins}/smart-paste.yazi";
 			mactag = "${yazi-plugins}/mactag.yazi";
-			starship = pkgs.fetchFromGitHub {
-				owner = "Rolv-Apneseth";
-				repo = "starship.yazi";
-				rev = "eca186171c5f2011ce62712f95f699308251c749";
-				sha256 = "sha256-xcz2+zepICZ3ji0Hm0SSUBSaEpabWUrIdG7JmxUl/ts=";
-			};
 		};
 
 		initLua = ''
 			require("full-border"):setup()
-			require("starship"):setup()
 			require("git"):setup()
 		'';
 
