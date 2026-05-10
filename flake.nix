@@ -99,6 +99,12 @@
                 catppuccin.homeModules.catppuccin
                 ./modules/home-manager/default.nix
               ];
+              pi-agent = {
+                enable = true;
+                skills = [
+                  ./modules/home-manager/pi-extensions/obsidian
+                ];
+              };
             };
           }
         ];
@@ -155,6 +161,9 @@
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
+                ];
+                pi-agent.skills = [
+                  ./modules/home-manager/pi-extensions/obsidian
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
@@ -269,6 +278,9 @@
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
+                ];
+                pi-agent.skills = [
+                  ./modules/home-manager/pi-extensions/obsidian
                 ];
                 pi-agent.mcpConfig = {
                   settings = {

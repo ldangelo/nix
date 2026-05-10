@@ -50,6 +50,12 @@ in {
       description = "Binary tools to expose in ~/.pi/agent/bin";
     };
 
+    skills = lib.mkOption {
+      type = lib.types.listOf lib.types.path;
+      default = [];
+      description = "Pi Agent skills to install (directories containing SKILL.md)";
+    };
+
     packages = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [];
@@ -112,6 +118,20 @@ in {
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           echo "Installing Pi Agent packages..."
           ${installPackageCommands}
+        '';
+    })
+
+    (lib.mkIf (cfg.skills != []) {
+      home.activation.installPiAgentSkills =
+        lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
+          echo "Installing Pi Agent skills..."
+          for skillPath in ${lib.concatMapStrings (s: "\"${lib.escapeShellArg s}\" ") cfg.skills}; do
+            skillName=$(basename "$skillPath")
+            mkdir -p "$HOME/.pi/agent/skills/$skillName"
+            cp -r "$skillPath"/* "$HOME/.pi/agent/skills/$skillName/"
+            # Make shell scripts executable
+            find "$HOME/.pi/agent/skills/$skillName" -name "*.sh" -exec chmod +x {} \;
+          done
         '';
     })
   ]);
