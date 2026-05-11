@@ -211,7 +211,7 @@ in {
 
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
           # vterm (emacs) related functions for prompt tracking, etc...
-          eval "$(oh-my-posh init zsh)"
+          eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.omp.json)"
           if [[ "$(uname -s)" == "Darwin" ]]; then
             [[ -f ~/.config/zsh/rc/homebrew.zsh ]] && source ~/.config/zsh/rc/homebrew.zsh
           fi
