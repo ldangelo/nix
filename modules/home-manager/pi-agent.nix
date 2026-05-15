@@ -2,7 +2,7 @@
 
 let
   cfg = config.pi-agent;
-  makeSettings = pkgs.lib.generators.toJSON {};
+  makeSettings = builtins.toJSON;
 
   installPackageCommands = lib.concatMapStrings (pkg: ''
     pi_cmd=""
