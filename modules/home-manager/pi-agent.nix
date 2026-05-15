@@ -81,6 +81,7 @@ in {
       };
 
       home.file.".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
+      home.file.".pi/agent/extensions/tokens-per-second.ts".source = ./pi-extensions/tokens-per-second.ts;
       home.file.".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
       home.file.".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
       home.file.".pi/agent/agents" = {
