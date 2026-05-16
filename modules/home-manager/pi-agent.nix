@@ -140,10 +140,16 @@ in {
           echo "Installing Pi Agent skills..."
           for skillPath in ${lib.concatMapStrings (s: "\"${lib.escapeShellArg s}\" ") enabledSkills}; do
             skillName=$(basename "$skillPath")
-            mkdir -p "$HOME/.pi/agent/skills/$skillName"
-            cp -r "$skillPath"/* "$HOME/.pi/agent/skills/$skillName/"
+            skillTarget="$HOME/.pi/agent/skills/$skillName"
+            if [ -e "$skillTarget" ]; then
+              chmod -R u+rwX "$skillTarget" 2>/dev/null || true
+              rm -rf "$skillTarget"
+            fi
+            mkdir -p "$skillTarget"
+            cp -R "$skillPath"/. "$skillTarget"/
+            chmod -R u+rwX "$skillTarget"
             # Make shell scripts executable
-            find "$HOME/.pi/agent/skills/$skillName" -name "*.sh" -exec chmod +x {} \;
+            find "$skillTarget" -name "*.sh" -exec chmod +x {} \;
           done
         '';
     })
