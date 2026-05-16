@@ -75,6 +75,13 @@ in {
     ] ++ lib.optionals isDarwin [
       "1password"
     ];
+    initExtra = ''
+      # Docker MCP bearer token — reads fresh on shell init
+      if [ -f "$HOME/.docker/mcp/docker-mcp-bearer-token" ]; then
+        export MCP_DOCKER_BEARER_TOKEN="$(cat "$HOME/.docker/mcp/docker-mcp-bearer-token")"
+      fi
+    '';
+
     initContent = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return

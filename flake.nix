@@ -133,7 +133,15 @@
                   idleTimeout = 10;
                   directTools = false;
                 };
-                mcpServers = {};
+                mcpServers = {
+                  docker = {
+                    url = "http://127.0.0.1:3100/mcp";
+                    auth = "bearer";
+                    bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
+                    lifecycle = "lazy";
+                    directTools = true;
+                  };
+                };
               };
               pi-agent.models = {
                 providers = {
@@ -249,7 +257,15 @@
                     idleTimeout = 10;
                     directTools = false;
                   };
-                  mcpServers = {};
+                  mcpServers = {
+                    docker = {
+                      url = "http://127.0.0.1:3100/mcp";
+                      auth = "bearer";
+                      bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
+                      lifecycle = "lazy";
+                      directTools = true;
+                    };
+                  };
                 };
                 pi-agent.models = {
                   providers = {
@@ -353,7 +369,15 @@
                     idleTimeout = 10;
                     directTools = false;
                   };
-                  mcpServers = {};
+                  mcpServers = {
+                    docker = {
+                      url = "http://127.0.0.1:3100/mcp";
+                      auth = "bearer";
+                      bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
+                      lifecycle = "lazy";
+                      directTools = true;
+                    };
+                  };
                 };
                 pi-agent.models = {
                   providers = {
