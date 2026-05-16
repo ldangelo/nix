@@ -3,8 +3,19 @@
 let
   cfg = config.pi-agent;
   makeSettings = builtins.toJSON;
+  builtInSkills = [
+    ./pi-extensions/cavecrew
+    ./pi-extensions/caveman
+    ./pi-extensions/caveman-commit
+    ./pi-extensions/caveman-review
+    ./pi-extensions/caveman-compress
+    ./pi-extensions/caveman-help
+    ./pi-extensions/caveman-stats
+  ];
+  enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
 
-  installPackageCommands = lib.concatMapStrings (pkg: ''
+  installPackageCommands = lib.concatMapStrings (pkg:
+  if lib.isString pkg then ''
     pi_cmd=""
     if command -v pi >/dev/null 2>&1; then
       pi_cmd="$(command -v pi)"
@@ -23,7 +34,7 @@ let
     else
       echo "pi not found; skipping package ${lib.escapeShellArg pkg}"
     fi
-  '') cfg.packages;
+  '' else "") cfg.packages;
 in {
   options.pi-agent = {
     enable = lib.mkOption {
@@ -57,9 +68,9 @@ in {
     };
 
     packages = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
+      type = lib.types.listOf (lib.types.oneOf [ lib.types.str lib.types.attrs ]);
       default = [];
-      description = "Pi Agent packages to install, e.g. [ \"npm:pi-powerline-footer\" ]";
+      description = "Pi Agent packages to install, e.g. [ \"npm:pi-powerline-footer\" ]. Attrset entries are accepted for configs that also mirror local package objects into settings.json; activation only installs string specs.";
     };
 
     mcpConfig = lib.mkOption {
@@ -122,11 +133,11 @@ in {
         '';
     })
 
-    (lib.mkIf (cfg.skills != []) {
+    (lib.mkIf (enabledSkills != []) {
       home.activation.installPiAgentSkills =
         lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
           echo "Installing Pi Agent skills..."
-          for skillPath in ${lib.concatMapStrings (s: "\"${lib.escapeShellArg s}\" ") cfg.skills}; do
+          for skillPath in ${lib.concatMapStrings (s: "\"${lib.escapeShellArg s}\" ") enabledSkills}; do
             skillName=$(basename "$skillPath")
             mkdir -p "$HOME/.pi/agent/skills/$skillName"
             cp -r "$skillPath"/* "$HOME/.pi/agent/skills/$skillName/"
