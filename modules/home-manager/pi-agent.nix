@@ -11,6 +11,7 @@ let
     ./pi-extensions/caveman-compress
     ./pi-extensions/caveman-help
     ./pi-extensions/caveman-stats
+    ./pi-extensions/semantic-web-research
   ];
   enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
 
