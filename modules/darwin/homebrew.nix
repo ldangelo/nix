@@ -184,6 +184,7 @@
       "postman"
       "postman-cli"
       "proxyman"               # HTTP debugging proxy
+      "qutebrowser"            # Keyboard-driven browser; Nix qtwebengine fails on Darwin
       "readdle-spark"          # Email client
       "repo-prompt"            # Prompt generation
       "rider"
