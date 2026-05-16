@@ -1,2 +1,1 @@
-# oh-my-posh prompt initialization
-eval "$(oh-my-posh init zsh)"
+# starship removed — prompt is now managed by oh-my-posh (see shell.nix)

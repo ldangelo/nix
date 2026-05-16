@@ -8,6 +8,10 @@ os := `uname -s`
 # Load single-user Nix if needed, then run nix.
 nix := 'if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then source "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi; nix'
 
+# On macOS this is where nix-darwin installs darwin-rebuild;
+# /run/current-system is not guaranteed to exist.
+darwin_rebuild := '/nix/var/nix/profiles/system/sw/bin/darwin-rebuild'
+
 # Linux recipes
 deploy-nc-linux:
   {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
@@ -32,16 +36,16 @@ hm-build-linux:
 _sudo_prefix := if env_var_or_default("SSH_CLIENT", "") + env_var_or_default("SSH_TTY", "") + env_var_or_default("SSH_CONNECTION", "") != "" { "sudo" } else { "SUDO_ASKPASS=" + env_var_or_default("HOME", "~") + "/.local/bin/sudo-askpass sudo -AH" }
 
 deploy-nc-macos:
-  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} darwin-rebuild switch --flake .#$host --option eval-cache false
+  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --flake .#$host --option eval-cache false
 
 deploy-rebuild-macos:
-  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} darwin-rebuild switch --rebuild --flake .#$host
+  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --rebuild --flake .#$host
 
 deploy-macos:
-  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} darwin-rebuild switch --flake .#$host
+  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --flake .#$host
 
 debug-macos:
-  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} darwin-rebuild switch --flake .#$host --show-trace --verbose
+  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --flake .#$host --show-trace --verbose
 
 hm-switch-macos:
   {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo

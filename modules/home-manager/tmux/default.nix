@@ -71,7 +71,7 @@ in
         plugin = vim-tmux-navigator;
         extraConfig = ''
           # Ensure Nix paths are available to plugin run-shell commands
-          set-environment -g PATH "/etc/profiles/per-user/ldangelo/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+          set-environment -g PATH "/etc/profiles/per-user/ldangelo/bin:/nix/var/nix/profiles/system/sw/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
         '';
       }
       yank

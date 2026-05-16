@@ -34,6 +34,7 @@ in {
       # Shell & Terminal Tools
       atuin
       bat
+      oh-my-posh
       btop
       bun
       coreutils
@@ -46,7 +47,6 @@ in {
       lsd
       zsh-autosuggestions
       zsh-syntax-highlighting
-      zsh-powerlevel10k
 
       # Text Processing & Search
       markdown-toc

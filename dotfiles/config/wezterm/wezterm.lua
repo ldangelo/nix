@@ -66,7 +66,7 @@ local local_config = load_local_config("local")
 local config = {
   -- font = wezterm.font("Cica"),
   -- font_size = 10.0,
-  font = wezterm.font("Source Code Pro"),
+  font = wezterm.font("FiraCode Nerd Font"),
   font_size = 14,
   -- Launch login shell so Nix-managed PATH is inherited
   default_prog = { "/bin/zsh", "-l" },

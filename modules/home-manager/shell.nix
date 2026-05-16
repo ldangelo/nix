@@ -15,6 +15,9 @@ in {
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
         . "$HOME/.nix-profile/etc/profile.d/nix.sh"
       fi
+      if [[ "$(uname -s)" == "Darwin" ]]; then
+        export PATH="/nix/var/nix/profiles/system/sw/bin:$PATH"
+      fi
       export PATH="$HOME/.nix-profile/bin:$HOME/.local/bin:$HOME/bin:$PATH"
     '';
     shellAliases = {
@@ -118,6 +121,7 @@ in {
           path=("$HOME/bin" $path)
           path=("$HOME/.local/bin" $path)
           if [[ "$(uname -s)" == "Darwin" ]]; then
+            path=('/nix/var/nix/profiles/system/sw/bin' $path)
             path=('/opt/homebrew/bin' $path)
             path=('/opt/homebrew/opt/gnu-tar/libexec/gnubin' $path)
             path=('/opt/homebrew/opt/python@3.13/bin/' $path)
@@ -211,7 +215,7 @@ in {
 
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
           # vterm (emacs) related functions for prompt tracking, etc...
-          eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.omp.json)"
+          [[ -z "$INSIDE_EMACS" ]] && eval "$(oh-my-posh init zsh)"
           if [[ "$(uname -s)" == "Darwin" ]]; then
             [[ -f ~/.config/zsh/rc/homebrew.zsh ]] && source ~/.config/zsh/rc/homebrew.zsh
           fi
@@ -228,7 +232,7 @@ in {
             [[ -f ~/.config/zsh/rc/comp.zsh ]] && source ~/.config/zsh/rc/comp.zsh
             [[ -f ~/.config/zsh/rc/fzf-tab.zsh ]] && source ~/.config/zsh/rc/fzf-tab.zsh
             [[ -f ~/.config/zsh/rc/vterm.zsh ]] && source ~/.config/zsh/rc/vterm.zsh
-            # [[ -f ~/.config/zsh/rc/powerlevel10k.zsh ]] && source ~/.config/zsh/rc/powerlevel10k.zsh
+            # powerlevel10k removed — prompt is now managed by oh-my-posh
             test -e "$HOME/.iterm2_shell_integration.zsh" && source "$HOME/.iterm2_shell_integration.zsh"
             test -d "$HOME/.iterm2" && export PATH="$HOME/.iterm2:$PATH"
             
@@ -265,6 +269,7 @@ in {
       )
       if [[ "$(uname -s)" == "Darwin" ]]; then
         path=(
+          '/nix/var/nix/profiles/system/sw/bin'
           '/opt/homebrew/opt/postgresql@17/bin'
           '/opt/homebrew/opt/python@3.13/bin'
           '/opt/homebrew/bin'

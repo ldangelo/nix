@@ -33,8 +33,6 @@
 
   outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ... }:
     let
-      pkgs = import nixpkgs { system = "aarch64-darwin"; config.allowUnfree = true; overlays = common-overlays; };
-      lib = pkgs.lib;
       common-overlays = [
       (self: super: {
         # NVM - wrapper script that loads the nvm.sh from ~/.nvm
@@ -96,12 +94,11 @@
             home-manager.sharedModules = [
               ./modules/home-manager/pi-agent.nix
             ];
-            home-manager.users.ldangelo = {
+            home-manager.users.ldangelo = { pkgs, ... }: {
               imports = [
                 catppuccin.homeModules.catppuccin
                 ./modules/home-manager/default.nix
               ];
-
               pi-agent.enable = true;
               pi-agent.skills = [
                 ./modules/home-manager/pi-extensions/obsidian
@@ -114,19 +111,8 @@
                 packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-mcp-adapter"
-                  {
-                    source = "${pkgs.fetchFromGitHub {
-                      owner = "FortiumPartners";
-                      repo = "ensemble";
-                      rev = "faa88672815559b3739b8da5ec5c50607553eb5d";
-                      hash = "sha256-0jQiNfIWLY0sQP0el6b1WgjvjfT6c9YC0hpzFChka5A=";
-                    }}/packages/pi";
-                    extensions = [];
-                  }
                 ];
-                powerline = {
-                  preset = "nerd";
-                };
+                powerline.preset = "nerd";
                 workingVibeMode = "file";
                 workingVibe = "off";
                 bashMode = {
@@ -135,9 +121,11 @@
                   transcriptMaxBytes = 524288;
                 };
               };
-              pi-agent.binTools = with pkgs; [
-                fd
-                ripgrep
+              pi-agent.binTools = with pkgs; [ fd ripgrep nodejs ];
+              pi-agent.packages = [
+                "npm:pi-powerline-footer"
+                "npm:pi-mcp-adapter"
+                "npm:pi-hooks"
               ];
               pi-agent.mcpConfig = {
                 settings = {
@@ -162,21 +150,22 @@
                       maxTokensField = "max_tokens";
                     };
                     models = [
-                      { id = "openclaw"; name = "OpenClaw / Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "coding"; name = "Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "coding-hard"; name = "Coding Hard / Architecture (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "research"; name = "Research Default (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "research-deep"; name = "Research Deep (Nemotron Super 120B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "research-fast"; name = "Research Fast (Qwen 35B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "fast-chat"; name = "Fast Chat (Qwen 3B FP16 via LiteLLM)"; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "fast-chat-30b"; name = "Fast Chat 30B (DeepSeek R1 32B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "instant"; name = "Instant (Qwen 1.5 8B Chat via LiteLLM)"; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "multimodal"; name = "Multimodal (Qwen 2.5 V 72B via LiteLLM)"; reasoning = true; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "research-long"; name = "Research Long (Qwen 3 235B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "uncensored"; name = "Uncensored (DeepSeek R1 671B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "uncensored-gguf"; name = "Uncensored GGUF (DeepSeek R1 70B Q4_K_M via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "uncensored-vllm"; name = "Uncensored vLLM (DeepSeek R1 70B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
-                      { id = "vision"; name = "Vision (Qwen 2.5 V 7B via LiteLLM)"; reasoning = false; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "openclaw";        name = "OpenClaw / Coding Default (Qwen Coder INT4 via LiteLLM)";    reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "coding";          name = "Coding Default (Qwen Coder INT4 via LiteLLM)";               reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "coding-hard";     name = "Coding Hard / Architecture (Qwen 122B INT4 via LiteLLM)";    reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "coding-long";     name = "Coding Long 64k (Qwen Coder INT4 via LiteLLM)";              reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "research";        name = "Research Default (Qwen 122B INT4 via LiteLLM)";              reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "research-deep";   name = "Research Deep (Nemotron Super 120B via LiteLLM)";            reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "research-fast";   name = "Research Fast (Qwen 35B FP8 via LiteLLM)";                   reasoning = true;  input = [ "text" ];         contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "research-long";   name = "Research Long 64k (Qwen 122B INT4 via LiteLLM)";             reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "fast-chat";       name = "Fast Chat 4B (quick chat; weak tool-use)";                   reasoning = false; input = [ "text" ];         contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "fast-chat-30b";   name = "Fast Chat 30B (slow on GX10; not recommended)";              reasoning = false; input = [ "text" ];         contextWindow =  8192; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "instant";         name = "Instant 4B (quick chat; weak tool-use)";                     reasoning = false; input = [ "text" ];         contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "vision";          name = "Vision (Qwen3-VL 30B FP8 via LiteLLM)";                     reasoning = false; input = [ "text" "image" ]; contextWindow = 32768; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "multimodal";      name = "Multimodal (Qwen3-Omni 30B via LiteLLM)";                   reasoning = true;  input = [ "text" "image" ]; contextWindow = 32768; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "uncensored";      name = "Uncensored HF Safetensors via vLLM";                         reasoning = true;  input = [ "text" ];         contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "uncensored-vllm"; name = "Uncensored HF Safetensors via vLLM";                        reasoning = true;  input = [ "text" ];         contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "uncensored-gguf"; name = "Uncensored GGUF via llama.cpp";                             reasoning = false; input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                     ];
                   };
                 };

@@ -8,6 +8,7 @@
     theme = catppuccin-mocha
 
     # Font
+    font-family = FiraCode Nerd Font
     font-thicken = true
 
     # Window
