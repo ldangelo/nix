@@ -42,6 +42,7 @@
       "lazyjj"                         # TUI for Jujutsu
       "nuget"                          # .NET package manager
       "opencode"                       # AI coding agent
+      "marcus/tap/td"                  # Task/delegation CLI
       "pi-coding-agent"                # Pi AI coding agent
       "repomix"                        # Pack repo into AI-friendly file
       "swagger-codegen"                # OpenAPI code generator

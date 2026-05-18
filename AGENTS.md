@@ -55,15 +55,15 @@ nix/
 
 ## Agent Instructions
 
-## MANDATORY: Use td for Task Management
+## Task Management
 
-Run td usage --new-session at conversation start (or after /clear). This tells you what to work on next.
+Run `td usage --new-session` at conversation start (or after /clear). Shows next actionable task.
 
 Sessions are automatic (based on terminal/agent context). Optional:
-- td session "name" to label the current session
-- td session --new to force a new session in the same context
+- `td session "name"` to label the current session
+- `td session --new` to force a new session in the same context
 
-Use td usage -q after first read.
+Use `td usage -q` after first read.
 
 <!-- br-agent-instructions-v1 -->
 
