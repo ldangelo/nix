@@ -13,32 +13,19 @@ This repository manages the complete development workstation configuration for m
 - **Secrets management** via sops-nix
 - **Development tools and language runtimes**
 
-## Repository Structure
+## Directory Guides
 
-```
-nix/
-├── flake.nix                  # Main flake configuration and inputs
-├── Justfile                   # Command runner recipes (deploy, update, clean)
-├── modules/
-│   ├── darwin/               # System-level configuration (see modules/darwin/AGENTS.md)
-│   │   ├── system.nix        # macOS defaults, dock, finder
-│   │   ├── homebrew.nix      # Homebrew packages and casks
-│   │   ├── services.nix      # launchd services (kanata, karabiner)
-│   │   └── sops.nix          # Secrets management
-│   ├── home-manager/         # User environment (see modules/home-manager/AGENTS.md)
-│   │   ├── packages.nix      # Nix packages
-│   │   ├── shell.nix         # Zsh, starship, atuin, direnv
-│   │   ├── git.nix           # Git settings
-│   │   ├── programs.nix      # fzf, zellij, qutebrowser
-│   │   ├── nvim/             # Neovim/LazyVim configuration
-│   │   ├── emacs/            # Emacs configuration
-│   │   └── tmux/             # Tmux configuration
-│   └── flakes/               # Flake input definitions (see modules/flakes/AGENTS.md)
-├── overlays/                 # Custom package overlays (see overlays/AGENTS.md)
-├── dotfiles/                 # Legacy dotfiles (transitioning to home-manager)
-├── secrets/                  # sops-nix encrypted secrets (see secrets/AGENTS.md)
-└── docs/                     # Design documentation (PRD/TRD)
-```
+Each subdirectory has its own AGENTS.md with conventions:
+
+| Directory | Guide |
+|-----------|-------|
+| `modules/darwin/` | [darwin/AGENTS.md](modules/darwin/AGENTS.md) — system config, Homebrew, services |
+| `modules/home-manager/` | [home-manager/AGENTS.md](modules/home-manager/AGENTS.md) — packages, editors, dotfiles |
+| `modules/flakes/` | [flakes/AGENTS.md](modules/flakes/AGENTS.md) — flake inputs |
+| `overlays/` | [overlays/AGENTS.md](overlays/AGENTS.md) — nixpkgs overrides |
+| `secrets/` | [secrets/AGENTS.md](secrets/AGENTS.md) — sops-nix secrets |
+| `modules/linux/` | Linux flake (separate from darwin) |
+| `docs/` | PRD/TRD design docs |
 
 ## Key Commands
 
