@@ -174,6 +174,11 @@
                       { id = "uncensored";      name = "Uncensored HF Safetensors via vLLM";                         reasoning = true;  input = [ "text" ];         contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       { id = "uncensored-vllm"; name = "Uncensored HF Safetensors via vLLM";                        reasoning = true;  input = [ "text" ];         contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       { id = "uncensored-gguf"; name = "Uncensored GGUF via llama.cpp";                             reasoning = false; input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "openclaw-draft";  name = "OpenClaw Draft (Nemotron Nano 4B via LiteLLM)";            reasoning = false; input = [ "text" ];         contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; tags = [ "draft" "fast" ]; }
+                      { id = "coding-draft";    name = "Coding Draft (Nemotron Nano 4B via LiteLLM)";              reasoning = false; input = [ "text" ];         contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; tags = [ "draft" "fast" ]; }
+                      { id = "coding-draft-fast"; name = "Coding Draft Fast (Nemotron Nano 4B via LiteLLM)";      tags = [ "draft" "fast" ]; reasoning = false; input = [ "text" ]; contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "coding-draft-hybrid"; name = "Coding Draft Hybrid (Qwen 3.6 35B, thinking disabled via LiteLLM)"; tags = [ "draft" "hybrid" ]; reasoning = false; input = [ "text" ]; contextWindow = 60000; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "research-draft";  name = "Research Draft (Qwen 3.6 35B, thinking disabled via LiteLLM)"; tags = [ "draft" "research" ]; reasoning = false; input = [ "text" ]; contextWindow = 60000; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                     ];
                   };
                 };
@@ -187,12 +192,14 @@
             system = "aarch64-darwin";
             modules = darwinModules;
             specialArgs = { inherit inputs; isWorkstation = true; };
+            # pi-agent config moved to home-manager only
           };
 
           "Leos-Mac-mini" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             modules = darwinModules;
             specialArgs = { inherit inputs; isWorkstation = false; };
+            # pi-agent config moved to home-manager only
           };
         };
 
@@ -297,6 +304,11 @@
                         { id = "uncensored-gguf"; name = "Uncensored GGUF (DeepSeek R1 70B Q4_K_M via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "uncensored-vllm"; name = "Uncensored vLLM (DeepSeek R1 70B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "vision"; name = "Vision (Qwen 2.5 V 7B via LiteLLM)"; reasoning = false; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "openclaw-draft";  name = "OpenClaw Draft (Nemotron Nano 4B via LiteLLM)";            reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; tags = [ "draft" "fast" ]; }
+                        { id = "coding-draft";    name = "Coding Draft (Nemotron Nano 4B via LiteLLM)";              reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; tags = [ "draft" "fast" ]; }
+                        { id = "coding-draft-fast"; name = "Coding Draft Fast (Nemotron Nano 4B via LiteLLM)";      tags = [ "draft" "fast" ]; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding-draft-hybrid"; name = "Coding Draft Hybrid (Qwen 3.6 35B, thinking disabled via LiteLLM)"; tags = [ "draft" "hybrid" ]; reasoning = false; input = ["text"]; contextWindow = 60000; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-draft";  name = "Research Draft (Qwen 3.6 35B, thinking disabled via LiteLLM)"; tags = [ "draft" "research" ]; reasoning = false; input = ["text"]; contextWindow = 60000; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       ];
                     };
                   };
@@ -409,6 +421,11 @@
                         { id = "uncensored-gguf"; name = "Uncensored GGUF (DeepSeek R1 70B Q4_K_M via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "uncensored-vllm"; name = "Uncensored vLLM (DeepSeek R1 70B FP8 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "vision"; name = "Vision (Qwen 2.5 V 7B via LiteLLM)"; reasoning = false; input = ["text" "image"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "openclaw-draft";  name = "OpenClaw Draft (Nemotron Nano 4B via LiteLLM)";            reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; tags = [ "draft" "fast" ]; }
+                        { id = "coding-draft";    name = "Coding Draft (Nemotron Nano 4B via LiteLLM)";              reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; tags = [ "draft" "fast" ]; }
+                        { id = "coding-draft-fast"; name = "Coding Draft Fast (Nemotron Nano 4B via LiteLLM)";      tags = [ "draft" "fast" ]; reasoning = false; input = ["text"]; contextWindow = 32768; maxTokens = 1024; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding-draft-hybrid"; name = "Coding Draft Hybrid (Qwen 3.6 35B, thinking disabled via LiteLLM)"; tags = [ "draft" "hybrid" ]; reasoning = false; input = ["text"]; contextWindow = 60000; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "research-draft";  name = "Research Draft (Qwen 3.6 35B, thinking disabled via LiteLLM)"; tags = [ "draft" "research" ]; reasoning = false; input = ["text"]; contextWindow = 60000; maxTokens = 2048; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       ];
                     };
                   };
