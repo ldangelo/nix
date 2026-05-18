@@ -104,6 +104,18 @@
               pi-agent.skills = [
                 ./modules/home-manager/pi-extensions/obsidian
               ];
+              pi-agent.extensions = [
+                ./modules/home-manager/pi-extensions/permission-gate.ts
+                ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                ./modules/home-manager/pi-extensions/notify.ts
+                ./modules/home-manager/pi-extensions/protected-paths.ts
+                ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                ./modules/home-manager/pi-extensions/model-status.ts
+                ./modules/home-manager/pi-extensions/handoff.ts
+                ./modules/home-manager/pi-extensions/todo.ts
+                ./modules/home-manager/pi-extensions/bookmark.ts
+              ];
               pi-agent.settings = {
                 lastChangelogVersion = "0.72.1";
                 defaultProvider = "litellm";
@@ -246,6 +258,18 @@
                 pi-agent.skills = [
                   ./modules/home-manager/pi-extensions/obsidian
                 ];
+                pi-agent.extensions = [
+                  ./modules/home-manager/pi-extensions/permission-gate.ts
+                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                  ./modules/home-manager/pi-extensions/notify.ts
+                  ./modules/home-manager/pi-extensions/protected-paths.ts
+                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                  ./modules/home-manager/pi-extensions/model-status.ts
+                  ./modules/home-manager/pi-extensions/handoff.ts
+                  ./modules/home-manager/pi-extensions/todo.ts
+                  ./modules/home-manager/pi-extensions/bookmark.ts
+                ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-mcp-adapter"
@@ -374,6 +398,18 @@
                 ];
                 pi-agent.skills = [
                   ./modules/home-manager/pi-extensions/obsidian
+                ];
+                pi-agent.extensions = [
+                  ./modules/home-manager/pi-extensions/permission-gate.ts
+                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                  ./modules/home-manager/pi-extensions/notify.ts
+                  ./modules/home-manager/pi-extensions/protected-paths.ts
+                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                  ./modules/home-manager/pi-extensions/model-status.ts
+                  ./modules/home-manager/pi-extensions/handoff.ts
+                  ./modules/home-manager/pi-extensions/todo.ts
+                  ./modules/home-manager/pi-extensions/bookmark.ts
                 ];
                 pi-agent.mcpConfig = {
                   settings = {
