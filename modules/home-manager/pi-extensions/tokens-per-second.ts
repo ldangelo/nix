@@ -87,9 +87,8 @@ export default function (pi: ExtensionAPI) {
 			const elapsed = (Date.now() - streamStartTime) / 1000;
 			const avgTps = tokenCount / elapsed;
 
-			// Show final average for 3 seconds then clear
+			// Keep final average visible until the next turn updates or clears it.
 			updateStatus(ctx, avgTps, "✓");
-			setTimeout(() => clearStatus(ctx), 3000);
 		} else {
 			clearStatus(ctx);
 		}
