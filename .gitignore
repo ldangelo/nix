@@ -48,3 +48,4 @@ windsurf.mcp.json
 # Pi Agent local state (machine-specific)
 .pi/
 pi-agent-config-backup/
+/.beads

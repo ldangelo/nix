@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    catppuccin.url = "github:catppuccin/nix";
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -29,6 +28,8 @@
 
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
     sops-nix.url = "github:Mic92/sops-nix";
+
+    catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ... }:
@@ -328,7 +329,6 @@
               overlays = common-overlays;
             };
             modules = [
-              catppuccin.homeModules.catppuccin
               ./modules/linux/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
               ({ pkgs, ... }:
