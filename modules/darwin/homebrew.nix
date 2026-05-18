@@ -42,6 +42,7 @@
       "lazyjj"                         # TUI for Jujutsu
       "nuget"                          # .NET package manager
       "opencode"                       # AI coding agent
+      "marcus/tap/td"                  # Task/delegation CLI
       "pi-coding-agent"                # Pi AI coding agent
       "repomix"                        # Pack repo into AI-friendly file
       "swagger-codegen"                # OpenAPI code generator
@@ -140,6 +141,11 @@
       "aerospace"              # i3-like tiling window manager
       "obsidian"
       "raycast"                # Launcher and productivity
+      # Terminal emulators (both workstation and server)
+      "iterm2"
+      "itermai"                # AI for iTerm2
+      "itermbrowserplugin"     # Browser in iTerm2
+      "wezterm"
     ] ++ lib.optionals isWorkstation [
       # Workstation-only casks (MacBook Pro)
       "aldente"                # Battery charge limiter
@@ -164,9 +170,7 @@
 #      "hammerspoon"            # Desktop automation
 #      "homerow"                # Keyboard shortcuts
 #      "hookmark"               # Link and retrieve info
-      "iterm2"
-      "itermai"                # AI for iTerm2
-      "itermbrowserplugin"     # Browser in iTerm2
+      # iterm2/itermai/wezterm moved to common casks above
       "jetbrains-toolbox"
       "karabiner-elements"     # Keyboard customizer
       "launchcontrol"          # Service manager
@@ -196,13 +200,11 @@
       "sourcetree"             # Git GUI
 #      "stats"                  # System monitor
       "superhuman"             # Email client
-#      "tabtab"                 # Window/tab manager
       "todoist-app"
       "tradingview"
 #      "vscodium"               # VS Code without telemetry
       "wakatime"
 #      "warp-terminal"          # Terminal with AI
-      "wezterm"
       "cmux"                   # AI terminal multiplexer (manaflow-ai)
       "witsy"                  # BYOK AI assistant
       "zed"                    # Code editor
@@ -210,7 +212,6 @@
       #
       # yubi key
       "yubico-authenticator"
-      #      "yubico-yubikey-manager"
     ];
 
     # Mac App Store applications

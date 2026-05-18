@@ -49,5 +49,6 @@ windsurf.mcp.json
 .pi/
 pi-agent-config-backup/
 
-# Beads / Dolt files (added by bd init)
+# Beads local state (Dolt DB, runtime, exports)
+/.beads
 .beads-credential-key

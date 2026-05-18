@@ -79,52 +79,59 @@ in {
       default = {};
       description = "Shared MCP configuration written to ~/.config/mcp/mcp.json for pi-mcp-adapter";
     };
+
+    extensions = lib.mkOption {
+      type = lib.types.listOf lib.types.path;
+      default = [];
+      description = "Pi Agent extensions to install (individual .ts files or directories with index.ts)";
+    };
   };
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
       home.packages = cfg.binTools;
 
-      home.file.".pi/agent/settings.json".source =
-        pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
-
       xdg.configFile."mcp/mcp.json" = lib.mkIf (cfg.mcpConfig != {}) {
         source = pkgs.writeText "mcp.json" (makeSettings cfg.mcpConfig);
       };
 
-      home.file.".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
-      home.file.".pi/agent/extensions/tokens-per-second.ts".source = ./pi-extensions/tokens-per-second.ts;
-      home.file.".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
-      home.file.".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
-      home.file.".pi/agent/agents" = {
-        recursive = true;
-        source = ./pi-extensions/subagent/agents;
-      };
-      home.file.".pi/agent/prompts" = {
-        recursive = true;
-        source = ./pi-extensions/subagent/prompts;
-      };
+      home.file = lib.mkMerge [
+        {
+          ".pi/agent/settings.json".source =
+            pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
+          ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
+          ".pi/agent/extensions/tokens-per-second.ts".source = ./pi-extensions/tokens-per-second.ts;
+          ".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
+          ".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
+          ".pi/agent/agents" = { recursive = true; source = ./pi-extensions/subagent/agents; };
+          ".pi/agent/prompts" = { recursive = true; source = ./pi-extensions/subagent/prompts; };
+        }
+        (builtins.listToAttrs (
+          builtins.map (e: {
+            name = ".pi/agent/extensions/${builtins.baseNameOf (builtins.toString e)}";
+            value = { source = e; };
+          }) cfg.extensions
+        ))
+        (lib.mkIf (cfg.models != {}) {
+          ".pi/agent/models.json".source =
+            pkgs.writeText "pi-agent-models.json" (makeSettings cfg.models);
+        })
+        (lib.mkIf (cfg.binTools != []) {
+          ".pi/agent/bin" = {
+            recursive = true;
+            executable = true;
+            source = pkgs.runCommandLocal "pi-agent-bin" {} ''
+              mkdir -p "$out"
+              ${lib.concatMapStrings (tool: ''
+                for bin in ${tool}/bin/*; do
+                  ln -s "$bin" "$out/$(basename "$bin")"
+                done
+              '') cfg.binTools}
+            '';
+          };
+        })
+      ];
     }
-
-    (lib.mkIf (cfg.models != {}) {
-      home.file.".pi/agent/models.json".source =
-        pkgs.writeText "pi-agent-models.json" (makeSettings cfg.models);
-    })
-
-    (lib.mkIf (cfg.binTools != []) {
-      home.file.".pi/agent/bin" = {
-        recursive = true;
-        executable = true;
-        source = pkgs.runCommandLocal "pi-agent-bin" {} ''
-          mkdir -p "$out"
-          ${lib.concatMapStrings (tool: ''
-            for bin in ${tool}/bin/*; do
-              ln -s "$bin" "$out/$(basename "$bin")"
-            done
-          '') cfg.binTools}
-        '';
-      };
-    })
 
     (lib.mkIf (cfg.packages != []) {
       home.activation.installPiAgentPackages =

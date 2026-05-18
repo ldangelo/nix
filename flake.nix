@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    catppuccin.url = "github:catppuccin/nix";
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -29,6 +28,8 @@
 
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
     sops-nix.url = "github:Mic92/sops-nix";
+
+    catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ... }:
@@ -102,6 +103,18 @@
               pi-agent.enable = true;
               pi-agent.skills = [
                 ./modules/home-manager/pi-extensions/obsidian
+              ];
+              pi-agent.extensions = [
+                ./modules/home-manager/pi-extensions/permission-gate.ts
+                ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                ./modules/home-manager/pi-extensions/notify.ts
+                ./modules/home-manager/pi-extensions/protected-paths.ts
+                ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                ./modules/home-manager/pi-extensions/model-status.ts
+                ./modules/home-manager/pi-extensions/handoff.ts
+                ./modules/home-manager/pi-extensions/todo.ts
+                ./modules/home-manager/pi-extensions/bookmark.ts
               ];
               pi-agent.settings = {
                 lastChangelogVersion = "0.72.1";
@@ -245,6 +258,18 @@
                 pi-agent.skills = [
                   ./modules/home-manager/pi-extensions/obsidian
                 ];
+                pi-agent.extensions = [
+                  ./modules/home-manager/pi-extensions/permission-gate.ts
+                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                  ./modules/home-manager/pi-extensions/notify.ts
+                  ./modules/home-manager/pi-extensions/protected-paths.ts
+                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                  ./modules/home-manager/pi-extensions/model-status.ts
+                  ./modules/home-manager/pi-extensions/handoff.ts
+                  ./modules/home-manager/pi-extensions/todo.ts
+                  ./modules/home-manager/pi-extensions/bookmark.ts
+                ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-mcp-adapter"
@@ -328,7 +353,6 @@
               overlays = common-overlays;
             };
             modules = [
-              catppuccin.homeModules.catppuccin
               ./modules/linux/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
               ({ pkgs, ... }:
@@ -374,6 +398,18 @@
                 ];
                 pi-agent.skills = [
                   ./modules/home-manager/pi-extensions/obsidian
+                ];
+                pi-agent.extensions = [
+                  ./modules/home-manager/pi-extensions/permission-gate.ts
+                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                  ./modules/home-manager/pi-extensions/notify.ts
+                  ./modules/home-manager/pi-extensions/protected-paths.ts
+                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                  ./modules/home-manager/pi-extensions/model-status.ts
+                  ./modules/home-manager/pi-extensions/handoff.ts
+                  ./modules/home-manager/pi-extensions/todo.ts
+                  ./modules/home-manager/pi-extensions/bookmark.ts
                 ];
                 pi-agent.mcpConfig = {
                   settings = {
