@@ -173,6 +173,7 @@
                     models = [
                       { id = "openclaw";        name = "OpenClaw / Coding Default (Qwen Coder INT4 via LiteLLM)";    reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       { id = "coding";          name = "Coding Default (Qwen Coder INT4 via LiteLLM)";               reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                      { id = "coding-glm";      name = "Coding GLM (GLM-4.5-Air AWQ via LiteLLM)";                   reasoning = true;  input = [ "text" ];         contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       { id = "coding-hard";     name = "Coding Hard / Architecture (Qwen 122B INT4 via LiteLLM)";    reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       { id = "coding-long";     name = "Coding Long 64k (Qwen Coder INT4 via LiteLLM)";              reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                       { id = "research";        name = "Research Default (Qwen 122B INT4 via LiteLLM)";              reasoning = true;  input = [ "text" ];         contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
@@ -316,6 +317,7 @@
                       models = [
                         { id = "openclaw"; name = "OpenClaw / Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "coding"; name = "Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding-glm"; name = "Coding GLM (GLM-4.5-Air AWQ via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "coding-hard"; name = "Coding Hard / Architecture (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "research"; name = "Research Default (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "research-deep"; name = "Research Deep (Nemotron Super 120B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
@@ -444,6 +446,7 @@
                       models = [
                         { id = "openclaw"; name = "OpenClaw / Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "coding"; name = "Coding Default (Qwen Coder INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
+                        { id = "coding-glm"; name = "Coding GLM (GLM-4.5-Air AWQ via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 32768; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "coding-hard"; name = "Coding Hard / Architecture (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "research"; name = "Research Default (Qwen 122B INT4 via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
                         { id = "research-deep"; name = "Research Deep (Nemotron Super 120B via LiteLLM)"; reasoning = true; input = ["text"]; contextWindow = 65536; maxTokens = 4096; cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; }; }
