@@ -48,3 +48,6 @@ windsurf.mcp.json
 # Pi Agent local state (machine-specific)
 .pi/
 pi-agent-config-backup/
+
+# Beads / Dolt files (added by bd init)
+.beads-credential-key
