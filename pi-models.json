@@ -1,0 +1,631 @@
+{
+  "providers": {
+    "litellm": {
+      "baseUrl": "http://gx10-1:14000/v1",
+      "api": "openai-completions",
+      "apiKey": "!bash -lc \"grep -E '^LITELLM_MASTER_KEY=' /home/ldangelo/Docker/dgx-spark_lite-llm_llama-swap_vllm_llama-cpp_ollama/.env | tail -1 | cut -d= -f2-\"",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "supportsStrictMode": false,
+        "supportsUsageInStreaming": true,
+        "maxTokensField": "max_tokens",
+        "thinkingFormat": "qwen-chat-template"
+      },
+      "models": [
+        {
+          "id": "instant",
+          "name": "Instant \u2014 Nemotron Nano 4B via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 1024,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "fast-chat",
+          "name": "Fast Chat \u2014 Nemotron Nano 4B via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 1024,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "fast-chat-30b",
+          "name": "Fast Chat 30B \u2014 Nemotron Nano 30B via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "openclaw",
+          "name": "OpenClaw \u2014 Qwen3.6 35B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "openclaw-default",
+          "name": "OpenClaw Default \u2014 Qwen3.6 35B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "coding",
+          "name": "Coding \u2014 Qwen3.6 35B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "coding-fast",
+          "name": "Coding Fast \u2014 Qwen3.6 35B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "coding-long",
+          "name": "Coding Long \u2014 Qwen3.6 35B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "coding-xl",
+          "name": "Coding XL \u2014 Qwen3.6 35B 128k via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "long-context"
+          ]
+        },
+        {
+          "id": "coding-hard",
+          "name": "Coding Hard \u2014 Qwen3.5 122B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "coding-glm",
+          "name": "Coding GLM \u2014 GLM-4.5-Air via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "contender"
+          ]
+        },
+        {
+          "id": "coding-glm-mtp",
+          "name": "Coding GLM MTP \u2014 GLM-4.5-Air MTP via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "contender"
+          ]
+        },
+        {
+          "id": "coding-glm-draft9b",
+          "name": "Coding GLM Draft9B \u2014 GLM-4.5-Air + draft model via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "draft",
+            "contender"
+          ]
+        },
+        {
+          "id": "coding-deepseek",
+          "name": "Coding DeepSeek \u2014 DeepSeek Coder V2 Lite via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "contender"
+          ]
+        },
+        {
+          "id": "general",
+          "name": "General \u2014 Qwen3.6 35B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "research",
+          "name": "Research \u2014 Qwen3.5 122B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "research-fast",
+          "name": "Research Fast \u2014 Qwen3.6 35B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "research-long",
+          "name": "Research Long \u2014 Qwen3.5 122B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "research-xl",
+          "name": "Research XL \u2014 Qwen3.6 35B 128k via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "long-context"
+          ]
+        },
+        {
+          "id": "research-deep",
+          "name": "Research Deep \u2014 Nemotron Super 120B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "vision",
+          "name": "Vision \u2014 Qwen3-VL 30B via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "vision-xl",
+          "name": "Vision XL \u2014 Qwen3-VL 30B via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "long-context"
+          ]
+        },
+        {
+          "id": "multimodal",
+          "name": "Multimodal \u2014 Qwen3-Omni 30B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "multimodal-xl",
+          "name": "Multimodal XL \u2014 Qwen3-Omni 30B via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "long-context"
+          ]
+        },
+        {
+          "id": "uncensored",
+          "name": "Uncensored \u2014 Qwen3.5 35B Uncensored via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "uncensored-xl",
+          "name": "Uncensored XL \u2014 Qwen3.5 35B Uncensored via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "long-context"
+          ]
+        },
+        {
+          "id": "openclaw-draft",
+          "name": "openclaw-draft \u2014 Nemotron-3-Nano-4B-FP8 via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 1024,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "draft"
+          ]
+        },
+        {
+          "id": "coding-draft",
+          "name": "coding-draft \u2014 Nemotron-3-Nano-4B-FP8 via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 1024,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "draft"
+          ]
+        },
+        {
+          "id": "coding-draft-fast",
+          "name": "coding-draft-fast \u2014 Nemotron-3-Nano-4B-FP8 via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 1024,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "draft"
+          ]
+        },
+        {
+          "id": "coding-draft-deepseek",
+          "name": "coding-draft-deepseek \u2014 DeepSeek-Coder-V2-Lite-Instruct-AWQ via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "draft",
+            "contender"
+          ]
+        },
+        {
+          "id": "coding-draft-hybrid",
+          "name": "coding-draft-hybrid \u2014 Qwen3.6-35B-A3B-FP8 via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "draft"
+          ]
+        },
+        {
+          "id": "research-draft",
+          "name": "research-draft \u2014 Qwen3.6-35B-A3B-FP8 via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 2048,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "draft"
+          ]
+        },
+        {
+          "id": "claude-3-5-sonnet-20241022",
+          "name": "claude-3-5-sonnet-20241022 \u2014 Qwen3-Coder-Next-int4-AutoRound via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 128000,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "claude-sonnet-4-20250514",
+          "name": "claude-sonnet-4-20250514 \u2014 Qwen3-Coder-Next-int4-AutoRound via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 128000,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "qwen-3-coder-30b-fp8",
+          "name": "qwen-3-coder-30b-fp8 \u2014 Qwen3-Coder-Next-int4-AutoRound via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 128000,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        }
+      ]
+    }
+  }
+}
