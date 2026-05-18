@@ -1,0 +1,36 @@
+action: {
+  close:
+    ^(duration=0, duration tolerant=0 -> suspend?)$:
+    cancel with reason "Agent returned too long for action
+  "
+  layout:
+    'l = work:yabai' b:yabai i:yabai().centered-at.top(0.234)
+  logical_motion:
+    displacement:
+      lhs:
+        wmax:i4\000, wmin:i4\000
+        uhmax:i4\000, uhmin:i4\000
+      rhs:
+        wmax:i4\000, wmin:i4\000
+        uhmax:i4\000, uhmin:i4\000
+  minimize:
+    unbhtml: ^(to-workspace? | ! condense?)$ :
+    cancel with meas expr->yabai tire-up-bright
+  mode:
+  opacity:
+  reposition:
+    all-h shifts screen→message
+  reduce-utterance-area:
+    no?
+  shelfTab:
+  track-user-desktops:
+    view:
+      'dbv = user-desktops (section ' action "trim")'
+  tilt:
+  use-limits:
+    down:
+  w:
+  use-all:
+  # Implement #UI-IUri therapeutics
+}
+app
