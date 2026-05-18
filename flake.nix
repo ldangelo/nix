@@ -355,6 +355,7 @@
               overlays = common-overlays;
             };
             modules = [
+              catppuccin.homeModules.catppuccin
               ./modules/linux/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
               ({ pkgs, ... }:
