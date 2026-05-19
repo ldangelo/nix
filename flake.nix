@@ -134,7 +134,7 @@
                   transcriptMaxBytes = 524288;
                 };
               };
-              pi-agent.binTools = with pkgs; [ fd ripgrep nodejs ];
+              pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
               pi-agent.packages = [
                 "npm:pi-powerline-footer"
                 "npm:pi-mcp-adapter"
@@ -215,6 +215,7 @@
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
+                  bun
                 ];
                 pi-agent.skills = [
                   ./modules/home-manager/pi-extensions/obsidian
@@ -319,6 +320,7 @@
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
+                  bun
                 ];
                 pi-agent.skills = [
                   ./modules/home-manager/pi-extensions/obsidian

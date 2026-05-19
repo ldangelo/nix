@@ -14,6 +14,7 @@ let
     ./pi-extensions/semantic-web-research
   ];
   enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
+  piVsCcDir = ./pi-extensions/pi-vs-cc;
 
   installPackageCommands = lib.concatMapStrings (pkg:
   if lib.isString pkg then ''
@@ -105,6 +106,72 @@ in {
           ".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
           ".pi/agent/agents" = { recursive = true; source = ./pi-extensions/subagent/agents; };
           ".pi/agent/prompts" = { recursive = true; source = ./pi-extensions/subagent/prompts; };
+          ".pi/agent/vendor/pi-vs-cc" = { recursive = true; source = piVsCcDir; };
+
+          ".local/bin/pi-chain" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/agent-chain/index.ts" "$@"
+            '';
+          };
+          ".local/bin/pi-team" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/agent-team/index.ts" "$@"
+            '';
+          };
+          ".local/bin/pi-system" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/system-select/index.ts" "$@"
+            '';
+          };
+          ".local/bin/pi-tilldone" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/tilldone/index.ts" "$@"
+            '';
+          };
+          ".local/bin/pi-coms" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/coms/index.ts" "$@"
+            '';
+          };
+          ".local/bin/pi-coms-net" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/coms-net/index.ts" "$@"
+            '';
+          };
+          ".local/bin/pi-coms-net-server" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              if ! command -v bun >/dev/null 2>&1; then
+                echo "bun required for pi-coms-net-server" >&2
+                exit 127
+              fi
+              exec bun "$HOME/.pi/agent/vendor/pi-vs-cc/scripts/coms-net-server.ts" "$@"
+            '';
+          };
+          ".local/bin/pi-vs-cc-agents-init" = {
+            executable = true;
+            text = ''
+              #!/usr/bin/env bash
+              set -euo pipefail
+              target="''${1:-$PWD/.pi/agents}"
+              mkdir -p "$target"
+              cp -R "$HOME/.pi/agent/vendor/pi-vs-cc/agents/." "$target/"
+              echo "Installed Pi agent-chain/team sample agents to $target"
+            '';
+          };
         }
         (builtins.listToAttrs (
           builtins.map (e: {
