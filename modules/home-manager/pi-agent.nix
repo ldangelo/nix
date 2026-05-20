@@ -25,6 +25,9 @@ let
       docker = {
         description = "Docker MCP gateway for Firecrawl, Exa, Context7, Sequential Thinking, and other tools";
         baseUrl = "http://127.0.0.1:3100/mcp";
+        lifecycle = {
+          mode = "keep-alive";
+        };
         headers = {
           Authorization = "Bearer \${MCP_DOCKER_BEARER_TOKEN}";
         };
