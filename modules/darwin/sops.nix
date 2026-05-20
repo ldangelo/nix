@@ -53,4 +53,14 @@
     owner = "ldangelo";
     mode = "0400";
   };
+
+  sops.secrets.litellm_ui_password = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
+
+  sops.secrets.litellm_master_key = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
 }

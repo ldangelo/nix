@@ -3,7 +3,7 @@
     "litellm": {
       "baseUrl": "http://gx10-1:14000/v1",
       "api": "openai-completions",
-      "apiKey": "!bash -lc \"grep -E '^LITELLM_MASTER_KEY=' /home/ldangelo/Docker/dgx-spark_lite-llm_llama-swap_vllm_llama-cpp_ollama/.env | tail -1 | cut -d= -f2-\"",
+      "apiKey": "!bash -lc \"cat /run/secrets/litellm_master_key\"",
       "compat": {
         "supportsDeveloperRole": false,
         "supportsReasoningEffort": false,

@@ -13,6 +13,8 @@
     export OPENAI_API_KEY="$(cat /run/secrets/openai_api_key 2>/dev/null || echo "")"
     export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
     export MINIMAX_API_KEY="$(cat /run/secrets/minimax_api_key 2>/dev/null || echo "")"
+    export LITELLM_UI_PASSWORD="$(cat /run/secrets/litellm_ui_password 2>/dev/null || echo "")"
+    export LITELLM_MASTER_KEY="$(cat /run/secrets/litellm_master_key 2>/dev/null || echo "")"
   '';
 }
 
