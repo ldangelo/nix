@@ -97,18 +97,21 @@
         {
           "id": "coding",
           "name": "Coding \u2014 Qwen3.6 35B via LiteLLM",
-          "reasoning": true,
+          "reasoning": false,
           "input": [
             "text"
           ],
-          "contextWindow": 131072,
-          "maxTokens": 2048,
+          "contextWindow": 65536,
+          "maxTokens": 4096,
           "cost": {
             "input": 0,
             "output": 0,
             "cacheRead": 0,
             "cacheWrite": 0
-          }
+          },
+          "tags": [
+            "default"
+          ]
         },
         {
           "id": "coding-fast",

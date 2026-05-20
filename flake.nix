@@ -130,6 +130,8 @@
                 powerline.preset = "nerd";
                 workingVibeMode = "file";
                 workingVibe = "off";
+                permissionLevel = "low";
+                permissionMode = "ask";
                 bashMode = {
                   toggleShortcut = "ctrl+shift+b";
                   transcriptMaxLines = 2000;
@@ -193,6 +195,8 @@
                   };
                   workingVibeMode = "file";
                   workingVibe = "off";
+                  permissionLevel = "low";
+                  permissionMode = "ask";
                   bashMode = {
                     toggleShortcut = "ctrl+shift+b";
                     transcriptMaxLines = 2000;
@@ -284,6 +288,8 @@
                   };
                   workingVibeMode = "file";
                   workingVibe = "off";
+                  permissionLevel = "low";
+                  permissionMode = "ask";
                   bashMode = {
                     toggleShortcut = "ctrl+shift+b";
                     transcriptMaxLines = 2000;
