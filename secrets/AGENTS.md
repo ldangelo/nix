@@ -1,3 +1,9 @@
+---
+disclose: always
+summary: Sops-nix encrypted secrets workflow, edit_secrets.sh usage, age key management, and deployed secret paths
+triggers: [secrets, sops, sops-nix, age, edit_secrets, tokens, passwords]
+---
+
 # Secrets Directory AGENTS.md
 
 Sops-nix encrypted secrets. Files here are encrypted at rest.

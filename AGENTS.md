@@ -1,3 +1,9 @@
+---
+disclose: summary
+summary: nix-darwin workstation repo rules, key deploy commands, caveman response style, beads workflow, and mandatory commit/push session protocol
+triggers: [nix, darwin, deploy, home-manager, flakes, overlays, secrets, beads, bd, git, commit, push, caveman]
+---
+
 # nix-darwin System Configuration
 
 Personal macOS system configuration using Nix flakes, nix-darwin, and home-manager for fully declarative system management.

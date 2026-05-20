@@ -1,3 +1,9 @@
+---
+disclose: lazy
+summary: Darwin system configuration guidance for Homebrew, launchd services, macOS defaults, keyboard, networking, and system domains
+triggers: [darwin, macos, homebrew, launchd, services, defaults, keyboard, networking, system]
+---
+
 # system-domains: Updated macOS configuration sections added which were not previously documented.
 
 ## Section Documents

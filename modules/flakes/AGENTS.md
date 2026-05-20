@@ -1,3 +1,9 @@
+---
+disclose: always
+summary: Nix flake input management, adding/updating inputs, and overlay references
+triggers: [flake, flakes, inputs, nixpkgs, update, overlays, just up]
+---
+
 # Flake Inputs
 
 Nix flake inputs — external dependencies pinned and versioned.

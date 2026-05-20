@@ -1,3 +1,9 @@
+---
+disclose: always
+summary: Custom nixpkgs overlay structure, naming conventions, and adding overlay packages
+triggers: [overlays, overlay, nixpkgs, package, sketchybar]
+---
+
 # Package Overlays
 
 Custom nixpkgs package overlays — modify or extend the default package set.

@@ -1,3 +1,9 @@
+---
+disclose: always
+summary: Linux-specific flake and home-manager configuration separate from macOS nix-darwin setup
+triggers: [linux, nixos, nixos-rebuild, home-manager, flake]
+---
+
 # Linux Flake
 
 Linux-specific nix-darwin equivalent configuration. Separate from darwin flake.

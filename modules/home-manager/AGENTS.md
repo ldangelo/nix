@@ -1,3 +1,9 @@
+---
+disclose: always
+summary: Home Manager module structure, user environment conventions, editor config locations, and Pi extension workflow
+triggers: [home-manager, packages, shell, git, nvim, emacs, pi-agent, pi-extensions, dotfiles]
+---
+
 # Home Manager Module AGENTS.md
 
 User environment and dotfiles. Loaded by home-manager.
