@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process';
+function usage(){console.error(`Usage:
+  pi-context7 resolve <library-name>
+  pi-context7 docs <library-id> [--topic <topic>] [--tokens <n>]
+
+Backed by mcporter -> docker.resolve-library-id/get-library-docs MCP tools.`);process.exit(2)}
+function take(a,n,f){const i=a.indexOf(n);if(i<0)return f;if(i===a.length-1)usage();const v=a[i+1];a.splice(i,2);return v}
+function kv(k,v){return `${k}=${typeof v==='string'?v:JSON.stringify(v)}`}
+function call(tool, params, output='markdown'){const args=['docker.'+tool,'--output',output,...Object.entries(params).filter(([,v])=>v!==undefined).map(([k,v])=>kv(k,v))];const r=spawnSync('pi-mcp-call',args,{stdio:'inherit',env:process.env});process.exit(r.status??1)}
+const args=process.argv.slice(2);const cmd=args.shift();
+if(cmd==='resolve'){const libraryName=args.join(' ').trim();if(!libraryName)usage();call('resolve-library-id',{libraryName},'markdown')}
+else if(cmd==='docs'){const context7CompatibleLibraryID=args.shift();if(!context7CompatibleLibraryID)usage();call('get-library-docs',{context7CompatibleLibraryID,topic:take(args,'--topic',undefined),tokens:Number(take(args,'--tokens','10000'))||10000},'markdown')}
+else usage();

@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process';
+function usage(){console.error(`Usage:
+  pi-think "thought text" [--n <current>] [--total <n>] [--done]
+  pi-think --json '<sequentialthinking args json>'
+
+Backed by mcporter -> docker.sequentialthinking MCP tool.`);process.exit(2)}
+function take(a,n,f){const i=a.indexOf(n);if(i<0)return f;if(i===a.length-1)usage();const v=a[i+1];a.splice(i,2);return v}
+function has(a,n){const i=a.indexOf(n);if(i<0)return false;a.splice(i,1);return true}
+function call(params){const args=['docker.sequentialthinking','--output','markdown',...Object.entries(params).filter(([,v])=>v!==undefined).map(([k,v])=>`${k}=${typeof v==='string'?v:JSON.stringify(v)}`)];const r=spawnSync('pi-mcp-call',args,{stdio:'inherit',env:process.env});process.exit(r.status??1)}
+const args=process.argv.slice(2);
+const json=take(args,'--json',undefined);if(json){call(JSON.parse(json))}
+const thoughtNumber=Number(take(args,'--n','1'))||1;
+const totalThoughts=Number(take(args,'--total','3'))||3;
+const done=has(args,'--done');
+const thought=args.join(' ').trim();if(!thought)usage();
+call({thought,thoughtNumber,totalThoughts,nextThoughtNeeded:!done});

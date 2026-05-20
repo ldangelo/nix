@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process';
+function usage(){console.error(`Usage:
+  pi-exa search <query> [--num <n>]
+  pi-exa fetch <url> [url ...] [--max <chars>]
+
+Backed by mcporter -> docker.web_*_exa MCP tools.`);process.exit(2)}
+function take(a,n,f){const i=a.indexOf(n);if(i<0)return f;if(i===a.length-1)usage();const v=a[i+1];a.splice(i,2);return v}
+function kv(k,v){return `${k}=${typeof v==='string'?v:JSON.stringify(v)}`}
+function call(tool, params, output='json'){const args=['docker.'+tool,'--output',output,...Object.entries(params).filter(([,v])=>v!==undefined).map(([k,v])=>kv(k,v))];const r=spawnSync('pi-mcp-call',args,{stdio:'inherit',env:process.env});process.exit(r.status??1)}
+const args=process.argv.slice(2);const cmd=args.shift();
+if(cmd==='search'){const numResults=Number(take(args,'--num','10'))||10;const query=args.join(' ').trim();if(!query)usage();call('web_search_exa',{query,numResults})}
+else if(cmd==='fetch'){const maxCharacters=Number(take(args,'--max','3000'))||3000;if(!args.length)usage();call('web_fetch_exa',{urls:args,maxCharacters},'markdown')}
+else usage();

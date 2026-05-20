@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process';
+
+function usage() {
+  console.error(`Usage:
+  pi-firecrawl scrape <url> [--format markdown|json|links|summary] [--prompt <text>] [--schema <json>] [--wait <ms>]
+  pi-firecrawl search <query> [--limit <n>] [--scrape]
+  pi-firecrawl map <url> [--search <text>] [--limit <n>]
+  pi-firecrawl extract <url> [--prompt <text>] [--schema <json>]
+
+Backed by mcporter -> docker.firecrawl_* MCP tools.`);
+  process.exit(2);
+}
+function take(args, name, fallback) { const i=args.indexOf(name); if(i<0) return fallback; if(i===args.length-1) usage(); const v=args[i+1]; args.splice(i,2); return v; }
+function has(args, name) { const i=args.indexOf(name); if(i<0) return false; args.splice(i,1); return true; }
+function kv(k, v) { return `${k}=${typeof v === 'string' ? v : JSON.stringify(v)}`; }
+function call(tool, params, output='json') {
+  const args = ['docker.' + tool, '--output', output, ...Object.entries(params).filter(([,v]) => v !== undefined).map(([k,v]) => kv(k,v))];
+  const r = spawnSync('pi-mcp-call', args, { stdio: 'inherit', env: process.env });
+  process.exit(r.status ?? 1);
+}
+const args = process.argv.slice(2);
+const cmd = args.shift();
+if (cmd === 'scrape') {
+  const url = args.shift(); if (!url) usage();
+  const format = take(args, '--format', 'markdown');
+  const prompt = take(args, '--prompt', undefined);
+  const schemaRaw = take(args, '--schema', undefined);
+  const waitFor = Number(take(args, '--wait', '0')) || undefined;
+  const jsonOptions = format === 'json' ? { ...(prompt ? {prompt} : {}), ...(schemaRaw ? {schema: JSON.parse(schemaRaw)} : {}) } : undefined;
+  call('firecrawl_scrape', { url, formats: [format], waitFor, jsonOptions }, format === 'markdown' ? 'markdown' : 'json');
+} else if (cmd === 'search') {
+  const limit = Number(take(args, '--limit', '5')) || 5;
+  const scrape = has(args, '--scrape');
+  const query = args.join(' ').trim(); if (!query) usage();
+  call('firecrawl_search', { query, limit, ...(scrape ? { scrapeOptions: { formats: ['markdown'], onlyMainContent: true } } : {}) });
+} else if (cmd === 'map') {
+  const url = args.shift(); if (!url) usage();
+  call('firecrawl_map', { url, search: take(args, '--search', undefined), limit: Number(take(args, '--limit', '50')) || 50 });
+} else if (cmd === 'extract') {
+  const url = args.shift(); if (!url) usage();
+  const prompt = take(args, '--prompt', undefined);
+  const schemaRaw = take(args, '--schema', undefined);
+  call('firecrawl_extract', { urls: [url], prompt, ...(schemaRaw ? { schema: JSON.parse(schemaRaw) } : {}) });
+} else usage();

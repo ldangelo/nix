@@ -12,9 +12,25 @@ let
     ./pi-extensions/caveman-help
     ./pi-extensions/caveman-stats
     ./pi-extensions/semantic-web-research
+    ./pi-extensions/firecrawl-cli
+    ./pi-extensions/exa-cli
+    ./pi-extensions/sequentialthinking-cli
+    ./pi-extensions/context7-cli
   ];
   enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
   piVsCcDir = ./pi-extensions/pi-vs-cc;
+  mcporterConfig = pkgs.writeText "mcporter.json" (makeSettings {
+    "$schema" = "https://raw.githubusercontent.com/openclaw/mcporter/main/mcporter.schema.json";
+    mcpServers = {
+      docker = {
+        description = "Docker MCP gateway for Firecrawl, Exa, Context7, Sequential Thinking, and other tools";
+        baseUrl = "http://127.0.0.1:3100/mcp";
+        headers = {
+          Authorization = "Bearer \${MCP_DOCKER_BEARER_TOKEN}";
+        };
+      };
+    };
+  });
 
   installPackageCommands = lib.concatMapStrings (pkg:
   if lib.isString pkg then ''
@@ -96,12 +112,22 @@ in {
     {
       home.packages = cfg.binTools;
 
-      xdg.configFile."mcp/mcp.json" = lib.mkIf (cfg.mcpConfig != {}) {
-        source = pkgs.writeText "mcp.json" (makeSettings cfg.mcpConfig);
-      };
+      xdg.configFile = lib.mkMerge [
+        (lib.mkIf (cfg.mcpConfig != {}) {
+          "mcp/mcp.json" = {
+            source = pkgs.writeText "mcp.json" (makeSettings cfg.mcpConfig);
+          };
+        })
+        {
+          "mcporter/mcporter.json" = {
+            source = mcporterConfig;
+          };
+        }
+      ];
 
       home.file = lib.mkMerge [
         {
+          ".mcporter/mcporter.json".source = mcporterConfig;
           ".pi/agent/settings.json".source =
             pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
           ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
@@ -165,6 +191,11 @@ in {
               exec bun "$HOME/.pi/agent/vendor/pi-vs-cc/scripts/coms-net-server.ts" "$@"
             '';
           };
+          ".local/bin/pi-mcp-call" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-mcp-call; };
+          ".local/bin/pi-firecrawl" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-firecrawl; };
+          ".local/bin/pi-exa" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-exa; };
+          ".local/bin/pi-context7" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-context7; };
+          ".local/bin/pi-think" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-think; };
           ".local/bin/pi-vs-cc-agents-init" = {
             executable = true;
             text = ''

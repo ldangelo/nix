@@ -156,7 +156,7 @@
                     auth = "bearer";
                     bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
                     lifecycle = "lazy";
-                    directTools = true;
+                    directTools = false;
                   };
                 };
               };
@@ -220,6 +220,7 @@
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
+                  nodejs
                   bun
                 ];
                 pi-agent.skills = [
@@ -263,7 +264,7 @@
                       auth = "bearer";
                       bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
                       lifecycle = "lazy";
-                      directTools = true;
+                      directTools = false;
                     };
                   };
                 };
@@ -327,6 +328,7 @@
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
+                  nodejs
                   bun
                 ];
                 pi-agent.skills = [
@@ -356,7 +358,7 @@
                       auth = "bearer";
                       bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
                       lifecycle = "lazy";
-                      directTools = true;
+                      directTools = false;
                     };
                   };
                 };

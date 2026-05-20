@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+if (!process.env.MCP_DOCKER_BEARER_TOKEN) {
+  const tokenPath = join(process.env.HOME || '', '.docker/mcp/docker-mcp-bearer-token');
+  if (existsSync(tokenPath)) process.env.MCP_DOCKER_BEARER_TOKEN = readFileSync(tokenPath, 'utf8').trim();
+}
+
+const target = process.argv[2];
+if (!target) {
+  console.error('Usage: pi-mcp-call <server.tool> [key=json ...] [--output text|markdown|json|raw]');
+  process.exit(2);
+}
+
+let output = 'json';
+const rest = [];
+for (let i = 3; i < process.argv.length; i++) {
+  if (process.argv[i] === '--output') output = process.argv[++i] || output;
+  else rest.push(process.argv[i]);
+}
+
+const mcporter = spawnSync('bash', ['-lc', 'command -v mcporter || true'], { encoding: 'utf8' }).stdout.trim();
+const cmd = mcporter || 'npx';
+const config = join(process.env.HOME || '', '.config/mcporter/mcporter.json');
+const configArgs = existsSync(config) ? ['--config', config] : [];
+const args = mcporter
+  ? [...configArgs, 'call', target, '--output', output, ...rest]
+  : ['-y', 'mcporter@latest', ...configArgs, 'call', target, '--output', output, ...rest];
+
+const child = spawnSync(cmd, args, { stdio: 'inherit', env: process.env });
+if (child.error) {
+  console.error(`pi-mcp-call: ${child.error.message}`);
+  process.exit(1);
+}
+process.exit(child.status ?? 1);
