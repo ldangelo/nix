@@ -125,6 +125,8 @@
                 packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-mcp-adapter"
+                  "npm:pi-hooks"
+                  "npm:pi-context"
                 ];
                 powerline.preset = "nerd";
                 workingVibeMode = "file";
@@ -202,6 +204,7 @@
                   packages = [
                     "npm:pi-powerline-footer"
                     "npm:pi-mcp-adapter"
+                    "npm:pi-context"
                   ];
                   powerline = {
                     preset = "nerd";
