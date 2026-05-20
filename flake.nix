@@ -124,7 +124,6 @@
                 defaultThinkingLevel = "medium";
                 packages = [
                   "npm:pi-powerline-footer"
-                  "npm:pi-mcp-adapter"
                   "npm:pi-hooks"
                   "npm:pi-context"
                 ];
@@ -140,26 +139,10 @@
               pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
               pi-agent.packages = [
                 "npm:pi-powerline-footer"
-                "npm:pi-mcp-adapter"
                 "npm:pi-hooks"
                 "npm:pi-context"
               ];
-              pi-agent.mcpConfig = {
-                settings = {
-                  toolPrefix = "server";
-                  idleTimeout = 10;
-                  directTools = false;
-                };
-                mcpServers = {
-                  docker = {
-                    url = "http://127.0.0.1:3100/mcp";
-                    auth = "bearer";
-                    bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
-                    lifecycle = "lazy";
-                    directTools = false;
-                  };
-                };
-              };
+              pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
             };
           }
@@ -203,7 +186,6 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
-                    "npm:pi-mcp-adapter"
                     "npm:pi-context"
                   ];
                   powerline = {
@@ -240,7 +222,6 @@
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
-                  "npm:pi-mcp-adapter"
                   "npm:pi-context"
                   {
                     source = "${pkgs.fetchFromGitHub {
@@ -252,22 +233,7 @@
                     extensions = [];
                   }
                 ];
-                pi-agent.mcpConfig = {
-                  settings = {
-                    toolPrefix = "server";
-                    idleTimeout = 10;
-                    directTools = false;
-                  };
-                  mcpServers = {
-                    docker = {
-                      url = "http://127.0.0.1:3100/mcp";
-                      auth = "bearer";
-                      bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
-                      lifecycle = "lazy";
-                      directTools = false;
-                    };
-                  };
-                };
+                pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
               })
               {
@@ -304,7 +270,6 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
-                    "npm:pi-mcp-adapter"
                     "npm:pi-context"
                     {
                       source = "${ensemblePi}/packages/pi";
@@ -346,22 +311,7 @@
                   ./modules/home-manager/pi-extensions/todo.ts
                   ./modules/home-manager/pi-extensions/bookmark.ts
                 ];
-                pi-agent.mcpConfig = {
-                  settings = {
-                    toolPrefix = "server";
-                    idleTimeout = 10;
-                    directTools = false;
-                  };
-                  mcpServers = {
-                    docker = {
-                      url = "http://127.0.0.1:3100/mcp";
-                      auth = "bearer";
-                      bearerTokenEnv = "MCP_DOCKER_BEARER_TOKEN";
-                      lifecycle = "lazy";
-                      directTools = false;
-                    };
-                  };
-                };
+                pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
               })
             ];
