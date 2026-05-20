@@ -30,6 +30,11 @@
     sops-nix.url = "github:Mic92/sops-nix";
 
     catppuccin.url = "github:catppuccin/nix";
+
+    pi-context = {
+      url = "github:ttttmr/pi-context/d5b69f05e376152b0692be15507fcae9aa286969";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ... }:
@@ -115,6 +120,7 @@
                 ./modules/home-manager/pi-extensions/handoff.ts
                 ./modules/home-manager/pi-extensions/todo.ts
                 ./modules/home-manager/pi-extensions/bookmark.ts
+                inputs.pi-context.packages.default
               ];
               pi-agent.settings = {
                 lastChangelogVersion = "0.72.1";
@@ -231,6 +237,7 @@
                   ./modules/home-manager/pi-extensions/handoff.ts
                   ./modules/home-manager/pi-extensions/todo.ts
                   ./modules/home-manager/pi-extensions/bookmark.ts
+                  inputs.pi-context.packages.default
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
@@ -336,6 +343,7 @@
                   ./modules/home-manager/pi-extensions/handoff.ts
                   ./modules/home-manager/pi-extensions/todo.ts
                   ./modules/home-manager/pi-extensions/bookmark.ts
+                  inputs.pi-context.packages.default
                 ];
                 pi-agent.mcpConfig = {
                   settings = {
