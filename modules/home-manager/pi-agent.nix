@@ -138,6 +138,7 @@ in {
           };
           ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
           ".pi/agent/extensions/tokens-per-second.ts".source = ./pi-extensions/tokens-per-second.ts;
+          ".pi/agent/extensions/progressive-context.ts".source = ./pi-extensions/progressive-context.ts;
           ".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
           ".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
           ".pi/agent/agents" = { recursive = true; source = ./pi-extensions/subagent/agents; };
