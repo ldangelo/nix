@@ -10,6 +10,7 @@ let
     ./pi-extensions/caveman-review
     ./pi-extensions/caveman-compress
     ./pi-extensions/caveman-help
+    ./pi-extensions/pi-help
     ./pi-extensions/caveman-stats
     ./pi-extensions/semantic-web-research
     ./pi-extensions/firecrawl-cli
@@ -142,6 +143,10 @@ in {
           ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
           ".pi/agent/extensions/tokens-per-second.ts".source = ./pi-extensions/tokens-per-second.ts;
           ".pi/agent/extensions/progressive-context.ts".source = ./pi-extensions/progressive-context.ts;
+          ".pi/agent/extensions/auto-commit-on-exit.ts".source = ./pi-extensions/auto-commit-on-exit.ts;
+          ".pi/agent/extensions/preset.ts".source = ./pi-extensions/preset.ts;
+          ".pi/agent/extensions/nvim/index.ts".source = ./pi-extensions/nvim/index.ts;
+          ".pi/agent/extensions/poly-notify/notify.json".source = ./pi-extensions/poly-notify/notify.json;
           ".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
           ".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
           ".pi/agent/agents" = { recursive = true; source = ./pi-extensions/subagent/agents; };
@@ -270,6 +275,17 @@ in {
             # Make shell scripts executable
             find "$skillTarget" -name "*.sh" -exec chmod +x {} \;
           done
+        '';
+    })
+
+    (lib.mkIf (builtins.any (e: e == ./pi-extensions/sandbox) cfg.extensions) {
+      home.activation.installSandboxDeps =
+        lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
+          echo "Installing sandbox extension dependencies..."
+          sandboxDir="$HOME/.pi/agent/extensions/sandbox"
+          if [ -d "$sandboxDir" ] && [ -f "$sandboxDir/package.json" ]; then
+            cd "$sandboxDir" && npm install --production 2>/dev/null || true
+          fi
         '';
     })
   ]);

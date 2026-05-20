@@ -109,13 +109,17 @@
                 ./modules/home-manager/pi-extensions/permission-gate.ts
                 ./modules/home-manager/pi-extensions/git-checkpoint.ts
                 ./modules/home-manager/pi-extensions/notify.ts
-                ./modules/home-manager/pi-extensions/protected-paths.ts
                 ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
                 ./modules/home-manager/pi-extensions/confirm-destructive.ts
                 ./modules/home-manager/pi-extensions/model-status.ts
                 ./modules/home-manager/pi-extensions/handoff.ts
                 ./modules/home-manager/pi-extensions/todo.ts
                 ./modules/home-manager/pi-extensions/bookmark.ts
+                ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
+                ./modules/home-manager/pi-extensions/preset.ts
+                ./modules/home-manager/pi-extensions/nvim
+                ./modules/home-manager/pi-extensions/poly-notify
+                ./modules/home-manager/pi-extensions/sandbox
               ];
               pi-agent.settings = {
                 lastChangelogVersion = "0.72.1";
@@ -216,13 +220,17 @@
                   ./modules/home-manager/pi-extensions/permission-gate.ts
                   ./modules/home-manager/pi-extensions/git-checkpoint.ts
                   ./modules/home-manager/pi-extensions/notify.ts
-                  ./modules/home-manager/pi-extensions/protected-paths.ts
                   ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
                   ./modules/home-manager/pi-extensions/confirm-destructive.ts
                   ./modules/home-manager/pi-extensions/model-status.ts
                   ./modules/home-manager/pi-extensions/handoff.ts
                   ./modules/home-manager/pi-extensions/todo.ts
                   ./modules/home-manager/pi-extensions/bookmark.ts
+                  ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
+                  ./modules/home-manager/pi-extensions/preset.ts
+                  ./modules/home-manager/pi-extensions/nvim
+                  ./modules/home-manager/pi-extensions/poly-notify
+                  ./modules/home-manager/pi-extensions/sandbox
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
@@ -309,13 +317,17 @@
                   ./modules/home-manager/pi-extensions/permission-gate.ts
                   ./modules/home-manager/pi-extensions/git-checkpoint.ts
                   ./modules/home-manager/pi-extensions/notify.ts
-                  ./modules/home-manager/pi-extensions/protected-paths.ts
                   ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
                   ./modules/home-manager/pi-extensions/confirm-destructive.ts
                   ./modules/home-manager/pi-extensions/model-status.ts
                   ./modules/home-manager/pi-extensions/handoff.ts
                   ./modules/home-manager/pi-extensions/todo.ts
                   ./modules/home-manager/pi-extensions/bookmark.ts
+                  ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
+                  ./modules/home-manager/pi-extensions/preset.ts
+                  ./modules/home-manager/pi-extensions/nvim
+                  ./modules/home-manager/pi-extensions/poly-notify
+                  ./modules/home-manager/pi-extensions/sandbox
                 ];
                 pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
