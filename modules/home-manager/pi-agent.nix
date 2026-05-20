@@ -21,6 +21,10 @@ let
     pi_cmd=""
     if command -v pi >/dev/null 2>&1; then
       pi_cmd="$(command -v pi)"
+    elif [ -x /opt/homebrew/bin/pi ]; then
+      pi_cmd=/opt/homebrew/bin/pi
+    elif [ -x /usr/local/bin/pi ]; then
+      pi_cmd=/usr/local/bin/pi
     else
       for candidate in "$HOME"/.nvm/versions/node/*/bin/pi; do
         if [ -x "$candidate" ]; then
