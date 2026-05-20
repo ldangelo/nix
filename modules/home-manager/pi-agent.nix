@@ -121,15 +121,21 @@ in {
         {
           "mcporter/mcporter.json" = {
             source = mcporterConfig;
+            force = true;
           };
         }
       ];
 
       home.file = lib.mkMerge [
         {
-          ".mcporter/mcporter.json".source = mcporterConfig;
-          ".pi/agent/settings.json".source =
-            pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
+          ".mcporter/mcporter.json" = {
+            source = mcporterConfig;
+            force = true;
+          };
+          ".pi/agent/settings.json" = {
+            source = pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
+            force = true;
+          };
           ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
           ".pi/agent/extensions/tokens-per-second.ts".source = ./pi-extensions/tokens-per-second.ts;
           ".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
