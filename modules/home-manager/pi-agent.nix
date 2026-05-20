@@ -20,6 +20,9 @@ let
   ];
   enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
   piVsCcDir = ./pi-extensions/pi-vs-cc;
+  sandboxExtension = ./pi-extensions/sandbox;
+  sandboxEnabled = builtins.any (e: e == sandboxExtension) cfg.extensions;
+  managedExtensions = lib.filter (e: e != sandboxExtension) cfg.extensions;
   mcporterConfig = pkgs.writeText "mcporter.json" (makeSettings {
     "$schema" = "https://raw.githubusercontent.com/openclaw/mcporter/main/mcporter.schema.json";
     mcpServers = {
@@ -227,7 +230,7 @@ in {
           builtins.map (e: {
             name = ".pi/agent/extensions/${builtins.baseNameOf (builtins.toString e)}";
             value = { source = e; };
-          }) cfg.extensions
+          }) managedExtensions
         ))
         (lib.mkIf (cfg.models != {}) {
           ".pi/agent/models.json".source =
@@ -278,14 +281,38 @@ in {
         '';
     })
 
-    (lib.mkIf (builtins.any (e: e == ./pi-extensions/sandbox) cfg.extensions) {
+    {
+      home.activation.cleanupPiAgentExtensionBackups =
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          echo "Cleaning stale Pi Agent extension backups..."
+          for backup in \
+            "$HOME/.pi/agent/extensions/nvim.bak" \
+            "$HOME/.pi/agent/extensions/sandbox.bak" \
+            "$HOME/.pi/agent/extensions/poly-notify.bak" \
+            "$HOME/.pi/agent/extensions/auto-commit-on-exit.ts.bak" \
+            "$HOME/.pi/agent/extensions/preset.ts.bak"; do
+            if [ -e "$backup" ]; then
+              chmod -R u+rwX "$backup" 2>/dev/null || true
+              rm -rf "$backup"
+            fi
+          done
+        '';
+    }
+
+    (lib.mkIf sandboxEnabled {
       home.activation.installSandboxDeps =
-        lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiAgentExtensionBackups" "installPiAgentPackages" ] ''
           echo "Installing sandbox extension dependencies..."
           sandboxDir="$HOME/.pi/agent/extensions/sandbox"
-          if [ -d "$sandboxDir" ] && [ -f "$sandboxDir/package.json" ]; then
-            cd "$sandboxDir" && npm install --production 2>/dev/null || true
+          if [ -L "$sandboxDir" ] || [ -e "$sandboxDir" ]; then
+            chmod -R u+rwX "$sandboxDir" 2>/dev/null || true
+            rm -rf "$sandboxDir"
           fi
+          mkdir -p "$sandboxDir"
+          cp -R "${sandboxExtension}"/. "$sandboxDir"/
+          chmod -R u+rwX "$sandboxDir"
+          cd "$sandboxDir"
+          npm install --omit=dev
         '';
     })
   ]);
