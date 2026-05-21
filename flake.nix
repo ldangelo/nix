@@ -106,7 +106,6 @@
                 ./modules/home-manager/pi-extensions/obsidian
               ];
               pi-agent.extensions = [
-                ./modules/home-manager/pi-extensions/permission-gate.ts
                 ./modules/home-manager/pi-extensions/git-checkpoint.ts
                 ./modules/home-manager/pi-extensions/notify.ts
                 ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
@@ -224,7 +223,6 @@
                   ./modules/home-manager/pi-extensions/obsidian
                 ];
                 pi-agent.extensions = [
-                  ./modules/home-manager/pi-extensions/permission-gate.ts
                   ./modules/home-manager/pi-extensions/git-checkpoint.ts
                   ./modules/home-manager/pi-extensions/notify.ts
                   ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
@@ -325,7 +323,6 @@
                   ./modules/home-manager/pi-extensions/obsidian
                 ];
                 pi-agent.extensions = [
-                  ./modules/home-manager/pi-extensions/permission-gate.ts
                   ./modules/home-manager/pi-extensions/git-checkpoint.ts
                   ./modules/home-manager/pi-extensions/notify.ts
                   ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
