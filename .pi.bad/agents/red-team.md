@@ -1,0 +1,1 @@
+/nix/store/6niph6r76wxy55684d59byachgglj5yr-home-manager-files/.pi/agent/vendor/pi-vs-cc/agents/red-team.md
