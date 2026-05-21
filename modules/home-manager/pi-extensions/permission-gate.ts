@@ -12,6 +12,7 @@ export default function (pi: ExtensionAPI) {
 
 	const whitelist = [
 		/darwin-rebuild switch --flake/, // nix-darwin deploy
+		/sudo.*darwin-rebuild/,         // nix-darwin deploy via sudo prefix
 	];
 
 	pi.on("tool_call", async (event, ctx) => {
