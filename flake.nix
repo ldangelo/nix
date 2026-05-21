@@ -120,6 +120,7 @@
                 ./modules/home-manager/pi-extensions/nvim
                 ./modules/home-manager/pi-extensions/poly-notify
                 ./modules/home-manager/pi-extensions/sandbox
+                ./modules/home-manager/pi-extensions/auto-active-skills.ts
               ];
               pi-agent.settings = {
                 lastChangelogVersion = "0.72.1";
@@ -141,6 +142,9 @@
                   transcriptMaxLines = 2000;
                   transcriptMaxBytes = 524288;
                 };
+                skills = [
+                  "/Users/ldangelo/nix/.agents/skills"
+                ];
               };
               pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
               pi-agent.packages = [
@@ -206,7 +210,10 @@
                     transcriptMaxLines = 2000;
                     transcriptMaxBytes = 524288;
                   };
-                };
+                skills = [
+                  "/Users/ldangelo/nix/.agents/skills"
+                ];
+              };
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
@@ -231,6 +238,7 @@
                   ./modules/home-manager/pi-extensions/nvim
                   ./modules/home-manager/pi-extensions/poly-notify
                   ./modules/home-manager/pi-extensions/sandbox
+                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
@@ -303,7 +311,10 @@
                     transcriptMaxLines = 2000;
                     transcriptMaxBytes = 524288;
                   };
-                };
+                skills = [
+                  "/Users/ldangelo/nix/.agents/skills"
+                ];
+              };
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
@@ -328,6 +339,7 @@
                   ./modules/home-manager/pi-extensions/nvim
                   ./modules/home-manager/pi-extensions/poly-notify
                   ./modules/home-manager/pi-extensions/sandbox
+                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
                 ];
                 pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
