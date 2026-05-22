@@ -41,6 +41,7 @@ in {
       eza
       fasd
       fd
+      zoxide
       git-lfs
       htop
       jq
