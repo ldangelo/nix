@@ -48,7 +48,7 @@ let
       if [ ! -f "$HOME/.pi/agent/npm/package.json" ]; then
         printf '{"name":"pi-extensions","private":true,"dependencies":{}}\n' > "$HOME/.pi/agent/npm/package.json"
       fi
-      npm --prefix "$HOME/.pi/agent/npm" install "$npm_pkg"
+      ${pkgs.nodejs}/bin/npm --prefix "$HOME/.pi/agent/npm" install "$npm_pkg"
     else
       pi_cmd=""
       if command -v pi >/dev/null 2>&1; then
@@ -276,7 +276,7 @@ in {
         lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
           pi_context="$HOME/.pi/agent/npm/node_modules/pi-context/src/index.ts"
           if [ -f "$pi_context" ] && ! grep -q "auto-enable ACM on session start" "$pi_context"; then
-            python3 - "$pi_context" <<'PY'
+            ${pkgs.python3}/bin/python3 - "$pi_context" <<'PY'
 import pathlib, sys
 path = pathlib.Path(sys.argv[1])
 text = path.read_text()
@@ -357,7 +357,7 @@ PY
           cp -R "${sandboxExtension}"/. "$sandboxDir"/
           chmod -R u+rwX "$sandboxDir"
           cd "$sandboxDir"
-          npm install --omit=dev
+          ${pkgs.nodejs}/bin/npm install --omit=dev
         '';
     })
   ]);
