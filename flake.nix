@@ -165,6 +165,13 @@
             # pi-agent config moved to home-manager only
           };
 
+          "Sunstone-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+            system = "aarch64-darwin";
+            modules = darwinModules;
+            specialArgs = { inherit inputs; isWorkstation = true; };
+            # pi-agent config moved to home-manager only
+          };
+
           "Leos-Mac-mini" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             modules = darwinModules;
