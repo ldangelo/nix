@@ -41,27 +41,37 @@ let
 
   installPackageCommands = lib.concatMapStrings (pkg:
   if lib.isString pkg then ''
-    pi_cmd=""
-    if command -v pi >/dev/null 2>&1; then
-      pi_cmd="$(command -v pi)"
-    elif [ -x /opt/homebrew/bin/pi ]; then
-      pi_cmd=/opt/homebrew/bin/pi
-    elif [ -x /usr/local/bin/pi ]; then
-      pi_cmd=/usr/local/bin/pi
+    pkg=${lib.escapeShellArg pkg}
+    if [[ "$pkg" == npm:* ]]; then
+      npm_pkg="''${pkg#npm:}"
+      mkdir -p "$HOME/.pi/agent/npm"
+      if [ ! -f "$HOME/.pi/agent/npm/package.json" ]; then
+        printf '{"name":"pi-extensions","private":true,"dependencies":{}}\n' > "$HOME/.pi/agent/npm/package.json"
+      fi
+      npm --prefix "$HOME/.pi/agent/npm" install "$npm_pkg"
     else
-      for candidate in "$HOME"/.nvm/versions/node/*/bin/pi; do
-        if [ -x "$candidate" ]; then
-          pi_cmd="$candidate"
-          break
-        fi
-      done
-    fi
+      pi_cmd=""
+      if command -v pi >/dev/null 2>&1; then
+        pi_cmd="$(command -v pi)"
+      elif [ -x /opt/homebrew/bin/pi ]; then
+        pi_cmd=/opt/homebrew/bin/pi
+      elif [ -x /usr/local/bin/pi ]; then
+        pi_cmd=/usr/local/bin/pi
+      else
+        for candidate in "$HOME"/.nvm/versions/node/*/bin/pi; do
+          if [ -x "$candidate" ]; then
+            pi_cmd="$candidate"
+            break
+          fi
+        done
+      fi
 
-    if [ -n "$pi_cmd" ]; then
-      export PATH="$(dirname "$pi_cmd"):$PATH"
-      "$pi_cmd" install ${lib.escapeShellArg pkg}
-    else
-      echo "pi not found; skipping package ${lib.escapeShellArg pkg}"
+      if [ -n "$pi_cmd" ]; then
+        export PATH="$(dirname "$pi_cmd"):$PATH"
+        "$pi_cmd" install "$pkg"
+      else
+        echo "pi not found; skipping package $pkg"
+      fi
     fi
   '' else "") cfg.packages;
 in {
@@ -260,6 +270,41 @@ in {
           ${installPackageCommands}
         '';
     })
+
+    {
+      home.activation.patchPiContextAutoAcm =
+        lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
+          pi_context="$HOME/.pi/agent/npm/node_modules/pi-context/src/index.ts"
+          if [ -f "$pi_context" ] && ! grep -q "auto-enable ACM on session start" "$pi_context"; then
+            python3 - "$pi_context" <<'PY'
+import pathlib, sys
+path = pathlib.Path(sys.argv[1])
+text = path.read_text()
+needle = "export default function (pi: ExtensionAPI) {\n"
+insert = "\n".join([
+    "export default function (pi: ExtensionAPI) {",
+    "    // auto-enable ACM on session start (Nix managed)",
+    "    pi.on(\"session_start\", async (_event, ctx) => {",
+    "        CommandCtx = ctx as unknown as ExtensionCommandContext;",
+    "        if (_event.reason === \"startup\" || _event.reason === \"new\" || _event.reason === \"resume\" || _event.reason === \"fork\") {",
+    "            pi.sendMessage({",
+    "                customType: \"pi-context\",",
+    "                content: \"use context-management skill\",",
+    "                display: false,",
+    "            }, {",
+    "                deliverAs: \"followUp\"",
+    "            });",
+    "        }",
+    "    });",
+    "",
+])
+if needle not in text:
+    raise SystemExit("pi-context patch target not found")
+path.write_text(text.replace(needle, insert, 1))
+PY
+          fi
+        '';
+    }
 
     (lib.mkIf (enabledSkills != []) {
       home.activation.installPiAgentSkills =

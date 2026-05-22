@@ -129,6 +129,7 @@
                 packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-hooks"
+                  "npm:pi-context"
                 ];
                 powerline.preset = "nerd";
                 workingVibeMode = "file";
@@ -148,6 +149,7 @@
               pi-agent.packages = [
                 "npm:pi-powerline-footer"
                 "npm:pi-hooks"
+                "npm:pi-context"
               ];
               pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
@@ -193,6 +195,8 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
+                    "npm:pi-hooks"
+                    "npm:pi-context"
                   ];
                   powerline = {
                     preset = "nerd";
@@ -237,6 +241,8 @@
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
+                  "npm:pi-hooks"
+                  "npm:pi-context"
                   {
                     source = "${pkgs.fetchFromGitHub {
                       owner = "FortiumPartners";
@@ -284,6 +290,8 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
+                    "npm:pi-hooks"
+                    "npm:pi-context"
                     {
                       source = "${ensemblePi}/packages/pi";
                       # Ensemble currently ships an ask_user extension. We provide
@@ -332,6 +340,11 @@
                   ./modules/home-manager/pi-extensions/poly-notify
                   ./modules/home-manager/pi-extensions/sandbox
                   ./modules/home-manager/pi-extensions/auto-active-skills.ts
+                ];
+                pi-agent.packages = [
+                  "npm:pi-powerline-footer"
+                  "npm:pi-hooks"
+                  "npm:pi-context"
                 ];
                 pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);

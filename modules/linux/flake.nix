@@ -50,6 +50,8 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
+                    "npm:pi-hooks"
+                    "npm:pi-context"
                     "npm:pi-mcp-adapter"
                     {
                       source = "${ensemblePi}/packages/pi";
@@ -76,6 +78,8 @@
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
+                  "npm:pi-hooks"
+                  "npm:pi-context"
                   "npm:pi-mcp-adapter"
                 ];
                 pi-agent.mcpConfig = {
