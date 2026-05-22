@@ -129,7 +129,6 @@
                 packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-hooks"
-                  "npm:pi-context"
                 ];
                 powerline.preset = "nerd";
                 workingVibeMode = "file";
@@ -149,7 +148,6 @@
               pi-agent.packages = [
                 "npm:pi-powerline-footer"
                 "npm:pi-hooks"
-                "npm:pi-context"
               ];
               pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
@@ -195,7 +193,6 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
-                    "npm:pi-context"
                   ];
                   powerline = {
                     preset = "nerd";
@@ -240,7 +237,6 @@
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
-                  "npm:pi-context"
                   {
                     source = "${pkgs.fetchFromGitHub {
                       owner = "FortiumPartners";
@@ -288,7 +284,6 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
-                    "npm:pi-context"
                     {
                       source = "${ensemblePi}/packages/pi";
                       # Ensemble currently ships an ask_user extension. We provide

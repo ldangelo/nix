@@ -1,22 +1,18 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
-  // Auto-enable ACM (Agentic Context Management) on session startup.
-  // /acm is the pi-context command that both binds command context (needed by
-  // context_checkout) and queues the context-management skill load. A custom
-  // hidden message only told the model to use the skill; it did not enable ACM.
-  pi.on("session_start", async (event) => {
-    if (event.reason === "reload") return;
-
-    pi.sendUserMessage("/acm", {
-      deliverAs: "followUp",
-    });
-  });
-
-  // Inject caveman mode instructions into system prompt
+  // Keep ACM instructions active without sending `/acm` as a user prompt.
+  // Extension-generated user messages bypass slash-command handling in API/RPC
+  // sessions, so `pi.sendUserMessage("/acm")` leaks to the model as literal text.
   pi.on("before_agent_start", async (event) => {
     return {
-      systemPrompt: event.systemPrompt + `\n\n--- CAVEMAN MODE ---
+      systemPrompt: event.systemPrompt + `\n\n--- AGENTIC CONTEXT MANAGEMENT ---
+Use pi-context proactively when useful:
+- call context_log at task start or when context feels noisy
+- call context_tag before risky work and at stable milestones
+- call context_checkout only if ACM has been enabled by the interactive /acm command
+
+--- CAVEMAN MODE ---
 Always communicate in ultra-compressed style:
 - Short sentences, direct statements, no fluff
 - Skip pleasantries, filler words, and unnecessary transitions
