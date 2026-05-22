@@ -1,13 +1,14 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
-  // Auto-enable ACM (Agentic Context Management) on every session start
-  pi.on("session_start", async (_event, ctx) => {
-    pi.sendMessage({
-      customType: "pi-context",
-      content: "use context-management skill",
-      display: false,
-    }, {
+  // Auto-enable ACM (Agentic Context Management) on session startup.
+  // /acm is the pi-context command that both binds command context (needed by
+  // context_checkout) and queues the context-management skill load. A custom
+  // hidden message only told the model to use the skill; it did not enable ACM.
+  pi.on("session_start", async (event) => {
+    if (event.reason === "reload") return;
+
+    pi.sendUserMessage("/acm", {
       deliverAs: "followUp",
     });
   });
