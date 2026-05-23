@@ -119,7 +119,6 @@
                 ./modules/home-manager/pi-extensions/preset.ts
                 ./modules/home-manager/pi-extensions/nvim
                 ./modules/home-manager/pi-extensions/poly-notify
-                ./modules/home-manager/pi-extensions/sandbox
                 ./modules/home-manager/pi-extensions/auto-active-skills.ts
               ];
               pi-agent.settings = {
@@ -131,6 +130,13 @@
                   "npm:pi-powerline-footer"
                   "npm:pi-hooks"
                   "npm:pi-context"
+                  {
+                    source = "/Users/ldangelo/Development/Fortium/ensemble/packages/pi";
+                    # Ensemble currently ships an ask_user extension. We provide
+                    # a Pi-version-compatible ask_user extension separately to
+                    # avoid duplicate/conflicting tool registration.
+                    extensions = [];
+                  }
                 ];
                 powerline.preset = "nerd";
                 workingVibeMode = "file";
@@ -151,6 +157,7 @@
                 "npm:pi-powerline-footer"
                 "npm:pi-hooks"
                 "npm:pi-context"
+                "/Users/ldangelo/Development/Fortium/ensemble/packages/pi"
               ];
               pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
@@ -245,7 +252,6 @@
                   ./modules/home-manager/pi-extensions/preset.ts
                   ./modules/home-manager/pi-extensions/nvim
                   ./modules/home-manager/pi-extensions/poly-notify
-                  ./modules/home-manager/pi-extensions/sandbox
                   ./modules/home-manager/pi-extensions/auto-active-skills.ts
                 ];
                 pi-agent.packages = [
@@ -348,13 +354,13 @@
                   ./modules/home-manager/pi-extensions/preset.ts
                   ./modules/home-manager/pi-extensions/nvim
                   ./modules/home-manager/pi-extensions/poly-notify
-                  ./modules/home-manager/pi-extensions/sandbox
                   ./modules/home-manager/pi-extensions/auto-active-skills.ts
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-hooks"
                   "npm:pi-context"
+                  "${ensemblePi}/packages/pi"
                 ];
                 pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
