@@ -30,6 +30,7 @@ After running `darwin-rebuild switch`, secrets will be available at:
 - `/run/secrets/github/token` - GitHub token
 - `~/.ssh/id_ed25519` - SSH private key, when `ssh.id_ed25519` exists
 - `~/.ssh/id_ed25519.pub` - SSH public key, when `ssh.id_ed25519_pub` exists
+- `~/.ssh/authorized_keys` - updated with the shared public key between Nix-managed markers
 
 ## Adding New Secrets
 
@@ -73,4 +74,5 @@ After running `darwin-rebuild switch`, secrets will be available at:
 - Never commit unencrypted secrets
 - Keep your age keys and SSH private keys secure
 - New machines still need a sops decryption key first; after that, Home Manager can deploy SSH keys into `~/.ssh`
+- Managed machines that receive `ssh.id_ed25519_pub` will also accept the matching private key for inbound SSH
 - The `.gitignore` is configured to only allow encrypted files
