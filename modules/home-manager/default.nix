@@ -13,6 +13,7 @@
     ./dotfiles
     ./path.nix
     ./shell.nix
+    ./ssh.nix
     ./user.nix
     ./alias.nix
     ./nix-search-tv.nix

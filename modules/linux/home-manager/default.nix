@@ -15,6 +15,7 @@
     ../../home-manager/dotfiles
     ../../home-manager/path.nix
     ../../home-manager/shell.nix
+    ../../home-manager/ssh.nix
     ../../home-manager/user.nix
     ../../home-manager/alias.nix
     ../../home-manager/nix-search-tv.nix
