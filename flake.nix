@@ -148,6 +148,7 @@
                   transcriptMaxLines = 2000;
                   transcriptMaxBytes = 524288;
                 };
+                httpIdleTimeoutMs = 0;
                 skills = [
                   "/Users/ldangelo/nix/.agents/skills"
                 ];
@@ -226,6 +227,7 @@
                     transcriptMaxLines = 2000;
                     transcriptMaxBytes = 524288;
                   };
+                  httpIdleTimeoutMs = 0;
                 skills = [
                   "/Users/ldangelo/nix/.agents/skills"
                 ];
@@ -328,6 +330,7 @@
                     transcriptMaxLines = 2000;
                     transcriptMaxBytes = 524288;
                   };
+                  httpIdleTimeoutMs = 0;
                 skills = [
                   "/Users/ldangelo/nix/.agents/skills"
                 ];
