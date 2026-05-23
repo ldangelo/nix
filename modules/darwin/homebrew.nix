@@ -12,7 +12,7 @@
 #      "homebrew/bundle"
 #      "homebrew/services"
       "marcus/tap"
-      "d12frosted/emacs-plus"
+#      "d12frosted/emacs-plus"
       "felixkratz/formulae"
       "nikitabobko/tap"
       #      "dicklesworthstone/tap"
@@ -70,14 +70,13 @@
       # https://github.com/marcus/sidecar
 
       # Special packages with build requirements
-      {
-        name = "d12frosted/emacs-plus/emacs-plus@31";
-        args = [
-          "with-imagemagick"
-          "with-mailutils"
-          "with-no-frame-refocus"
-        ];
-      }
+#      {
+#        name = "d12frosted/emacs-plus/emacs-plus@31";
+#        args = [
+#          "with-imagemagick"
+#          "with-mailutils"
+#        ];
+#      }
       # Window/UI management
       "felixkratz/formulae/borders"    # Window border system
       "acsandmann/tap/rift"            # Rust tiling window manager
