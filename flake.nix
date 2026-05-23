@@ -94,6 +94,7 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bak";
             home-manager.sharedModules = [
+              sops-nix.homeManagerModules.sops
               ./modules/home-manager/pi-agent.nix
             ];
             home-manager.users.ldangelo = { pkgs, ... }: {
@@ -189,6 +190,7 @@
             };
             modules = [
               catppuccin.homeModules.catppuccin
+              sops-nix.homeManagerModules.sops
               ./modules/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
               ./overlays
@@ -278,6 +280,7 @@
             };
             modules = [
               catppuccin.homeModules.catppuccin
+              sops-nix.homeManagerModules.sops
               ./modules/linux/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
               ({ pkgs, ... }:

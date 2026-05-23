@@ -28,6 +28,8 @@ This will open your default editor (set via `$EDITOR` or defaults to vim) with t
 After running `darwin-rebuild switch`, secrets will be available at:
 
 - `/run/secrets/github/token` - GitHub token
+- `~/.ssh/id_ed25519` - SSH private key, when `ssh.id_ed25519` exists
+- `~/.ssh/id_ed25519.pub` - SSH public key, when `ssh.id_ed25519_pub` exists
 
 ## Adding New Secrets
 
@@ -40,6 +42,13 @@ After running `darwin-rebuild switch`, secrets will be available at:
    ```yaml
    github:
      token: ghp_your_token_here
+
+   ssh:
+     id_ed25519: |
+       -----BEGIN OPENSSH PRIVATE KEY-----
+       your-private-key-here
+       -----END OPENSSH PRIVATE KEY-----
+     id_ed25519_pub: ssh-ed25519 your-public-key-here
 
    api:
      key: your_api_key_here
@@ -63,4 +72,5 @@ After running `darwin-rebuild switch`, secrets will be available at:
 - The encrypted `secrets.yaml` file is safe to commit to git
 - Never commit unencrypted secrets
 - Keep your age keys and SSH private keys secure
+- New machines still need a sops decryption key first; after that, Home Manager can deploy SSH keys into `~/.ssh`
 - The `.gitignore` is configured to only allow encrypted files
