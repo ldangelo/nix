@@ -172,7 +172,6 @@
 #      "hookmark"               # Link and retrieve info
       # iterm2/itermai/wezterm moved to common casks above
       "jetbrains-toolbox"
-      "karabiner-elements"     # Keyboard customizer
       "launchcontrol"          # Service manager
       "lens"                   # Kubernetes IDE
 #      "limitless"              # AI transcription
