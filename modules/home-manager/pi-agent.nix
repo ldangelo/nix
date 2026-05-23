@@ -48,7 +48,7 @@ let
       if [ ! -f "$HOME/.pi/agent/npm/package.json" ]; then
         printf '{"name":"pi-extensions","private":true,"dependencies":{}}\n' > "$HOME/.pi/agent/npm/package.json"
       fi
-      ${pkgs.nodejs}/bin/npm --prefix "$HOME/.pi/agent/npm" install "$npm_pkg"
+      PATH="${pkgs.nodejs}/bin:$PATH" ${pkgs.nodejs}/bin/npm --prefix "$HOME/.pi/agent/npm" install "$npm_pkg"
     else
       pi_cmd=""
       if command -v pi >/dev/null 2>&1; then

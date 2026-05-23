@@ -1,6 +1,9 @@
 # just is a command runner, Justfile is very similar to Makefile, but simpler.
 
-set shell := ["bash", "-lc"]
+# Use a non-login shell. macOS Terminal's /etc/bashrc_Apple_Terminal
+# emits "Saving/Restored session" lines on login shells, which
+# contaminate backtick captures like `uname -s` below.
+set shell := ["bash", "-c"]
 
 # Detect operating system
 os := `uname -s`
