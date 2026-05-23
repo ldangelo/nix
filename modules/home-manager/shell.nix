@@ -82,6 +82,20 @@ in {
       fi
     '';
 
+    loginExtra = ''
+      # Attach to tmux on login shells while avoiding nested/non-TTY sessions.
+      if [[ -o interactive ]] \
+        && [[ -z "$TMUX" ]] \
+        && [[ -z "$INSIDE_EMACS" ]] \
+        && [[ "$TERM" != "dumb" ]] \
+        && [[ "$AUTO_TMUX" != "0" ]] \
+        && [[ -t 0 && -t 1 ]] \
+        && command -v tmux >/dev/null 2>&1; then
+        tmux attach-session || exec tmux new-session
+        exit
+      fi
+    '';
+
     initContent = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
