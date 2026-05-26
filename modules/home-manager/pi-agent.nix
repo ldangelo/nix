@@ -1,8 +1,62 @@
+# Pi Agent Configuration Module
+#
+# Provides centralized defaults for pi-agent settings, extensions, packages,
+# and skills. Machine-specific config in flake.nix should only override what
+# differs — see each machine's override block for the minimal pattern.
+
 { pkgs, config, lib, ... }:
 
 let
   cfg = config.pi-agent;
   makeSettings = builtins.toJSON;
+
+  # ── Default packages (NPM + local sources) ──────────────────────────────
+  defaultPackages = [
+    "npm:pi-powerline-footer"
+    "npm:pi-hooks"
+    "npm:pi-context"
+    "npm:pi-subagents"
+    "npm:pi-intercom"
+    "npm:context-mode"
+  ];
+
+  # Merge default packages with user-provided packages (dedup).
+  # attrset entries (e.g. { source = "..."; extensions = []; }) are also included.
+  mergedPackages = defaultPackages ++ cfg.packages;
+
+  # ── Default settings ────────────────────────────────────────────────────
+  defaultSettings = {
+    lastChangelogVersion = "0.72.1";
+    defaultProvider = "litellm";
+    defaultModel = "coding";
+    defaultThinkingLevel = "medium";
+    packages = mergedPackages;
+    powerline = { preset = "nerd"; };
+    workingVibeMode = "file";
+    workingVibe = "off";
+    permissionLevel = "low";
+    permissionMode = "ask";
+    bashMode = {
+      toggleShortcut = "ctrl+shift+b";
+      transcriptMaxLines = 2000;
+      transcriptMaxBytes = 524288;
+    };
+  };
+
+  # Build final settings: merge defaults with machine overrides.
+  # Only the "packages" field needs special handling (append user packages).
+  builtSettings =
+    let
+      # Merge settings: defaults + user overrides, with package list combined
+      merged = defaultSettings // cfg.settings;
+    in
+    merged // {
+      packages = if cfg.settings ? packages
+        then mergedPackages ++ cfg.settings.packages
+        else mergedPackages;
+    };
+
+  # ── Built-in skills ─────────────────────────────────────────────────────
   builtInSkills = [
     ./pi-extensions/cavecrew
     ./pi-extensions/caveman
@@ -19,62 +73,65 @@ let
     ./pi-extensions/context7-cli
   ];
   enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
+
+  # ── Extension sources (hardcoded + user-provided) ──────────────────────
   piVsCcDir = ./pi-extensions/pi-vs-cc;
   sandboxExtension = ./pi-extensions/sandbox;
   sandboxEnabled = builtins.any (e: e == sandboxExtension) cfg.extensions;
   managedExtensions = lib.filter (e: e != sandboxExtension) cfg.extensions;
+
+  # ── MC Porter config ───────────────────────────────────────────────────
   mcporterConfig = pkgs.writeText "mcporter.json" (makeSettings {
     "$schema" = "https://raw.githubusercontent.com/openclaw/mcporter/main/mcporter.schema.json";
     mcpServers = {
       docker = {
         description = "Docker MCP gateway for Firecrawl, Exa, Context7, Sequential Thinking, and other tools";
         baseUrl = "http://127.0.0.1:3100/mcp";
-        lifecycle = {
-          mode = "keep-alive";
-        };
-        headers = {
-          Authorization = "Bearer \${MCP_DOCKER_BEARER_TOKEN}";
-        };
+        lifecycle.mode = "keep-alive";
+        headers.Authorization = "Bearer \${MCP_DOCKER_BEARER_TOKEN}";
       };
     };
   });
 
+  # ── Package installation activation script ──────────────────────────────
   installPackageCommands = lib.concatMapStrings (pkg:
-  if lib.isString pkg then ''
-    pkg=${lib.escapeShellArg pkg}
-    if [[ "$pkg" == npm:* ]]; then
-      npm_pkg="''${pkg#npm:}"
-      mkdir -p "$HOME/.pi/agent/npm"
-      if [ ! -f "$HOME/.pi/agent/npm/package.json" ]; then
-        printf '{"name":"pi-extensions","private":true,"dependencies":{}}\n' > "$HOME/.pi/agent/npm/package.json"
-      fi
-      PATH="${pkgs.nodejs}/bin:$PATH" ${pkgs.nodejs}/bin/npm --prefix "$HOME/.pi/agent/npm" install "$npm_pkg"
-    else
-      pi_cmd=""
-      if command -v pi >/dev/null 2>&1; then
-        pi_cmd="$(command -v pi)"
-      elif [ -x /opt/homebrew/bin/pi ]; then
-        pi_cmd=/opt/homebrew/bin/pi
-      elif [ -x /usr/local/bin/pi ]; then
-        pi_cmd=/usr/local/bin/pi
+    if lib.isString pkg then ''
+      pkg=${lib.escapeShellArg pkg}
+      if [[ "$pkg" == npm:* ]]; then
+        npm_pkg="''${pkg#npm:}"
+        mkdir -p "$HOME/.pi/agent/npm"
+        if [ ! -f "$HOME/.pi/agent/npm/package.json" ]; then
+          printf '{"name":"pi-extensions","private":true,"dependencies":{}}\n' > "$HOME/.pi/agent/npm/package.json"
+        fi
+        PATH="${pkgs.nodejs}/bin:$PATH" ${pkgs.nodejs}/bin/npm --prefix "$HOME/.pi/agent/npm" install "$npm_pkg"
       else
-        for candidate in "$HOME"/.nvm/versions/node/*/bin/pi; do
-          if [ -x "$candidate" ]; then
-            pi_cmd="$candidate"
-            break
-          fi
-        done
+        pi_cmd=""
+        if command -v pi >/dev/null 2>&1; then
+          pi_cmd="$(command -v pi)"
+        elif [ -x /opt/homebrew/bin/pi ]; then
+          pi_cmd=/opt/homebrew/bin/pi
+        elif [ -x /usr/local/bin/pi ]; then
+          pi_cmd=/usr/local/bin/pi
+        else
+          for candidate in "$HOME"/.nvm/versions/node/*/bin/pi; do
+            if [ -x "$candidate" ]; then
+              pi_cmd="$candidate"
+              break
+            fi
+          done
+        fi
+        if [ -n "$pi_cmd" ]; then
+          export PATH="$(dirname "$pi_cmd"):$PATH"
+          "$pi_cmd" install "$pkg"
+        else
+          echo "pi not found; skipping package $pkg"
+        fi
       fi
+    '' else "") cfg.packages;
 
-      if [ -n "$pi_cmd" ]; then
-        export PATH="$(dirname "$pi_cmd"):$PATH"
-        "$pi_cmd" install "$pkg"
-      else
-        echo "pi not found; skipping package $pkg"
-      fi
-    fi
-  '' else "") cfg.packages;
-in {
+in
+{
+  # ── Module options ──────────────────────────────────────────────────────
   options.pi-agent = {
     enable = lib.mkOption {
       type = lib.types.bool;
@@ -85,13 +142,13 @@ in {
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = {};
-      description = "Settings for Pi Agent";
+      description = "Machine-specific overrides for Pi Agent settings (merged with defaults)";
     };
 
     models = lib.mkOption {
       type = lib.types.attrs;
       default = {};
-      description = "Models configuration for Pi Agent";
+      description = "Models configuration for Pi Agent (from pi-models.json)";
     };
 
     binTools = lib.mkOption {
@@ -103,13 +160,13 @@ in {
     skills = lib.mkOption {
       type = lib.types.listOf lib.types.path;
       default = [];
-      description = "Pi Agent skills to install (directories containing SKILL.md)";
+      description = "Additional Pi Agent skills to install (merged with built-in skills)";
     };
 
     packages = lib.mkOption {
       type = lib.types.listOf (lib.types.oneOf [ lib.types.str lib.types.attrs ]);
       default = [];
-      description = "Pi Agent packages to install, e.g. [ \"npm:pi-powerline-footer\" ]. Attrset entries are accepted for configs that also mirror local package objects into settings.json; activation only installs string specs.";
+      description = "Extra Pi Agent packages to install alongside defaults (e.g. { source = \"/path\"; extensions = []; })";
     };
 
     mcpConfig = lib.mkOption {
@@ -121,38 +178,41 @@ in {
     extensions = lib.mkOption {
       type = lib.types.listOf lib.types.path;
       default = [];
-      description = "Pi Agent extensions to install (individual .ts files or directories with index.ts)";
+      description = "Additional Pi Agent extensions to install (merged with built-in extensions)";
+    };
+
+    ensembleSource = lib.mkOption {
+      type = lib.types.path;
+      default = ./pi-extensions/ensemble;
+      defaultText = lib.literalMD "local path (override with fetchFromGitHub result)";
+      description = "Path to the Ensemble Pi package (typically from fetchFromGitHub)";
     };
   };
 
+  # ── Module config ───────────────────────────────────────────────────────
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
       home.packages = cfg.binTools;
 
       xdg.configFile = lib.mkMerge [
         (lib.mkIf (cfg.mcpConfig != {}) {
-          "mcp/mcp.json" = {
-            source = pkgs.writeText "mcp.json" (makeSettings cfg.mcpConfig);
-          };
+          "mcp/mcp.json" = { source = pkgs.writeText "mcp.json" (makeSettings cfg.mcpConfig); };
         })
-        {
-          "mcporter/mcporter.json" = {
-            source = mcporterConfig;
-            force = true;
-          };
-        }
+        { "mcporter/mcporter.json" = { source = mcporterConfig; force = true; }; }
       ];
 
       home.file = lib.mkMerge [
         {
-          ".mcporter/mcporter.json" = {
-            source = mcporterConfig;
-            force = true;
-          };
+          # ── MC Porter ────────────────────────────────────────────────────
+          ".mcporter/mcporter.json" = { source = mcporterConfig; force = true; };
+
+          # ── Core config files ────────────────────────────────────────────
           ".pi/agent/settings.json" = {
-            source = pkgs.writeText "pi-agent-settings.json" (makeSettings cfg.settings);
+            source = pkgs.writeText "pi-agent-settings.json" (makeSettings builtSettings);
             force = true;
           };
+
+          # ── Built-in extensions ──────────────────────────────────────────
           ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
           ".pi/agent/extensions/tokens-per-second.ts".source = ./pi-extensions/tokens-per-second.ts;
           ".pi/agent/extensions/progressive-context.ts".source = ./pi-extensions/progressive-context.ts;
@@ -160,64 +220,49 @@ in {
           ".pi/agent/extensions/preset.ts".source = ./pi-extensions/preset.ts;
           ".pi/agent/extensions/nvim/index.ts".source = ./pi-extensions/nvim/index.ts;
           ".pi/agent/extensions/poly-notify/notify.json".source = ./pi-extensions/poly-notify/notify.json;
-          ".pi/agent/extensions/subagent/index.ts".source = ./pi-extensions/subagent/index.ts;
-          ".pi/agent/extensions/subagent/agents.ts".source = ./pi-extensions/subagent/agents.ts;
-          ".pi/agent/agents" = { recursive = true; source = ./pi-extensions/subagent/agents; };
-          ".pi/agent/prompts" = { recursive = true; source = ./pi-extensions/subagent/prompts; };
+
+          # ── Vendor packages ──────────────────────────────────────────────
           ".pi/agent/vendor/pi-vs-cc" = { recursive = true; source = piVsCcDir; };
 
+          # ── Local bin wrappers ───────────────────────────────────────────
           ".local/bin/pi-chain" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
-              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/agent-chain/index.ts" "$@"
-            '';
+            text = ''#!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/agent-chain/index.ts" "$@"'';
           };
           ".local/bin/pi-team" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
-              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/agent-team/index.ts" "$@"
-            '';
+            text = ''#!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/agent-team/index.ts" "$@"'';
           };
           ".local/bin/pi-system" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
-              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/system-select/index.ts" "$@"
-            '';
+            text = ''#!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/system-select/index.ts" "$@"'';
           };
           ".local/bin/pi-tilldone" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
-              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/tilldone/index.ts" "$@"
-            '';
+            text = ''#!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/tilldone/index.ts" "$@"'';
           };
           ".local/bin/pi-coms" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
-              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/coms/index.ts" "$@"
-            '';
+            text = ''#!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/coms/index.ts" "$@"'';
           };
           ".local/bin/pi-coms-net" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
-              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/coms-net/index.ts" "$@"
-            '';
+            text = ''#!/usr/bin/env bash
+              exec pi -e "$HOME/.pi/agent/vendor/pi-vs-cc/coms-net/index.ts" "$@"'';
           };
           ".local/bin/pi-coms-net-server" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
+            text = ''#!/usr/bin/env bash
               if ! command -v bun >/dev/null 2>&1; then
                 echo "bun required for pi-coms-net-server" >&2
                 exit 127
               fi
-              exec bun "$HOME/.pi/agent/vendor/pi-vs-cc/scripts/coms-net-server.ts" "$@"
-            '';
+              exec bun "$HOME/.pi/agent/vendor/pi-vs-cc/scripts/coms-net-server.ts" "$@"'';
           };
           ".local/bin/pi-mcp-call" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-mcp-call; };
           ".local/bin/pi-firecrawl" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-firecrawl; };
@@ -226,26 +271,30 @@ in {
           ".local/bin/pi-think" = { executable = true; source = ./pi-extensions/mcp-lite/bin/pi-think; };
           ".local/bin/pi-vs-cc-agents-init" = {
             executable = true;
-            text = ''
-              #!/usr/bin/env bash
+            text = ''#!/usr/bin/env bash
               set -euo pipefail
               target="''${1:-$PWD/.pi/agents}"
               mkdir -p "$target"
               cp -R "$HOME/.pi/agent/vendor/pi-vs-cc/agents/." "$target/"
-              echo "Installed Pi agent-chain/team sample agents to $target"
-            '';
+              echo "Installed Pi agent-chain/team sample agents to $target"'';
           };
         }
+
+        # ── User-provided extensions ───────────────────────────────────────
         (builtins.listToAttrs (
           builtins.map (e: {
             name = ".pi/agent/extensions/${builtins.baseNameOf (builtins.toString e)}";
             value = { source = e; };
           }) managedExtensions
         ))
+
+        # ── Models ─────────────────────────────────────────────────────────
         (lib.mkIf (cfg.models != {}) {
           ".pi/agent/models.json".source =
             pkgs.writeText "pi-agent-models.json" (makeSettings cfg.models);
         })
+
+        # ── Bin tools symlinks ─────────────────────────────────────────────
         (lib.mkIf (cfg.binTools != []) {
           ".pi/agent/bin" = {
             recursive = true;
@@ -263,6 +312,7 @@ in {
       ];
     }
 
+    # ── Package installation activation ─────────────────────────────────────
     (lib.mkIf (cfg.packages != []) {
       home.activation.installPiAgentPackages =
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -271,6 +321,7 @@ in {
         '';
     })
 
+    # ── ACM patch (always runs) ───────────────────────────────────────────
     {
       home.activation.patchPiContextAutoAcm =
         lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
@@ -306,6 +357,7 @@ PY
         '';
     }
 
+    # ── Skills installation ───────────────────────────────────────────────
     (lib.mkIf (enabledSkills != []) {
       home.activation.installPiAgentSkills =
         lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
@@ -320,12 +372,12 @@ PY
             mkdir -p "$skillTarget"
             cp -R "$skillPath"/. "$skillTarget"/
             chmod -R u+rwX "$skillTarget"
-            # Make shell scripts executable
             find "$skillTarget" -name "*.sh" -exec chmod +x {} \;
           done
         '';
     })
 
+    # ── Extension backup cleanup ──────────────────────────────────────────
     {
       home.activation.cleanupPiAgentExtensionBackups =
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -344,6 +396,7 @@ PY
         '';
     }
 
+    # ── Sandbox extension (if user adds it to extensions) ─────────────────
     (lib.mkIf sandboxEnabled {
       home.activation.installSandboxDeps =
         lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiAgentExtensionBackups" "installPiAgentPackages" ] ''

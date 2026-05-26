@@ -43,53 +43,14 @@
                 };
               in {
                 pi-agent.enable = true;
-                pi-agent.settings = {
-                  lastChangelogVersion = "0.72.1";
-                  defaultProvider = "litellm";
-                  defaultModel = "coding";
-                  defaultThinkingLevel = "medium";
-                  packages = [
-                    "npm:pi-powerline-footer"
-                    "npm:pi-hooks"
-                    "npm:pi-context"
-                    "npm:pi-mcp-adapter"
-                    {
-                      source = "${ensemblePi}/packages/pi";
-                      # Ensemble currently ships an ask_user extension. We provide
-                      # a Pi-version-compatible ask_user extension separately to
-                      # avoid duplicate/conflicting tool registration.
-                      extensions = [];
-                    }
-                  ];
-                  powerline = {
-                    preset = "nerd";
-                  };
-                  workingVibeMode = "file";
-                  workingVibe = "off";
-                  bashMode = {
-                    toggleShortcut = "ctrl+shift+b";
-                    transcriptMaxLines = 2000;
-                    transcriptMaxBytes = 524288;
-                  };
-                };
-                pi-agent.binTools = with pkgs; [
-                  fd
-                  ripgrep
-                ];
+                pi-agent.models = builtins.fromJSON (builtins.readFile ../pi-models.json);
                 pi-agent.packages = [
-                  "npm:pi-powerline-footer"
-                  "npm:pi-hooks"
-                  "npm:pi-context"
-                  "npm:pi-mcp-adapter"
+                  {
+                    source = "${ensemblePi}/packages/pi";
+                    extensions = [];
+                  }
                 ];
-                pi-agent.mcpConfig = {
-                  settings = {
-                    toolPrefix = "server";
-                    idleTimeout = 10;
-                    directTools = false;
-                  };
-                  mcpServers = {};
-                };
+                pi-agent.binTools = with pkgs; [ fd ripgrep ];
               })
             ];
           };

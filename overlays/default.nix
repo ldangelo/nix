@@ -3,7 +3,7 @@
   nixpkgs.overlays = [
     # sketchybar-lua overlay - wraps the package properly
     (final: prev: {
-      sketchybar-lua = prev.callPackage ./sketchybar-lua { 
+      sketchybar-lua = prev.callPackage ./sketchybar-lua {
         sources = { sketchybar-lua = prev.fetchFromGitHub {
           owner = "FelixKratz";
           repo = "SbarLua";
