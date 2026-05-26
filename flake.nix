@@ -58,13 +58,6 @@
           doCheck = false;
         });
 
-        # pipx 1.8.0 tests fail with newer `packaging` lib (pkg@url vs pkg @ url
-        # normalization). Skip tests until upstream catches up.
-        pipx = super.pipx.overridePythonAttrs (_: {
-          doCheck = false;
-          doInstallCheck = false;
-        });
-
         # Himalaya with OAuth2 support for Microsoft 365
         himalaya = super.himalaya.overrideAttrs (oldAttrs: {
           cargoBuildFeatures = (oldAttrs.cargoBuildFeatures or []) ++ [ "oauth2" ];
@@ -103,28 +96,72 @@
             home-manager.sharedModules = [
               sops-nix.homeManagerModules.sops
               ./modules/home-manager/pi-agent.nix
-              ./modules/home-manager/context-mode.nix
             ];
             home-manager.users.ldangelo = { pkgs, ... }: {
               imports = [
                 catppuccin.homeModules.catppuccin
                 ./modules/home-manager/default.nix
               ];
-              context-mode.enable = true;
               pi-agent.enable = true;
-              pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
-              pi-agent.packages = [
-                {
-                  source = "${pkgs.fetchFromGitHub {
-                    owner = "FortiumPartners";
-                    repo = "ensemble";
-                    rev = "faa88672815559b3739b8da5ec5c50607553eb5d";
-                    hash = "sha256-0jQiNfIWLY0sQP0el6b1WgjvjfT6c9YC0hpzFChka5A=";
-                  }}/packages/pi";
-                  extensions = [];
-                }
+              pi-agent.skills = [
+                ./modules/home-manager/pi-extensions/obsidian
               ];
+              pi-agent.extensions = [
+                ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                ./modules/home-manager/pi-extensions/notify.ts
+                ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                ./modules/home-manager/pi-extensions/model-status.ts
+                ./modules/home-manager/pi-extensions/handoff.ts
+                ./modules/home-manager/pi-extensions/todo.ts
+                ./modules/home-manager/pi-extensions/bookmark.ts
+                ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
+                ./modules/home-manager/pi-extensions/preset.ts
+                ./modules/home-manager/pi-extensions/nvim
+                ./modules/home-manager/pi-extensions/poly-notify
+                ./modules/home-manager/pi-extensions/auto-active-skills.ts
+              ];
+              pi-agent.settings = {
+                lastChangelogVersion = "0.72.1";
+                defaultProvider = "litellm";
+                defaultModel = "coding";
+                defaultThinkingLevel = "medium";
+                packages = [
+                  "npm:pi-powerline-footer"
+                  "npm:pi-hooks"
+                  "npm:pi-context"
+                  {
+                    source = "/Users/ldangelo/Development/Fortium/ensemble/packages/pi";
+                    # Ensemble currently ships an ask_user extension. We provide
+                    # a Pi-version-compatible ask_user extension separately to
+                    # avoid duplicate/conflicting tool registration.
+                    extensions = [];
+                  }
+                ];
+                powerline.preset = "nerd";
+                workingVibeMode = "file";
+                workingVibe = "off";
+                permissionLevel = "low";
+                permissionMode = "ask";
+                bashMode = {
+                  toggleShortcut = "ctrl+shift+b";
+                  transcriptMaxLines = 2000;
+                  transcriptMaxBytes = 524288;
+                };
+                httpIdleTimeoutMs = 0;
+                skills = [
+                  "/Users/ldangelo/nix/.agents/skills"
+                ];
+              };
               pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
+              pi-agent.packages = [
+                "npm:pi-powerline-footer"
+                "npm:pi-hooks"
+                "npm:pi-context"
+                "/Users/ldangelo/Development/Fortium/ensemble/packages/pi"
+              ];
+              pi-agent.mcpConfig = {};
+              pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
             };
           }
         ];
@@ -163,14 +200,66 @@
               catppuccin.homeModules.catppuccin
               sops-nix.homeManagerModules.sops
               ./modules/home-manager/default.nix
-              ./modules/home-manager/context-mode.nix
+              ./modules/home-manager/pi-agent.nix
               ./overlays
               ({ pkgs, ... }:
               {
-                context-mode.enable = true;
                 pi-agent.enable = true;
-                pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
+                pi-agent.settings = {
+                  lastChangelogVersion = "0.72.1";
+                  defaultProvider = "litellm";
+                  defaultModel = "coding";
+                  defaultThinkingLevel = "medium";
+                  packages = [
+                    "npm:pi-powerline-footer"
+                    "npm:pi-hooks"
+                    "npm:pi-context"
+                  ];
+                  powerline = {
+                    preset = "nerd";
+                  };
+                  workingVibeMode = "file";
+                  workingVibe = "off";
+                  permissionLevel = "low";
+                  permissionMode = "ask";
+                  bashMode = {
+                    toggleShortcut = "ctrl+shift+b";
+                    transcriptMaxLines = 2000;
+                    transcriptMaxBytes = 524288;
+                  };
+                  httpIdleTimeoutMs = 0;
+                skills = [
+                  "/Users/ldangelo/nix/.agents/skills"
+                ];
+              };
+                pi-agent.binTools = with pkgs; [
+                  fd
+                  ripgrep
+                  nodejs
+                  bun
+                ];
+                pi-agent.skills = [
+                  ./modules/home-manager/pi-extensions/obsidian
+                ];
+                pi-agent.extensions = [
+                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                  ./modules/home-manager/pi-extensions/notify.ts
+                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                  ./modules/home-manager/pi-extensions/model-status.ts
+                  ./modules/home-manager/pi-extensions/handoff.ts
+                  ./modules/home-manager/pi-extensions/todo.ts
+                  ./modules/home-manager/pi-extensions/bookmark.ts
+                  ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
+                  ./modules/home-manager/pi-extensions/preset.ts
+                  ./modules/home-manager/pi-extensions/nvim
+                  ./modules/home-manager/pi-extensions/poly-notify
+                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
+                ];
                 pi-agent.packages = [
+                  "npm:pi-powerline-footer"
+                  "npm:pi-hooks"
+                  "npm:pi-context"
                   {
                     source = "${pkgs.fetchFromGitHub {
                       owner = "FortiumPartners";
@@ -181,7 +270,8 @@
                     extensions = [];
                   }
                 ];
-                pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
+                pi-agent.mcpConfig = {};
+                pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
               })
               {
                 home.username = "ldangelo";
@@ -200,6 +290,7 @@
               catppuccin.homeModules.catppuccin
               sops-nix.homeManagerModules.sops
               ./modules/linux/home-manager/default.nix
+              ./modules/home-manager/pi-agent.nix
               ({ pkgs, ... }:
               let
                 ensemblePi = pkgs.fetchFromGitHub {
@@ -210,14 +301,72 @@
                 };
               in {
                 pi-agent.enable = true;
-                pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
-                pi-agent.packages = [
-                  {
-                    source = "${ensemblePi}/packages/pi";
-                    extensions = [];
-                  }
+                pi-agent.settings = {
+                  lastChangelogVersion = "0.72.1";
+                  defaultProvider = "litellm";
+                  defaultModel = "coding";
+                  defaultThinkingLevel = "medium";
+                  packages = [
+                    "npm:pi-powerline-footer"
+                    "npm:pi-hooks"
+                    "npm:pi-context"
+                    {
+                      source = "${ensemblePi}/packages/pi";
+                      # Ensemble currently ships an ask_user extension. We provide
+                      # a Pi-version-compatible ask_user extension separately to
+                      # avoid duplicate/conflicting tool registration.
+                      extensions = [];
+                    }
+                  ];
+                  powerline = {
+                    preset = "nerd";
+                  };
+                  workingVibeMode = "file";
+                  workingVibe = "off";
+                  permissionLevel = "low";
+                  permissionMode = "ask";
+                  bashMode = {
+                    toggleShortcut = "ctrl+shift+b";
+                    transcriptMaxLines = 2000;
+                    transcriptMaxBytes = 524288;
+                  };
+                  httpIdleTimeoutMs = 0;
+                skills = [
+                  "/Users/ldangelo/nix/.agents/skills"
                 ];
-                pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
+              };
+                pi-agent.binTools = with pkgs; [
+                  fd
+                  ripgrep
+                  nodejs
+                  bun
+                ];
+                pi-agent.skills = [
+                  ./modules/home-manager/pi-extensions/obsidian
+                ];
+                pi-agent.extensions = [
+                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
+                  ./modules/home-manager/pi-extensions/notify.ts
+                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
+                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
+                  ./modules/home-manager/pi-extensions/model-status.ts
+                  ./modules/home-manager/pi-extensions/handoff.ts
+                  ./modules/home-manager/pi-extensions/todo.ts
+                  ./modules/home-manager/pi-extensions/bookmark.ts
+                  ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
+                  ./modules/home-manager/pi-extensions/preset.ts
+                  ./modules/home-manager/pi-extensions/nvim
+                  ./modules/home-manager/pi-extensions/poly-notify
+                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
+                ];
+                pi-agent.packages = [
+                  "npm:pi-powerline-footer"
+                  "npm:pi-hooks"
+                  "npm:pi-context"
+                  "${ensemblePi}/packages/pi"
+                ];
+                pi-agent.mcpConfig = {};
+                pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
               })
             ];
           };
