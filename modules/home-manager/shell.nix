@@ -91,7 +91,7 @@ in {
         && [[ "$AUTO_TMUX" != "0" ]] \
         && [[ -t 0 && -t 1 ]] \
         && command -v tmux >/dev/null 2>&1; then
-        tmux attach-session || exec tmux new-session
+        exec tmux new-session
         exit
       fi
     '';
