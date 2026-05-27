@@ -58,6 +58,12 @@
           doCheck = false;
         });
 
+        # pipx: skip test_package_specifier failures (newer packaging lib changed @-spacing in output)
+        pipx = super.pipx.overridePythonAttrs (oldAttrs: {
+          doCheck = false;
+          doInstallCheck = false;
+        });
+
         # Himalaya with OAuth2 support for Microsoft 365
         himalaya = super.himalaya.overrideAttrs (oldAttrs: {
           cargoBuildFeatures = (oldAttrs.cargoBuildFeatures or []) ++ [ "oauth2" ];
@@ -158,7 +164,9 @@
                 "npm:pi-powerline-footer"
                 "npm:pi-hooks"
                 "npm:pi-context"
-                "/Users/ldangelo/Development/Fortium/ensemble/packages/pi"
+                # Ensemble pi package is registered via pi-agent.settings.packages
+                # as an attrset with extensions=[] to avoid duplicate ask_user
+                # tool registration with the nix-managed ask-user.ts extension.
               ];
               pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
@@ -363,7 +371,9 @@
                   "npm:pi-powerline-footer"
                   "npm:pi-hooks"
                   "npm:pi-context"
-                  "${ensemblePi}/packages/pi"
+                  # Ensemble pi package is registered via pi-agent.settings.packages
+                  # as an attrset with extensions=[] to avoid duplicate ask_user
+                  # tool registration with the nix-managed ask-user.ts extension.
                 ];
                 pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);

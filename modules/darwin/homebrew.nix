@@ -135,6 +135,7 @@
       "font-powerline-symbols"
       "font-source-code-pro"
       "git-credential-manager"
+      "homerow"                # Keyboard shortcuts for macOS
       "tailscale-app"
       "block-goose"            # AI agent
       "aerospace"              # i3-like tiling window manager
@@ -167,7 +168,6 @@
       "grammarly-desktop"
       "granola"                # AI meeting notes
 #      "hammerspoon"            # Desktop automation
-#      "homerow"                # Keyboard shortcuts
 #      "hookmark"               # Link and retrieve info
       # iterm2/itermai/wezterm moved to common casks above
       "jetbrains-toolbox"
