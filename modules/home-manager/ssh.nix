@@ -36,6 +36,13 @@ in {
       identityFile = [ "${homeDir}/.ssh/id_ed25519" ];
       extraOptions.StrictHostKeyChecking = "accept-new";
     };
+
+    matchBlocks."azure-devops" = {
+      host = "ssh.dev.azure.com";
+      user = "git";
+      identitiesOnly = true;
+      identityFile = [ "${homeDir}/.ssh/id_rsa_azuredevops" ];
+    };
   };
 
   home.activation.createSshDirectory = lib.hm.dag.entryBefore [ "sops-nix" ] ''
