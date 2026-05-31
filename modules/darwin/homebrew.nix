@@ -15,11 +15,10 @@
 #      "d12frosted/emacs-plus"
       "felixkratz/formulae"
       "nikitabobko/tap"
-      #      "dicklesworthstone/tap"
+      "dicklesworthstone/tap"
       "charmbracelet/tap"
       "bakks/bakks"
       "steipete/tap"
-      "steveyegge/beads"
       "manaflow-ai/cmux"
       "acsandmann/tap"
     ];
@@ -29,9 +28,8 @@
       # Development Tools (not in nixpkgs)
       "aider"                          # AI pair programming
       "basedpyright"                   # Pyright fork with improvements
-      "steveyegge/beads/bd"             # Git-backed graph issue tracker for AI agents
+      "dicklesworthstone/tap/bv"        # Beads Viewer TUI (graph-aware issue triage)
       #"gastown"                        # Go-based agentic task runner (steveyegge)
-      "dolt"                           # Version-controlled SQL database (beads dependency)
 #      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
       "steipete/tap/imsg"              # iMessage/SMS CLI
@@ -107,7 +105,7 @@
 
 
         # Dicklesworthstone flywheel tools (via dicklesworthstone/tap)
-        #  "bv"                           # Beads Viewer TUI
+        # bv moved to common brews list above (installed on all darwin boxes)
         #"caam"                         # Coding Agent Account Manager
         #"cass"                         # Coding Agent Session Search
         #"cm"                           # CASS Memory System
@@ -127,7 +125,7 @@
       # Common casks (both machines)
       "1password"
       "1password-cli"
-      "claude-code"            # Terminal AI assistant
+      #      "claude-code"            # Terminal AI assistant
 #      "claude-monitor"            # Terminal AI assistant
       "font-cantarell"
       "font-fira-code"

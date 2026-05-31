@@ -472,27 +472,23 @@ git push                # Push to remote
 <!-- end-br-agent-instructions -->
 
 
-<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:7510c1e2 -->
-## Beads Issue Tracker
+## Beads Viewer (bv)
 
-This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
+`bv` is a graph-aware TUI for browsing the beads tracker (PageRank, critical path, kanban, dependency DAG). It reads `.beads/beads.jsonl`, which `br sync --flush-only` writes.
 
-### Quick Reference
+### Agent usage (robot mode)
+
+Never run bare `bv` in an agent context — it launches an interactive TUI that blocks the session. Always use `--robot-*` flags:
 
 ```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>         # Complete work
+bv --robot-triage   # Single-call triage: counts, ranked picks, blockers, project health
+bv --robot-next     # Minimal: top pick + claim command
+bv --robot-help     # Full robot-mode reference
 ```
 
-### Rules
+Before claiming work surfaced by `bv`, verify state with `br show <id> --json` or `br ready --json`.
 
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
-- Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
-
-**Architecture in one line:** issues live in a local Dolt DB; sync uses `refs/dolt/data` on your git remote; `.beads/issues.jsonl` is a passive export. See https://github.com/gastownhall/beads/blob/main/docs/SYNC_CONCEPTS.md for details and anti-patterns.
+**Architecture in one line:** issues live in a local SQLite DB (`.beads/*.db`); `br sync --flush-only` exports `.beads/beads.jsonl` (committed to git); `br sync` never runs git commands. `bv` reads that JSONL.
 
 ## Session Completion
 
@@ -518,4 +514,3 @@ bd close <id>         # Complete work
 - NEVER stop before pushing - that leaves work stranded locally
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
-<!-- END BEADS INTEGRATION -->

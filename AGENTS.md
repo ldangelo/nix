@@ -1,7 +1,7 @@
 ---
 disclose: summary
 summary: nix-darwin workstation repo rules, key deploy commands, caveman response style, beads workflow, and mandatory commit/push session protocol
-triggers: [nix, darwin, deploy, home-manager, flakes, overlays, secrets, beads, bd, git, commit, push, caveman]
+triggers: [nix, darwin, deploy, home-manager, flakes, overlays, secrets, beads, br, bv, git, commit, push, caveman]
 ---
 
 # nix-darwin System Configuration
@@ -53,7 +53,7 @@ Each subdirectory has its own AGENTS.md with conventions:
 ```bash
 git status              # Check what changed
 git add <files>         # Stage code changes
-bd sync --flush-only    # Export beads changes to JSONL
+br sync --flush-only    # Export beads changes to JSONL
 git commit -m "..."     # Commit everything
 git push                # Push to remote
 ```
@@ -74,27 +74,28 @@ Auto-Clarity: drop caveman for security warnings, irreversible actions, user con
 
 Boundaries: code/commits/PRs written normal.
 
-<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:7510c1e2 -->
 ## Beads Issue Tracker
 
-This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
+This project uses **br** ([beads_rust](https://github.com/Dicklesworthstone/beads_rust)) for issue tracking, with **bv** (beads viewer) as a graph-aware TUI. Run `br robot-docs` for machine-readable command contracts.
 
 ### Quick Reference
 
 ```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>         # Complete work
+br ready                              # Find available work (open, unblocked)
+br show <id>                          # View issue details
+br update <id> --status=in_progress   # Claim work
+br close <id>                         # Complete work
+br sync --flush-only                  # Export DB to .beads/beads.jsonl
+bv --robot-triage                     # Graph-aware triage for agents
 ```
 
 ### Rules
 
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
-- Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
+- Use `br` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
+- Run `br robot-docs` for the full command reference
+- In agent context use `bv --robot-*` only; bare `bv` launches an interactive TUI that blocks the session
 
-**Architecture in one line:** issues live in a local Dolt DB; sync uses `refs/dolt/data` on your git remote; `.beads/issues.jsonl` is a passive export. See https://github.com/gastownhall/beads/blob/main/docs/SYNC_CONCEPTS.md for details and anti-patterns.
+**Architecture in one line:** issues live in a local SQLite DB (`.beads/*.db`); `br sync --flush-only` exports `.beads/beads.jsonl` (committed to git); `br sync` never runs git commands. `bv` reads that JSONL.
 
 ## Session Completion
 
@@ -120,4 +121,3 @@ bd close <id>         # Complete work
 - NEVER stop before pushing - that leaves work stranded locally
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
-<!-- END BEADS INTEGRATION -->
