@@ -69,6 +69,15 @@
           cargoBuildFeatures = (oldAttrs.cargoBuildFeatures or []) ++ [ "oauth2" ];
         });
 
+        # bun 1.3.14 — nixpkgs-unstable lags behind; remove once nixpkgs catches up
+        bun = super.bun.overrideAttrs (_: {
+          version = "1.3.14";
+          src = super.fetchurl {
+            url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.14/bun-darwin-aarch64.zip";
+            hash = "sha256-2LliIYKK1vl6x6wKt+lYcjQa92MAHogD6CZ2UsJlJiA=";
+          };
+        });
+
         # https://github.com/NixOS/nixpkgs/issues/108480#issuecomment-1115108802
         isync-oauth2 = super.buildEnv {
           name = "isync-oauth2";
