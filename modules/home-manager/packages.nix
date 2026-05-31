@@ -1,8 +1,19 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
 let
   inherit (pkgs.stdenv) isDarwin isLinux;
 in {
+  home.file.".npmrc".text = ''
+    prefix=${config.home.homeDirectory}/.npm-global
+  '';
+
+  home.activation.installAgentMemory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    echo "Installing AgentMemory npm package..."
+    export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+    mkdir -p "$NPM_CONFIG_PREFIX"
+    PATH="${pkgs.nodejs}/bin:$PATH" ${pkgs.nodejs}/bin/npm install --global --prefix "$NPM_CONFIG_PREFIX" @agentmemory/agentmemory@0.9.24
+  '';
+
   # Shared package manifest for the active home-manager profile.
   home.packages = with pkgs;
     [
