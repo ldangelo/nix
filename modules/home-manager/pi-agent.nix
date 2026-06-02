@@ -26,8 +26,8 @@ let
 
   # ── Default settings ────────────────────────────────────────────────────
   defaultSettings = {
-    defaultProvider = "openai";
-    defaultModel = "openai-codex/gpt-5.5";
+    defaultProvider = "openai-codex";
+    defaultModel = "gpt-5.5";
     defaultThinkingLevel = "medium";
     powerline = { preset = "nerd"; };
     workingVibeMode = "file";

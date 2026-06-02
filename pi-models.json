@@ -711,15 +711,15 @@
         }
       ]
     },
-    "openai": {
+    "openai-codex": {
       "apiKey": "env:OPENAI_API_KEY",
       "models": [
         {
-          "id": "openai-codex/gpt-5.5",
+          "id": "gpt-5.5",
           "input": ["text"],
           "contextWindow": 200000,
           "maxTokens": 32000,
-          "name": "GPT-5.5 — OpenAI Codex",
+          "name": "GPT-5.5",
           "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
           "reasoning": true,
           "tags": ["default"]

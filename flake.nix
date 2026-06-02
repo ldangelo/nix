@@ -192,8 +192,8 @@
                 pi-agent.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
-                  defaultProvider = "openai";
-                  defaultModel = "openai-codex/gpt-5.5";
+                  defaultProvider = "openai-codex";
+                  defaultModel = "gpt-5.5";
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
@@ -288,8 +288,8 @@
                 pi-agent.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
-                  defaultProvider = "openai";
-                  defaultModel = "openai-codex/gpt-5.5";
+                  defaultProvider = "openai-codex";
+                  defaultModel = "gpt-5.5";
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
