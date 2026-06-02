@@ -72,6 +72,12 @@ let
     ./pi-extensions/sequentialthinking-cli
     ./pi-extensions/context7-cli
     ./pi-extensions/assess-repo
+    ./pi-extensions/assess-architect
+    ./pi-extensions/assess-code-quality
+    ./pi-extensions/assess-testing
+    ./pi-extensions/assess-security
+    ./pi-extensions/assess-ai-readiness
+    ./pi-extensions/assess-cicd
     ./pi-extensions/assess-team
     ./pi-extensions/obsidian
   ];
