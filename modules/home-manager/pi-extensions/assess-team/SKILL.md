@@ -45,8 +45,7 @@ docs/assessment/team-<YYYY-MM-DD>-<agent-name>.md
 ```
 
 ## Phase 2: Parallel Analysis
-
-Launch 5 parallel `task` agents. Each agent:
+Launch 8 parallel `task` agents. Each agent:
 1. Analyzes its domain deeply
 2. Saves detailed findings to its output file
 3. Returns a summary (not full findings) to reduce context
@@ -287,15 +286,168 @@ Return summary (max 10 lines):
 - Score: A-F with one-line rationale
 ```
 
-## Phase 3: Read Agent Outputs
 
-After all 5 tasks complete, read each agent's output file:
+### Task 6: Documentation Contributions
+```markdown
+# Goal: Analyze documentation contributions and patterns by developer
+
+Save your findings to: docs/assessment/team-<REPORT_PREFIX>-documentation.md
+
+Analyze:
+- Documentation file changes (.md, docs/, README*)
+- Author attribution for doc work
+- Documentation coverage (what's documented vs not)
+- README updates, API docs, ADRs, runbooks
+- Documentation currency (when last updated?)
+
+Output structure:
+```markdown
+# Team Assessment: Documentation
+
+## Documentation Contributions
+| Author | Doc Commits | Files Created | Files Updated |
+|--------|-------------|---------------|---------------|
+| ... | N | N | N |
+
+## Documentation Coverage
+| Area | Documented | Last Updated |
+|------|-----------|-------------|
+| ... | Yes/No | date |
+
+## Key Findings
+1. [Finding with evidence]
+2. [Finding with evidence]
+
+## Score: A-F (one line rationale)
+
+## Recommendations
+1. [Priority]
+2. [Secondary]
+```
+
+Return summary (max 10 lines):
+- Top doc contributors
+- Coverage gaps
+- Score: A-F with one-line rationale
+```
+
+### Task 7: Incident Response
+```markdown
+# Goal: Analyze incident response patterns and production contributions
+
+Save your findings to: docs/assessment/team-<REPORT_PREFIX>-incidents.md
+
+Analyze:
+- Hotfix branches and emergency merges
+- Production-related commits (prod, production, hotfix, emergency)
+- Quick turnarounds (merged within hours of creation)
+- MTTR patterns by author
+- Production ownership concentration
+
+Output structure:
+```markdown
+# Team Assessment: Incident Response
+
+## Incident Contributions by Author
+| Author | Hotfixes | Emergency Merges | Prod Config Changes | Score |
+|--------|----------|------------------|---------------------|-------|
+| ... | N | N | N | A-F |
+
+## MTTR Distribution
+| Author | Avg Time to Merge | Quick Fix % | Quality Score |
+|--------|-------------------|-------------|---------------|
+| ... | X hours | X% | A-F |
+
+## Production Ownership
+[Who owns production code? Concentration risk?]
+
+## Key Findings
+1. [Finding with evidence]
+2. [Finding with evidence]
+
+## Score: A-F (one line rationale)
+
+## Recommendations
+1. [Priority]
+2. [Secondary]
+```
+
+Return summary (max 10 lines):
+- Top incident responders
+- MTTR insights
+- Production ownership concentration
+- Score: A-F with one-line rationale
+```
+
+### Task 8: Code Review Participation
+```markdown
+# Goal: Analyze code review participation and quality by developer
+
+Save your findings to: docs/assessment/team-<REPORT_PREFIX>-code-review.md
+
+Analyze:
+- Reviews given vs received
+- Review turnaround time
+- Cross-team reviewing patterns
+- Co-authored commits (indicate collaboration)
+- Review participation rate
+
+If GitHub/GitLab API available:
+- Review requests by author
+- Reviews given by author
+- Review comments per PR
+
+Output structure:
+```markdown
+# Team Assessment: Code Review
+
+## Review Participation
+| Author | Reviews Given | Reviews Received | Participation Rate | Score |
+|--------|---------------|-----------------|--------------------|-------|
+| ... | N | N | X% | A-F |
+
+## Review Turnaround
+| Author | Avg Time to Review | Fast Reviews % | Quality |
+|--------|--------------------|----------------|---------|
+| ... | X hours | X% | A-F |
+
+## Review Distribution
+[Analysis of review load distribution]
+
+## Collaboration Patterns
+| Author | Cross-team Reviews | Co-authored Commits |
+|--------|-------------------|---------------------|
+| ... | N | N |
+
+## Key Findings
+1. [Finding with evidence]
+2. [Finding with evidence]
+
+## Score: A-F (one line rationale)
+
+## Recommendations
+1. [Priority]
+2. [Secondary]
+```
+
+Return summary (max 10 lines):
+- Top reviewers
+- Review distribution insights
+- Collaboration patterns
+- Score: A-F with one-line rationale
+```
+
+## Phase 3: Read Agent Outputs
+After all 8 tasks complete, read each agent's output file:
 ```
 read path: docs/assessment/team-<REPORT_PREFIX>-commit-volume.md
 read path: docs/assessment/team-<REPORT_PREFIX>-commit-messages.md
 read path: docs/assessment/team-<REPORT_PREFIX>-code-quality.md
 read path: docs/assessment/team-<REPORT_PREFIX>-test-coverage.md
 read path: docs/assessment/team-<REPORT_PREFIX>-ai-adoption.md
+read path: docs/assessment/team-<REPORT_PREFIX>-documentation.md
+read path: docs/assessment/team-<REPORT_PREFIX>-incidents.md
+read path: docs/assessment/team-<REPORT_PREFIX>-code-review.md
 ```
 
 ## Phase 4: Generate Final Report
@@ -464,6 +616,9 @@ Synthesize findings into the comprehensive report.
 - [Code Quality](docs/assessment/team-<REPORT_PREFIX>-code-quality.md)
 - [Test Coverage](docs/assessment/team-<REPORT_PREFIX>-test-coverage.md)
 - [AI Adoption](docs/assessment/team-<REPORT_PREFIX>-ai-adoption.md)
+- [Documentation](docs/assessment/team-<REPORT_PREFIX>-documentation.md)
+- [Incident Response](docs/assessment/team-<REPORT_PREFIX>-incidents.md)
+- [Code Review](docs/assessment/team-<REPORT_PREFIX>-code-review.md)
 
 ---
 

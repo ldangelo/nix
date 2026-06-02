@@ -80,11 +80,12 @@ let
     ./pi-extensions/assess-ai-readiness
     ./pi-extensions/assess-cicd
     ./pi-extensions/assess-team
-    ./pi-extensions/assess-team-commit-volume
-    ./pi-extensions/assess-team-commit-messages
     ./pi-extensions/assess-team-code-quality
     ./pi-extensions/assess-team-test-coverage
     ./pi-extensions/assess-team-ai-adoption
+    ./pi-extensions/assess-team-documentation
+    ./pi-extensions/assess-team-incidents
+    ./pi-extensions/assess-team-code-review
     ./pi-extensions/obsidian
   ];
   enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
