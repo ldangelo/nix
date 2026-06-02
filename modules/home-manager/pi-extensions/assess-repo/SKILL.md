@@ -49,13 +49,72 @@ docs/assessment/<repo-name>-<YYYY-MM-DD>-<agent-name>.md
 
 Use `read` tool to check if `docs/assessment/` exists. Create if needed.
 
-## Phase 2: Parallel Analysis
+## Phase 2: Purpose Analysis (First Agent)
 
-Launch 6 parallel `task` agents. Each agent:
+Launch **assess-purpose** FIRST to establish context for all other agents.
+
+```markdown
+# Goal: Explore repository to infer purpose, domain, and target audience
+
+Save your findings to: docs/assessment/<REPORT_PREFIX>-purpose.md
+
+This is the foundational analysis — everything else builds on it.
+
+Analyze:
+- Tech stack (languages, frameworks, dependencies)
+- Directory structure and organization
+- Entry points and main modules
+- Domain-specific patterns (search for healthcare/finance/devops keywords)
+- Business logic to understand what operations are performed
+
+**Tools:** find, read, search, ast_grep. NOT bash pipelines.
+
+**IMPORTANT:**
+- Focus on what can be INFERRED from code, not what docs say
+- This tests AI-readiness: can you understand the codebase without human docs?
+- Cite specific file:line for evidence
+- One-line rationale for scores
+- Save full findings to output file, return summary only
+
+Output structure for file:
+```markdown
+# Repository Purpose Analysis
+
+## Tech Stack
+[Table with language, ecosystem, build tool, package manager]
+
+## Inferred Purpose
+- Primary Function: [one sentence]
+- Domain: [Healthcare/Finance/DevOps/etc.]
+- Target Users: [Developers/End Users/Admins/etc.]
+- Key Capabilities: [3-5 bullets]
+
+## Evidence
+[File:line citations for key findings]
+
+## Confidence Assessment
+[How certain are we about each inference]
+
+## Score: A-F (one line rationale)
+
+## Recommendations
+[What docs would help future AI agents]
+```
+
+Return a summary (max 15 lines) with:
+- Tech stack overview
+- Inferred purpose (1 sentence)
+- Domain
+- Confidence level
+- Score: A-F with one-line rationale
+- Top 2 recommendations for documentation
+```
+
+## Phase 3: Parallel Analysis
+Launch 7 parallel `task` agents. Each agent:
 1. Analyzes its domain deeply
 2. Saves detailed findings to its output file
 3. Returns a summary (not full findings) to reduce context
-
 Pass this context to all tasks:
 ```
 REPO_ROOT: {cwd}
@@ -66,9 +125,7 @@ COMMIT: {first 7 chars of HEAD}
 OUTPUT_DIR: docs/assessment
 REPORT_PREFIX: <repo-name>-<YYYY-MM-DD>
 ```
-
 ## Specialist Tasks
-
 ### Task 1: Architecture Analysis
 ```markdown
 # Goal: Analyze repository architecture and structure
@@ -419,9 +476,9 @@ Return a summary (max 15 lines) with:
 ```
 
 ## Phase 3: Read Agent Outputs
-
-After all 6 tasks complete, read each agent's output file:
+After all 7 tasks complete, read each agent's output file:
 ```
+read path: docs/assessment/<REPORT_PREFIX>-purpose.md
 read path: docs/assessment/<REPORT_PREFIX>-architecture.md
 read path: docs/assessment/<REPORT_PREFIX>-code-quality.md
 read path: docs/assessment/<REPORT_PREFIX>-testing.md
@@ -483,25 +540,41 @@ Generate the comprehensive report that references agent outputs.
 
 ---
 
-## 1. Architecture Analysis
+## 1. Purpose Analysis
 
-*Detailed findings available in: [architecture.md](docs/assessment/<REPORT_PREFIX>-architecture.md)*
+### Tech Stack
+| Aspect | Finding |
+|--------|---------|
+| Language(s) | ... |
+| Ecosystem | ... |
+| Build Tool | ... |
 
-[Summarize key findings — cite specific file:line, use tables]
+### Inferred Purpose
+Primary Function: [one sentence]
+Domain: [Healthcare/Finance/DevOps/etc.]
+Target Users: [Developers/End Users/Admins/etc.]
 
-### Project Structure
-[Directory tree]
+### Key Capabilities
+1. ...
+2. ...
+3. ...
 
-### Key Findings
-1. [Finding with file:line reference]
-2. [Finding with file:line reference]
+### Confidence Assessment
+| Aspect | Level | Notes |
+|--------|-------|-------|
+| Purpose | HIGH/MEDIUM/LOW | ... |
+| Domain | HIGH/MEDIUM/LOW | ... |
+| Users | HIGH/MEDIUM/LOW | ... |
 
 ### Score: A-F
 
 ### Recommendations
-1. [Priority]
-2. [Secondary]
+1. Add [doc] to clarify [aspect]
+2. Add [doc] to clarify [aspect]
 
+---
+
+## 2. Architecture Analysis
 ---
 
 ## 2. Code Quality Assessment
@@ -742,4 +815,4 @@ Generate the comprehensive report that references agent outputs.
 
 ---
 
-*Document generated from multi-agent parallel analysis.*
+*Document generated from multi-agent parallel analysis.*- [Purpose Analysis](docs/assessment/<REPORT_PREFIX>-purpose.md)
