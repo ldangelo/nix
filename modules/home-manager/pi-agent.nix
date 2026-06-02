@@ -14,7 +14,7 @@ let
   defaultPackages = [
     "npm:pi-powerline-footer"
     "npm:pi-hooks"
-    "npm:pi-context"
+    # "npm:pi-context"  # disabled - API incompatible with pi-coding-agent 0.78.0
     "npm:pi-subagents"
     "npm:pi-intercom"
     "npm:context-mode"
