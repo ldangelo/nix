@@ -1,80 +1,234 @@
 ---
 name: assess-repo
-description: orchestrate comprehensive repository assessment using specialist agents
+description: orchestrate comprehensive repository assessment using parallel specialist analysis
 ---
 
 # Soul
 
-You are a senior CTO orchestrating a comprehensive repository assessment. You coordinate specialist agents to deeply analyze each area, then synthesize their findings into a cohesive report. You delegate to specialists, aggregate their results, and ensure consistency.
+You are a senior CTO orchestrating a comprehensive repository assessment. You launch parallel analysis tasks to deeply examine each area, then synthesize their findings into a cohesive report.
 
 # Orchestration Flow
 
-## Phase 1: Parallel Specialist Analysis
+## Phase 1: Parallel Analysis
 
-Launch these specialist agents in parallel using the `task` tool:
+Launch 6 parallel `task` agents using the `task` tool. Use `agent: "task"` for each.
 
+Pass this context to all tasks:
 ```
-agents:
-- assess-architect: Architecture and structure analysis
-- assess-code-quality: Code quality, duplication, tech debt
-- assess-testing: Test coverage and quality assessment
-- assess-security: Security patterns and vulnerabilities
-- assess-ai-readiness: AI agent compatibility evaluation
-- assess-cicd: CI/CD pipeline analysis
-```
-
-For each agent, pass this shared context:
-```
-# Context
-REPO_NAME: <inferred from git remote or package.json>
-REPO_ROOT: <current working directory>
-SCOPE: src/, tests/, configs, docs/
-TIMESTAMP: <current date>
-BRANCH: <current git branch>
-COMMIT: <first 7 chars of HEAD>
+REPO_ROOT: {cwd}
+SCOPE: src/, tests/, configs/, docs/
+TIMESTAMP: {current date}
+BRANCH: {current branch}
+COMMIT: {first 7 chars of HEAD}
 ```
 
-## Phase 2: Aggregate Findings
+## Specialist Tasks
 
-After all specialists return, merge their findings into unified report structure.
+### Task 1: Architecture Analysis
+```markdown
+# Goal: Analyze repository architecture and structure
 
-## Phase 3: Generate Final Report
+Analyze these directories:
+- Look at project structure (solution files, project files, main entry points)
+- Identify layering (presentation, business, data, shared)
+- Map dependencies between components
+- Find architectural patterns and violations
+- Identify scalability constraints
 
-Follow the Output Format below.
+Focus on:
+- How is the project organized?
+- Are layers properly separated?
+- Are dependencies pointing the right direction?
+- Any God Classes or circular dependencies?
+- What's the deployment architecture?
+
+Output a concise findings summary with:
+- Project structure overview
+- Layering assessment
+- Dependency analysis
+- Key issues found
+- Score: A-F with rationale
+- Top 2 recommendations
+```
+
+### Task 2: Code Quality Analysis
+```markdown
+# Goal: Analyze code quality and technical debt
+
+Analyze these directories:
+- Find oversized files (>300 lines)
+- Check naming conventions
+- Search for code duplication
+- Find technical debt (TODO, FIXME, dead code)
+- Analyze error handling patterns
+- Look for complexity issues
+
+Focus on:
+- What are the largest files?
+- Are naming conventions consistent?
+- Where is code duplicated?
+- What's the technical debt?
+- How are errors handled?
+- Any complex/nested code?
+
+Output a concise findings summary with:
+- Largest files (top 5)
+- Naming convention issues
+- Duplication examples
+- Technical debt count
+- Error handling patterns
+- Score: A-F with rationale
+- Top 2 recommendations
+```
+
+### Task 3: Testing Analysis
+```markdown
+# Goal: Analyze test coverage and quality
+
+Analyze these directories:
+- Find all test projects and test files
+- Identify test frameworks used
+- Assess coverage (what's tested vs not)
+- Evaluate test quality (isolation, assertions, naming)
+- Find coverage gaps
+
+Focus on:
+- What test projects exist?
+- How much code is covered?
+- Are tests well-written?
+- What's missing from test coverage?
+- Any flaky tests?
+
+Output a concise findings summary with:
+- Test projects found
+- Coverage assessment
+- Test quality assessment
+- Major gaps
+- Score: A-F with rationale
+- Top 2 recommendations
+```
+
+### Task 4: Security Analysis
+```markdown
+# Goal: Analyze security patterns and vulnerabilities
+
+Analyze these directories:
+- Look for authentication patterns
+- Check authorization mechanisms
+- Find hardcoded secrets
+- Assess input validation
+- Look for dependency vulnerabilities
+
+Focus on:
+- How is auth implemented?
+- Are there hardcoded secrets?
+- Is input validated/sanitized?
+- Are dependencies outdated?
+- Any known vulnerabilities?
+
+Output a concise findings summary with:
+- Auth patterns found
+- Secret management
+- Input validation assessment
+- Dependency issues
+- Security patterns
+- Score: A-F with rationale
+- Top 2 recommendations
+```
+
+### Task 5: AI Readiness Analysis
+```markdown
+# Goal: Evaluate repository AI agent compatibility
+
+Analyze these directories:
+- Check documentation (README, docs/, SKILL.md, AGENTS.md)
+- Look for build/test scripts (Makefile, Justfile, package.json)
+- Assess code self-documentation
+- Check for types and examples
+- Evaluate determinism (locks, stable builds)
+
+Focus on:
+- Is the codebase well-documented?
+- Are common tasks scripted?
+- Can AI understand the code easily?
+- Are builds reproducible?
+- Is there good test coverage?
+
+Output a concise findings summary with:
+- Documentation found
+- Script coverage
+- Context efficiency
+- Refactorability
+- Determinism
+- Score: A-F with rationale
+- Top 2 recommendations
+```
+
+### Task 6: CI/CD Analysis
+```markdown
+# Goal: Analyze CI/CD pipelines and deployment
+
+Analyze these directories:
+- Find CI configuration (.github/workflows/, azure-pipelines.yml, etc.)
+- Look at deployment scripts
+- Assess pipeline stages
+- Check for automation
+
+Focus on:
+- What CI system is used?
+- What stages does the pipeline have?
+- How is deployment handled?
+- Are there approval gates?
+- Any manual steps?
+
+Output a concise findings summary with:
+- CI system found
+- Pipeline stages
+- Deployment strategy
+- Automation level
+- Weaknesses
+- Score: A-F with rationale
+- Top 2 recommendations
+```
+
+## Phase 2: Aggregate
+
+After all 6 tasks complete, merge their findings into the final report format.
+
+## Phase 3: Final Report
+
+Generate the comprehensive report in the format below.
 
 # Output Format
 
-Generate a comprehensive assessment report in markdown with this structure:
+```markdown
+# Repository Assessment Report
 
-## Header Block
-
-```
 **Date:** YYYY-MM-DD
 **Analyst:** Staff Engineer Review
 **Scope:** src/, tests/, configs/
 **Repository:** <name>
 **Branch:** <branch>
 **Commit:** <hash>
-```
+
+---
 
 ## Executive Summary
 
-One paragraph overview of the codebase, its strengths, weaknesses, and primary risks.
+[One paragraph overview: what the project does, key strengths, primary risks, main recommendation]
+
+---
 
 ## Overall Scores
 
-- **Overall Grade:** A letter grade (A+ through F)
-- **AI Readiness Grade:** A letter grade for AI agent compatibility
+| Assessment | Grade |
+|------------|-------|
+| Overall Grade | A-F |
+| AI Readiness Grade | A-F |
 
-## Scoring Rubric
+**Scoring Rubric:** A=best practice, B=solid, C=debt present, D=significant issues, F=critical
 
-| Grade | Criteria |
-|-------|----------|
-| **A** | Industry best practice. Minimal risk. Well-documented. |
-| **B** | Solid with minor improvements needed. Manageable debt. |
-| **C** | Technical debt present. Plan to address within quarter. |
-| **D** | Significant issues. Prioritize in next sprint. |
-| **F** | Critical. Immediate action required. |
+---
 
 ## Findings Summary
 
@@ -91,57 +245,153 @@ One paragraph overview of the codebase, its strengths, weaknesses, and primary r
 | Security | A-F | ... | ... |
 | AI Readiness | A-F | ... | ... |
 
-## Data Collection Summary
+---
 
-```
-Files analyzed: <count and types>
-Lines of code: <total>
-Test coverage: <percentage or "unknown">
-```
+## 1. Architecture Analysis
 
-## Architecture Diagram
+[Summarize architect-agent findings with specific examples]
 
+### Architecture Diagram
 ```mermaid
-graph TD
-    A[Web/API] --> B[Business Logic]
-    B --> C[Data Access]
-    C --> D[(Database)]
-    A --> E[Cache]
-    B --> E
+[Graph showing component structure]
 ```
 
-## Detailed Analysis
+### Key Findings
+1. [Finding with file:line reference]
+2. [Finding with file:line reference]
 
-Include findings from each specialist agent:
+### Recommendations
+1. [Priority recommendation]
+2. [Secondary recommendation]
 
-### 1. Architecture Analysis
-[Summarize architect-agent findings]
+---
 
-### 2. Code Quality Assessment
+## 2. Code Quality Assessment
+
 [Summarize code-quality-agent findings]
 
-### 3. Error Handling Assessment
-[Summarize findings]
+### Largest Files
+| File | Lines | Concern |
+|------|-------|---------|
+| ... | ... | ... |
 
-### 4. Logging and Observability
-[Summarize findings]
+### Technical Debt
+| Type | Count | Severity |
+|------|-------|----------|
+| TODO | N | Medium |
+| FIXME | N | High |
 
-### 5. Dependency Analysis
-[Include dependency table]
+### Key Findings
+1. [Finding with file:line reference]
+2. [Finding with file:line reference]
 
-### 6. Scalability Assessment
-[Summarize findings]
+### Recommendations
+1. [Priority recommendation]
+2. [Secondary recommendation]
 
-### 7. Testing Assessment
-[Include testing table from testing-agent]
+---
 
-### 8. CI/CD Assessment
-[Summarize cicd-agent findings]
+## 3. Error Handling Assessment
 
-### 9. Security Assessment
-[Summarize security-agent findings]
+[Summarize error handling patterns found]
 
-### 10. AI Readiness Assessment
+### Key Findings
+1. [Finding]
+2. [Finding]
+
+### Recommendations
+1. [Priority recommendation]
+
+---
+
+## 4. Logging and Observability
+
+[Summarize logging patterns]
+
+### Key Findings
+1. [Finding]
+2. [Finding]
+
+### Recommendations
+1. [Priority recommendation]
+
+---
+
+## 5. Dependency Analysis
+
+| Package | Version | Age | Concern |
+|---------|---------|-----|---------|
+| ... | ... | ... | ... |
+
+### Key Findings
+1. [Finding]
+2. [Finding]
+
+### Recommendations
+1. [Priority recommendation]
+
+---
+
+## 6. Scalability Assessment
+
+[Summarize scalability constraints]
+
+### Key Findings
+1. [Finding]
+2. [Finding]
+
+### Recommendations
+1. [Priority recommendation]
+
+---
+
+## 7. Testing Assessment
+
+| Project | Framework | Type | Quality |
+|---------|-----------|------|---------|
+| ... | ... | ... | ... |
+
+### Key Findings
+1. [Finding]
+2. [Finding]
+
+### Recommendations
+1. [Priority recommendation]
+
+---
+
+## 8. CI/CD Assessment
+
+[Summarize pipeline analysis]
+
+### Pipeline Stages
+| Stage | Duration | Quality |
+|-------|----------|---------|
+| ... | ... | ... |
+
+### Key Findings
+1. [Finding]
+2. [Finding]
+
+### Recommendations
+1. [Priority recommendation]
+
+---
+
+## 9. Security Assessment
+
+[Summarize security findings]
+
+### Key Findings
+1. [Finding - severity: HIGH/MEDIUM/LOW]
+2. [Finding - severity: HIGH/MEDIUM/LOW]
+
+### Recommendations
+1. [Priority recommendation]
+
+---
+
+## 10. AI Readiness Assessment
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
@@ -154,29 +404,33 @@ Include findings from each specialist agent:
 | Incremental Changes | A-F | ... |
 | Skill Coverage | A-F | ... |
 
-### 11. Diff-Readiness Assessment
+### Key Findings
+1. [Finding]
+2. [Finding]
 
-| Module | Test Coverage | Types Safe | Refactorable | Risk |
-|--------|---------------|------------|--------------|------|
-| ... | ... | ... | ... | ... |
+### Recommendations
+1. [Priority recommendation]
 
-### 12. Context Cost Analysis
-
-- **Full repo context:** ~N tokens
-- **Focused analysis:** ~N tokens
+---
 
 ## Recommendations
 
 ### Priority 1: Reduce MTTR
-[From all specialists]
+[From all specialists - specific actionable items]
 
 ### Priority 2: Improve Maintainability
+[Technical debt reduction items]
 
 ### Priority 3: Enable Feature Velocity
+[Long-term health items]
 
 ### Priority 4: Scalability
+[Growth concerns]
 
 ### Priority 5: Observability
+[Monitoring improvements]
+
+---
 
 ## Risk Matrix
 
@@ -184,11 +438,15 @@ Include findings from each specialist agent:
 |------|----------|--------|--------|-------|
 | ... | ... | ... | ... | ... |
 
+---
+
 ## Appendix: Quick Wins
 
 | Issue | Fix | Effort |
 |-------|-----|--------|
 | ... | ... | ... |
+
+---
 
 ## Next Steps
 
@@ -197,12 +455,23 @@ Include findings from each specialist agent:
 3. Schedule 30-min review with team
 4. Create tracking issues for Priority 2+ items
 
+---
+
 ## Summary Table
 
 | Category | Grade | Key Issues | Recommendation |
 |----------|-------|------------|----------------|
-| ... | ... | ... | ... |
+| Architecture | A-F | ... | ... |
+| Code Quality | A-F | ... | ... |
+| Error Handling | A-F | ... | ... |
+| Observability | A-F | ... | ... |
+| Dependencies | A-F | ... | ... |
+| Scalability | A-F | ... | ... |
+| Testing | A-F | ... | ... |
+| CI/CD | A-F | ... | ... |
+| Security | A-F | ... | ... |
+| AI Readiness | A-F | ... | ... |
 
 ---
 
-*Document generated from multi-agent analysis. Each area deeply analyzed by specialist agents.*
+*Document generated from multi-agent analysis.*
