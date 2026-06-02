@@ -7,6 +7,21 @@ description: orchestrate comprehensive repository assessment using parallel spec
 
 You are a senior CTO orchestrating a comprehensive repository assessment. You launch parallel analysis tasks to deeply examine each area, then synthesize their findings into a cohesive report.
 
+# Critical: Permission Gate Restrictions
+
+**DO NOT USE these bash patterns — they will be blocked:**
+- `find ... -exec ...`
+- `xargs ...`
+- `wc -l | sort | head`
+- Complex shell pipelines
+
+**USE INSTEAD:**
+- `find` tool — simple file discovery
+- `read` tool — inspect files with line ranges
+- `ast_grep` tool — structural code search
+- `search` tool — text pattern search
+- `lsp` tool — code intelligence
+
 # Orchestration Flow
 
 ## Phase 1: Parallel Analysis
@@ -24,23 +39,24 @@ COMMIT: {first 7 chars of HEAD}
 
 ## Specialist Tasks
 
+Each task prompt includes these restrictions:
+
+> **IMPORTANT:** Do NOT use complex bash commands. Use `find`, `read`, `ast_grep`, `search`, `lsp` tools instead. Complex bash will be blocked by permission gate.
+
 ### Task 1: Architecture Analysis
 ```markdown
 # Goal: Analyze repository architecture and structure
 
-Analyze these directories:
-- Look at project structure (solution files, project files, main entry points)
-- Identify layering (presentation, business, data, shared)
-- Map dependencies between components
-- Find architectural patterns and violations
-- Identify scalability constraints
+Analyze the repository structure to understand:
+- Project layout and organization
+- Layering (presentation, business, data, shared)
+- Component boundaries and dependencies
+- Integration patterns
+- Scalability constraints
 
-Focus on:
-- How is the project organized?
-- Are layers properly separated?
-- Are dependencies pointing the right direction?
-- Any God Classes or circular dependencies?
-- What's the deployment architecture?
+**Tools:** Use `find` to discover structure, `read` to inspect key files, `search` for import patterns, `ast_grep` for structural analysis.
+
+**IMPORTANT:** Do NOT use `find -exec`, `xargs`, or complex bash pipelines. Use the tools listed above.
 
 Output a concise findings summary with:
 - Project structure overview
@@ -55,27 +71,23 @@ Output a concise findings summary with:
 ```markdown
 # Goal: Analyze code quality and technical debt
 
-Analyze these directories:
-- Find oversized files (>300 lines)
-- Check naming conventions
-- Search for code duplication
-- Find technical debt (TODO, FIXME, dead code)
-- Analyze error handling patterns
-- Look for complexity issues
+Analyze the codebase for:
+- Large files (>300 lines) — use `find` then `read` to count
+- Naming convention violations
+- Code duplication patterns
+- Technical debt (TODO, FIXME, dead code) — use `search`
+- Error handling patterns
+- Complexity issues
 
-Focus on:
-- What are the largest files?
-- Are naming conventions consistent?
-- Where is code duplicated?
-- What's the technical debt?
-- How are errors handled?
-- Any complex/nested code?
+**Tools:** Use `find` to discover files, `read` to inspect and count lines, `search` for comments, `ast_grep` for structural patterns.
+
+**IMPORTANT:** Do NOT use `find -exec`, `xargs`, or `wc -l | sort`. Use the tools listed above. To count lines, use `read` with `:raw` selector and count the output.
 
 Output a concise findings summary with:
-- Largest files (top 5)
+- Largest files (top 5, estimate by reading first/last lines)
 - Naming convention issues
 - Duplication examples
-- Technical debt count
+- Technical debt count (search for TODO/FIXME/HACK)
 - Error handling patterns
 - Score: A-F with rationale
 - Top 2 recommendations
@@ -85,19 +97,16 @@ Output a concise findings summary with:
 ```markdown
 # Goal: Analyze test coverage and quality
 
-Analyze these directories:
-- Find all test projects and test files
+Analyze testing across the codebase:
+- Find test projects and test files — use `find` with patterns like `*test*`, `*spec*`, `tests/`
 - Identify test frameworks used
 - Assess coverage (what's tested vs not)
 - Evaluate test quality (isolation, assertions, naming)
 - Find coverage gaps
 
-Focus on:
-- What test projects exist?
-- How much code is covered?
-- Are tests well-written?
-- What's missing from test coverage?
-- Any flaky tests?
+**Tools:** Use `find` to locate test files, `read` to inspect test content, `search` for test patterns.
+
+**IMPORTANT:** Do NOT use `find -exec` or complex bash. Use the tools listed above.
 
 Output a concise findings summary with:
 - Test projects found
@@ -112,23 +121,20 @@ Output a concise findings summary with:
 ```markdown
 # Goal: Analyze security patterns and vulnerabilities
 
-Analyze these directories:
-- Look for authentication patterns
+Analyze security posture:
+- Look for authentication patterns — use `search`
 - Check authorization mechanisms
-- Find hardcoded secrets
+- Find hardcoded secrets (report presence, NOT values)
 - Assess input validation
 - Look for dependency vulnerabilities
 
-Focus on:
-- How is auth implemented?
-- Are there hardcoded secrets?
-- Is input validated/sanitized?
-- Are dependencies outdated?
-- Any known vulnerabilities?
+**Tools:** Use `search` for auth/authz patterns, `read` to inspect configs, `ast_grep` for security patterns.
+
+**IMPORTANT:** Do NOT use complex bash. Also: NEVER output actual secrets, passwords, or API keys — report only that they exist.
 
 Output a concise findings summary with:
 - Auth patterns found
-- Secret management
+- Secret management assessment
 - Input validation assessment
 - Dependency issues
 - Security patterns
@@ -140,19 +146,16 @@ Output a concise findings summary with:
 ```markdown
 # Goal: Evaluate repository AI agent compatibility
 
-Analyze these directories:
-- Check documentation (README, docs/, SKILL.md, AGENTS.md)
-- Look for build/test scripts (Makefile, Justfile, package.json)
+Analyze how well the codebase supports AI agents:
+- Check documentation (README, docs/, SKILL.md, AGENTS.md) — use `find`
+- Look for build/test scripts (Makefile, Justfile, package.json) — use `find`
 - Assess code self-documentation
 - Check for types and examples
-- Evaluate determinism (locks, stable builds)
+- Evaluate determinism (lock files, stable builds)
 
-Focus on:
-- Is the codebase well-documented?
-- Are common tasks scripted?
-- Can AI understand the code easily?
-- Are builds reproducible?
-- Is there good test coverage?
+**Tools:** Use `find` to locate docs and scripts, `read` to inspect content, `search` for patterns.
+
+**IMPORTANT:** Do NOT use complex bash. Use the tools listed above.
 
 Output a concise findings summary with:
 - Documentation found
@@ -168,18 +171,15 @@ Output a concise findings summary with:
 ```markdown
 # Goal: Analyze CI/CD pipelines and deployment
 
-Analyze these directories:
-- Find CI configuration (.github/workflows/, azure-pipelines.yml, etc.)
-- Look at deployment scripts
-- Assess pipeline stages
+Analyze CI/CD configuration:
+- Find CI files — use `find` for `.github/workflows/`, `azure-pipelines.yml`, `Jenkinsfile`, etc.
+- Look at pipeline stages
+- Assess deployment strategy
 - Check for automation
 
-Focus on:
-- What CI system is used?
-- What stages does the pipeline have?
-- How is deployment handled?
-- Are there approval gates?
-- Any manual steps?
+**Tools:** Use `find` to locate CI configs, `read` to inspect pipeline files, `search` for deployment patterns.
+
+**IMPORTANT:** Do NOT use complex bash. Use the tools listed above.
 
 Output a concise findings summary with:
 - CI system found
