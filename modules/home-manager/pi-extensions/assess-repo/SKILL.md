@@ -22,6 +22,26 @@ You are a senior CTO orchestrating a comprehensive repository assessment. You la
 - `search` tool — text pattern search
 - `lsp` tool — code intelligence
 
+# Data Source Constraints
+
+**IMPORTANT:** Know what data is available from local git vs requires API:
+
+| Data | Local Git | Requires API |
+|------|-----------|--------------|
+| Code files | YES | — |
+| Config files | YES | — |
+| Test files | YES | — |
+| CI/CD configs | YES | — |
+| Coverage reports | NO | Run with coverage tool |
+| Dependency graph | NO | `deptrac` or similar |
+
+When data not available:
+- Write: "No evidence found in local git" 
+- Add: `[confidence: MEDIUM - requires tooling to verify]`
+- Adjust score accordingly
+
+---
+
 # Token Optimization Rules
 
 **For All Agents:**
@@ -101,7 +121,7 @@ Output structure for file:
 [What docs would help future AI agents]
 ```
 
-Return a summary (max 15 lines) with:
+Return a summary (max 5 lines) with:
 - Tech stack overview
 - Inferred purpose (1 sentence)
 - Domain
@@ -171,7 +191,7 @@ Output structure for file:
 2. [Secondary]
 ```
 
-Return a summary (max 15 lines) with:
+Return a summary (max 5 lines) with:
 - Project structure overview
 - Top 3 architectural issues
 - Score: A-F with one-line rationale
@@ -232,7 +252,7 @@ Output structure for file:
 2. [Secondary]
 ```
 
-Return a summary (max 15 lines) with:
+Return a summary (max 5 lines) with:
 - Top 5 largest files (estimate lines)
 - Technical debt counts (TODO, FIXME, etc.)
 - Top 3 issues
@@ -286,7 +306,7 @@ Output structure for file:
 2. [Secondary]
 ```
 
-Return a summary (max 15 lines) with:
+Return a summary (max 5 lines) with:
 - Test projects found
 - Coverage estimate (%)
 - Top 3 gaps
@@ -344,7 +364,7 @@ Output structure for file:
 2. [Secondary]
 ```
 
-Return a summary (max 15 lines) with:
+Return a summary (max 5 lines) with:
 - Auth patterns found
 - Secret management issues
 - Top 3 security issues (severity)
@@ -409,7 +429,7 @@ Output structure for file:
 2. [Secondary]
 ```
 
-Return a summary (max 15 lines) with:
+Return a summary (max 5 lines) with:
 - All 8 dimension scores (brief)
 - Top 3 gaps
 - Score: A-F with one-line rationale
@@ -467,7 +487,7 @@ Output structure for file:
 2. [Secondary]
 ```
 
-Return a summary (max 15 lines) with:
+Return a summary (max 5 lines) with:
 - CI system found
 - Pipeline stages (brief)
 - Top 3 weaknesses

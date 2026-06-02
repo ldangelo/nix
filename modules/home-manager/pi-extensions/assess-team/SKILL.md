@@ -29,6 +29,27 @@ You are a senior CTO orchestrating a comprehensive team assessment. You launch p
 5. **Be specific with numbers** — "127 commits without body" not "many commits"
 6. **Truncate verbose output** — Cite 3 examples, state "47 more similar"
 7. **No filler prose** — "Key Finding:" not long preambles
+8. **Return max 5 lines summary** — not 10
+
+# Data Source Constraints
+
+**IMPORTANT:** Know what data is available from local git vs requires API:
+
+| Data | Local Git | Requires API |
+|------|-----------|--------------|
+| Commit history | YES | — |
+| Author attribution | YES | — |
+| File blame | YES | — |
+| PR reviews | NO | `gh pr list` or `az repos pr list` |
+| PR comments | NO | `gh pr view` or `az repos pr` |
+| Branch policies | NO | `gh repo view --json` or Azure API |
+
+When data not available:
+- Write: "No evidence found in local git" (not "N/A")
+- Add: `[confidence: MEDIUM - requires API to verify]`
+- Adjust score accordingly
+
+---
 
 # Orchestration Flow
 
@@ -45,10 +66,11 @@ docs/assessment/team-<YYYY-MM-DD>-<agent-name>.md
 ```
 
 ## Phase 2: Parallel Analysis
+
 Launch 8 parallel `task` agents. Each agent:
 1. Analyzes its domain deeply
 2. Saves detailed findings to its output file
-3. Returns a summary (not full findings) to reduce context
+3. Returns a summary (max 5 lines) — not 10
 
 ## Specialist Tasks
 
@@ -58,16 +80,15 @@ Launch 8 parallel `task` agents. Each agent:
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-commit-volume.md
 
+**Data Source:** Local git only
+
 Analyze:
 - Total commits per author
 - Commits per time period (month/week)
 - Activity distribution (who does the most work?)
-- Pull request merge patterns
-- Core contributors vs occasional contributors
+- PR/merge patterns
 
-**Tools:** search, read, bash (git log). NOT complex pipelines.
-
-Output structure:
+**Output structure:**
 ```markdown
 # Team Assessment: Commit Volume
 
@@ -78,11 +99,11 @@ Output structure:
 | 2 | ... | N | X% |
 
 ## Activity Distribution
-[Analysis of how commits are distributed]
+[Analysis]
 
 ## Key Findings
-1. [Finding with evidence]
-2. [Finding with evidence]
+1. [Finding] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding] [confidence: HIGH/MEDIUM/LOW]
 
 ## Score: A-F (one line rationale)
 
@@ -91,10 +112,10 @@ Output structure:
 2. [Secondary]
 ```
 
-Return summary (max 10 lines):
-- Top 3 contributors by volume
-- Activity distribution insight
-- Score: A-F with one-line rationale
+Return summary (max 5 lines):
+- Top 2 contributors
+- Key insight
+- Score: A-F with one-word rationale
 ```
 
 ### Task 2: Commit Message Standards
@@ -103,22 +124,23 @@ Return summary (max 10 lines):
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-commit-messages.md
 
+**Data Source:** Local git only
+
 Analyze:
 - Conventional commit format usage (feat:, fix:, docs:, etc.)
 - Subject line length compliance (50-72 chars)
 - Body explanation for complex changes
 - Issue/ticket references
-- Breaking change markers
 
 Sample 50-100 commits across multiple authors.
 
-Output structure:
+**Output structure:**
 ```markdown
 # Team Assessment: Commit Message Standards
 
 ## Convention Adoption
-| Author | Conventional % | Quality Score |
-|--------|---------------|---------------|
+| Author | Conventional % | Quality |
+|--------|---------------|---------|
 | ... | X% | A-F |
 
 ## Message Quality Distribution
@@ -130,8 +152,8 @@ Output structure:
 | Poor | N | X% |
 
 ## Common Issues
-1. [Issue with examples]
-2. [Issue with examples]
+1. [Issue with 3 examples, "47 more similar"]
+2. [Issue with 3 examples, "12 more similar"]
 
 ## Score: A-F (one line rationale)
 
@@ -140,10 +162,10 @@ Output structure:
 2. [Secondary]
 ```
 
-Return summary (max 10 lines):
+Return summary (max 5 lines):
 - % following conventional commits
-- Top issues found
-- Score: A-F with one-line rationale
+- Top issue pattern
+- Score: A-F with one-word rationale
 ```
 
 ### Task 3: Code Quality Contributions
@@ -152,15 +174,16 @@ Return summary (max 10 lines):
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-code-quality.md
 
+**Data Source:** Local git only
+
 Analyze:
 - PR/merge sizes (small focused vs large batch)
 - Refactoring commits (cleanups, improvements)
 - Bug fix patterns (quick fixes vs proper solutions)
 - Technical debt introduction vs removal
-- Code review participation
-- Ownership of critical components
+- TODO/FIXME comment density
 
-Output structure:
+**Output structure:**
 ```markdown
 # Team Assessment: Code Quality
 
@@ -170,11 +193,11 @@ Output structure:
 | ... | N | X% | Low/Med/High | A-F |
 
 ## Quality Distribution
-[Analysis of how quality is distributed across team]
+[Analysis]
 
 ## Key Findings
-1. [Finding with evidence]
-2. [Finding with evidence]
+1. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
 
 ## Score: A-F (one line rationale)
 
@@ -183,10 +206,10 @@ Output structure:
 2. [Secondary]
 ```
 
-Return summary (max 10 lines):
-- Top quality contributors
-- Quality distribution insight
-- Score: A-F with one-line rationale
+Return summary (max 5 lines):
+- Top quality contributor
+- Key risk
+- Score: A-F with one-word rationale
 ```
 
 ### Task 4: Test Coverage Contributions
@@ -195,22 +218,22 @@ Return summary (max 10 lines):
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-test-coverage.md
 
+**Data Source:** Local git + file discovery
+
 Analyze:
 - Test files and their authors (via git blame)
-- Unit test files, integration test files, E2E test files
-- Who writes the most tests?
-- Who rarely writes tests?
-- Who writes quality tests?
-- Untested critical paths
+- Who writes tests vs who doesn't
+- Coverage gaps in critical paths
+- Test file to source file ratios
 
-Output structure:
+**Output structure:**
 ```markdown
 # Team Assessment: Test Coverage
 
 ## Test Contribution by Author
-| Author | Test Commits | Test Files | Coverage % | Score |
-|--------|--------------|------------|------------|-------|
-| ... | N | N | X% | A-F |
+| Author | Test Commits | Test Files | Lines Blamed | Score |
+|--------|--------------|------------|--------------|-------|
+| ... | N | N | N (X%) | A-F |
 
 ## Coverage Distribution
 [Analysis of coverage across codebase]
@@ -221,8 +244,8 @@ Output structure:
 | ... | High/Med/Low | ... |
 
 ## Key Findings
-1. [Finding with evidence]
-2. [Finding with evidence]
+1. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
 
 ## Score: A-F (one line rationale)
 
@@ -231,10 +254,10 @@ Output structure:
 2. [Secondary]
 ```
 
-Return summary (max 10 lines):
-- Top test contributors
-- Coverage gaps
-- Score: A-F with one-line rationale
+Return summary (max 5 lines):
+- Test authorship concentration
+- Coverage gap
+- Score: A-F with one-word rationale
 ```
 
 ### Task 5: AI Adoption Analysis
@@ -243,14 +266,23 @@ Return summary (max 10 lines):
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-ai-adoption.md
 
-Analyze:
-- Evidence of AI tool usage (consistent formatting, similar style)
-- Boilerplate generation patterns
-- Rapid code creation patterns
-- AI-related documentation/PRs
-- CI/CD AI integration
+**Data Source:** Local git + code pattern analysis
 
-Output structure:
+**AI Usage Signals (in code patterns):**
+- Consistent formatting across unrelated files (auto-format)
+- Boilerplate with similar variable names (AI generation)
+- Structured comments: `// TODO:`, `// Generated by`
+- Rapid file creation: < 5 min between commits on same file
+- Large PRs with uniform style (no organic variation)
+- `[pi]` or `[ai]` markers in commit messages
+
+Analyze:
+- Code style consistency patterns
+- Boilerplate frequency
+- Formatting uniformity
+- AI-related documentation/PRs
+
+**Output structure:**
 ```markdown
 # Team Assessment: AI Adoption
 
@@ -266,8 +298,8 @@ Output structure:
 [Comparison if data available]
 
 ## Key Findings
-1. [Finding with evidence]
-2. [Finding with evidence]
+1. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
 
 ## AI Tool Integration
 - CI/CD AI checks: Yes/No
@@ -280,12 +312,11 @@ Output structure:
 2. [Secondary]
 ```
 
-Return summary (max 10 lines):
+Return summary (max 5 lines):
 - AI adoption rate
-- Top AI users
-- Score: A-F with one-line rationale
+- Top AI user
+- Score: A-F with one-word rationale
 ```
-
 
 ### Task 6: Documentation Contributions
 ```markdown
@@ -293,14 +324,15 @@ Return summary (max 10 lines):
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-documentation.md
 
+**Data Source:** Local git + file discovery
+
 Analyze:
 - Documentation file changes (.md, docs/, README*)
 - Author attribution for doc work
-- Documentation coverage (what's documented vs not)
 - README updates, API docs, ADRs, runbooks
-- Documentation currency (when last updated?)
+- Documentation coverage (what's documented vs not)
 
-Output structure:
+**Output structure:**
 ```markdown
 # Team Assessment: Documentation
 
@@ -315,8 +347,8 @@ Output structure:
 | ... | Yes/No | date |
 
 ## Key Findings
-1. [Finding with evidence]
-2. [Finding with evidence]
+1. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
 
 ## Score: A-F (one line rationale)
 
@@ -325,10 +357,10 @@ Output structure:
 2. [Secondary]
 ```
 
-Return summary (max 10 lines):
-- Top doc contributors
-- Coverage gaps
-- Score: A-F with one-line rationale
+Return summary (max 5 lines):
+- Top doc contributor
+- Coverage gap
+- Score: A-F with one-word rationale
 ```
 
 ### Task 7: Incident Response
@@ -337,33 +369,34 @@ Return summary (max 10 lines):
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-incidents.md
 
+**Data Source:** Local git only
+
 Analyze:
 - Hotfix branches and emergency merges
 - Production-related commits (prod, production, hotfix, emergency)
 - Quick turnarounds (merged within hours of creation)
-- MTTR patterns by author
 - Production ownership concentration
 
-Output structure:
+**Output structure:**
 ```markdown
 # Team Assessment: Incident Response
 
 ## Incident Contributions by Author
-| Author | Hotfixes | Emergency Merges | Prod Config Changes | Score |
-|--------|----------|------------------|---------------------|-------|
+| Author | Hotfixes | Emergency Merges | Prod Config | Score |
+|--------|----------|------------------|-------------|-------|
 | ... | N | N | N | A-F |
 
-## MTTR Distribution
-| Author | Avg Time to Merge | Quick Fix % | Quality Score |
-|--------|-------------------|-------------|---------------|
+## MTTR Distribution (proxy)
+| Author | Avg Time to Merge | Quick Fix % | Quality |
+|--------|-------------------|-------------|---------|
 | ... | X hours | X% | A-F |
 
 ## Production Ownership
 [Who owns production code? Concentration risk?]
 
 ## Key Findings
-1. [Finding with evidence]
-2. [Finding with evidence]
+1. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
 
 ## Score: A-F (one line rationale)
 
@@ -372,11 +405,10 @@ Output structure:
 2. [Secondary]
 ```
 
-Return summary (max 10 lines):
-- Top incident responders
-- MTTR insights
+Return summary (max 5 lines):
+- Top incident responder
 - Production ownership concentration
-- Score: A-F with one-line rationale
+- Score: A-F with one-word rationale
 ```
 
 ### Task 8: Code Review Participation
@@ -385,59 +417,52 @@ Return summary (max 10 lines):
 
 Save your findings to: docs/assessment/team-<REPORT_PREFIX>-code-review.md
 
+**Data Source:** Local git + file discovery
+
+**IMPORTANT:** Local git cannot verify PR reviews. Git history shows who merged, not who reviewed.
+- To get review data: run `gh pr list --state merged` or `az repos pr list`
+- If tools unavailable: score = D, note "Cannot verify peer review from local git"
+
 Analyze:
-- Reviews given vs received
-- Review turnaround time
-- Cross-team reviewing patterns
+- Merged PR commits (who merged, how many)
 - Co-authored commits (indicate collaboration)
-- Review participation rate
+- Review participation rate (if verifiable)
 
-If GitHub/GitLab API available:
-- Review requests by author
-- Reviews given by author
-- Review comments per PR
-
-Output structure:
+**Output structure:**
 ```markdown
 # Team Assessment: Code Review
 
-## Review Participation
-| Author | Reviews Given | Reviews Received | Participation Rate | Score |
-|--------|---------------|-----------------|--------------------|-------|
+## Review Participation (local git only)
+| Author | Merges | Co-authored | Participation Rate | Score |
+|--------|--------|-------------|---------------------|-------|
 | ... | N | N | X% | A-F |
 
-## Review Turnaround
-| Author | Avg Time to Review | Fast Reviews % | Quality |
-|--------|--------------------|----------------|---------|
-| ... | X hours | X% | A-F |
+## Data Availability
+- PR review data: **NOT available from local git** [confidence: LOW - requires API]
+- Review approval data: **NOT available from local git** [confidence: LOW - requires API]
 
 ## Review Distribution
 [Analysis of review load distribution]
 
-## Collaboration Patterns
-| Author | Cross-team Reviews | Co-authored Commits |
-|--------|-------------------|---------------------|
-| ... | N | N |
-
 ## Key Findings
-1. [Finding with evidence]
-2. [Finding with evidence]
+1. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding with evidence] [confidence: HIGH/MEDIUM/LOW]
 
 ## Score: A-F (one line rationale)
 
 ## Recommendations
-1. [Priority]
-2. [Secondary]
+1. Run `gh pr list --state merged --limit 100` for full review data
+2. [Priority]
 ```
 
-Return summary (max 10 lines):
-- Top reviewers
-- Review distribution insights
-- Collaboration patterns
-- Score: A-F with one-line rationale
+Return summary (max 5 lines):
+- Merge concentration
+- Data limitation warning
+- Score: A-F with one-word rationale
 ```
 
 ## Phase 3: Read Agent Outputs
+
 After all 8 tasks complete, read each agent's output file:
 ```
 read path: docs/assessment/team-<REPORT_PREFIX>-commit-volume.md
@@ -474,14 +499,17 @@ Synthesize findings into the comprehensive report.
 
 ## Overall Scores
 
-| Assessment | Grade |
-|------------|-------|
-| Overall | A-F |
-| Commit Volume | A-F |
-| Commit Messages | A-F |
-| Code Quality | A-F |
-| Test Coverage | A-F |
-| AI Adoption | A-F |
+| Assessment | Grade | Key Finding |
+|------------|-------|-------------|
+| Overall | A-F | [one line] |
+| Commit Volume | A-F | [one line] |
+| Commit Messages | A-F | [one line] |
+| Code Quality | A-F | [one line] |
+| Test Coverage | A-F | [one line] |
+| AI Adoption | A-F | [one line] |
+| Documentation | A-F | [one line] |
+| Incident Response | A-F | [one line] |
+| Code Review | A-F | [one line - include data limitation note] |
 
 **Scoring Rubric:** A=best practice, B=solid, C=debt present, D=significant issues, F=critical
 
@@ -489,106 +517,22 @@ Synthesize findings into the comprehensive report.
 
 ## Developer Rankings
 
-| Rank | Author | Commit Volume | Messages | Code Quality | Tests | AI Adoption | Overall |
-|------|--------|--------------|----------|--------------|-------|-------------|---------|
+| Rank | Author | Volume | Messages | Quality | Tests | AI | Overall |
+|------|--------|--------|----------|---------|-------|-----|---------|
 | 1 | ... | A-F | A-F | A-F | A-F | A-F | A-F |
 | 2 | ... | ... | ... | ... | ... | ... | ... |
 
 ---
 
-## 1. Commit Volume Analysis
+## N. [Category Name]
 
-*Detailed findings in: [commit-volume.md](docs/assessment/team-<REPORT_PREFIX>-commit-volume.md)*
-
-### Top Contributors
-| Author | Commits | % of Total |
-|--------|---------|------------|
+*Detailed findings in: [category.md](docs/assessment/team-<REPORT_PREFIX>-category.md)*
 
 ### Key Findings
-1. [Finding]
-2. [Finding]
+1. [Finding] [confidence: HIGH/MEDIUM/LOW]
+2. [Finding] [confidence: HIGH/MEDIUM/LOW]
 
-### Score: A-F
-
-### Recommendations
-1. [Priority]
-2. [Secondary]
-
----
-
-## 2. Commit Message Standards
-
-*Detailed findings in: [commit-messages.md](docs/assessment/team-<REPORT_PREFIX>-commit-messages.md)*
-
-### Convention Adoption
-| Author | Conventional % | Quality |
-|--------|---------------|---------|
-
-### Key Findings
-1. [Finding]
-2. [Finding]
-
-### Score: A-F
-
-### Recommendations
-1. [Priority]
-2. [Secondary]
-
----
-
-## 3. Code Quality Contributions
-
-*Detailed findings in: [code-quality.md](docs/assessment/team-<REPORT_PREFIX>-code-quality.md)*
-
-### Author Profiles
-| Author | Avg PR Size | Refactor % | Tech Debt | Score |
-|--------|-------------|------------|-----------|-------|
-
-### Key Findings
-1. [Finding]
-2. [Finding]
-
-### Score: A-F
-
-### Recommendations
-1. [Priority]
-2. [Secondary]
-
----
-
-## 4. Test Coverage Contributions
-
-*Detailed findings in: [test-coverage.md](docs/assessment/team-<REPORT_PREFIX>-test-coverage.md)*
-
-### Test Contributions
-| Author | Test Commits | Test Files | Coverage % | Score |
-|--------|--------------|------------|------------|-------|
-
-### Key Findings
-1. [Finding]
-2. [Finding]
-
-### Score: A-F
-
-### Recommendations
-1. [Priority]
-2. [Secondary]
-
----
-
-## 5. AI Adoption Analysis
-
-*Detailed findings in: [ai-adoption.md](docs/assessment/team-<REPORT_PREFIX>-ai-adoption.md)*
-
-### Adoption Distribution
-| Author | AI Signals | Effectiveness |
-|--------|------------|---------------|
-
-### Key Findings
-1. [Finding]
-2. [Finding]
-
-### Score: A-F
+### Score: A-F (one line rationale)
 
 ### Recommendations
 1. [Priority]
@@ -606,6 +550,15 @@ Synthesize findings into the comprehensive report.
 
 ### Priority 3: [Focus area]
 [Specific actions]
+
+---
+
+## Data Limitations
+
+The following data could not be verified from local git:
+- PR review/approval data (requires GitHub/Azure DevOps API)
+- Branch policy enforcement
+- Copilot usage statistics
 
 ---
 
@@ -627,8 +580,8 @@ Synthesize findings into the comprehensive report.
 
 # Return Summary
 
-After generating the report, return:
-- Developer rankings (top 3)
-- Key insights per category
-- Overall team score
-- Top 3 recommendations
+After generating the report, return (max 5 lines):
+- Top developer by overall score
+- Key insight
+- Overall score: A-F
+- Top 2 recommendations
