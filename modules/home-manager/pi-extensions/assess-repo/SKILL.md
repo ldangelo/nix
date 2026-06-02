@@ -26,7 +26,7 @@ You are a senior CTO orchestrating a comprehensive repository assessment. You la
 
 ## Phase 1: Parallel Analysis
 
-Launch 6 parallel `task` agents using the `task` tool. Use `agent: "task"` for each.
+Launch 6 parallel `task` agents using the `task` tool with `agent: "task"`.
 
 Pass this context to all tasks:
 ```
@@ -56,13 +56,13 @@ Analyze the repository structure to understand:
 
 **Tools:** Use `find` to discover structure, `read` to inspect key files, `search` for import patterns, `ast_grep` for structural analysis.
 
-**IMPORTANT:** Do NOT use `find -exec`, `xargs`, or complex bash pipelines. Use the tools listed above.
+**IMPORTANT:** Do NOT use `find -exec`, `xargs`, or complex bash pipelines.
 
 Output a concise findings summary with:
-- Project structure overview
+- Project structure overview (tree or list format)
 - Layering assessment
 - Dependency analysis
-- Key issues found
+- Key architectural issues (specific file:line references)
 - Score: A-F with rationale
 - Top 2 recommendations
 ```
@@ -72,23 +72,23 @@ Output a concise findings summary with:
 # Goal: Analyze code quality and technical debt
 
 Analyze the codebase for:
-- Large files (>300 lines) — use `find` then `read` to count
+- Large files (>300 lines) — use `find` then `read` with :raw to count
 - Naming convention violations
 - Code duplication patterns
 - Technical debt (TODO, FIXME, dead code) — use `search`
 - Error handling patterns
 - Complexity issues
 
-**Tools:** Use `find` to discover files, `read` to inspect and count lines, `search` for comments, `ast_grep` for structural patterns.
+**Tools:** Use `find` to discover files, `read` to inspect, `search` for comments, `ast_grep` for patterns.
 
-**IMPORTANT:** Do NOT use `find -exec`, `xargs`, or `wc -l | sort`. Use the tools listed above. To count lines, use `read` with `:raw` selector and count the output.
+**IMPORTANT:** Do NOT use `find -exec`, `xargs`, or `wc -l | sort`. To count lines, use `read` with `:raw` selector.
 
 Output a concise findings summary with:
 - Largest files (top 5, estimate by reading first/last lines)
-- Naming convention issues
-- Duplication examples
-- Technical debt count (search for TODO/FIXME/HACK)
-- Error handling patterns
+- Naming convention issues with examples
+- Duplication examples with file references
+- Technical debt count (search for TODO/FIXME/HACK/BUG)
+- Error handling patterns (catch blocks, raw Exception throws)
 - Score: A-F with rationale
 - Top 2 recommendations
 ```
@@ -106,13 +106,13 @@ Analyze testing across the codebase:
 
 **Tools:** Use `find` to locate test files, `read` to inspect test content, `search` for test patterns.
 
-**IMPORTANT:** Do NOT use `find -exec` or complex bash. Use the tools listed above.
+**IMPORTANT:** Do NOT use `find -exec` or complex bash.
 
 Output a concise findings summary with:
-- Test projects found
-- Coverage assessment
-- Test quality assessment
-- Major gaps
+- Test projects found (name, framework, type)
+- Coverage assessment (estimated percentage)
+- Test quality assessment (strengths and weaknesses)
+- Major gaps (untested critical code)
 - Score: A-F with rationale
 - Top 2 recommendations
 ```
@@ -130,14 +130,14 @@ Analyze security posture:
 
 **Tools:** Use `search` for auth/authz patterns, `read` to inspect configs, `ast_grep` for security patterns.
 
-**IMPORTANT:** Do NOT use complex bash. Also: NEVER output actual secrets, passwords, or API keys — report only that they exist.
+**IMPORTANT:** Do NOT use complex bash. NEVER output actual secrets — report only that they exist.
 
 Output a concise findings summary with:
 - Auth patterns found
 - Secret management assessment
 - Input validation assessment
-- Dependency issues
-- Security patterns
+- Dependency issues (outdated, vulnerable packages)
+- Security patterns (CSRF, XSS, injection prevention)
 - Score: A-F with rationale
 - Top 2 recommendations
 ```
@@ -149,20 +149,32 @@ Output a concise findings summary with:
 Analyze how well the codebase supports AI agents:
 - Check documentation (README, docs/, SKILL.md, AGENTS.md) — use `find`
 - Look for build/test scripts (Makefile, Justfile, package.json) — use `find`
-- Assess code self-documentation
-- Check for types and examples
+- Assess code self-documentation (types, comments, XML docs)
 - Evaluate determinism (lock files, stable builds)
+- Assess observability (logging, structured errors)
+- Evaluate testability (can AI verify changes?)
+- Assess refactorability (boundaries, coupling)
+- Check skill coverage (common ops as scripts?)
 
-**Tools:** Use `find` to locate docs and scripts, `read` to inspect content, `search` for patterns.
+**Tools:** Use `find` to locate docs and scripts, `read` to inspect, `search` for patterns.
 
-**IMPORTANT:** Do NOT use complex bash. Use the tools listed above.
+**IMPORTANT:** Do NOT use complex bash.
 
-Output a concise findings summary with:
+Output a concise findings summary with ALL 8 dimensions scored:
+| Dimension | Score | Evidence |
+|-----------|-------|----------|
+| Context Efficiency | A-F | ... |
+| Refactorability | A-F | ... |
+| Testability | A-F | ... |
+| Determinism | A-F | ... |
+| Observability | A-F | ... |
+| Error Recovery | A-F | ... |
+| Incremental Changes | A-F | ... |
+| Skill Coverage | A-F | ... |
+
+Plus:
 - Documentation found
-- Script coverage
-- Context efficiency
-- Refactorability
-- Determinism
+- Missing documentation
 - Score: A-F with rationale
 - Top 2 recommendations
 ```
@@ -176,24 +188,37 @@ Analyze CI/CD configuration:
 - Look at pipeline stages
 - Assess deployment strategy
 - Check for automation
+- Evaluate secrets management in CI
 
-**Tools:** Use `find` to locate CI configs, `read` to inspect pipeline files, `search` for deployment patterns.
+**Tools:** Use `find` to locate CI configs, `read` to inspect pipeline files, `search` for patterns.
 
-**IMPORTANT:** Do NOT use complex bash. Use the tools listed above.
+**IMPORTANT:** Do NOT use complex bash.
 
 Output a concise findings summary with:
 - CI system found
-- Pipeline stages
-- Deployment strategy
+- Pipeline stages (build, test, deploy)
+- Deployment strategy (blue-green, canary, rolling)
 - Automation level
-- Weaknesses
+- Key weaknesses
 - Score: A-F with rationale
 - Top 2 recommendations
 ```
 
 ## Phase 2: Aggregate
 
-After all 6 tasks complete, merge their findings into the final report format.
+After all 6 tasks complete, merge their findings into the final report.
+
+**CRITICAL:** Ensure all 10 categories are present in the final report:
+1. Architecture
+2. Code Quality
+3. Error Handling
+4. Observability
+5. Dependencies
+6. Scalability
+7. Testing
+8. CI/CD
+9. Security
+10. AI Readiness
 
 ## Phase 3: Final Report
 
@@ -215,7 +240,7 @@ Generate the comprehensive report in the format below.
 
 ## Executive Summary
 
-[One paragraph overview: what the project does, key strengths, primary risks, main recommendation]
+[One paragraph: what the project does, key strengths, primary risks, main recommendation]
 
 ---
 
@@ -223,8 +248,8 @@ Generate the comprehensive report in the format below.
 
 | Assessment | Grade |
 |------------|-------|
-| Overall Grade | A-F |
-| AI Readiness Grade | A-F |
+| Overall | A-F |
+| AI Readiness | A-F |
 
 **Scoring Rubric:** A=best practice, B=solid, C=debt present, D=significant issues, F=critical
 
@@ -234,31 +259,34 @@ Generate the comprehensive report in the format below.
 
 | Category | Score | Key Issues | Recommendation |
 |----------|-------|------------|----------------|
-| Architecture | A-F | ... | ... |
-| Code Quality | A-F | ... | ... |
-| Error Handling | A-F | ... | ... |
-| Observability | A-F | ... | ... |
-| Dependencies | A-F | ... | ... |
-| Scalability | A-F | ... | ... |
-| Testing | A-F | ... | ... |
-| CI/CD | A-F | ... | ... |
-| Security | A-F | ... | ... |
-| AI Readiness | A-F | ... | ... |
+| Architecture | A-F | 2-3 issues | 1-2 sentences |
+| Code Quality | A-F | 2-3 issues | 1-2 sentences |
+| Error Handling | A-F | 2-3 issues | 1-2 sentences |
+| Observability | A-F | 2-3 issues | 1-2 sentences |
+| Dependencies | A-F | 2-3 issues | 1-2 sentences |
+| Scalability | A-F | 2-3 issues | 1-2 sentences |
+| Testing | A-F | 2-3 issues | 1-2 sentences |
+| CI/CD | A-F | 2-3 issues | 1-2 sentences |
+| Security | A-F | 2-3 issues | 1-2 sentences |
+| AI Readiness | A-F | 2-3 issues | 1-2 sentences |
 
 ---
 
 ## 1. Architecture Analysis
 
-[Summarize architect-agent findings with specific examples]
+[Detailed findings from architect agent]
 
-### Architecture Diagram
-```mermaid
-[Graph showing component structure]
-```
+### Project Structure
+[Directory tree or list]
+
+### Layering Assessment
+[Layer separation analysis]
 
 ### Key Findings
 1. [Finding with file:line reference]
 2. [Finding with file:line reference]
+
+### Score: A-F
 
 ### Recommendations
 1. [Priority recommendation]
@@ -268,7 +296,7 @@ Generate the comprehensive report in the format below.
 
 ## 2. Code Quality Assessment
 
-[Summarize code-quality-agent findings]
+[Detailed findings from code quality agent]
 
 ### Largest Files
 | File | Lines | Concern |
@@ -280,10 +308,13 @@ Generate the comprehensive report in the format below.
 |------|-------|----------|
 | TODO | N | Medium |
 | FIXME | N | High |
+| ... | ... | ... |
 
 ### Key Findings
 1. [Finding with file:line reference]
 2. [Finding with file:line reference]
+
+### Score: A-F
 
 ### Recommendations
 1. [Priority recommendation]
@@ -293,11 +324,13 @@ Generate the comprehensive report in the format below.
 
 ## 3. Error Handling Assessment
 
-[Summarize error handling patterns found]
+[Summarize error handling patterns]
 
 ### Key Findings
-1. [Finding]
-2. [Finding]
+1. [Finding with file:line reference]
+2. [Finding with file:line reference]
+
+### Score: A-F
 
 ### Recommendations
 1. [Priority recommendation]
@@ -306,11 +339,13 @@ Generate the comprehensive report in the format below.
 
 ## 4. Logging and Observability
 
-[Summarize logging patterns]
+[Summarize logging and monitoring]
 
 ### Key Findings
 1. [Finding]
 2. [Finding]
+
+### Score: A-F
 
 ### Recommendations
 1. [Priority recommendation]
@@ -319,6 +354,8 @@ Generate the comprehensive report in the format below.
 
 ## 5. Dependency Analysis
 
+[Summarize dependencies]
+
 | Package | Version | Age | Concern |
 |---------|---------|-----|---------|
 | ... | ... | ... | ... |
@@ -326,6 +363,8 @@ Generate the comprehensive report in the format below.
 ### Key Findings
 1. [Finding]
 2. [Finding]
+
+### Score: A-F
 
 ### Recommendations
 1. [Priority recommendation]
@@ -337,8 +376,10 @@ Generate the comprehensive report in the format below.
 [Summarize scalability constraints]
 
 ### Key Findings
-1. [Finding]
-2. [Finding]
+1. [Finding with file:line reference]
+2. [Finding with file:line reference]
+
+### Score: A-F
 
 ### Recommendations
 1. [Priority recommendation]
@@ -347,22 +388,32 @@ Generate the comprehensive report in the format below.
 
 ## 7. Testing Assessment
 
-| Project | Framework | Type | Quality |
-|---------|-----------|------|---------|
-| ... | ... | ... | ... |
+[Detailed findings from testing agent]
+
+| Project | Framework | Type | Coverage | Quality |
+|---------|-----------|------|----------|---------|
+| ... | ... | ... | ... | ... |
+
+### Coverage Summary
+- Overall: ~N%
+- Business Logic: ~N%
+- [Other areas as applicable]
 
 ### Key Findings
 1. [Finding]
 2. [Finding]
 
+### Score: A-F
+
 ### Recommendations
 1. [Priority recommendation]
+2. [Secondary recommendation]
 
 ---
 
 ## 8. CI/CD Assessment
 
-[Summarize pipeline analysis]
+[Detailed findings from CI/CD agent]
 
 ### Pipeline Stages
 | Stage | Duration | Quality |
@@ -373,25 +424,35 @@ Generate the comprehensive report in the format below.
 1. [Finding]
 2. [Finding]
 
+### Score: A-F
+
 ### Recommendations
 1. [Priority recommendation]
+2. [Secondary recommendation]
 
 ---
 
 ## 9. Security Assessment
 
-[Summarize security findings]
+[Detailed findings from security agent]
 
 ### Key Findings
-1. [Finding - severity: HIGH/MEDIUM/LOW]
-2. [Finding - severity: HIGH/MEDIUM/LOW]
+| Finding | Severity |
+|---------|----------|
+| [Finding 1] | HIGH/MEDIUM/LOW |
+| [Finding 2] | HIGH/MEDIUM/LOW |
+
+### Score: A-F
 
 ### Recommendations
 1. [Priority recommendation]
+2. [Secondary recommendation]
 
 ---
 
 ## 10. AI Readiness Assessment
+
+[Detailed findings from AI readiness agent]
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
@@ -408,27 +469,26 @@ Generate the comprehensive report in the format below.
 1. [Finding]
 2. [Finding]
 
+### Score: A-F
+
 ### Recommendations
 1. [Priority recommendation]
+2. [Secondary recommendation]
 
 ---
 
-## Recommendations
+## Recommendations — Priority Order
 
 ### Priority 1: Reduce MTTR
-[From all specialists - specific actionable items]
+[From all specialists]
 
 ### Priority 2: Improve Maintainability
-[Technical debt reduction items]
 
 ### Priority 3: Enable Feature Velocity
-[Long-term health items]
 
 ### Priority 4: Scalability
-[Growth concerns]
 
 ### Priority 5: Observability
-[Monitoring improvements]
 
 ---
 
@@ -450,10 +510,10 @@ Generate the comprehensive report in the format below.
 
 ## Next Steps
 
-1. Run assessment to regenerate this report
-2. Pick ONE Priority 1 item to address this week
-3. Schedule 30-min review with team
-4. Create tracking issues for Priority 2+ items
+1. [Action 1]
+2. [Action 2]
+3. [Action 3]
+4. [Action 4]
 
 ---
 
@@ -474,4 +534,4 @@ Generate the comprehensive report in the format below.
 
 ---
 
-*Document generated from multi-agent analysis.*
+*Document generated from multi-agent parallel analysis.*
