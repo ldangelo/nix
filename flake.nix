@@ -320,13 +320,13 @@
                 pi-agent.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
-                  defaultProvider = "litellm";
-                  defaultModel = "coding";
+                  defaultProvider = "openai";
+                  defaultModel = "openai-codex/gpt-5.5";
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
                     "npm:pi-hooks"
-                    "npm:pi-context"
+                    # "npm:pi-context"  # disabled - API incompatible with pi-coding-agent 0.78.0
                     {
                       source = "${ensemblePi}/packages/pi";
                       # Ensemble currently ships an ask_user extension. We provide
