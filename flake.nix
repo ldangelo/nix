@@ -136,38 +136,6 @@
                 ./modules/home-manager/pi-extensions/poly-notify
                 ./modules/home-manager/pi-extensions/auto-active-skills.ts
               ];
-              pi-agent.settings = {
-                lastChangelogVersion = "0.72.1";
-                defaultProvider = "litellm";
-                defaultModel = "coding";
-                defaultThinkingLevel = "medium";
-                packages = [
-                  "npm:pi-powerline-footer"
-                  "npm:pi-hooks"
-                  "npm:pi-context"
-                  {
-                    source = "/Users/ldangelo/Development/Fortium/ensemble/packages/pi";
-                    # Ensemble currently ships an ask_user extension. We provide
-                    # a Pi-version-compatible ask_user extension separately to
-                    # avoid duplicate/conflicting tool registration.
-                    extensions = [];
-                  }
-                ];
-                powerline.preset = "nerd";
-                workingVibeMode = "file";
-                workingVibe = "off";
-                permissionLevel = "low";
-                permissionMode = "ask";
-                bashMode = {
-                  toggleShortcut = "ctrl+shift+b";
-                  transcriptMaxLines = 2000;
-                  transcriptMaxBytes = 524288;
-                };
-                httpIdleTimeoutMs = 0;
-                skills = [
-                  "/Users/ldangelo/nix/.agents/skills"
-                ];
-              };
               pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
               pi-agent.packages = [
                 "npm:pi-powerline-footer"
@@ -224,13 +192,13 @@
                 pi-agent.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
-                  defaultProvider = "litellm";
-                  defaultModel = "coding";
+                  defaultProvider = "openai";
+                  defaultModel = "openai-codex/gpt-5.5";
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
                     "npm:pi-hooks"
-                    "npm:pi-context"
+                    # "npm:pi-context"  # disabled - API incompatible
                   ];
                   powerline = {
                     preset = "nerd";
