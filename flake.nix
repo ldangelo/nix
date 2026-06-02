@@ -140,7 +140,7 @@
               pi-agent.packages = [
                 "npm:pi-powerline-footer"
                 "npm:pi-hooks"
-                "npm:pi-context"
+                # "npm:pi-context"  # disabled - API incompatible
                 # Ensemble pi package is registered via pi-agent.settings.packages
                 # as an attrset with extensions=[] to avoid duplicate ask_user
                 # tool registration with the nix-managed ask-user.ts extension.
@@ -244,7 +244,7 @@
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-hooks"
-                  "npm:pi-context"
+                  # "npm:pi-context"  # disabled - API incompatible
                   {
                     source = "${pkgs.fetchFromGitHub {
                       owner = "FortiumPartners";
@@ -347,7 +347,7 @@
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
                   "npm:pi-hooks"
-                  "npm:pi-context"
+                  # "npm:pi-context"  # disabled - API incompatible
                   # Ensemble pi package is registered via pi-agent.settings.packages
                   # as an attrset with extensions=[] to avoid duplicate ask_user
                   # tool registration with the nix-managed ask-user.ts extension.
