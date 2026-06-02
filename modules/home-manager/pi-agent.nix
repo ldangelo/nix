@@ -71,6 +71,9 @@ let
     ./pi-extensions/exa-cli
     ./pi-extensions/sequentialthinking-cli
     ./pi-extensions/context7-cli
+    ./pi-extensions/assess-repo
+    ./pi-extensions/assess-team
+    ./pi-extensions/obsidian
   ];
   enabledSkills = lib.unique (builtInSkills ++ cfg.skills);
 
