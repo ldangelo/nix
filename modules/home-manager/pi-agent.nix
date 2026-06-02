@@ -26,11 +26,9 @@ let
 
   # ── Default settings ────────────────────────────────────────────────────
   defaultSettings = {
-    lastChangelogVersion = "0.72.1";
-    defaultProvider = "litellm";
-    defaultModel = "coding";
+    defaultProvider = "openai";
+    defaultModel = "openai-codex/gpt-5.5";
     defaultThinkingLevel = "medium";
-    packages = mergedPackages;
     powerline = { preset = "nerd"; };
     workingVibeMode = "file";
     workingVibe = "off";
