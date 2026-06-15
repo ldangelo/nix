@@ -17,12 +17,16 @@ let
     # "npm:pi-context"  # disabled - API incompatible with pi-coding-agent 0.78.0
     "npm:pi-subagents"
     "npm:pi-intercom"
-    "npm:context-mode"
+    "npm:context-mode"  # mksglu/context-mode Pi package
   ];
 
   # Merge default packages with user-provided packages (dedup).
   # attrset entries (e.g. { source = "..."; extensions = []; }) are also included.
-  mergedPackages = defaultPackages ++ cfg.packages;
+  mergedPackages = lib.unique (defaultPackages ++ cfg.packages);
+  settingsPackages =
+    if cfg.settings ? packages
+    then lib.unique (mergedPackages ++ cfg.settings.packages)
+    else mergedPackages;
 
   # ── Default settings ────────────────────────────────────────────────────
   defaultSettings = {
@@ -49,9 +53,7 @@ let
       merged = defaultSettings // cfg.settings;
     in
     merged // {
-      packages = if cfg.settings ? packages
-        then mergedPackages ++ cfg.settings.packages
-        else mergedPackages;
+      packages = settingsPackages;
     };
 
   # ── Built-in skills ─────────────────────────────────────────────────────
@@ -141,7 +143,7 @@ let
           echo "pi not found; skipping package $pkg"
         fi
       fi
-    '' else "") cfg.packages;
+    '' else "") settingsPackages;
 
 in
 {
@@ -233,6 +235,8 @@ in
           ".pi/agent/extensions/auto-commit-on-exit.ts".source = ./pi-extensions/auto-commit-on-exit.ts;
           ".pi/agent/extensions/preset.ts".source = ./pi-extensions/preset.ts;
           ".pi/agent/extensions/nvim/index.ts".source = ./pi-extensions/nvim/index.ts;
+          ".pi/agent/extensions/agentmemory/index.ts".source = ./pi-extensions/agentmemory/index.ts;
+          ".pi/agent/extensions/agentmemory/security.ts".source = ./pi-extensions/agentmemory/security.ts;
           ".pi/agent/extensions/poly-notify/notify.json".source = ./pi-extensions/poly-notify/notify.json;
 
           # ── Vendor packages ──────────────────────────────────────────────
@@ -327,7 +331,7 @@ in
     }
 
     # ── Package installation activation ─────────────────────────────────────
-    (lib.mkIf (cfg.packages != []) {
+    (lib.mkIf (settingsPackages != []) {
       home.activation.installPiAgentPackages =
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           echo "Installing Pi Agent packages..."

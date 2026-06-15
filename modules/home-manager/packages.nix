@@ -67,7 +67,7 @@ in {
       multimarkdown
       pandoc
       ripgrep
-      silver-searcher
+      platinum-searcher
 
       # Email & Communication
       afew

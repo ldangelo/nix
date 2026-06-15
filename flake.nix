@@ -69,6 +69,11 @@
           cargoBuildFeatures = (oldAttrs.cargoBuildFeatures or []) ++ [ "oauth2" ];
         });
 
+        # Avoid GNU Emacs GUI build failure on current unstable/Xcode.
+        # Mail tools only need notmuch CLI and batch Emacs for mu4e byte-compilation.
+        notmuch = super.notmuch.override { withEmacs = false; };
+        mu = super.mu.override { emacs = super.emacs-nox; };
+
         # bun 1.3.14 — nixpkgs-unstable lags behind; remove once nixpkgs catches up
         bun = super.bun.overrideAttrs (_: {
           version = "1.3.14";

@@ -237,9 +237,9 @@
 
     # Cleanup options
     onActivation = {
-      cleanup = "zap";        # Uninstall packages not listed
-      autoUpdate = true;      # Auto-update Homebrew
-      upgrade = true;         # Auto-upgrade packages
+      cleanup = "none";      # Disable cleanup (use "uninstall" or "zap" with HOMEBREW_ASK=1)
+      autoUpdate = true;          # Auto-update Homebrew
+      upgrade = true;             # Auto-upgrade packages
     };
   };
 }

@@ -240,9 +240,9 @@ in
 
       # Mouse toggle
       bind m set -g mouse \; display "Mouse: #{?mouse,ON,OFF}"
-
-      # Activity monitoring (highlight windows with new output)
-      set -g monitor-activity on
+      # Reload config
+      bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
+      # Activity monitoring
       set -g visual-activity off
 
       # Bell monitoring — Claude Code and other agents send terminal bells
