@@ -14,10 +14,8 @@ let
   defaultPackages = [
     "npm:pi-powerline-footer"
     "npm:pi-hooks"
-    # "npm:pi-context"  # disabled - API incompatible with pi-coding-agent 0.78.0
     "npm:pi-subagents"
     "npm:pi-intercom"
-    "npm:context-mode"  # mksglu/context-mode Pi package
   ];
 
   # Merge default packages with user-provided packages (dedup).
@@ -338,42 +336,6 @@ in
           ${installPackageCommands}
         '';
     })
-
-    # ── ACM patch (always runs) ───────────────────────────────────────────
-    {
-      home.activation.patchPiContextAutoAcm =
-        lib.hm.dag.entryAfter [ "installPiAgentPackages" ] ''
-          pi_context="$HOME/.pi/agent/npm/node_modules/pi-context/src/index.ts"
-          if [ -f "$pi_context" ] && ! grep -q "auto-enable ACM on session start" "$pi_context"; then
-            ${pkgs.python3}/bin/python3 - "$pi_context" <<'PY'
-import pathlib, sys
-path = pathlib.Path(sys.argv[1])
-text = path.read_text()
-needle = "export default function (pi: ExtensionAPI) {\n"
-insert = "\n".join([
-    "export default function (pi: ExtensionAPI) {",
-    "    // auto-enable ACM on session start (Nix managed)",
-    "    pi.on(\"session_start\", async (_event, ctx) => {",
-    "        CommandCtx = ctx as unknown as ExtensionCommandContext;",
-    "        if (_event.reason === \"startup\" || _event.reason === \"new\" || _event.reason === \"resume\" || _event.reason === \"fork\") {",
-    "            pi.sendMessage({",
-    "                customType: \"pi-context\",",
-    "                content: \"use context-management skill\",",
-    "                display: false,",
-    "            }, {",
-    "                deliverAs: \"followUp\"",
-    "            });",
-    "        }",
-    "    });",
-    "",
-])
-if needle not in text:
-    raise SystemExit("pi-context patch target not found")
-path.write_text(text.replace(needle, insert, 1))
-PY
-          fi
-        '';
-    }
 
     # ── Skills installation ───────────────────────────────────────────────
     (lib.mkIf (enabledSkills != []) {
