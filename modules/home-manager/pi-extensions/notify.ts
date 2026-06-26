@@ -9,6 +9,7 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
 
 function windowsToastScript(title: string, body: string): string {
 	const type = "Windows.UI.Notifications";
@@ -38,7 +39,13 @@ function notifyWindows(title: string, body: string): void {
 	execFile("powershell.exe", ["-NoProfile", "-Command", windowsToastScript(title, body)]);
 }
 
+function bell(): void {
+	// Raw BEL. tmux catches this via alert-bell and emits session/window-aware macOS notification.
+	process.stdout.write("\x07");
+}
+
 function notify(title: string, body: string): void {
+	bell();
 	if (process.env.WT_SESSION) {
 		notifyWindows(title, body);
 	} else if (process.env.KITTY_WINDOW_ID) {
@@ -49,6 +56,37 @@ function notify(title: string, body: string): void {
 }
 
 export default function (pi: ExtensionAPI) {
+	pi.registerTool({
+		name: "notify_user",
+		label: "Notify User",
+		description: "Send a terminal/tmux notification to the user when attention is needed.",
+		promptSnippet: "Send a terminal/tmux notification to the user when attention is needed.",
+		promptGuidelines: [
+			"Use notify_user when work is complete, blocked, or waiting on user attention in a long-running/async workflow.",
+			"Do not spam notify_user; call it at meaningful completion, block, or handoff points only.",
+		],
+		parameters: Type.Object({
+			title: Type.Optional(Type.String({ description: "Notification title. Default: Pi" })),
+			body: Type.Optional(Type.String({ description: "Notification body. Default: Ready for input" })),
+		}),
+		async execute(_toolCallId, params) {
+			const title = params.title?.trim() || "Pi";
+			const body = params.body?.trim() || "Ready for input";
+			notify(title, body);
+			return {
+				content: [{ type: "text", text: `Notified user: ${title} — ${body}` }],
+				details: { title, body },
+			};
+		},
+	});
+
+	pi.registerCommand("notify", {
+		description: "Send a tmux/terminal notification now",
+		handler: async (args) => {
+			notify("Pi", args?.trim() || "Ready for input");
+		},
+	});
+
 	pi.on("agent_end", async () => {
 		notify("Pi", "Ready for input");
 	});

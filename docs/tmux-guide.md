@@ -243,9 +243,29 @@ Saved data: window layouts, pane positions, working directories, running command
 |-----|--------|
 | `Prefix Tab` | Extract words, paths, URLs from pane into fzf picker |
 
+### Notifications — AI Needs Input / Process Done
+
+Two paths exist:
+
+1. **Terminal bell → tmux alert hook → macOS notification**
+   - Any process can call `bell` or `printf '\a'`.
+   - tmux shows session/window-aware notification via `terminal-notifier`.
+2. **Pi notify extension → terminal notification + bell**
+   - Pi auto-notifies on `agent_end`.
+   - Pi `ask_user` tool rings before blocking for input.
+   - Agents can call `notify_user` when work is complete, blocked, or waiting for attention.
+
+Manual test:
+
+```bash
+bell
+# or
+printf '\a'
+```
+
 ### tmux-notify — Process Completion Alerts
 
-Monitors panes and sends a macOS notification when a process finishes (after 5+ seconds). Bell signals from Claude Code also trigger notifications — if an agent needs attention, you'll get a macOS alert showing the session and window name.
+Monitors panes and sends a macOS notification when a process finishes (after 5+ seconds). Bell signals from AI tools also trigger notifications — if an agent needs attention, you'll get a macOS alert showing the session and window name.
 
 ### Catppuccin Theme
 

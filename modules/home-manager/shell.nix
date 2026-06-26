@@ -24,6 +24,7 @@ in {
       #am    = "cd ~/mcp_agent_mail; scripts/run_server_with_token.sh";
       ag    = "ag --color-line-number='0;33' --color-path='0;32'";
       #      bd    = "br";
+      bell  = "printf '\\a'";
       cc    = "claude --chrome";
       ccc   = "claude --continue --chrome";
       cp    = "nocorrect cp";
@@ -302,6 +303,14 @@ in {
 
 fi
 
+    '';
+  };
+
+  home.file.".local/bin/bell" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      printf '\a'
     '';
   };
 }

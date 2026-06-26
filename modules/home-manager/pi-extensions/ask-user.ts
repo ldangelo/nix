@@ -7,6 +7,10 @@ const AskUserParams = Type.Object({
   placeholder: Type.Optional(Type.String({ description: "Placeholder text for free-form input" })),
 });
 
+function bell(): void {
+  process.stdout.write("\x07");
+}
+
 export default function askUser(pi: ExtensionAPI) {
   pi.registerTool({
     name: "ask_user",
@@ -27,6 +31,9 @@ export default function askUser(pi: ExtensionAPI) {
           details: { question: params.question, answer: null },
         };
       }
+
+      // Alert immediately before Pi opens blocking prompt.
+      bell();
 
       let answer: string | null | undefined;
       if (params.options && params.options.length > 0) {
