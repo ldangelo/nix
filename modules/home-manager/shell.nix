@@ -40,7 +40,8 @@ in {
       ln    = "nocorrect ln";
       lnr   = "nocorrect ln -s --relative";
       mkdir = "nocorrect mkdir";
-      mux   = "tmuxinator";
+      mux   = "tmuxp";
+      muxi  = "tmuxinator";
       mv    = "nocorrect mv";
       scp   = "${pkgs.rsync}/bin/rsync -aP --inplace";
       sudo  = "nocorrect sudo";

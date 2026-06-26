@@ -168,7 +168,7 @@ in
 
       # tmux-tea: fuzzy tmux session manager
       # Note: plugin uses tea.tmux instead of tmux_tea.tmux
-      set -g @tea-bind 't'
+      set -g @tea-bind 'o'
       set -g @tea-default-command 'nvim .'
       set -g @tea-find-path "$HOME/Development"
       set -g @tea-preview-position 'top'
@@ -230,6 +230,21 @@ in
       bind Enter copy-mode
       bind v copy-mode
 
+      # Session/project navigation
+      bind f run-shell 'dir="$(zoxide query -l | fzf-tmux -p 80%,70% --prompt="project> ")" && ~/.local/bin/tmux-template "$dir"'
+      bind S choose-tree -Zs
+      bind N new-session -c "#{pane_current_path}"
+      bind-key -n M-t run-shell '~/.local/bin/tmux-template "#{pane_current_path}"'
+      bind-key -n M-1 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "1p")" && tmux switch-client -t "$target"'
+      bind-key -n M-2 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "2p")" && tmux switch-client -t "$target"'
+      bind-key -n M-3 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "3p")" && tmux switch-client -t "$target"'
+      bind-key -n M-4 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "4p")" && tmux switch-client -t "$target"'
+      bind-key -n M-5 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "5p")" && tmux switch-client -t "$target"'
+      bind-key -n M-6 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "6p")" && tmux switch-client -t "$target"'
+      bind-key -n M-7 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "7p")" && tmux switch-client -t "$target"'
+      bind-key -n M-8 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "8p")" && tmux switch-client -t "$target"'
+      bind-key -n M-9 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "9p")" && tmux switch-client -t "$target"'
+
       # Window navigation
       bind Tab last-window
       bind BTab switch-client -l
@@ -254,7 +269,7 @@ in
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
 
-      # Session management via tmux-tea (prefix + t)
+      # Session management via tmux-template (prefix + f) and tmux-tea (prefix + o)
       # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
 
       # UX tweaks
@@ -372,18 +387,24 @@ in
       - name: +Sessions
         key: s
         menu:
+          - name: Project picker
+            key: f
+            command: run 'dir="$(zoxide query -l | fzf-tmux -p 80%,70% --prompt="project> ")" && ~/.local/bin/tmux-template "$dir"'
           - name: Choose
             key: s
             command: choose-tree -Zs
-              - name: Tea
-                key: t
-                command: run "tea"
-              - name: Rename
-                key: r
-                command: command-prompt -I "#S" "rename-session -- \"%%\""
-              - name: Detach
-                key: d
-                command: detach
+          - name: New here
+            key: n
+            command: new-session -c "#{pane_current_path}"
+          - name: Tea
+            key: t
+            command: run "tea"
+          - name: Rename
+            key: r
+            command: command-prompt -I "#S" "rename-session -- \"%%\""
+          - name: Detach
+            key: d
+            command: detach
       - name: Copy mode
         key: c
         command: copy-mode
@@ -518,6 +539,141 @@ in
             - br list --status=open
             - ""
   '';
+
+  # Directory-aware tmuxp launcher. Detects project type and starts matching layout.
+  home.file.".local/bin/tmux-template" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      dir="''${1:-$PWD}"
+      dir="$(cd "$dir" && pwd)"
+      session="$(basename "$dir" | tr '.:' '__')"
+
+      if tmux has-session -t "$session" 2>/dev/null; then
+        if [[ -n "''${TMUX:-}" ]]; then
+          tmux switch-client -t "$session"
+        else
+          tmux attach-session -t "$session"
+        fi
+        exit 0
+      fi
+
+      template="dev"
+      if [[ -f "$dir/.tmux-template" ]]; then
+        template="$(tr -d '[:space:]' < "$dir/.tmux-template")"
+      elif [[ -f "$dir/package.json" ]]; then
+        template="node"
+      elif [[ -f "$dir/flake.nix" ]]; then
+        template="nix"
+      elif [[ -f "$dir/Cargo.toml" ]]; then
+        template="rust"
+      elif [[ -f "$dir/pyproject.toml" || -f "$dir/requirements.txt" ]]; then
+        template="python"
+      fi
+
+      tmp="$(mktemp)"
+      trap 'rm -f "$tmp"' EXIT
+
+      case "$template" in
+        node)
+          cat > "$tmp" <<EOF
+      session_name: "$session"
+      start_directory: "$dir"
+      windows:
+        - window_name: code
+          layout: even-horizontal
+          panes:
+            - nvim .
+            - claude --continue
+        - window_name: dev
+          layout: even-horizontal
+          panes:
+            - npm run dev
+            - npm test -- --watch
+      EOF
+          ;;
+        nix)
+          cat > "$tmp" <<EOF
+      session_name: "$session"
+      start_directory: "$dir"
+      windows:
+        - window_name: code
+          layout: even-horizontal
+          panes:
+            - nvim .
+            - claude --continue
+        - window_name: ops
+          layout: main-vertical
+          panes:
+            - br ready || true
+            - nix flake check
+            - ""
+      EOF
+          ;;
+        rust)
+          cat > "$tmp" <<EOF
+      session_name: "$session"
+      start_directory: "$dir"
+      windows:
+        - window_name: code
+          layout: even-horizontal
+          panes:
+            - nvim .
+            - claude --continue
+        - window_name: cargo
+          layout: even-horizontal
+          panes:
+            - cargo check
+            - cargo test
+      EOF
+          ;;
+        python)
+          cat > "$tmp" <<EOF
+      session_name: "$session"
+      start_directory: "$dir"
+      windows:
+        - window_name: code
+          layout: even-horizontal
+          panes:
+            - nvim .
+            - claude --continue
+        - window_name: test
+          layout: even-horizontal
+          panes:
+            - uv run pytest || pytest
+            - ""
+      EOF
+          ;;
+        dev|*)
+          cat > "$tmp" <<EOF
+      session_name: "$session"
+      start_directory: "$dir"
+      windows:
+        - window_name: code
+          layout: even-horizontal
+          panes:
+            - nvim .
+            - claude --continue
+        - window_name: ops
+          layout: main-vertical
+          panes:
+            - bv || br ready || true
+            - foreman status --watch || true
+            - ""
+      EOF
+          ;;
+      esac
+
+      tmuxp load -y -d "$tmp"
+      if [[ -n "''${TMUX:-}" ]]; then
+        tmux switch-client -t "$session"
+      else
+        tmux attach-session -t "$session"
+      fi
+    '';
+  };
 
   # Ensure which-key's generated init.tmux is writable after each deploy.
   # The plugin regenerates this file on every tmux start; if it's read-only

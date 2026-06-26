@@ -1,7 +1,7 @@
 # Terminal Workspace Guide
 
-**Last Updated**: 2026-03-27
-**Architecture**: WezTerm (dumb terminal) + tmux (multiplexer) + tmuxinator (layouts) + sessionizer (project switching)
+**Last Updated**: 2026-06-26
+**Architecture**: WezTerm (dumb terminal) + tmux (multiplexer) + sesh/tmux-template (project switching) + tmuxp (layouts/templates)
 **Prefix Key**: `Ctrl+Space`
 **Configuration**: `modules/home-manager/tmux/default.nix`, `dotfiles/config/wezterm/`
 
@@ -12,7 +12,7 @@
 ```
 WezTerm (terminal emulator)
   └── tmux (multiplexer — owns all windows, panes, sessions)
-        ├── Session: "foreman" (tmuxinator dev layout)
+        ├── Session: "foreman" (tmuxp dev template)
         │     ├── Window 1: "code"     ← tab in status bar
         │     │     ├── Pane: nvim
         │     │     └── Pane: claude --continue
@@ -46,9 +46,11 @@ tmux
 # Launch the sessionizer to pick a project
 # Prefix f  (Ctrl+Space, then f)
 
-# Or launch a dev workspace directly
+# Or launch the directory-aware template launcher directly
 cd ~/Development/Fortium/foreman
-tmuxinator start dev
+tmux-template .
+
+# `mux` is tmuxp for ad-hoc layouts; `muxi` keeps old tmuxinator layouts
 ```
 
 ### Daily Workflow
@@ -64,7 +66,7 @@ tmuxinator start dev
 
 ## Sessionizer (Prefix f)
 
-The sessionizer is a fuzzy project picker. It creates or attaches to a tmux session per project, using the `dev` tmuxinator layout.
+The sessionizer is a fuzzy project picker. It creates or attaches to one tmux session per project, using `tmux-template` to pick a tmuxp layout by project type.
 
 | Key | Action |
 |-----|--------|
@@ -74,9 +76,9 @@ How it works:
 1. Queries zoxide for your most-used directories (ranked by frequency)
 2. Shows them in fzf for fuzzy selection
 3. If a tmux session already exists for that project → switches to it
-4. If not → creates a new session using the `dev` tmuxinator layout
+4. If not → creates a new session using detected tmuxp template
 
-This means each project gets its own isolated tmux session with the full dev workspace, and you switch between projects instantly.
+This means each project gets its own isolated tmux session with the right workspace for its stack, and you switch between projects instantly.
 
 ---
 
@@ -98,10 +100,10 @@ If you forget a shortcut, press `Prefix Space` — the which-key menu shows ever
 
 | Key | Action |
 |-----|--------|
-| `Prefix f` | **Sessionizer** — fuzzy project picker |
-| `Prefix o` | **SessionX** — interactive session picker with preview |
+| `Prefix f` | **Sessionizer** — fuzzy project picker via zoxide + tmux-template |
+| `Prefix o` | tmux-tea legacy session picker |
 | `Prefix S` | Choose session (built-in picker) |
-| `Prefix N` | New session in current directory |
+| `Prefix N` | New raw tmux session in current directory |
 | `Prefix d` | Detach from session |
 | `Prefix BTab` | Switch to last session |
 | `M-t` | New session in current dir (no prefix) |
@@ -196,6 +198,22 @@ Popups open in the current pane's working directory.
 
 ## Plugins
 
+Recommended plugin set for this setup:
+
+| Plugin | Why keep/use |
+|--------|--------------|
+| `vim-tmux-navigator` | Seamless Ctrl+h/j/k/l between tmux + Neovim |
+| `resurrect` + `continuum` | Session save/restore |
+| `tmux-yank` | Copy mode → macOS clipboard |
+| `tmux-toggle-popup` | Lazygit/yazi/shell as persistent popups |
+| `tmux-which-key` | Discover bindings from `Prefix Space` |
+| `tmux-fzf` + `fzf-tmux-url` | Fuzzy tmux ops + URL picker |
+| `tmux-thumbs` / `extrakto` | Fast copy/extract URLs, paths, hashes |
+| `tmux-notify` | macOS alerts when long commands/agents finish |
+| `catppuccin`, `cpu`, `battery` | Statusline/theme |
+
+Optional later: `tmux-sessionx` if `Prefix f` feels too minimal. Avoid adding more layout/session plugins until `tmux-template` proves insufficient.
+
 ### Session Persistence: resurrect + continuum
 
 Sessions auto-save every 10 minutes and restore on tmux start.
@@ -239,24 +257,52 @@ Mocha variant with slanted window status. Status bar shows:
 
 ---
 
-## Tmuxinator Workspaces
+## Session Manager + Templates
 
-Tmuxinator manages predefined layouts. All workspaces use the current directory as root.
+Recommended stack:
 
-### Available Workspaces
+| Tool | Role |
+|------|------|
+| `sesh` | Session discovery/switching CLI |
+| `tmux-template` | Local launcher: maps directory → template |
+| `tmuxp` / `mux` | Layout/template engine |
+| `tmuxinator` / `muxi` | Legacy layouts kept for compatibility |
 
-| Workspace | Command | Description |
-|-----------|---------|-------------|
-| `dev` | `tmuxinator start dev` | **Primary** — code (nvim+claude) + ops (bv+foreman+shell) |
-| `claude` | `tmuxinator start claude` | Focused AI pairing: nvim + claude side-by-side |
-| `agents` | `tmuxinator start agents` | 3 parallel Claude agents + overview |
-| `simple` | `tmuxinator start simple` | Single shell |
-| `editor` | `tmuxinator start editor` | Neovim fullscreen |
-| `monitor` | `tmuxinator start monitor` | System dashboard: htop, disk, network |
-| `notes` | `tmuxinator start notes` | Obsidian vault in nvim |
-| `ops` | `tmuxinator start ops` | Shell + logs |
+### Directory → Template Mapping
 
-### dev (primary workspace)
+`tmux-template DIR` checks files in this order:
+
+| Signal | Template |
+|--------|----------|
+| `.tmux-template` | Explicit override. File contains `dev`, `node`, `nix`, `rust`, or `python` |
+| `package.json` | `node` |
+| `flake.nix` | `nix` |
+| `Cargo.toml` | `rust` |
+| `pyproject.toml` / `requirements.txt` | `python` |
+| fallback | `dev` |
+
+### Current Templates
+
+| Template | Windows | Best for |
+|----------|---------|----------|
+| `dev` | `code` = nvim + claude, `ops` = bv/foreman/shell | Default project |
+| `node` | `code`, `dev` = npm dev + npm test watch | JS/TS apps |
+| `nix` | `code`, `ops` = br + `nix flake check` + shell | Nix flakes |
+| `rust` | `code`, `cargo` = check + test | Rust crates |
+| `python` | `code`, `test` = pytest + shell | Python projects |
+
+### Commands
+
+```bash
+tmux-template .                 # Detect current dir and start/switch session
+tmux-template ~/code/myapp       # Start/switch specific project
+sesh list                        # List sessions/dirs known to sesh
+sesh connect <name-or-path>      # Connect via sesh
+mux load <layout.yaml>           # Load any tmuxp layout manually
+muxi start dev                   # Legacy tmuxinator layout
+```
+
+### dev (primary fallback)
 
 ```
 Window 1: "code" (even-horizontal)
@@ -264,7 +310,7 @@ Window 1: "code" (even-horizontal)
   └── claude --continue
 
 Window 2: "ops" (main-vertical)
-  ├── bv (beads viewer)
+  ├── bv / br ready
   ├── foreman status --watch
   └── shell
 
@@ -275,26 +321,6 @@ Popups (not windows — no tab clutter):
 ```
 
 Only 2 tabs in the status bar. Lazygit and yazi are a keypress away as popups.
-
-### agents (multi-agent workspace)
-
-```
-Window 1-3: "agent-1/2/3" — independent claude --continue sessions
-Window 4: "overview" — br list + shell (even-horizontal)
-```
-
-### notes
-
-Root defaults to Obsidian vault at `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo`. Override with `OBSIDIAN_VAULT` env var.
-
-### Managing Workspaces
-
-```bash
-tmuxinator list                              # List all workspaces
-tmuxinator start dev                         # Start in current directory
-tmuxinator start dev --project-root ~/myapp  # Start in specific directory
-tmuxinator stop dev                          # Kill the session
-```
 
 ---
 
@@ -339,7 +365,8 @@ Prefix y          # Toggle yazi popup
 Prefix f          # Sessionizer — pick another project
                   # Each project is its own tmux session
 M-1 through M-9   # Quick-switch between sessions (Alt+number)
-Prefix o          # SessionX interactive picker with preview
+Prefix S          # Built-in session tree picker
+Prefix o          # tmux-tea legacy picker
 ```
 
 ### Quick Git Operations
@@ -362,10 +389,10 @@ tmux attach       # Everything is exactly where you left it
 
 ```bash
 cd ~/Development/Fortium/foreman
-tmuxinator start agents
+muxi start agents
+# Legacy tmuxinator layout:
 # Window 1-3: three Claude Code sessions working in parallel
 # Window 4: overview with task list
-# Each agent works independently, check overview for progress
 ```
 
 ---
@@ -387,7 +414,8 @@ tmuxinator start agents
 | `Prefix \|` | Split horizontal |
 | `Prefix -` | Split vertical |
 | `Prefix d` | Detach |
-| `Prefix o` | SessionX session picker |
+| `Prefix S` | Session tree picker |
+| `Prefix o` | tmux-tea legacy picker |
 | `Prefix h` | This help guide (popup) |
 | `Prefix F` | Thumbs (quick copy) |
 | `Prefix u` | URL picker |

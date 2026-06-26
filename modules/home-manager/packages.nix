@@ -52,6 +52,8 @@ in {
       eza
       fasd
       fd
+      sesh
+      tmuxp
       zoxide
       git-lfs
       htop
