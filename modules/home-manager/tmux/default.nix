@@ -341,7 +341,7 @@ in
             command: command-prompt -I "#W" "renamew -- \"%%\""
           - name: Kill
             key: X
-            command: confirm -p "Kill window #W? (y/n)" killw
+            command: 'confirm-before -p "Kill window #W? (y/n)" kill-window'
       - name: +Panes
         key: p
         menu:
@@ -380,7 +380,7 @@ in
             command: break-pane
           - name: Kill
             key: X
-            command: confirm -p "Kill pane #P? (y/n)" killp
+            command: 'confirm-before -p "Kill pane #P? (y/n)" kill-pane'
           - name: Sync panes
             key: "Y"
             command: setw synchronize-panes
@@ -389,7 +389,7 @@ in
         menu:
           - name: Project picker
             key: f
-            command: run '~/.local/bin/tmux-project-picker'
+            command: run-shell ~/.local/bin/tmux-project-picker
           - name: Choose
             key: s
             command: choose-tree -Zs
@@ -709,7 +709,8 @@ in
   # The plugin regenerates this file on every tmux start; if it's read-only
   # (e.g. from a previous umask or macOS quarantine attribute), the plugin
   # silently fails and prefix+Space reverts to next-layout.
-  home.activation.fixWhichKeyPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.fixWhichKeyPermissions = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    mkdir -p "$HOME/.local/share/tmux/plugins/tmux-which-key"
     chmod -f u+w "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux" || true
   '';
 
