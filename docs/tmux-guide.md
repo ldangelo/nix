@@ -73,10 +73,11 @@ The sessionizer is a fuzzy project picker. It creates or attaches to one tmux se
 | `Prefix f` | Open sessionizer (fzf project picker) |
 
 How it works:
-1. Queries zoxide for your most-used directories (ranked by frequency)
+1. Queries zoxide for your most-used directories; falls back to `fd` under `~/Development`, `~/code`, `~/src`
 2. Shows them in fzf for fuzzy selection
-3. If a tmux session already exists for that project → switches to it
-4. If not → creates a new session using detected tmuxp template
+3. Cancel exits cleanly without tmux error noise
+4. If a tmux session already exists for that project → switches to it
+5. If not → creates a new session using detected tmuxp template
 
 This means each project gets its own isolated tmux session with the right workspace for its stack, and you switch between projects instantly.
 

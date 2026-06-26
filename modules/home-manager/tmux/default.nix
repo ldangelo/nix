@@ -231,7 +231,7 @@ in
       bind v copy-mode
 
       # Session/project navigation
-      bind f run-shell 'dir="$(zoxide query -l | fzf-tmux -p 80%,70% --prompt="project> ")" && ~/.local/bin/tmux-template "$dir"'
+      bind f run-shell '~/.local/bin/tmux-project-picker'
       bind S choose-tree -Zs
       bind N new-session -c "#{pane_current_path}"
       bind-key -n M-t run-shell '~/.local/bin/tmux-template "#{pane_current_path}"'
@@ -389,7 +389,7 @@ in
         menu:
           - name: Project picker
             key: f
-            command: run 'dir="$(zoxide query -l | fzf-tmux -p 80%,70% --prompt="project> ")" && ~/.local/bin/tmux-template "$dir"'
+            command: run '~/.local/bin/tmux-project-picker'
           - name: Choose
             key: s
             command: choose-tree -Zs
@@ -539,6 +539,36 @@ in
             - br list --status=open
             - ""
   '';
+
+  # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
+  home.file.".local/bin/tmux-project-picker" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -uo pipefail
+
+      candidates="$(
+        {
+          zoxide query -l 2>/dev/null || true
+          fd --type d --max-depth 3 . "$HOME/Development" "$HOME/code" "$HOME/src" 2>/dev/null || true
+        } | awk 'NF' | awk '!seen[$0]++'
+      )"
+
+      if [[ -z "$candidates" ]]; then
+        tmux display-message "No project dirs found by zoxide/fd"
+        exit 0
+      fi
+
+      if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
+        dir="$(printf '%s\n' "$candidates" | fzf-tmux -p 80%,70% --prompt='project> ')" || exit 0
+      else
+        dir="$(printf '%s\n' "$candidates" | fzf --prompt='project> ')" || exit 0
+      fi
+
+      [[ -n "$dir" ]] || exit 0
+      exec "$HOME/.local/bin/tmux-template" "$dir"
+    '';
+  };
 
   # Directory-aware tmuxp launcher. Detects project type and starts matching layout.
   home.file.".local/bin/tmux-template" = {

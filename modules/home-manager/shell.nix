@@ -15,6 +15,7 @@ in {
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
         . "$HOME/.nix-profile/etc/profile.d/nix.sh"
       fi
+      export DISABLE_AUTO_TITLE='true'
       if [[ "$(uname -s)" == "Darwin" ]]; then
         export PATH="/nix/var/nix/profiles/system/sw/bin:$PATH"
       fi
