@@ -15,56 +15,8 @@
       },
       "models": [
         {
-          "id": "instant",
-          "name": "Instant \u2014 Nemotron Nano 4B via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 1024,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "fast-chat",
-          "name": "Fast Chat \u2014 Nemotron Nano 4B via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 1024,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "fast-chat-30b",
-          "name": "Fast Chat 30B \u2014 Nemotron Nano 30B via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 2048,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
           "id": "openclaw",
-          "name": "OpenClaw \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "OpenClaw — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -80,7 +32,7 @@
         },
         {
           "id": "openclaw-default",
-          "name": "OpenClaw Default \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "OpenClaw Default — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -96,7 +48,7 @@
         },
         {
           "id": "openclaw-256k",
-          "name": "OpenClaw 256k \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "OpenClaw 256k — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -116,7 +68,7 @@
         },
         {
           "id": "coding",
-          "name": "Coding \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "Coding — Qwen3.6 35B via LiteLLM",
           "reasoning": false,
           "input": [
             "text"
@@ -135,7 +87,7 @@
         },
         {
           "id": "coding-fast",
-          "name": "Coding Fast \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "Coding Fast — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -151,7 +103,7 @@
         },
         {
           "id": "coding-long",
-          "name": "Coding Long \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "Coding Long — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -167,7 +119,7 @@
         },
         {
           "id": "coding-xl",
-          "name": "Coding XL \u2014 Qwen3.6 35B 128k via LiteLLM",
+          "name": "Coding XL — Qwen3.6 35B 128k via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -186,7 +138,7 @@
         },
         {
           "id": "coding-256k",
-          "name": "Coding 256k \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "Coding 256k — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -205,24 +157,8 @@
           ]
         },
         {
-          "id": "coding-hard",
-          "name": "Coding Hard \u2014 Qwen3.5 122B via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 131072,
-          "maxTokens": 2048,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
           "id": "coding-glm",
-          "name": "Coding GLM \u2014 GLM-4.5-Air via LiteLLM",
+          "name": "Coding GLM — GLM-4.5-Air via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -241,7 +177,7 @@
         },
         {
           "id": "coding-glm-mtp",
-          "name": "Coding GLM MTP \u2014 GLM-4.5-Air MTP via LiteLLM",
+          "name": "Coding GLM MTP — GLM-4.5-Air MTP via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -260,7 +196,7 @@
         },
         {
           "id": "coding-glm-draft9b",
-          "name": "Coding GLM Draft9B \u2014 GLM-4.5-Air + draft model via LiteLLM",
+          "name": "Coding GLM Draft9B — GLM-4.5-Air + draft model via LiteLLM",
           "reasoning": false,
           "input": [
             "text"
@@ -279,43 +215,8 @@
           ]
         },
         {
-          "id": "coding-deepseek",
-          "name": "Coding DeepSeek \u2014 DeepSeek Coder V2 Lite via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 4096,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "contender"
-          ]
-        },
-        {
           "id": "general",
-          "name": "General \u2014 Qwen3.6 35B via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 131072,
-          "maxTokens": 2048,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "research",
-          "name": "Research \u2014 Qwen3.5 122B via LiteLLM",
+          "name": "General — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -331,23 +232,7 @@
         },
         {
           "id": "research-fast",
-          "name": "Research Fast \u2014 Qwen3.6 35B via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 131072,
-          "maxTokens": 2048,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "research-long",
-          "name": "Research Long \u2014 Qwen3.5 122B via LiteLLM",
+          "name": "Research Fast — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -363,7 +248,7 @@
         },
         {
           "id": "research-xl",
-          "name": "Research XL \u2014 Qwen3.6 35B 128k via LiteLLM",
+          "name": "Research XL — Qwen3.6 35B 128k via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -382,7 +267,7 @@
         },
         {
           "id": "research-256k",
-          "name": "Research 256k \u2014 Qwen3.6 35B via LiteLLM",
+          "name": "Research 256k — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
           "input": [
             "text"
@@ -401,210 +286,8 @@
           ]
         },
         {
-          "id": "research-deep",
-          "name": "Research Deep \u2014 Nemotron Super 120B via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 131072,
-          "maxTokens": 2048,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "vision",
-          "name": "Vision \u2014 Qwen3-VL 30B via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text",
-            "image"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 4096,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "vision-xl",
-          "name": "Vision XL \u2014 Qwen3-VL 30B via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text",
-            "image"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 4096,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "long-context"
-          ]
-        },
-        {
-          "id": "multimodal",
-          "name": "Multimodal \u2014 Qwen3-Omni 30B via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text",
-            "image"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 4096,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "multimodal-xl",
-          "name": "Multimodal XL \u2014 Qwen3-Omni 30B via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text",
-            "image"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 4096,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "long-context"
-          ]
-        },
-        {
-          "id": "uncensored",
-          "name": "Uncensored \u2014 Qwen3.5 35B Uncensored via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 131072,
-          "maxTokens": 8192,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "uncensored-xl",
-          "name": "Uncensored XL \u2014 Qwen3.5 35B Uncensored via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 131072,
-          "maxTokens": 8192,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "long-context"
-          ]
-        },
-        {
-          "id": "openclaw-draft",
-          "name": "openclaw-draft \u2014 Nemotron-3-Nano-4B-FP8 via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 1024,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "draft"
-          ]
-        },
-        {
-          "id": "coding-draft",
-          "name": "coding-draft \u2014 Nemotron-3-Nano-4B-FP8 via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 1024,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "draft"
-          ]
-        },
-        {
-          "id": "coding-draft-fast",
-          "name": "coding-draft-fast \u2014 Nemotron-3-Nano-4B-FP8 via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 1024,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "draft"
-          ]
-        },
-        {
-          "id": "coding-draft-deepseek",
-          "name": "coding-draft-deepseek \u2014 DeepSeek-Coder-V2-Lite-Instruct-AWQ via LiteLLM",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 65536,
-          "maxTokens": 2048,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "tags": [
-            "draft",
-            "contender"
-          ]
-        },
-        {
           "id": "coding-draft-hybrid",
-          "name": "coding-draft-hybrid \u2014 Qwen3.6-35B-A3B-FP8 via LiteLLM",
+          "name": "coding-draft-hybrid — Qwen3.6-35B-A3B-FP8 via LiteLLM",
           "reasoning": false,
           "input": [
             "text"
@@ -623,7 +306,7 @@
         },
         {
           "id": "research-draft",
-          "name": "research-draft \u2014 Qwen3.6-35B-A3B-FP8 via LiteLLM",
+          "name": "research-draft — Qwen3.6-35B-A3B-FP8 via LiteLLM",
           "reasoning": false,
           "input": [
             "text"
@@ -641,56 +324,8 @@
           ]
         },
         {
-          "id": "claude-3-5-sonnet-20241022",
-          "name": "claude-3-5-sonnet-20241022 \u2014 Qwen3-Coder-Next-int4-AutoRound via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 128000,
-          "maxTokens": 8192,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "claude-sonnet-4-20250514",
-          "name": "claude-sonnet-4-20250514 \u2014 Qwen3-Coder-Next-int4-AutoRound via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 128000,
-          "maxTokens": 8192,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
-          "id": "qwen-3-coder-30b-fp8",
-          "name": "qwen-3-coder-30b-fp8 \u2014 Qwen3-Coder-Next-int4-AutoRound via LiteLLM",
-          "reasoning": true,
-          "input": [
-            "text"
-          ],
-          "contextWindow": 128000,
-          "maxTokens": 8192,
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          }
-        },
-        {
           "id": "Qwen3.6-35B-A3B-FP8-256k",
-          "name": "Qwen3.6 35B FP8 256k \u2014 exact LiteLLM route",
+          "name": "Qwen3.6 35B FP8 256k — exact LiteLLM route",
           "reasoning": true,
           "input": [
             "text"
@@ -713,121 +348,651 @@
           "id": "openrouter-auto",
           "name": "OpenRouter Auto — best model for task",
           "reasoning": true,
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 2000000,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "auto"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "auto"
+          ]
         },
         {
           "id": "openrouter-fusion",
           "name": "OpenRouter Fusion — multi-model deliberation",
           "reasoning": true,
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 1000000,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier"
+          ]
         },
         {
           "id": "claude-opus-4",
           "name": "Claude Opus 4 — Anthropic flagship",
           "reasoning": true,
-          "input": ["text", "image"],
+          "input": [
+            "text",
+            "image"
+          ],
           "contextWindow": 1000000,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "anthropic"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "anthropic"
+          ]
         },
         {
           "id": "claude-sonnet-4",
           "name": "Claude Sonnet 4 — Anthropic balanced",
           "reasoning": true,
-          "input": ["text", "image"],
+          "input": [
+            "text",
+            "image"
+          ],
           "contextWindow": 1000000,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "anthropic"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "anthropic"
+          ]
         },
         {
           "id": "o3",
           "name": "OpenAI o3 — reasoning frontier",
           "reasoning": true,
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 200000,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "openai"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "openai"
+          ]
         },
         {
           "id": "o4-mini",
           "name": "OpenAI o4-mini — compact reasoning",
           "reasoning": true,
-          "input": ["text", "image"],
+          "input": [
+            "text",
+            "image"
+          ],
           "contextWindow": 200000,
           "maxTokens": 16384,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "openai"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "openai"
+          ]
         },
         {
           "id": "gemini-2.5-pro",
           "name": "Google Gemini 2.5 Pro — multimodal frontier",
           "reasoning": true,
-          "input": ["text", "image"],
+          "input": [
+            "text",
+            "image"
+          ],
           "contextWindow": 1048576,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "google"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "google"
+          ]
         },
         {
           "id": "gemini-2.5-flash",
           "name": "Google Gemini 2.5 Flash — fast multimodal",
           "reasoning": true,
-          "input": ["text", "image"],
+          "input": [
+            "text",
+            "image"
+          ],
           "contextWindow": 1048576,
           "maxTokens": 16384,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "google"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "google"
+          ]
         },
         {
           "id": "deepseek-v4-pro",
           "name": "DeepSeek V4 Pro — reasoning frontier",
           "reasoning": true,
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 1048576,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "deepseek"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "deepseek"
+          ]
         },
         {
           "id": "minimax-01",
           "name": "MiniMax-01 — 1M context multimodal",
           "reasoning": true,
-          "input": ["text", "image"],
+          "input": [
+            "text",
+            "image"
+          ],
           "contextWindow": 1000192,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["frontier", "minimax"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "minimax"
+          ]
         },
         {
           "id": "nemotron-ultra-free",
           "name": "Nemotron Ultra FREE — 550B frontier",
           "reasoning": true,
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 1000000,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["free"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "free"
+          ]
         },
         {
           "id": "qwen3-coder-free",
           "name": "Qwen3 Coder FREE — 480B MoE coder",
           "reasoning": true,
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 1048576,
           "maxTokens": 32768,
-          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
-          "tags": ["free", "coding"]
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "free",
+            "coding"
+          ]
+        },
+        {
+          "id": "coding-qwen3-coder",
+          "name": "Coding Qwen3 Coder — Qwen3-Coder 30B FP8 via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "coding",
+            "candidate"
+          ]
+        },
+        {
+          "id": "coding-agent-fast",
+          "name": "Coding Agent Fast — Qwen3-Coder Next FP8 via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 32768,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "coding",
+            "agent",
+            "candidate"
+          ]
+        },
+        {
+          "id": "Qwen3-Coder-30B-A3B-Instruct-FP8",
+          "name": "Qwen3-Coder 30B FP8 — exact LiteLLM route",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "coding",
+            "exact"
+          ]
+        },
+        {
+          "id": "Qwen3-Coder-Next-FP8",
+          "name": "Qwen3-Coder Next FP8 — exact LiteLLM route",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 32768,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "coding",
+            "agent",
+            "exact"
+          ]
+        },
+        {
+          "id": "Qwen3.6-35B-A3B-FP8",
+          "name": "Qwen3.6 35B FP8 — exact LiteLLM route",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "exact"
+          ]
+        },
+        {
+          "id": "Qwen3.6-35B-A3B-FP8-128k",
+          "name": "Qwen3.6 35B FP8 128k — exact LiteLLM route",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "long-context",
+            "exact"
+          ]
+        },
+        {
+          "id": "GLM-4.5-Air-AWQ-4bit",
+          "name": "GLM-4.5-Air AWQ — exact LiteLLM route",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "coding",
+            "glm",
+            "exact"
+          ]
+        },
+        {
+          "id": "GLM-4.5-Air-AWQ-4bit-MTP",
+          "name": "GLM-4.5-Air AWQ MTP — exact LiteLLM route",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "coding",
+            "glm",
+            "exact"
+          ]
+        },
+        {
+          "id": "GLM-4.5-Air-AWQ-4bit-Draft9B",
+          "name": "GLM-4.5-Air AWQ Draft9B — exact LiteLLM route",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "coding",
+            "glm",
+            "exact"
+          ]
+        },
+        {
+          "id": "openclaw-xl",
+          "name": "OpenClaw XL — Qwen3.6 35B 128k via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "long-context"
+          ]
+        },
+        {
+          "id": "openrouter-pareto-code",
+          "name": "OpenRouter Pareto Code — coder router",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 1048576,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "coding",
+            "router"
+          ]
+        },
+        {
+          "id": "nemotron-super-free",
+          "name": "Nemotron Super FREE — 120B MoE",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 1000000,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "free"
+          ]
+        },
+        {
+          "id": "qwen3-next-free",
+          "name": "Qwen3 Next FREE — 80B MoE",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 1048576,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "free",
+            "qwen"
+          ]
+        },
+        {
+          "id": "claude-haiku-4",
+          "name": "Claude Haiku 4.5 — fast frontier",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 200000,
+          "maxTokens": 8192,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "anthropic"
+          ]
+        },
+        {
+          "id": "o3-pro",
+          "name": "OpenAI o3 Pro — frontier reasoning",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 200000,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "openai"
+          ]
+        },
+        {
+          "id": "o4-mini-high",
+          "name": "OpenAI o4-mini-high — fast reasoning",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 200000,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "openai"
+          ]
+        },
+        {
+          "id": "o3-deep-research",
+          "name": "OpenAI o3 Deep Research — research",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 200000,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "openai",
+            "research"
+          ]
+        },
+        {
+          "id": "gemini-3.5-flash",
+          "name": "Google Gemini 3.5 Flash — fast multimodal",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 1048576,
+          "maxTokens": 16384,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "google"
+          ]
+        },
+        {
+          "id": "deepseek-v4-flash",
+          "name": "DeepSeek V4 Flash — fast frontier",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 1048576,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "deepseek"
+          ]
+        },
+        {
+          "id": "minimax-m3",
+          "name": "MiniMax M3 — frontier multimodal",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 1000192,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "frontier",
+            "minimax"
+          ]
         }
       ]
     },
@@ -836,13 +1001,22 @@
       "models": [
         {
           "id": "gpt-5.5",
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 200000,
           "maxTokens": 32000,
           "name": "GPT-5.5",
-          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
           "reasoning": true,
-          "tags": ["default"]
+          "tags": [
+            "default"
+          ]
         }
       ]
     }
