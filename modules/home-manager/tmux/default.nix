@@ -245,6 +245,9 @@ in
       bind-key -n M-8 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "8p")" && tmux switch-client -t "$target"'
       bind-key -n M-9 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "9p")" && tmux switch-client -t "$target"'
 
+      # Auto-name newly created sessions after their starting directory.
+      set-hook -g session-created 'run-shell -b "$HOME/.local/bin/tmux-auto-rename-session \"#{session_id}\""'
+
       # Window navigation
       bind Tab last-window
       bind BTab switch-client -l
@@ -567,6 +570,39 @@ in
 
       [[ -n "$dir" ]] || exit 0
       exec "$HOME/.local/bin/tmux-template" "$dir"
+    '';
+  };
+
+  # Rename a new tmux session to the basename of its starting directory.
+  home.file.".local/bin/tmux-auto-rename-session" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      sid="''${1:?session id required}"
+      sleep 0.05
+
+      dir="$(tmux display-message -p -t "$sid:" '#{pane_current_path}' 2>/dev/null || true)"
+      [[ -n "$dir" ]] || exit 0
+
+      base="$(basename "$dir" | tr '.:' '__')"
+      [[ -n "$base" && "$base" != "/" ]] || exit 0
+
+      current="$(tmux display-message -p -t "$sid" '#{session_name}' 2>/dev/null || true)"
+      [[ "$current" == "$base" ]] && exit 0
+
+      name="$base"
+      n=2
+      while tmux has-session -t "=$name" 2>/dev/null; do
+        # Existing session with this name is okay if it is this session.
+        existing="$(tmux display-message -p -t "=$name" '#{session_id}' 2>/dev/null || true)"
+        [[ "$existing" == "$sid" ]] && exit 0
+        name="$base-$n"
+        n=$((n + 1))
+      done
+
+      tmux rename-session -t "$sid" "$name" 2>/dev/null || true
     '';
   };
 
