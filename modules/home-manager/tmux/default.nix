@@ -246,7 +246,7 @@ in
       bind-key -n M-9 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "9p")" && tmux switch-client -t "$target"'
 
       # Auto-name newly created sessions after their starting directory.
-      set-hook -g session-created 'run-shell -b "$HOME/.local/bin/tmux-auto-rename-session \"#{session_id}\""'
+      set-hook -g session-created 'run-shell -b "$HOME/.local/bin/tmux-auto-rename-session #{q:session_id}"'
 
       # Window navigation
       bind Tab last-window
