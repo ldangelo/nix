@@ -15,6 +15,7 @@ let
     "npm:pi-powerline-footer"
     "npm:@hypabolic/pi-hypa"
     "npm:pi-vault-mind"
+    "npm:pi-context"
     "https://github.com/tmonk/pi-goal-x"
     "https://github.com/KristjanPikhof/pi-yaml-hooks"
     "npm:pi-subagents"
