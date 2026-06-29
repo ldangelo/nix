@@ -1,0 +1,10 @@
+name: nix
+root: .
+windows:
+  - shell:
+      panes:
+        - pi
+        - ""
+  - editor:
+      panes:
+        - nvim
