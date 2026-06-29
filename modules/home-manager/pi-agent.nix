@@ -10,14 +10,10 @@ let
   cfg = config.pi-agent;
   makeSettings = builtins.toJSON;
 
-  # ── Headroom CLI (MCP server) ─────────────────────────────────────────
-  headroomRepo = "https://github.com/chopratejas/headroom";
-  headroomRev = "3fc2a78a5e20f159f7c5f198de6b91788dc64287";
-  headroomPackageSpec = "headroom-ai[mcp] @ git+${headroomRepo}.git@${headroomRev}";
-
   # ── Default packages (NPM + local sources) ──────────────────────────────
   defaultPackages = [
     "npm:pi-powerline-footer"
+    "npm:@hypabolic/pi-hypa"
     "https://github.com/tmonk/pi-goal-x"
     "https://github.com/KristjanPikhof/pi-yaml-hooks"
     "npm:pi-subagents"
@@ -242,7 +238,6 @@ in
           ".pi/agent/extensions/agentmemory/index.ts".source = ./pi-extensions/agentmemory/index.ts;
           ".pi/agent/extensions/agentmemory/security.ts".source = ./pi-extensions/agentmemory/security.ts;
           ".pi/agent/extensions/poly-notify/notify.json".source = ./pi-extensions/poly-notify/notify.json;
-          ".pi/agent/extensions/headroom-mcp.ts".source = ./pi-extensions/headroom-mcp.ts;
 
           # ── Vendor packages ──────────────────────────────────────────────
           ".pi/agent/vendor/pi-vs-cc" = { recursive = true; source = piVsCcDir; };
@@ -370,22 +365,13 @@ in
       ];
     }
 
-    # ── Headroom CLI installation ─────────────────────────────────────────
+    # ── Retired Headroom cleanup ──────────────────────────────────────────
     {
-      home.activation.installHeadroom =
+      home.activation.cleanupHeadroom =
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          echo "Installing Headroom CLI..."
-          export PATH="$HOME/.local/bin:${pkgs.python3}/bin:${pkgs.pipx}/bin:$PATH"
-          marker="$HOME/.local/pipx/venvs/headroom-ai/.pi-agent-headroom-source"
-          if command -v headroom >/dev/null 2>&1 && headroom mcp --help >/dev/null 2>&1 && [ -f "$marker" ] && [ "$(cat "$marker")" = ${lib.escapeShellArg headroomPackageSpec} ]; then
-            echo "Headroom already installed: $(headroom --version 2>/dev/null || true)"
-          else
-            ${pkgs.pipx}/bin/pipx uninstall headroom-ai >/dev/null 2>&1 || true
-            ${pkgs.pipx}/bin/pipx install --include-deps ${lib.escapeShellArg headroomPackageSpec}
-            mkdir -p "$(dirname "$marker")"
-            printf '%s' ${lib.escapeShellArg headroomPackageSpec} > "$marker"
-          fi
-          ${pkgs.pipx}/bin/pipx ensurepath >/dev/null 2>&1 || true
+          echo "Cleaning retired Headroom integration..."
+          ${pkgs.pipx}/bin/pipx uninstall headroom-ai >/dev/null 2>&1 || true
+          rm -f "$HOME/.pi/agent/extensions/headroom-mcp.ts" "$HOME/.pi/agent/extensions/headroom-mcp.ts.bak"
         '';
     }
 
