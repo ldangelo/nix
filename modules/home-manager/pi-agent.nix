@@ -243,6 +243,11 @@ in
           ".pi/agent/vendor/pi-vs-cc" = { recursive = true; source = piVsCcDir; };
 
           # ── Local bin wrappers ───────────────────────────────────────────
+          ".local/bin/hypa" = {
+            executable = true;
+            text = ''#!/usr/bin/env bash
+              exec "$HOME/.pi/agent/npm/node_modules/.bin/hypa" "$@"'';
+          };
           ".local/bin/pi-chain" = {
             executable = true;
             text = ''#!/usr/bin/env bash
