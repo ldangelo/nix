@@ -44,7 +44,16 @@ function bell(): void {
 	process.stdout.write("\x07");
 }
 
+function notifyViaScript(title: string, body: string): boolean {
+	const { spawnSync } = require("child_process");
+	const script = `${process.env.HOME || ""}/.local/bin/pi-notify`;
+	const result = spawnSync(script, [title, body], { stdio: "inherit" });
+	return !result.error && result.status === 0;
+}
+
 function notify(title: string, body: string): void {
+	if (notifyViaScript(title, body)) return;
+
 	bell();
 	if (process.env.WT_SESSION) {
 		notifyWindows(title, body);

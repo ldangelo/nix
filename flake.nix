@@ -144,7 +144,8 @@
               pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
               pi-agent.packages = [
                 "npm:pi-powerline-footer"
-                "npm:pi-hooks"
+                "https://github.com/tmonk/pi-goal-x"
+                "https://github.com/KristjanPikhof/pi-yaml-hooks"
                 # "npm:pi-context"  # disabled - API incompatible
                 # Ensemble pi package is registered via pi-agent.settings.packages
                 # as an attrset with extensions=[] to avoid duplicate ask_user
@@ -202,7 +203,8 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
-                    "npm:pi-hooks"
+                    "https://github.com/tmonk/pi-goal-x"
+                    "https://github.com/KristjanPikhof/pi-yaml-hooks"
                     # "npm:pi-context"  # disabled - API incompatible
                   ];
                   powerline = {
@@ -248,7 +250,8 @@
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
-                  "npm:pi-hooks"
+                  "https://github.com/tmonk/pi-goal-x"
+                  "https://github.com/KristjanPikhof/pi-yaml-hooks"
                   # "npm:pi-context"  # disabled - API incompatible
                   {
                     source = "${pkgs.fetchFromGitHub {
@@ -298,7 +301,8 @@
                   defaultThinkingLevel = "medium";
                   packages = [
                     "npm:pi-powerline-footer"
-                    "npm:pi-hooks"
+                    "https://github.com/tmonk/pi-goal-x"
+                    "https://github.com/KristjanPikhof/pi-yaml-hooks"
                     # "npm:pi-context"  # disabled - API incompatible with pi-coding-agent 0.78.0
                     {
                       source = "${ensemblePi}/packages/pi";
@@ -351,7 +355,8 @@
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
-                  "npm:pi-hooks"
+                  "https://github.com/tmonk/pi-goal-x"
+                  "https://github.com/KristjanPikhof/pi-yaml-hooks"
                   # "npm:pi-context"  # disabled - API incompatible
                   # Ensemble pi package is registered via pi-agent.settings.packages
                   # as an attrset with extensions=[] to avoid duplicate ask_user

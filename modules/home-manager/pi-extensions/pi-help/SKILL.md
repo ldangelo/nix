@@ -104,7 +104,8 @@ Local extensions in `~/.pi/agent/extensions/`:
 
 Installed via `pi install npm:...`:
 - **pi-powerline-footer** — Powerline status bar
-- **pi-hooks** — Session lifecycle hooks
+- **pi-goal-x** — Durable goal lifecycle
+- **pi-yaml-hooks** — YAML session/tool hooks
 - **pi-context** — Context management
 - **pi-plan-mode** — Plan mode
 - **pi-interactive-shell** — Interactive shell overlay

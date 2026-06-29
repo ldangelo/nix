@@ -18,7 +18,8 @@ let
   # ── Default packages (NPM + local sources) ──────────────────────────────
   defaultPackages = [
     "npm:pi-powerline-footer"
-    "npm:pi-hooks"
+    "https://github.com/tmonk/pi-goal-x"
+    "https://github.com/KristjanPikhof/pi-yaml-hooks"
     "npm:pi-subagents"
     "npm:pi-intercom"
   ];
@@ -141,7 +142,7 @@ let
         fi
         if [ -n "$pi_cmd" ]; then
           export PATH="$(dirname "$pi_cmd"):$PATH"
-          "$pi_cmd" install "$pkg"
+          "$pi_cmd" install "$pkg" || echo "pi install $pkg failed; package remains in settings for startup reconciliation"
         else
           echo "pi not found; skipping package $pkg"
         fi
@@ -299,6 +300,41 @@ in
               mkdir -p "$target"
               cp -R "$HOME/.pi/agent/vendor/pi-vs-cc/agents/." "$target/"
               echo "Installed Pi agent-chain/team sample agents to $target"'';
+          };
+          ".local/bin/pi-notify" = {
+            executable = true;
+            text = ''#!/usr/bin/env bash
+              set -euo pipefail
+              title="''${1:-Pi}"
+              body="''${2:-Ready for input}"
+
+              # tmux catches BEL via alert-bell and emits session/window-aware notification.
+              printf '\a'
+
+              if command -v terminal-notifier >/dev/null 2>&1; then
+                terminal-notifier \
+                  -title "$title" \
+                  -message "$body" \
+                  -sound default \
+                  -group "pi-agent" >/dev/null 2>&1 || true
+              elif [ -n "''${KITTY_WINDOW_ID:-}" ]; then
+                printf '\033]99;i=1:d=0;%s\033\\' "$title"
+                printf '\033]99;i=1:p=body;%s\033\\' "$body"
+              else
+                printf '\033]777;notify;%s;%s\a' "$title" "$body"
+              fi
+            '';
+          };
+
+          ".pi/agent/hook/hooks.yaml" = {
+            force = true;
+            text = ''
+              hooks:
+                - id: pi-notify-on-idle
+                  event: session.idle
+                  actions:
+                    - bash: '"$HOME/.local/bin/pi-notify" "Pi" "Ready for input"'
+            '';
           };
         }
 
