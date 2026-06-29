@@ -14,6 +14,7 @@ let
   defaultPackages = [
     "npm:pi-powerline-footer"
     "npm:@hypabolic/pi-hypa"
+    "npm:pi-vault-mind"
     "https://github.com/tmonk/pi-goal-x"
     "https://github.com/KristjanPikhof/pi-yaml-hooks"
     "npm:pi-subagents"
@@ -27,6 +28,93 @@ let
     if cfg.settings ? packages
     then lib.unique (mergedPackages ++ cfg.settings.packages)
     else mergedPackages;
+
+  # ── Vault Mind shared Obsidian wiki ─────────────────────────────────────
+  vaultMindVaultPath = "/Users/ldangelo/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo";
+  vaultMindBase = "${vaultMindVaultPath}/Agent/VaultMind";
+  vaultMindConfig = {
+    version = 2;
+    collections = {
+      main = {
+        path = "${vaultMindBase}/collections/main.jsonl";
+        schema = [ "id" "domain" "source" "fact" "tag" "artifact" ];
+        dedupField = "fact";
+      };
+      pending = {
+        path = "${vaultMindBase}/collections/pending.jsonl";
+        schema = "main";
+      };
+      worklog = {
+        path = "${vaultMindBase}/collections/worklog.jsonl";
+        schema = [ "id" "date" "agent" "project" "summary" "status" "bottlenecks" "tags" ];
+        dedupField = "id";
+      };
+      decisions = {
+        path = "${vaultMindBase}/collections/decisions.jsonl";
+        schema = [ "id" "date" "project" "decision" "rationale" "status" "tags" ];
+        dedupField = "decision";
+      };
+      context_events = {
+        path = "${vaultMindBase}/collections/context_events.jsonl";
+        schema = [ "id" "type" "session_entry_id" "content" "timestamp" "tags" ];
+        dedupField = "id";
+      };
+    };
+    injectors = [
+      {
+        name = "recall-topic";
+        regex = "(?:recall|remember|wiki|knowledge)\\s+(.+)";
+        collection = "main";
+        filterField = "tag";
+        artifactPath = "${vaultMindBase}/artifacts/recall.md";
+      }
+      {
+        name = "decision-context";
+        regex = "decision\\s+(.+)";
+        collection = "decisions";
+        filterField = "project";
+        artifactPath = "${vaultMindBase}/artifacts/decisions.md";
+      }
+      {
+        name = "bottleneck-context";
+        regex = "bottleneck\\s+(.+)";
+        collection = "worklog";
+        filterField = "project";
+        artifactPath = "${vaultMindBase}/artifacts/bottlenecks.md";
+      }
+    ];
+    vaultMind = {
+      dataDir = "/Users/ldangelo/.pi/agent/vault-mind/lancedb";
+      embedding = {
+        useTransformers = true;
+        localUrl = "http://127.0.0.1:11434";
+      };
+      graph = {
+        enabled = true;
+        canvasSync = false;
+      };
+      ftsEnabled = true;
+      httpPort = 11435;
+      autoIndex = false;
+      vaults = {
+        default = {
+          path = vaultMindVaultPath;
+          autoSync = true;
+          autoSyncTags = [ "decision" "insight" "requirement" "bottleneck" "worklog" ];
+          autoSyncMinLength = 200;
+        };
+      };
+    };
+    extensionCompatibility = {
+      pi-context = {
+        enabled = true;
+        tagPatterns = [];
+        enhanceInjectors = false;
+        autoEnableAcm = true;
+        indexContextEvents = true;
+      };
+    };
+  };
 
   # ── Default settings ────────────────────────────────────────────────────
   defaultSettings = {
@@ -227,6 +315,10 @@ in
             source = pkgs.writeText "pi-agent-settings.json" (makeSettings builtSettings);
             force = true;
           };
+          ".pi/agent/vault-mind.config.json" = {
+            source = pkgs.writeText "vault-mind.config.json" (makeSettings vaultMindConfig);
+            force = true;
+          };
 
           # ── Built-in extensions ──────────────────────────────────────────
           ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
@@ -368,6 +460,17 @@ in
           };
         })
       ];
+    }
+
+    # ── Vault Mind directory bootstrap ─────────────────────────────────────
+    {
+      home.activation.setupVaultMind =
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          echo "Setting up Vault Mind directories..."
+          mkdir -p ${lib.escapeShellArg "${vaultMindBase}/collections"} \
+                   ${lib.escapeShellArg "${vaultMindBase}/artifacts"} \
+                   "$HOME/.pi/agent/vault-mind/lancedb"
+        '';
     }
 
     # ── Retired Headroom cleanup ──────────────────────────────────────────
