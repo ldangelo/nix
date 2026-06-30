@@ -190,7 +190,9 @@ in
       run-shell "${tmux-notify}/share/tmux-plugins/tmux-notify/tnotify.tmux"
 
       # Extended keys — required for modified Enter/Tab keys (e.g. Pi, Neovim)
+      # Pi expects CSI-u encoding; xterm format causes keybinding warnings.
       set -g extended-keys on
+      set -g extended-keys-format csi-u
 
       # Status line — must come after catppuccin plugin sets up variables.
       set -g status-right-length 150
