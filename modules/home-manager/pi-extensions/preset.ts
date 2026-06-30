@@ -3,7 +3,7 @@
  *
  * Allows defining named presets that configure model, thinking level, tools,
  * and system prompt instructions. Presets are defined in JSON config files
- * and can be activated via CLI flag, /preset command, or Ctrl+Shift+U to cycle.
+ * and can be activated via CLI flag or /preset command.
  *
  * Config files (merged, project takes precedence):
  * - ~/.pi/agent/presets.json (global)
@@ -33,7 +33,6 @@
  * - `pi --preset plan` - start with plan preset
  * - `/preset` - show selector to switch presets mid-session
  * - `/preset implement` - switch to implement preset directly
- * - `Ctrl+Shift+U` - cycle through presets
  *
  * CLI flags always override preset values.
  */
@@ -43,7 +42,7 @@ import { join } from "node:path";
 import type { Api, Model } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { DynamicBorder, getAgentDir } from "@earendil-works/pi-coding-agent";
-import { Container, Key, type SelectItem, SelectList, Text } from "@earendil-works/pi-tui";
+import { Container, type SelectItem, SelectList, Text } from "@earendil-works/pi-tui";
 
 // Preset configuration
 interface Preset {
@@ -342,13 +341,6 @@ export default function presetExtension(pi: ExtensionAPI) {
 		ctx.ui.notify(`Preset "${nextName}" activated`, "info");
 		updateStatus(ctx);
 	}
-
-	pi.registerShortcut(Key.ctrlShift("u"), {
-		description: "Cycle presets",
-		handler: async (ctx) => {
-			await cyclePreset(ctx);
-		},
-	});
 
 	// Register /preset command
 	pi.registerCommand("preset", {

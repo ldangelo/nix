@@ -352,8 +352,6 @@ in
           ".pi/agent/extensions/pi-fact.ts".source = ./pi-extensions/pi-fact.ts;
           ".pi/agent/extensions/obsidian-session-saver.ts".source = ./pi-extensions/obsidian/obsidian-session-saver.ts;
           ".pi/agent/extensions/nvim/index.ts".source = ./pi-extensions/nvim/index.ts;
-          ".pi/agent/extensions/agentmemory/index.ts".source = ./pi-extensions/agentmemory/index.ts;
-          ".pi/agent/extensions/agentmemory/security.ts".source = ./pi-extensions/agentmemory/security.ts;
           ".pi/agent/extensions/poly-notify/notify.json".source = ./pi-extensions/poly-notify/notify.json;
 
           # ── Vendor packages ──────────────────────────────────────────────
@@ -547,6 +545,7 @@ in
             "$HOME/.pi/agent/extensions/nvim.bak" \
             "$HOME/.pi/agent/extensions/sandbox.bak" \
             "$HOME/.pi/agent/extensions/poly-notify.bak" \
+            "$HOME/.pi/agent/extensions/agentmemory" \
             "$HOME/.pi/agent/extensions/auto-commit-on-exit.ts.bak" \
             "$HOME/.pi/agent/extensions/preset.ts.bak"; do
             if [ -e "$backup" ]; then

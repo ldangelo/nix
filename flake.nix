@@ -220,9 +220,6 @@
                     transcriptMaxBytes = 524288;
                   };
                   httpIdleTimeoutMs = 0;
-                skills = [
-                  "/Users/ldangelo/nix/.agents/skills"
-                ];
               };
                 pi-agent.binTools = with pkgs; [
                   fd
@@ -325,9 +322,6 @@
                     transcriptMaxBytes = 524288;
                   };
                   httpIdleTimeoutMs = 0;
-                skills = [
-                  "/Users/ldangelo/nix/.agents/skills"
-                ];
               };
                 pi-agent.binTools = with pkgs; [
                   fd
