@@ -52,3 +52,7 @@ pi-agent-config-backup/
 # Beads local state (Dolt DB, runtime, exports)
 /.beads
 .beads-credential-key
+
+# pi-vault-mind
+.lancedb/
+.obsidian/workspace*.json

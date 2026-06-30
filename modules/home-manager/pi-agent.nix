@@ -316,6 +316,19 @@ in
             source = pkgs.writeText "pi-agent-settings.json" (makeSettings builtSettings);
             force = true;
           };
+          ".pi/agent/keybindings.json" = {
+            source = pkgs.writeText "pi-agent-keybindings.json" (makeSettings {
+              # Ctrl-p / Ctrl-n browse prompt history via editor up/down.
+              # Unbind default Ctrl-p/Ctrl-n app actions so prompt history wins.
+              "tui.editor.cursorUp" = [ "up" "ctrl+p" ];
+              "tui.editor.cursorDown" = [ "down" "ctrl+n" ];
+              "app.model.cycleForward" = [];
+              "app.session.togglePath" = [];
+              "app.session.toggleNamedFilter" = [];
+              "app.models.toggleProvider" = [];
+            });
+            force = true;
+          };
           ".pi/agent/vault-mind.config.json" = {
             source = pkgs.writeText "vault-mind.config.json" (makeSettings vaultMindConfig);
             force = true;
