@@ -641,8 +641,9 @@ in
         template="python"
       fi
 
-      tmp="$(mktemp)"
-      trap 'rm -f "$tmp"' EXIT
+      tmpdir="$(mktemp -d "''${TMPDIR:-/tmp}/tmux-template.XXXXXX")"
+      tmp="$tmpdir/workspace.yaml"
+      trap 'rm -rf "$tmpdir"' EXIT
 
       case "$template" in
         node)
