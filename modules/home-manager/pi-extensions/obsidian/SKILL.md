@@ -181,7 +181,7 @@ This session log was automatically saved by the pi agent.
 
 The session saver extension is at:
 ```
-~/.pi/agent/skills/obsidian/obsidian-session-saver.ts
+~/.pi/agent/extensions/obsidian-session-saver.ts
 ```
 
 ## Example Usage
@@ -205,4 +205,5 @@ pi obsidian recent-sessions
 - All agents share the same Obsidian vault for unified persistent memory
 - Session logs are saved automatically at session end (quit only)
 - The extension uses `session_shutdown` event for reliable saving
+- `/pi-fact <fact>` saves durable facts to `Agent/PiMemory/MEMORY.md` in the vault
 - Manual scripts available for search and context retrieval

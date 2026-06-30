@@ -1,112 +1,110 @@
 /**
  * Obsidian Session Saver Extension
  *
- * Automatically saves session logs to the Obsidian vault at session end.
- * This enables persistent context across pi agent sessions.
+ * Saves a readable Pi session log into Obsidian at normal quit. The log is
+ * intentionally plain Markdown so it can be inspected, searched, and corrected.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { basename } from "node:path";
 
-// Obsidian vault path - can be overridden via environment variable
 const VAULT = process.env.PI_OBSIDIAN_VAULT || "/Users/ldangelo/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo";
+const MAX_TRANSCRIPT_CHARS = 30_000;
+const MAX_MESSAGE_CHARS = 4_000;
+
+function textFromContent(content: unknown): string {
+	if (typeof content === "string") return content;
+	if (!Array.isArray(content)) return "";
+	return content
+		.filter((c): c is { type: string; text: string } =>
+			typeof c === "object" && c !== null && (c as { type?: unknown }).type === "text" && typeof (c as { text?: unknown }).text === "string",
+		)
+		.map((c) => c.text)
+		.join("\n");
+}
+
+function truncate(text: string, max: number): string {
+	return text.length > max ? `${text.slice(0, max)}\n...[truncated ${text.length - max} chars]` : text;
+}
+
+function entryLine(entry: SessionEntry): string | undefined {
+	if (entry.type !== "message") return undefined;
+	const role = entry.message.role;
+	if (role !== "user" && role !== "assistant") return undefined;
+	const text = truncate(textFromContent(entry.message.content).trim(), MAX_MESSAGE_CHARS);
+	if (!text) return undefined;
+	return `### ${role}\n\n${text}`;
+}
+
+function collectTranscript(entries: SessionEntry[]): string {
+	const lines = entries.map(entryLine).filter((line): line is string => Boolean(line));
+	return truncate(lines.join("\n\n---\n\n"), MAX_TRANSCRIPT_CHARS);
+}
+
+function countToolResults(entries: SessionEntry[]): number {
+	return entries.filter((entry) => entry.type === "message" && entry.message.role === "toolResult").length;
+}
+
+function inferProject(sessionPath: string, cwd: string | undefined): string {
+	const match = sessionPath.match(/sessions\/--(.+?)--\//i);
+	if (match) return match[1].replace(/-/g, "/");
+	return cwd ? basename(cwd) : "unknown";
+}
 
 export default function (pi: ExtensionAPI) {
 	pi.on("session_shutdown", async (event, ctx) => {
-		// Only save on actual shutdown (quit), not on reload/new/resume
-		if (event.reason !== "quit") {
-			return;
-		}
+		if (event.reason !== "quit") return;
 
-		// Ensure vault and sessions directory exist
-		const sessionsDir = `${VAULT}/Sessions`;
-		if (!existsSync(sessionsDir)) {
-			mkdirSync(sessionsDir, { recursive: true });
-		}
+		const sessionsDir = `${VAULT}/Sessions/Pi`;
+		if (!existsSync(sessionsDir)) mkdirSync(sessionsDir, { recursive: true });
 
-		// Get session file path and ID
 		const sessionFile = ctx.sessionManager.getSessionFile();
-		if (!sessionFile) {
-			return;
-		}
+		if (!sessionFile) return;
 
-		const sessionPath = sessionFile;
-		const sessionFileName = sessionFile.split("/").pop() || "session";
-		const sessionId = sessionFileName.replace(/\.jsonl$/, "");
-
-		// Parse session to extract key information
+		const sessionId = basename(sessionFile).replace(/\.jsonl$/, "");
 		const entries = ctx.sessionManager.getEntries();
-		let lastUserContent = "";
-		let lastAssistantContent = "";
-		let toolCallsCount = 0;
-
-		for (const entry of entries) {
-			if (entry.type === "message") {
-				if (entry.message.role === "user" && Array.isArray(entry.message.content)) {
-					lastUserContent = entry.message.content
-						.filter((c): c is { type: "text"; text: string } => c.type === "text")
-						.map((c) => c.text)
-						.join("\n");
-				} else if (entry.message.role === "assistant") {
-					lastAssistantContent = entry.message.content
-						.filter((c): c is { type: "text"; text: string } => c.type === "text")
-						.map((c) => c.text)
-						.join("\n");
-				}
-			}
-			if (entry.type === "toolResult") {
-				toolCallsCount++;
-			}
-		}
-
-		// Get session metadata from the header
 		const header = ctx.sessionManager.getHeader();
-		const sessionDate = header.timestamp.split("T")[0] || new Date().toISOString().split("T")[0];
+		const sessionDate = header?.timestamp?.split("T")[0] || new Date().toISOString().split("T")[0];
+		const projectName = inferProject(sessionFile, ctx.cwd);
+		const toolResultCount = countToolResults(entries);
+		const transcript = collectTranscript(entries);
 
-		// Determine project name from session path
-		const projectMatch = sessionPath.match(/Sessions\/--([^--]+)--/);
-		const projectName = projectMatch ? projectMatch[1].replace(/-/g, "/") : "unknown";
-
-		// Generate markdown content for session log
 		const markdownContent = `---
 date: ${sessionDate}
 project: ${projectName}
 tags: [pi-session, auto-saved]
+source: pi
+session_id: ${sessionId}
 ---
 
-# Session — ${sessionDate}
+# Pi Session — ${sessionDate}
 
 ## Summary
-This session log was automatically saved by the pi agent's Obsidian integration.
+Auto-saved Pi session log. Review/correct this note if needed; it is for human-visible memory, not hidden truth.
 
-## Conversation Highlights
-${lastUserContent.slice(0, 2000)}${lastUserContent.length > 2000 ? "..." : ""}
+## Project
+${projectName}
 
-## Key Results
-${lastAssistantContent.slice(0, 2000)}${lastAssistantContent.length > 2000 ? "..." : ""}
+## Transcript excerpt
+${transcript || "No user/assistant transcript captured."}
 
 ## Statistics
-- Tool calls: ${toolCallsCount}
+- Tool results: ${toolResultCount}
 - Total entries: ${entries.length}
 - Reason: ${event.reason}
+- Session file: ${sessionFile}
 
-## Open Items
-*Review the session log and add any pending tasks here.*
+## Durable facts to promote
+Use \`/pi-fact <fact>\` for any facts from this session Pi should always see.
 
-## Files Modified
-*Review the session log and list any files modified here.*
-
-## Key Learnings
-*Review the session log and note any important learnings here.*
+## Open items
+- [ ] Review session log.
 `;
 
-		// Write session log to vault
 		const outputPath = `${sessionsDir}/${sessionId}.md`;
 		writeFileSync(outputPath, markdownContent, "utf8");
 
-		if (ctx.hasUI) {
-			ctx.ui.notify(`Session log saved to: ${outputPath}`, "info");
-		}
+		if (ctx.hasUI) ctx.ui.notify(`Session log saved to: ${outputPath}`, "info");
 	});
 }

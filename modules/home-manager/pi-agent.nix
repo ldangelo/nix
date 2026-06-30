@@ -19,6 +19,7 @@ let
     "https://github.com/KristjanPikhof/pi-yaml-hooks"
     "npm:pi-subagents"
     "npm:pi-intercom"
+    "npm:pi-memory"
   ];
 
   # Merge default packages with user-provided packages (dedup).
@@ -298,6 +299,15 @@ in
     {
       home.packages = cfg.binTools;
 
+      home.sessionVariables = {
+        PI_OBSIDIAN_VAULT = vaultMindVaultPath;
+        PI_MEMORY_DIR = "${vaultMindVaultPath}/Agent/PiMemory";
+      };
+      programs.zsh.envExtra = lib.mkAfter ''
+        export PI_OBSIDIAN_VAULT=${lib.escapeShellArg vaultMindVaultPath}
+        export PI_MEMORY_DIR=${lib.escapeShellArg "${vaultMindVaultPath}/Agent/PiMemory"}
+      '';
+
       xdg.configFile = lib.mkMerge [
         (lib.mkIf (cfg.mcpConfig != {}) {
           "mcp/mcp.json" = { source = pkgs.writeText "mcp.json" (makeSettings cfg.mcpConfig); };
@@ -339,6 +349,8 @@ in
           ".pi/agent/extensions/progressive-context.ts".source = ./pi-extensions/progressive-context.ts;
           ".pi/agent/extensions/auto-commit-on-exit.ts".source = ./pi-extensions/auto-commit-on-exit.ts;
           ".pi/agent/extensions/preset.ts".source = ./pi-extensions/preset.ts;
+          ".pi/agent/extensions/pi-fact.ts".source = ./pi-extensions/pi-fact.ts;
+          ".pi/agent/extensions/obsidian-session-saver.ts".source = ./pi-extensions/obsidian/obsidian-session-saver.ts;
           ".pi/agent/extensions/nvim/index.ts".source = ./pi-extensions/nvim/index.ts;
           ".pi/agent/extensions/agentmemory/index.ts".source = ./pi-extensions/agentmemory/index.ts;
           ".pi/agent/extensions/agentmemory/security.ts".source = ./pi-extensions/agentmemory/security.ts;
@@ -482,6 +494,7 @@ in
           echo "Setting up Vault Mind directories..."
           mkdir -p ${lib.escapeShellArg "${vaultMindBase}/collections"} \
                    ${lib.escapeShellArg "${vaultMindBase}/artifacts"} \
+                   ${lib.escapeShellArg "${vaultMindVaultPath}/Agent/PiMemory/daily"} \
                    "$HOME/.pi/agent/vault-mind/lancedb"
         '';
     }
