@@ -176,6 +176,26 @@
           ]
         },
         {
+          "id": "coding-qwen-mtp",
+          "name": "Coding Qwen MTP — Qwen3.6 native MTP via LiteLLM",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "mtp",
+            "candidate"
+          ]
+        },
+        {
           "id": "coding-glm-mtp",
           "name": "Coding GLM MTP — GLM-4.5-Air MTP via LiteLLM",
           "reasoning": true,
@@ -687,6 +707,26 @@
           },
           "tags": [
             "exact"
+          ]
+        },
+        {
+          "id": "Qwen3.6-35B-A3B-FP8-MTP",
+          "name": "Qwen3.6 35B FP8 MTP — exact LiteLLM route",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "exact",
+            "mtp"
           ]
         },
         {
