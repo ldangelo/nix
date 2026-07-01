@@ -16,23 +16,24 @@ nix := 'if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then source "$HOME/
 darwin_rebuild := '/nix/var/nix/profiles/system/sw/bin/darwin-rebuild'
 
 # Linux recipes
+# NIX_CONFIG makes fallback inherited by home-manager's nested nix build.
 deploy-nc-linux:
-  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  export NIX_CONFIG="fallback = true"; {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 deploy-rebuild-linux:
-  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  export NIX_CONFIG="fallback = true"; {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 deploy-linux:
-  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  export NIX_CONFIG="fallback = true"; {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 debug-linux:
-  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux --show-trace
+  export NIX_CONFIG="fallback = true"; {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux --show-trace
 
 hm-switch-linux:
-  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  export NIX_CONFIG="fallback = true"; {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 hm-build-linux:
-  {{nix}} --fallback run github:nix-community/home-manager -- build --flake .#ldangelo-linux
+  export NIX_CONFIG="fallback = true"; {{nix}} run github:nix-community/home-manager -- build --flake .#ldangelo-linux
 
 # macOS recipes
 # Use GUI askpass when running locally; fall back to TTY prompt over SSH or in CI
