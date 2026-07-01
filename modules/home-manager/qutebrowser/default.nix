@@ -13,8 +13,7 @@
   # Enable qutebrowser
   programs.qutebrowser.enable = true;
 
-  # On Darwin, keep managing qutebrowser config files but do not install the
-  # Nix package: it pulls qtwebengine, which currently fails to build locally.
-  programs.qutebrowser.package =
-    lib.mkIf pkgs.stdenv.hostPlatform.isDarwin null;
+  # Manage qutebrowser config only. Installing the Nix package pulls qtwebengine,
+  # which is brittle on Darwin and currently hits bad Linux substitutes for ffmpeg/openapv.
+  programs.qutebrowser.package = null;
 }

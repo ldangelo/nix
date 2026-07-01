@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{pkgs, lib, ...}: let
 	yazi-plugins = pkgs.fetchFromGitHub {
 		owner = "yazi-rs";
 		repo = "plugins";
@@ -14,9 +14,10 @@ in {
 		# Preview dependencies
 		package = pkgs.yazi;
 		extraPackages = with pkgs; [
-			ffmpegthumbnailer  # video thumbnails
 			poppler-utils      # PDF previews
 			_7zz               # archive previews
+		] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+			ffmpegthumbnailer  # video thumbnails; pulls large ffmpeg closure on Linux
 		];
 
 		settings = {

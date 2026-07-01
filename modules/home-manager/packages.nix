@@ -71,15 +71,6 @@ in {
       ripgrep
       platinum-searcher
 
-      # Email & Communication
-      afew
-      cyrus_sasl
-      cyrus-sasl-xoauth2
-      himalaya
-      mu
-      neomutt
-      pizauth
-
       # Cloud & Infrastructure
       awscli2
       cloudflared
@@ -140,9 +131,17 @@ in {
     ]
     ++ lib.optionals isLinux [
       direnv
-      telegram-desktop
     ]
     ++ lib.optionals isDarwin [
+      # Email & Communication
+      afew
+      cyrus_sasl
+      cyrus-sasl-xoauth2
+      himalaya
+      mu
+      neomutt
+      pizauth
+
       # Development Tools
       antigravity
       ghostty-bin
