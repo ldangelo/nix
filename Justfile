@@ -17,22 +17,22 @@ darwin_rebuild := '/nix/var/nix/profiles/system/sw/bin/darwin-rebuild'
 
 # Linux recipes
 deploy-nc-linux:
-  {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 deploy-rebuild-linux:
-  {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 deploy-linux:
-  {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 debug-linux:
-  {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux --show-trace
+  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux --show-trace
 
 hm-switch-linux:
-  {{nix}} run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
+  {{nix}} --fallback run github:nix-community/home-manager -- -b bak switch --flake .#ldangelo-linux
 
 hm-build-linux:
-  {{nix}} run github:nix-community/home-manager -- build --flake .#ldangelo-linux
+  {{nix}} --fallback run github:nix-community/home-manager -- build --flake .#ldangelo-linux
 
 # macOS recipes
 # Use GUI askpass when running locally; fall back to TTY prompt over SSH or in CI
