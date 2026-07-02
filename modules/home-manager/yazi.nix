@@ -12,7 +12,26 @@ in {
 		shellWrapperName = "y";
 
 		# Preview dependencies
-		package = pkgs.yazi;
+		# Upstream yazi wrapper includes ffmpeg-headless by default. On Linux that
+		# currently pulls openapv with bad substitutes, so keep all optional tools
+		# except ffmpeg there. Darwin keeps video thumbnail support via ffmpegthumbnailer.
+		package = pkgs.yazi.override {
+			optionalDeps = with pkgs; [
+				file
+				jq
+				poppler-utils
+				_7zz
+				fd
+				ripgrep
+				fzf
+				zoxide
+				imagemagick
+				chafa
+				resvg
+			] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+				ffmpeg-headless
+			];
+		};
 		extraPackages = with pkgs; [
 			poppler-utils      # PDF previews
 			_7zz               # archive previews
