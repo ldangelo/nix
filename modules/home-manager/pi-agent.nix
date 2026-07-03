@@ -20,6 +20,7 @@ let
     "npm:pi-subagents"
     "npm:pi-intercom"
     "npm:pi-memory"
+    "npm:@raquezha/noheadroom"
   ];
 
   # Merge default packages with user-provided packages (dedup).
@@ -344,6 +345,17 @@ in
             source = pkgs.writeText "vault-mind.config.json" (makeSettings vaultMindConfig);
             force = true;
           };
+          ".pi/agent/headroom/settings.json" = {
+            source = pkgs.writeText "pi-headroom-settings.json" (makeSettings {
+              enabled = true;
+              baseUrl = "http://127.0.0.1:8788";
+              autoStart = true;
+              mode = "quiet";
+              minContextTokens = 10000;
+              minMessageChars = 2000;
+            });
+            force = true;
+          };
 
           # ── Built-in extensions ──────────────────────────────────────────
           ".pi/agent/extensions/ask-user.ts".source = ./pi-extensions/ask-user.ts;
@@ -500,12 +512,16 @@ in
         '';
     }
 
-    # ── Retired Headroom cleanup ──────────────────────────────────────────
+    # ── Headroom runtime bootstrap ───────────────────────────────────────
     {
-      home.activation.cleanupHeadroom =
+      home.activation.installHeadroomRuntime =
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          echo "Cleaning retired Headroom integration..."
-          ${pkgs.pipx}/bin/pipx uninstall headroom-ai >/dev/null 2>&1 || true
+          echo "Installing Headroom runtime..."
+          if ! ${pkgs.pipx}/bin/pipx list --short 2>/dev/null | grep -q '^headroom-ai '; then
+            ${pkgs.pipx}/bin/pipx install --include-deps 'headroom-ai[all]'
+          else
+            ${pkgs.pipx}/bin/pipx runpip headroom-ai install --upgrade 'headroom-ai[all]' || true
+          fi
           rm -f "$HOME/.pi/agent/extensions/headroom-mcp.ts" "$HOME/.pi/agent/extensions/headroom-mcp.ts.bak"
         '';
     }
