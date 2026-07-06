@@ -107,6 +107,13 @@
         darwinModules = [
           ({ ... }: {
             nix.enable = false;
+            # nix-darwin manual currently passes removed --toc-depth to the
+            # latest nixos-render-docs from unstable. Disable generated docs
+            # until nix-darwin catches up.
+            documentation.enable = false;
+            # Current darwin-uninstaller derivation evaluates its own default
+            # system with docs enabled, which trips the same renderer breakage.
+            system.tools.darwin-uninstaller.enable = false;
           })
           sops-nix.darwinModules.sops
           ./modules/darwin/default.nix
