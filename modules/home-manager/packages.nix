@@ -37,7 +37,7 @@ in {
 
       # Git Tools
       delta
-      gh
+      diffnav
       git-town
       glab
       jira-cli-go

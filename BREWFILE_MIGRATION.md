@@ -65,7 +65,7 @@ Successfully migrated packages from Brewfile to Nix configuration. The migration
 - borders (FelixKratz window borders)
 
 **Casks (GUI Applications):**
-1password, 1password-cli, aerospace, alt-tab, amazon-q, ammonite, appcleaner, arc, block-goose, claude-code, davmail-app, docker-desktop, elgato-*, fantastical, fonts, git-credential-manager, google-chrome, gotomeeting, grammarly-desktop, hammerspoon, homerow, hookmark, iterm2, itermai, itermbrowserplugin, jetbrains-toolbox, karabiner-elements, launchcontrol, lens, limitless, linear-linear, logseq, mactex-no-gui, meld, microsoft-*, mouseless, obsidian, ollama-app, postgres-unofficial, postman, proxyman, qutebrowser, readdle-spark, repo-prompt, setapp, sf-symbols, slack, sourcetree, stats, superhuman, tabtab, todoist-app, tradingview, vscodium, wakatime, wezterm, witsy, zed, zoom
+1password, 1password-cli, aerospace, alt-tab, amazon-q, ammonite, appcleaner, arc, block-goose, claude-code, davmail-app, docker-desktop, elgato-*, fantastical, fonts, git-credential-manager, google-chrome, gotomeeting, grammarly-desktop, hammerspoon, homerow, hookmark, iterm2, itermai, itermbrowserplugin, jetbrains-toolbox, karabiner-elements, launchcontrol, lens, limitless, linear, logseq, mactex-no-gui, meld, microsoft-*, mouseless, obsidian, ollama-app, postgres-app, postman, proxyman, qutebrowser, readdle-spark, repo-prompt, setapp, sf-symbols, slack, sourcetree, stats, superhuman, tabtab, todoist-app, tradingview, vscodium, wakatime, wezterm, witsy, zed, zoom
 
 **Mac App Store Apps:**
 All MAS apps from Brewfile migrated to `homebrew.masApps` in homebrew.nix

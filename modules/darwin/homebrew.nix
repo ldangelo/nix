@@ -50,6 +50,8 @@
       "bakks/bakks/butterfish"         # LLM command-line tool
       "oh-my-posh"                     # Prompt theme engine
       "charmbracelet/tap/crush"        # Terminal AI assistant
+      "ttyd"                           # Share terminal over the web
+      "vhs"                            # Record terminal sessions as GIF/video
 
       # golang
       "golang"
@@ -172,7 +174,7 @@
       "launchcontrol"          # Service manager
       "lens"                   # Kubernetes IDE
 #      "limitless"              # AI transcription
-      "linear-linear"          # Project management
+      "linear"                 # Project management
       "logseq"                 # Knowledge management
       "mactex-no-gui"          # TeX distribution
       "meld"                   # Visual diff
@@ -180,7 +182,7 @@
       "microsoft-teams"
       "mouseless@preview"      # Mouse control via keyboard
       "ollama-app"             # Local LLMs
-      "postgres-unofficial"    # Postgres.app
+      "postgres-app"           # Postgres.app
       "postman"
       "postman-cli"
       "proxyman"               # HTTP debugging proxy
@@ -239,7 +241,7 @@
     onActivation = {
       cleanup = "none";      # Disable cleanup (use "uninstall" or "zap" with HOMEBREW_ASK=1)
       autoUpdate = true;          # Auto-update Homebrew
-      upgrade = true;             # Auto-upgrade packages
+      upgrade = false;            # Keep deploy idempotent; upgrade Homebrew packages manually
     };
   };
 }

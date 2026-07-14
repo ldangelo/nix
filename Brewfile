@@ -212,8 +212,12 @@ brew "terminal-notifier"
 brew "the_silver_searcher"
 # Vulnerability scanner for container images, file systems, and Git repos
 brew "trivy"
+# Share your terminal over the web
+brew "ttyd"
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
+# Record terminal sessions as GIFs/videos
+brew "vhs"
 # Command-line hypervisor using Apple's Virtualization Framework
 brew "vfkit"
 # Tool for creating isolated virtual python environments
@@ -319,7 +323,7 @@ cask "lens"
 # Personal AI-powered transcription and notetaking service
 cask "limitless"
 # App to manage software development and track bugs
-cask "linear-linear"
+cask "linear"
 # Privacy-first, open-source platform for knowledge sharing and management
 cask "logseq"
 # Full TeX Live distribution without GUI applications
@@ -337,7 +341,7 @@ cask "obsidian"
 # Get up and running with large language models locally
 cask "ollama-app"
 # App wrapper for Postgres
-cask "postgres-unofficial"
+cask "postgres-app"
 # Collaboration platform for API development
 cask "postman"
 # CLI for command-line API management on Postman
