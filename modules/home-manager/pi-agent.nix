@@ -346,6 +346,29 @@ in
             });
             force = true;
           };
+          ".local/bin/pi" = {
+            text = ''
+              #!${pkgs.bash}/bin/bash
+              set -euo pipefail
+
+              export PI_OBSIDIAN_VAULT=${lib.escapeShellArg vaultMindVaultPath}
+              export PI_MEMORY_DIR=${lib.escapeShellArg "${vaultMindVaultPath}/Agent/PiMemory"}
+              export PI_AUTO_COMPACT_THRESHOLD_PERCENT=60
+              export PATH="${pkgs.git}/bin:${pkgs.nodejs}/bin:$PATH"
+
+              for candidate in "$HOME"/.nvm/versions/node/*/bin/pi "$HOME"/.npm-global/bin/pi /opt/homebrew/bin/pi /usr/local/bin/pi; do
+                if [ -x "$candidate" ]; then
+                  exec "$candidate" "$@"
+                fi
+              done
+
+              echo "pi wrapper: no upstream pi executable found" >&2
+              exit 127
+            '';
+            executable = true;
+            force = true;
+          };
+
           ".pi/agent/vault-mind.config.json" = {
             source = pkgs.writeText "vault-mind.config.json" (makeSettings vaultMindConfig);
             force = true;
