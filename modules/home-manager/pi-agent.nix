@@ -8,6 +8,7 @@
 
 let
   cfg = config.pi-agent;
+  homeDir = config.home.homeDirectory;
   makeSettings = builtins.toJSON;
 
   # ── Default packages (NPM + local sources) ──────────────────────────────
@@ -32,7 +33,10 @@ let
     else mergedPackages;
 
   # ── Vault Mind shared Obsidian wiki ─────────────────────────────────────
-  vaultMindVaultPath = "/Users/ldangelo/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo";
+  vaultMindVaultPath =
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then "${homeDir}/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo"
+    else "${homeDir}/.pi/agent/vault-mind/vault";
   vaultMindBase = "${vaultMindVaultPath}/Agent/VaultMind";
   vaultMindConfig = {
     version = 2;
@@ -86,7 +90,7 @@ let
       }
     ];
     vaultMind = {
-      dataDir = "/Users/ldangelo/.pi/agent/vault-mind/lancedb";
+      dataDir = "${homeDir}/.pi/agent/vault-mind/lancedb";
       embedding = {
         useTransformers = true;
         localUrl = "http://127.0.0.1:11434";
@@ -185,6 +189,7 @@ let
   sandboxExtension = ./pi-extensions/sandbox;
   sandboxEnabled = builtins.any (e: e == sandboxExtension) cfg.extensions;
   managedExtensions = lib.filter (e: e != sandboxExtension) cfg.extensions;
+  runtimeBinTools = lib.unique ([ pkgs.git pkgs.nodejs ] ++ cfg.binTools);
 
   # ── MC Porter config ───────────────────────────────────────────────────
   mcporterConfig = pkgs.writeText "mcporter.json" (makeSettings {
@@ -227,7 +232,7 @@ let
           done
         fi
         if [ -n "$pi_cmd" ]; then
-          export PATH="$(dirname "$pi_cmd"):$PATH"
+          export PATH="${pkgs.git}/bin:${pkgs.nodejs}/bin:$(dirname "$pi_cmd"):$PATH"
           "$pi_cmd" install "$pkg" || echo "pi install $pkg failed; package remains in settings for startup reconciliation"
         else
           echo "pi not found; skipping package $pkg"
@@ -298,7 +303,7 @@ in
   # ── Module config ───────────────────────────────────────────────────────
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      home.packages = cfg.binTools;
+      home.packages = runtimeBinTools;
 
       home.sessionVariables = {
         PI_OBSIDIAN_VAULT = vaultMindVaultPath;
@@ -483,7 +488,7 @@ in
         })
 
         # ── Bin tools symlinks ─────────────────────────────────────────────
-        (lib.mkIf (cfg.binTools != []) {
+        (lib.mkIf (runtimeBinTools != []) {
           ".pi/agent/bin" = {
             recursive = true;
             executable = true;
@@ -493,7 +498,7 @@ in
                 for bin in ${tool}/bin/*; do
                   ln -s "$bin" "$out/$(basename "$bin")"
                 done
-              '') cfg.binTools}
+              '') runtimeBinTools}
             '';
           };
         })
