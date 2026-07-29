@@ -79,23 +79,14 @@ in {
       "1password"
     ];
     initExtra = ''
+      # Auto-spawn tmux on interactive shells (not inside tmux, herdr, or orca)
+      if [ -z "$TMUX" ] && [ -z "$HERDR_ENV" ] && [ -z "$ORCA_CLI_COMMAND" ]; then
+        exec tmux new-session -A -s main
+      fi
+
       # Docker MCP bearer token — reads fresh on shell init
       if [ -f "$HOME/.docker/mcp/docker-mcp-bearer-token" ]; then
         export MCP_DOCKER_BEARER_TOKEN="$(cat "$HOME/.docker/mcp/docker-mcp-bearer-token")"
-      fi
-    '';
-
-    loginExtra = ''
-      # Attach to tmux on login shells while avoiding nested/non-TTY sessions.
-      if [[ -o interactive ]] \
-        && [[ -z "$TMUX" ]] \
-        && [[ -z "$INSIDE_EMACS" ]] \
-        && [[ "$TERM" != "dumb" ]] \
-        && [[ "$AUTO_TMUX" != "0" ]] \
-        && [[ -t 0 && -t 1 ]] \
-        && command -v tmux >/dev/null 2>&1; then
-        exec tmux new-session
-        exit
       fi
     '';
 
