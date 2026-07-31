@@ -15,33 +15,38 @@ in {
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks."*" = {
-      forwardAgent = false;
-      addKeysToAgent = "yes";
-      compression = false;
-      serverAliveInterval = 0;
-      serverAliveCountMax = 3;
-      hashKnownHosts = false;
-      userKnownHostsFile = "~/.ssh/known_hosts";
-      controlMaster = "no";
-      controlPath = "~/.ssh/master-%r@%n:%p";
-      controlPersist = "no";
-      identityFile = lib.mkIf hasSshPrivateKey [ "${homeDir}/.ssh/id_ed25519" ];
-    };
+    settings = {
+      "*" = lib.mkMerge [
+        {
+          ForwardAgent = false;
+          AddKeysToAgent = "yes";
+          Compression = false;
+          ServerAliveInterval = 0;
+          ServerAliveCountMax = 3;
+          HashKnownHosts = false;
+          UserKnownHostsFile = "~/.ssh/known_hosts";
+          ControlMaster = "no";
+          ControlPath = "~/.ssh/master-%r@%n:%p";
+          ControlPersist = "no";
+        }
+        (lib.mkIf hasSshPrivateKey {
+          IdentityFile = [ "${homeDir}/.ssh/id_ed25519" ];
+        })
+      ];
 
-    matchBlocks."tailscale" = lib.mkIf hasSshPrivateKey {
-      host = "*.ts.net 100.*";
-      user = "ldangelo";
-      identitiesOnly = true;
-      identityFile = [ "${homeDir}/.ssh/id_ed25519" ];
-      extraOptions.StrictHostKeyChecking = "accept-new";
-    };
+      tailscale = lib.mkIf hasSshPrivateKey {
+        header = "Host *.ts.net 100.*";
+        User = "ldangelo";
+        IdentitiesOnly = true;
+        IdentityFile = [ "${homeDir}/.ssh/id_ed25519" ];
+        StrictHostKeyChecking = "accept-new";
+      };
 
-    matchBlocks."azure-devops" = {
-      host = "ssh.dev.azure.com";
-      user = "git";
-      identitiesOnly = true;
-      identityFile = [ "${homeDir}/.ssh/id_rsa_azuredevops" ];
+      "ssh.dev.azure.com" = {
+        User = "git";
+        IdentitiesOnly = true;
+        IdentityFile = [ "${homeDir}/.ssh/id_rsa_azuredevops" ];
+      };
     };
   };
 

@@ -55,7 +55,7 @@
 
   # Place kanata config at /etc so root launchd daemon can access it
   # (root cannot traverse /Users/ldangelo which has mode 750)
-  environment.etc."kanata/home-row.kbd".source = ../../dotfiles/config/kanata/home-row.kbd;
+  environment.etc."kanata/home-row.kbd".text = builtins.readFile ../../dotfiles/config/kanata/home-row.kbd;
 
   # Kanata - Advanced keyboard remapper (system-level daemon)
   # https://github.com/jtroo/kanata
@@ -76,6 +76,66 @@
       Nice = -20;
       UserName = "root";
       GroupName = "wheel";
+    };
+  };
+
+  # RustDesk remote-access service.
+  # Official macOS install creates one root daemon plus one per-session LaunchAgent:
+  #   /Library/LaunchDaemons/com.carriez.RustDesk_service.plist
+  #   /Library/LaunchAgents/com.carriez.RustDesk_server.plist
+  # Homebrew runs late in nix-darwin activation, so wrappers wait for the cask app
+  # instead of failing first deploy before /Applications/RustDesk.app exists.
+  launchd.daemons.rustdesk-service = lib.mkIf isWorkstation {
+    serviceConfig = {
+      Label = "com.carriez.RustDesk_service";
+      ProgramArguments = [
+        "/bin/sh"
+        "-c"
+        ''
+          while [ ! -x /Applications/RustDesk.app/Contents/MacOS/service ]; do
+            sleep 30
+          done
+          cd /Applications/RustDesk.app/Contents/MacOS
+          exec ./service
+        ''
+      ];
+      KeepAlive = true;
+      RunAtLoad = true;
+      ThrottleInterval = 30;
+      StandardOutPath = "/var/log/rustdesk_service.out";
+      StandardErrorPath = "/var/log/rustdesk_service.err";
+      UserName = "root";
+      GroupName = "wheel";
+    };
+  };
+
+  launchd.agents.rustdesk-server = lib.mkIf isWorkstation {
+    serviceConfig = {
+      Label = "com.carriez.RustDesk_server";
+      ProgramArguments = [
+        "/bin/sh"
+        "-c"
+        ''
+          while [ ! -x /Applications/RustDesk.app/Contents/MacOS/RustDesk ]; do
+            sleep 30
+          done
+          cd /Applications/RustDesk.app/Contents/MacOS
+          exec ./RustDesk --server
+        ''
+      ];
+      LimitLoadToSessionType = [
+        "LoginWindow"
+        "Aqua"
+      ];
+      KeepAlive = {
+        SuccessfulExit = false;
+        AfterInitialDemand = false;
+      };
+      RunAtLoad = true;
+      ThrottleInterval = 30;
+      ProcessType = "Interactive";
+      StandardOutPath = "/tmp/rustdesk_server.out";
+      StandardErrorPath = "/tmp/rustdesk_server.err";
     };
   };
 

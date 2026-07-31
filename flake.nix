@@ -126,6 +126,7 @@
             home-manager.sharedModules = [
               sops-nix.homeManagerModules.sops
               ./modules/home-manager/pi-agent.nix
+              ./modules/home-manager/omp.nix
             ];
             home-manager.users.ldangelo = { pkgs, ... }: {
               imports = [
@@ -202,10 +203,12 @@
               sops-nix.homeManagerModules.sops
               ./modules/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
+              ./modules/home-manager/omp.nix
               ./overlays
               ({ pkgs, ... }:
               {
                 pi-agent.enable = true;
+                omp.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
                   defaultProvider = "openai-codex";
@@ -230,7 +233,7 @@
                     transcriptMaxBytes = 524288;
                   };
                   httpIdleTimeoutMs = 0;
-              };
+                };
                 pi-agent.binTools = with pkgs; [
                   fd
                   ripgrep
@@ -249,11 +252,11 @@
                   ./modules/home-manager/pi-extensions/handoff.ts
                   ./modules/home-manager/pi-extensions/todo.ts
                   ./modules/home-manager/pi-extensions/bookmark.ts
+                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
                   ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
                   ./modules/home-manager/pi-extensions/preset.ts
                   ./modules/home-manager/pi-extensions/nvim
                   ./modules/home-manager/pi-extensions/poly-notify
-                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
                 ];
                 pi-agent.packages = [
                   "npm:pi-powerline-footer"
@@ -291,6 +294,7 @@
               sops-nix.homeManagerModules.sops
               ./modules/linux/home-manager/default.nix
               ./modules/home-manager/pi-agent.nix
+              ./modules/home-manager/omp.nix
               ({ pkgs, ... }:
               let
                 ensemblePi = pkgs.fetchFromGitHub {
@@ -301,6 +305,7 @@
                 };
               in {
                 pi-agent.enable = true;
+                omp.enable = true;
                 pi-agent.settings = {
                   lastChangelogVersion = "0.72.1";
                   defaultProvider = "openai-codex";

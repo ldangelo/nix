@@ -131,6 +131,9 @@ in {
     ]
     ++ lib.optionals isLinux [
       direnv
+
+      # GUI Applications
+      rustdesk
     ]
     ++ lib.optionals isDarwin [
       # Email & Communication
@@ -163,4 +166,25 @@ in {
       raycast
       shortcat
     ];
+
+  systemd.user.services.rustdesk = lib.mkIf isLinux {
+    Unit = {
+      Description = "RustDesk remote desktop service";
+      Documentation = [
+        "https://rustdesk.com/docs/en/client/linux/"
+        "https://rustdesk.com/docs/en/self-host/client-deployment/"
+      ];
+      After = [ "graphical-session.target" "network-online.target" ];
+      Wants = [ "network-online.target" ];
+      X-Restart-Triggers = [ pkgs.rustdesk ];
+    };
+
+    Service = {
+      ExecStart = "${pkgs.rustdesk}/bin/rustdesk --service";
+      Restart = "on-failure";
+      RestartSec = 10;
+    };
+
+    Install.WantedBy = [ "default.target" ];
+  };
 }

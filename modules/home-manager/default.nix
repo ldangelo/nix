@@ -18,12 +18,14 @@
     ./alias.nix
     ./nix-search-tv.nix
     ./home.nix
+    ./sops.nix
     ./borders
     ./zoxide.nix
     ./tmux
     ./ghostty.nix
     ./yazi.nix
     ./pi-agent.nix
+    ./omp.nix
   ];
 
   home = {
@@ -33,6 +35,7 @@
 
   catppuccin = {
     enable = true;
+    autoEnable = true;
     atuin.enable = true;
     bat.enable = true;
     btop.enable = true;

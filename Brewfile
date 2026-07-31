@@ -340,6 +340,8 @@ cask "mouseless@preview"
 cask "obsidian"
 # Get up and running with large language models locally
 cask "ollama-app"
+# AI coding agent orchestrator
+cask "stablyai/orca/orca"
 # App wrapper for Postgres
 cask "postgres-app"
 # Collaboration platform for API development
@@ -356,6 +358,8 @@ cask "raycast"
 cask "readdle-spark"
 # Prompt generation tool
 cask "repo-prompt"
+# Open source virtual/remote desktop application
+cask "rustdesk"
 # Collection of apps available by subscription
 cask "setapp"
 # Tool that provides consistent, highly configurable symbols for apps

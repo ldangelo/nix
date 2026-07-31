@@ -41,8 +41,6 @@ in
   # Top-level dotfiles
   home.file = {
     ".emacs-profile".source = "${dotfilesPath}/emacs-profile";
-    ".emacs-profiles.el".source = "${dotfilesPath}/emacs-profiles.el";
-    ".ideavimrc".source = "${dotfilesPath}/ideavimrc";
     ".mailrc".source = "${dotfilesPath}/mailrc";
 
     # Oh My Zsh

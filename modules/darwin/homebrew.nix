@@ -21,6 +21,7 @@
       "steipete/tap"
       "manaflow-ai/cmux"
       "acsandmann/tap"
+      "stablyai/orca"
     ];
 
     # Brew formulae not easily available in nixpkgs
@@ -86,7 +87,7 @@
       "fileql"                         # SQL-like queries on files
       "ifstat"                         # Interface statistics
       "kanata"                         # Keyboard remapper
-      "switchaudio-osx"                # Change audio source CLI
+        #      "switchaudio-osx"                # Change audio source CLI
       "vfkit"                          # Virtualization framework CLI
       "tailscale"
       # Email (not available on macOS via nix)
@@ -137,6 +138,7 @@
       "git-credential-manager"
       "homerow"                # Keyboard shortcuts for macOS
       "tailscale-app"
+      "rustdesk"              # Remote desktop client
       "block-goose"            # AI agent
       "aerospace"              # i3-like tiling window manager
       "obsidian"
@@ -158,10 +160,10 @@
 #      "felixkratz/formulae/borders"
       "davmail-app"            # Exchange mail/calendar client
       "docker-desktop"
-      "elgato-camera-hub"
-      "elgato-control-center"
+        #      "elgato-camera-hub"
+        #      "elgato-control-center"
       "elgato-stream-deck"
-      "elgato-wave-link"
+        #      "elgato-wave-link"
       "fantastical"            # Calendar
       "google-chrome"
       "gotomeeting"
@@ -182,6 +184,7 @@
       "microsoft-teams"
       "mouseless@preview"      # Mouse control via keyboard
       "ollama-app"             # Local LLMs
+      "stablyai/orca/orca"      # AI coding agent orchestrator
       "postgres-app"           # Postgres.app
       "postman"
       "postman-cli"
@@ -190,14 +193,14 @@
       "readdle-spark"          # Email client
       "repo-prompt"            # Prompt generation
       "rider"
-      "rize"
+        #      "rize"
       "setapp"
       "sf-symbols"
 #      "shortcat"               # Keyboard navigation
       "slack"
       "sourcetree"             # Git GUI
 #      "stats"                  # System monitor
-      "superhuman"             # Email client
+        #      "superhuman"             # Email client
       "todoist-app"
       "tradingview"
 #      "vscodium"               # VS Code without telemetry

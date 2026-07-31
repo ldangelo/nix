@@ -1,4 +1,4 @@
-{ pkgs, environment, ... }: {
+{ pkgs, config, environment, ... }: {
   # output .mbsyncrc file
    programs.mbsync = {
      enable = true;
@@ -32,7 +32,7 @@
         address = "ldangelo@mac.com";
         imap.host = "imap.mail.me.com";
         userName = "ldangelo";
-        passwordCommand = "cat /run/secrets/mac_mail_key";
+        passwordCommand = "cat ${config.sops.secrets.mac_mail_key.path}";
         mbsync = {
           enable = true;
           create = "both";

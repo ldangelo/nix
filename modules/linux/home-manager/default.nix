@@ -20,6 +20,7 @@
     ../../home-manager/alias.nix
     ../../home-manager/nix-search-tv.nix
     ../../home-manager/home.nix
+    ../../home-manager/sops.nix
     ../../home-manager/zoxide.nix
     ../../home-manager/tmux
     ../../home-manager/yazi.nix
@@ -32,6 +33,7 @@
 
   catppuccin = {
     enable = true;
+    autoEnable = true;
     atuin.enable = true;
     bat.enable = true;
     btop.enable = true;

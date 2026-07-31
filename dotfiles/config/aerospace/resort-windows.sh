@@ -2,6 +2,9 @@
 # AeroSpace window re-sort script
 # Runs after startup to fix windows that opened before AeroSpace was ready
 # Called from: after-startup-command with a sleep delay
+#
+# Five workspaces:
+#   D Development | C Communication | N Notes | W Documents | P Personal
 
 A=/opt/homebrew/bin/aerospace
 
@@ -11,28 +14,29 @@ move() {
   done
 }
 
-# Home (1)
-move com.googlecode.iterm2 1
+# Development (D)
+move com.github.wez.wezterm D
+move com.electron.dockerdesktop D
+move com.google.Chrome D
 
 # Communication (C)
+move com.microsoft.Outlook C
+move com.apple.mail C
 move com.tinyspeck.slackmacgap C
-move us.zoom.xos C
-move com.logmein.goto C
+move com.microsoft.teams2 C
 move com.apple.MobileSMS C
-move com.hnc.Discord C
-move ru.keepcoder.Telegram C
-move com.readdle.SparkDesktop C
 
-# Organization (O)
-move com.flexibits.fantastical2.mac O
-move md.obsidian O
-move info.eurocomp.Timing-setapp O
+# Notes (N)
+move md.obsidian N
+move com.granola.app N
+move com.anthropic.claudefordesktop N
 
-# Entertainment (E)
-move com.apple.Music E
+# Documents (W)
+move com.microsoft.Excel W
+move com.apple.Preview W
+move com.microsoft.Word W
 
-# Trading (T)
-move com.tradingview.tradingviewapp.desktop T
-
-# Development (D)
-move com.jetbrains.intellij D
+# Personal (P)
+move com.apple.Music P
+move com.vivaldi.Vivaldi P
+move com.tradingview.tradingviewapp.desktop P
