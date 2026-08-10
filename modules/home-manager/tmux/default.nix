@@ -97,22 +97,7 @@ in
       }
       fzf-tmux-url
       extrakto
-      {
-        plugin = tmux-toggle-popup;
-        extraConfig = ''
-          set -g @popup-autostart on
-          # Prefix t — general popup shell (75% size)
-          bind t run "#{@popup-toggle} -w75% -h75% -Ed'#{pane_current_path}'"
-          # Prefix g — lazygit popup (90% size)
-          bind g run "#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=lazygit lazygit"
-          # Prefix y — yazi file browser popup (90% size)
-          bind y run "#{@popup-toggle} -w90% -h90% -Ed'#{pane_current_path}' --name=yazi yazi"
-          # Prefix D — deploy popup (just deploy)
-          bind D run "#{@popup-toggle} -w80% -h60% -Ed'#{pane_current_path}' --name=deploy just deploy"
-          # Prefix h — tmux user guide
-          bind h run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
-        '';
-      }
+
       {
         plugin = tmux-which-key;
         extraConfig = ''
@@ -214,6 +199,12 @@ in
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
 
+      # Diff view — toggle a full-height diffnav pane pinned to the left edge
+      bind e run-shell '~/.local/bin/tmux-diff-sidebar'
+
+      # Beads — toggle a full-height beads tree pane pinned to the right edge
+      bind b run-shell '~/.local/bin/tmux-beads-sidebar'
+
       # New window in current path
       bind c new-window -c "#{pane_current_path}"
 
@@ -283,6 +274,16 @@ in
       set -g set-clipboard on
       set -g pane-border-status top
       set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
+
+      # Popup overlays — native display-popup (no plugin)
+      bind t display-popup -w75% -h75% -E -d '#{pane_current_path}'
+      bind h display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}
+
+      # Tmuxinator sessions — popup-style with cwd from active pane
+      bind g run-shell "tmuxinator start lazygit '#{pane_current_path}'"
+      bind y run-shell "tmuxinator start yazi '#{pane_current_path}'"
+      bind s run-shell "tmuxinator start br-stats '#{pane_current_path}'"
+      bind V run-shell "tmuxinator start bv '#{pane_current_path}'"
     '';
   };
 
@@ -419,19 +420,22 @@ in
         menu:
           - name: Shell
             key: t
-            command: "run \"#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path}\""
+            command: "display-popup -w75% -h75% -E -d '#{pane_current_path}'"
           - name: Lazygit
             key: g
-            command: "run \"#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=lazygit lazygit\""
+            command: "run-shell \"tmuxinator start lazygit '#{pane_current_path}'\""
           - name: Yazi
             key: "y"
-            command: "run \"#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=yazi yazi\""
-          - name: Deploy
-            key: d
-            command: "run \"#{@popup-toggle} -w80% -h60% -Ed#{pane_current_path} --name=deploy just deploy\""
+            command: "run-shell \"tmuxinator start yazi '#{pane_current_path}'\""
+          - name: Bead stats
+            key: s
+            command: "run-shell \"tmuxinator start br-stats '#{pane_current_path}'\""
+          - name: Bead viewer
+            key: v
+            command: "run-shell \"tmuxinator start bv '#{pane_current_path}'\""
           - name: Help
             key: h
-            command: "run \"#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}\""
+            command: "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
       - separator: true
       - name: Reload config
         key: R
@@ -543,6 +547,46 @@ in
           panes:
             - br list --status=open
             - ""
+  '';
+
+  # Lazygit — full-window git TUI at pane cwd
+  xdg.configFile."tmuxinator/lazygit.yml".text = ''
+    name: lazygit
+    root: <%= @args[0] || ENV.fetch("HOME") %>
+    windows:
+      - main:
+          panes:
+            - lazygit
+  '';
+
+  # Yazi — full-window file browser at pane cwd
+  xdg.configFile."tmuxinator/yazi.yml".text = ''
+    name: yazi
+    root: <%= @args[0] || ENV.fetch("HOME") %>
+    windows:
+      - main:
+          panes:
+            - yazi
+  '';
+
+  # Beads stats — `br stats` overview
+  xdg.configFile."tmuxinator/br-stats.yml".text = ''
+    name: br-stats
+    root: <%= @args[0] || ENV.fetch("HOME") %>
+    windows:
+      - main:
+          panes:
+            - br stats
+  '';
+
+  # Beads viewer — full-window bv TUI at pane cwd (needs .beads)
+  xdg.configFile."tmuxinator/bv.yml".text = ''
+    name: bv
+    root: <%= @args[0] || ENV.fetch("HOME") %>
+    windows:
+      - main:
+          panes:
+            - bv
   '';
 
   # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
@@ -778,6 +822,196 @@ in
     text = ''
       #!/bin/bash
       /usr/bin/osascript -e 'display dialog "sudo password:" default answer "" with hidden answer with title "sudo"' -e 'text returned of result' 2>/dev/null
+    '';
+  };
+
+  # Diff view sidebar — toggle a full-height diffnav pane pinned to the left
+  # edge of the current window. Bound to Prefix e in the tmux config above.
+  home.file.".local/bin/tmux-diff-sidebar" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -uo pipefail
+
+      # If a diff sidebar is already open in this window, close it (toggle off).
+      existing="$(tmux show-options -wqv @diff_sidebar 2>/dev/null || true)"
+      if [[ -n "$existing" ]] && tmux list-panes -a -F '#{pane_id}' | grep -qx "$existing"; then
+        tmux kill-pane -t "$existing"
+        tmux set-option -wu @diff_sidebar 2>/dev/null || true
+        exit 0
+      fi
+
+      # Otherwise open one: a full-height pane pinned to the left edge (-fhb),
+      # 40% wide, running diffnav in watch mode so it live-updates.
+      path="$(tmux display-message -p '#{pane_current_path}')"
+      pane="$(tmux split-window -fhb -l 40% -c "$path" -P -F '#{pane_id}' 'diffnav --watch')"
+      tmux set-option -w @diff_sidebar "$pane"
+    '';
+  };
+
+  # Beads sidebar — toggle a full-height beads status tree pinned to the right
+  # edge of the current window. Bound to Prefix b in the tmux config above.
+  home.file.".local/bin/tmux-beads-sidebar" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -uo pipefail
+
+      # If a beads sidebar is already open in this window, close it (toggle off).
+      existing="$(tmux show-options -wqv @beads_sidebar 2>/dev/null || true)"
+      if [[ -n "$existing" ]] && tmux list-panes -a -F '#{pane_id}' | grep -qx "$existing"; then
+        tmux kill-pane -t "$existing"
+        tmux set-option -wu @beads_sidebar 2>/dev/null || true
+        exit 0
+      fi
+
+      # Otherwise open one: a full-height pane pinned to the RIGHT edge (-fh, no -b),
+      # 40% wide, running the auto-refreshing beads status tree.
+      path="$(tmux display-message -p '#{pane_current_path}')"
+      pane="$(tmux split-window -fh -l 40% -c "$path" -P -F '#{pane_id}' '~/.local/bin/beads-tree')"
+      tmux set-option -w @beads_sidebar "$pane"
+    '';
+  };
+
+  # beads-tree — self-refreshing status tree for the beads_rust tracker (br).
+  # Groups issues into open / in progress / blocked / closed and redraws every
+  # few seconds. Used by the Prefix b sidebar above; also runnable standalone.
+  home.file.".local/bin/beads-tree" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env python3
+      import json
+      import os
+      import shutil
+      import subprocess
+      import sys
+      import time
+      from datetime import datetime
+
+      # Ensure br (beads_rust) is found even though tmux runs this without a login shell.
+      HOME = os.path.expanduser("~")
+      EXTRA = [
+          os.path.join(HOME, ".cargo", "bin"),
+          "/opt/homebrew/bin",
+          "/run/current-system/sw/bin",
+          os.path.join("/etc/profiles/per-user", os.environ.get("USER", ""), "bin"),
+      ]
+      os.environ["PATH"] = os.pathsep.join(EXTRA + [os.environ.get("PATH", "")])
+
+      INTERVAL = 5.0
+      if len(sys.argv) > 1:
+          try:
+              INTERVAL = float(sys.argv[1])
+          except ValueError:
+              INTERVAL = 5.0
+
+      def rgb(r, g, b):
+          return "\033[38;2;{};{};{}m".format(r, g, b)
+
+      RESET = "\033[0m"
+      BOLD = "\033[1m"
+      GREY = rgb(108, 112, 134)
+      HEAD = rgb(203, 214, 244)
+      RED = rgb(243, 139, 168)
+      BLUE = rgb(137, 180, 250)
+
+      GROUPS = [
+          ("open", "open", rgb(137, 180, 250)),
+          ("in_progress", "in progress", rgb(249, 226, 175)),
+          ("blocked", "blocked", rgb(243, 139, 168)),
+          ("closed", "closed", rgb(166, 227, 161)),
+      ]
+      CLOSED_LIMIT = 15
+
+      def find_root(start):
+          d = os.path.abspath(start)
+          while True:
+              if os.path.isdir(os.path.join(d, ".beads")):
+                  return d
+              parent = os.path.dirname(d)
+              if parent == d:
+                  return None
+              d = parent
+
+      def fetch(status, root):
+          try:
+              out = subprocess.run(
+                  ["br", "list", "--status=" + status, "--json"],
+                  cwd=root, capture_output=True, text=True, timeout=10,
+              )
+          except Exception:
+              return []
+          if out.returncode != 0:
+              return []
+          try:
+              data = json.loads(out.stdout or "[]")
+          except Exception:
+              return []
+          if isinstance(data, dict):
+              for k in ("issues", "items", "results", "data"):
+                  if isinstance(data.get(k), list):
+                      return data[k]
+              return []
+          return data if isinstance(data, list) else []
+
+      def prio(it):
+          try:
+              return int(it.get("priority", 9))
+          except Exception:
+              return 9
+
+      def render(root):
+          width = shutil.get_terminal_size((60, 40)).columns
+          name = os.path.basename(root) if root else "beads"
+          now = datetime.now().strftime("%H:%M:%S")
+          lines = []
+          lines.append(" {}{}Beads{} {}· {}{}   {}{}{}".format(BOLD, HEAD, RESET, GREY, name, RESET, GREY, now, RESET))
+          lines.append("")
+          if shutil.which("br") is None:
+              lines.append(" {}br not found on PATH{}".format(RED, RESET))
+              lines.append(" {}install beads_rust (check ~/.cargo/bin or the brew tap){}".format(GREY, RESET))
+              return "\n".join(lines)
+          if not root:
+              lines.append(" {}no .beads directory found from this pane{}".format(RED, RESET))
+              return "\n".join(lines)
+          for status, label, color in GROUPS:
+              items = fetch(status, root)
+              items.sort(key=lambda it: (prio(it), str(it.get("id", ""))))
+              lines.append(" {}{}● {}{} {}({}){}".format(color, BOLD, label, RESET, GREY, len(items), RESET))
+              shown = items
+              extra = 0
+              if status == "closed" and len(items) > CLOSED_LIMIT:
+                  shown = items[:CLOSED_LIMIT]
+                  extra = len(items) - CLOSED_LIMIT
+              for i, it in enumerate(shown):
+                  last = (i == len(shown) - 1) and extra == 0
+                  branch = " └─" if last else " ├─"
+                  iid = str(it.get("id", "?"))
+                  title = str(it.get("title", "")).strip()
+                  ptag = "P{}".format(prio(it)) if prio(it) < 9 else "P-"
+                  prefix_len = len(branch) + len(ptag) + len(iid) + 6
+                  avail = max(6, width - prefix_len)
+                  if len(title) > avail:
+                      title = title[:avail - 1] + "…"
+                  pcol = RED if ptag in ("P0", "P1") else GREY
+                  lines.append("{}{}{} {}[{}]{} {}{}{}  {}".format(GREY, branch, RESET, pcol, ptag, RESET, BLUE, iid, RESET, title))
+              if extra:
+                  lines.append(" {} … +{} more{}".format(GREY, extra, RESET))
+              lines.append("")
+          return "\n".join(lines)
+
+      def main():
+          root = find_root(os.getcwd())
+          try:
+              while True:
+                  out = render(root)
+                  sys.stdout.write("\033[H\033[2J" + out + "\n")
+                  sys.stdout.flush()
+                  time.sleep(INTERVAL)
+          except KeyboardInterrupt:
+              pass
+
+      main()
     '';
   };
 
