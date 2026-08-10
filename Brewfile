@@ -254,8 +254,6 @@ brew "hashicorp/tap/terraform"
 cask "1password"
 # Command-line interface for 1Password
 cask "1password-cli"
-# AeroSpace is an i3-like tiling window manager for macOS
-cask "aerospace"
 # Menu bar tool to limit maximum charging percentage
 cask "aldente"
 # Enable Windows-like alt-tab

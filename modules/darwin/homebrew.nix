@@ -80,7 +80,6 @@
 #      }
       # Window/UI management
       "felixkratz/formulae/borders"    # Window border system
-      "acsandmann/tap/rift"            # Rust tiling window manager
 
 
       "choose-gui"                     # Dotfile manager
@@ -104,6 +103,7 @@
       "nvm"                            # Node version manager
       "watch"
       "yt-dlp"                         # YouTube downloader (curl-impersonate broken in nixpkgs on macOS 15)
+      "wakatime-cli"                   # WakaTime CLI for time tracking
           
 
 
@@ -140,7 +140,6 @@
       "tailscale-app"
       "rustdesk"              # Remote desktop client
       "block-goose"            # AI agent
-      "aerospace"              # i3-like tiling window manager
       "obsidian"
       "raycast"                # Launcher and productivity
       # Terminal emulators (both workstation and server)

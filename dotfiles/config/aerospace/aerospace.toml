@@ -14,8 +14,8 @@ after-startup-command = [
   'exec-and-forget sleep 8 && ~/.config/aerospace/resort-windows.sh',
 ]
 
-# Start AeroSpace at login
-start-at-login = true
+# Start AeroSpace at login (DISABLED)
+start-at-login = false
 
 # Normalizations OFF — stops AeroSpace from silently re-flattening / re-orienting
 # the window tree. Main fix for "the screen keeps rearranging itself".
