@@ -64,11 +64,6 @@
           doInstallCheck = false;
         });
 
-        # Himalaya with OAuth2 support for Microsoft 365
-        himalaya = super.himalaya.overrideAttrs (oldAttrs: {
-          cargoBuildFeatures = (oldAttrs.cargoBuildFeatures or []) ++ [ "oauth2" ];
-        });
-
         # Avoid GNU Emacs GUI build failure on current unstable/Xcode.
         # Mail tools only need notmuch CLI and batch Emacs for mu4e byte-compilation.
         notmuch = super.notmuch.override { withEmacs = false; };
@@ -134,6 +129,9 @@
                 ./modules/home-manager/default.nix
               ];
               pi-agent.enable = true;
+              # Parallel AI-agent worktree workflow (worktrunk + clash + tmuxinator).
+              # NOTE: requires versions + hashes filled in ai-worktrees.nix before deploy.
+              # aiWorktrees.enable = true;  # disabled: ai-worktrees.nix has fakeHash placeholders (worktrunk + clash-sh). Re-enable after pasting real versions + hashes per the file's own onboarding steps.
               pi-agent.skills = [
                 ./modules/home-manager/pi-extensions/obsidian
               ];
@@ -158,9 +156,12 @@
                 "https://github.com/tmonk/pi-goal-x"
                 "https://github.com/KristjanPikhof/pi-yaml-hooks"
                 # "npm:pi-context"  # disabled - API incompatible
-                # Ensemble pi package is registered via pi-agent.settings.packages
-                # as an attrset with extensions=[] to avoid duplicate ask_user
-                # tool registration with the nix-managed ask-user.ts extension.
+                {
+                  source = "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi";
+                  # Local Ensemble provides Pi skills and prompt templates only.
+                  # Keep extensions disabled to avoid duplicate/conflicting tools.
+                  extensions = [];
+                }
               ];
               pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
@@ -264,12 +265,9 @@
                   "https://github.com/KristjanPikhof/pi-yaml-hooks"
                   # "npm:pi-context"  # disabled - API incompatible
                   {
-                    source = "${pkgs.fetchFromGitHub {
-                      owner = "FortiumPartners";
-                      repo = "ensemble";
-                      rev = "faa88672815559b3739b8da5ec5c50607553eb5d";
-                      hash = "sha256-0jQiNfIWLY0sQP0el6b1WgjvjfT6c9YC0hpzFChka5A=";
-                    }}/packages/pi";
+                    source = "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi";
+                    # Local Ensemble provides Pi skills and prompt templates only.
+                    # Keep extensions disabled to avoid duplicate/conflicting tools.
                     extensions = [];
                   }
                 ];

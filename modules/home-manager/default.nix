@@ -26,6 +26,7 @@
     ./yazi.nix
     ./pi-agent.nix
     ./omp.nix
+    ./ai-worktrees.nix
   ];
 
   home = {
