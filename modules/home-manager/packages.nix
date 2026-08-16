@@ -3,9 +3,9 @@
 let
   inherit (pkgs.stdenv) isDarwin isLinux;
 in {
-  home.file.".npmrc".text = ''
-    prefix=${config.home.homeDirectory}/.npm-global
-  '';
+  # Explicitly opt out of managing ~/.npmrc; the installAgentMemory activation
+  # script sets NPM_CONFIG_PREFIX explicitly and does not depend on this file.
+  home.file.".npmrc".enable = false;
 
   home.activation.installAgentMemory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     echo "Installing AgentMemory npm package..."
@@ -54,6 +54,7 @@ in {
       fd
       sesh
       tmuxp
+      mosh
       zoxide
       git-lfs
       htop
@@ -92,6 +93,9 @@ in {
       ruby
       rustc
 
+      # Language Servers (LSP)
+      elixir-ls              # Elixir/Erlang Language Server
+      omnisharp-roslyn       # C#/.NET Language Server
       # Language Version Managers
       nvm
       rbenv
@@ -134,6 +138,7 @@ in {
 
       # GUI Applications
       rustdesk
+      wakatime-cli
     ]
     ++ lib.optionals isDarwin [
       # Email & Communication
