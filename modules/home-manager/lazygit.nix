@@ -34,27 +34,21 @@
       };
 
       git = {
-        # Use delta as pager for better diffs (array format)
-        pagers = [
+        # delta for diff/log/show rendering via stdinFilter. Two renderers are
+        # declared; press `|` inside lazygit to cycle between side-by-side (for
+        # diff/show review) and plain delta (for log/reflog scrolling).
+        diffRenderers = [
           {
+            type = "stdinFilter";
+            name = "delta-sxs";
             colorArg = "always";
-            command = "diff";
-            pager = "delta --dark --paging=never --side-by-side --line-numbers";
+            command = "delta --dark --paging=never --side-by-side --line-numbers";
           }
           {
+            type = "stdinFilter";
+            name = "delta";
             colorArg = "always";
-            command = "log";
-            pager = "delta --dark --paging=never";
-          }
-          {
-            colorArg = "always";
-            command = "reflog";
-            pager = "delta --dark --paging=never";
-          }
-          {
-            colorArg = "always";
-            command = "show";
-            pager = "delta --dark --paging=never --side-by-side --line-numbers";
+            command = "delta --dark --paging=never";
           }
         ];
 

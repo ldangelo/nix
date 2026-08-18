@@ -26,6 +26,7 @@
         navigate = true;
         side-by-side = true;
         line-numbers = true;
+        wrap-max-lines = "unlimited"; # never truncate wrapped long lines in side-by-side
         syntax-theme = "Catppuccin Mocha";
         minus-style = "syntax #3B1219";
         minus-emph-style = "syntax #6B2028";
