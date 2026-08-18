@@ -225,9 +225,6 @@ brew "virtualenv"
 # Simple terminal image viewer written in Rust
 brew "viu"
 # Pager/text based browser
-brew "w3m"
-# Command-line interface to the WakaTime api
-brew "wakatime-cli"
 # Internet file retriever
 brew "wget"
 # PDF viewer

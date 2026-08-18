@@ -45,6 +45,7 @@
       "pi-coding-agent"                # Pi AI coding agent
       "repomix"                        # Pack repo into AI-friendly file
       "swagger-codegen"                # OpenAPI code generator
+      "worktrunk"                      # Git worktree manager (parallel agent workflows)
       "localstack"                     # Local AWS cloud emulator
 
       # Shell & System Tools
@@ -67,6 +68,7 @@
       "marksman"                       # Markdown language server (depends on .NET/Swift in nixpkgs)
       "dotnet@6"                       # .NET 6
       "flyctl"                         # Fly.io CLI
+      "vi-sql"                  # Terminal UI for SQL databases with vim motions
      ] ++ lib.optionals isWorkstation [
       # https://github.com/marcus/sidecar
 
@@ -204,7 +206,8 @@
       "tradingview"
 #      "vscodium"               # VS Code without telemetry
       "wakatime"
-#      "warp-terminal"          # Terminal with AI
+      "warp"                    # Warp terminal (Rust-based AI terminal)
+      "warp-agent-cli"          # Warp agentic CLI for command-line workflows
       "cmux"                   # AI terminal multiplexer (manaflow-ai)
       "witsy"                  # BYOK AI assistant
       "zed"                    # Code editor
