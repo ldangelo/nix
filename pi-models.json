@@ -3,7 +3,7 @@
     "litellm": {
       "baseUrl": "http://gx10-1:14000/v1",
       "api": "openai-completions",
-      "apiKey": "!bash -lc \"cat /run/secrets/litellm_master_key\"",
+      "apiKey": "LITELLM_MASTER_KEY",
       "compat": {
         "supportsDeveloperRole": false,
         "supportsReasoningEffort": false,
@@ -1037,7 +1037,7 @@
       ]
     },
     "openai-codex": {
-      "apiKey": "env:OPENAI_API_KEY",
+      "apiKey": "OPENAI_API_KEY",
       "models": [
         {
           "id": "gpt-5.5",
