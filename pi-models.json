@@ -15,11 +15,17 @@
       },
       "models": [
         {
-          "id": "ornith",
-          "name": "ornith",
-          "contextWindow": 32768,
-          "maxTokens": 1024,
-          "reasoning": false
+          "id": "coding-fast",
+          "name": "Qwen3.6 35B FP8 via LiteLLM",
+          "contextWindow": 131072,
+          "maxTokens": 512,
+          "reasoning": true,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
         },
         {
           "id": "openclaw",
