@@ -1,11 +1,12 @@
 # OMP (Oh My Pi) Configuration Module
 #
-# Migrates relevant settings from pi-agent and configures:
-#   - OMP config.yml (merged pi -> OMP settings)
-#   - MCP servers: hindsight, agentmemory, headroom
-#   - OMP marketplace for skills
-#   - Headroom settings
-#   - Ensemble skill installation
+# Manages ~/.omp/agent/{config.yml,models.yml,mcp.json} and ~/.omp/marketplaces.json.
+#
+# Important: these files are materialized as REGULAR files at activation,
+# not symlinked to /nix/store. OMP writes flock(2) lock files next to each
+# config (e.g. config.yml.lock) via @oh-my-pi/pi-utils/file-lock.ts — which
+# uses path.resolve() that follows symlinks — so a symlink would push the
+# lock path into /nix/store (read-only) → EACCES at startup.
 
 { pkgs, lib, config, ... }:
 
@@ -16,11 +17,16 @@ let
   ompDir = "${homeDir}/.omp";
   ompMarketplaceUrl = "https://github.com/oh-my-pi/marketplace";
 
-  # Read pi-agent settings for migration
+  # One-time migration inputs from pi-agent's settings files. Reads are still
+  # state-dependent (depend on disk state of ~/.pi/agent/* at eval time), but
+  # these files are NOT managed by this module — they're inputs, not outputs.
   piSettingsPath = "${homeDir}/.pi/agent/settings.json";
   piHeadroomSettingsPath = "${homeDir}/.pi/agent/headroom/settings.json";
-
-  # Use builtins.readFile instead of lib.importJSON to avoid pure-mode issues
+  piModelsPath = ../../pi-models.json;
+  piModels =
+    if builtins.pathExists piModelsPath
+    then builtins.fromJSON (builtins.readFile piModelsPath)
+    else {};
   piSettings =
     if builtins.pathExists piSettingsPath
     then builtins.fromJSON (builtins.readFile piSettingsPath)
@@ -28,15 +34,6 @@ let
   piHeadroomSettings =
     if builtins.pathExists piHeadroomSettingsPath
     then builtins.fromJSON (builtins.readFile piHeadroomSettingsPath)
-    else {};
-  # Read existing OMP config.yml for deep-merge
-  # approvalMode migration: pi "low" + "ask" -> OMP "write"
-  approvalMode = "write";
-  # Read existing OMP config.yml for deep-merge
-  existingOmpConfigPath = "${ompAgentDir}/config.yml";
-  existingOmpConfig =
-    if builtins.pathExists existingOmpConfigPath
-    then builtins.fromJSON (builtins.readFile existingOmpConfigPath)
     else {};
   # Headroom MCP server config from pi-agent headroom settings
   headroomMcpConfig = {
@@ -46,76 +43,86 @@ let
     minMessageChars = piHeadroomSettings.minMessageChars or 2000;
     mode = piHeadroomSettings.mode or "quiet";
   };
-  # Build merged config.yml attrs
-  mergedOmpConfig =
-    lib.recursiveUpdate existingOmpConfig
-      ({
-        modelRoles = {
-          default = piSettings.defaultModel or "minimax/MiniMax-M2.7";
-        } // lib.optionalAttrs (existingOmpConfig ? modelRoles) existingOmpConfig.modelRoles;
-        defaultThinkingLevel = piSettings.defaultThinkingLevel or "medium";
-        symbolPreset =
-          piSettings.powerline.powerlinePreset
-          or piSettings.powerline.preset
-          or existingOmpConfig.symbolPreset
-          or "nerd";
-        tools = { approvalMode = approvalMode; };
-        headroom = headroomMcpConfig;
-        skills = {
-          customDirectories =
-            ["${homeDir}/.pi/agent/skills"]
-            ++ (existingOmpConfig.skills.customDirectories or []);
-        };
-        memory.backend = "hindsight";
-        hindsight.mentalModelAutoSeed = true;
-        compaction.thresholdPercent =
-          existingOmpConfig.compaction.thresholdPercent or 70;
-        retry.fallbackChains = {
-          default = [
-            "${piSettings.defaultProvider or "openai-codex"}/gpt-5.4"
-          ];
-        };
-      });
+  # Defaults baked into module policy. NOT a deep-merge of any deployed file.
+  # Runtime edits to ~/.omp/agent/config.yml are overwritten on next deploy —
+  # that's by design. cfg.settings lets the user layer overrides explicitly
+  # via flake.nix; nothing is read from managed output at eval time.
+  defaults = {
+    modelRoles.default = piSettings.defaultModel or "minimax/MiniMax-M2.7";
+    defaultThinkingLevel = piSettings.defaultThinkingLevel or "medium";
+    symbolPreset =
+      piSettings.powerline.powerlinePreset
+      or piSettings.powerline.preset
+      or "nerd";
+    tools.approvalMode = "write";  # module policy: do not weaken silently
+    headroom = {
+      autoStart = headroomMcpConfig.autoStart;
+      baseUrl = headroomMcpConfig.baseUrl;
+      mode = headroomMcpConfig.mode;
+    } // lib.optionalAttrs (headroomMcpConfig.minContextTokens != null) {
+      minContextTokens = headroomMcpConfig.minContextTokens;
+    } // lib.optionalAttrs (headroomMcpConfig.minMessageChars != null) {
+      minMessageChars = headroomMcpConfig.minMessageChars;
+    };
+    skills.customDirectories = [ "${homeDir}/.pi/agent/skills" ];
+    memory.backend = "hindsight";
+    hindsight.mentalModelAutoSeed = true;
+    compaction.thresholdPercent = 70;
+    retry.fallbackChains.default = [
+      "${piSettings.defaultProvider or "openai-codex"}/gpt-5.4"
+    ];
+  };
+  finalOmpConfig = lib.recursiveUpdate defaults cfg.settings;
 
-  # Build mcp.json attrs
-  existingMcp =
-    let mcpPath = "${ompAgentDir}/mcp.json";
-    in if builtins.pathExists mcpPath
-       then builtins.fromJSON (builtins.readFile mcpPath)
-       else { mcpServers = {}; };
-
-  mcpJson =
-    let
-      base = {
-        headroom = {
-          command = "npx";
-          args = [ "-y" "@raquezha/noheadroom" ];
-          env = {
-            HEADROOM_BASE_URL = headroomMcpConfig.baseUrl;
-            HEADROOM_AUTO_START = if headroomMcpConfig.autoStart then "true" else "false";
-          } // lib.optionalAttrs (headroomMcpConfig.minContextTokens != null) {
-            HEADROOM_MIN_CONTEXT_TOKENS = toString headroomMcpConfig.minContextTokens;
-          } // lib.optionalAttrs (headroomMcpConfig.minMessageChars != null) {
-            HEADROOM_MIN_MESSAGE_CHARS = toString headroomMcpConfig.minMessageChars;
-          };
-        };
-        agentmemory = {
-          command = "npx";
-          args = [ "-y" "@agentmemory/agentmemory" ];
-        };
-        hindsight = {
-          command = "npx";
-          args = [ "-y" "@vectorize-io/hindsight-mcp" ];
+  # Build mcp.json attrs. No read of the deployed file; module owns the full
+  # server set: built-in headroom/agentmemory/hindsight + cfg.extraMcpServers.
+  mcpJson = {
+    mcpServers = {
+      headroom = {
+        command = "npx";
+        args = [ "-y" "@raquezha/noheadroom" ];
+        env = {
+          HEADROOM_BASE_URL = headroomMcpConfig.baseUrl;
+          HEADROOM_AUTO_START = if headroomMcpConfig.autoStart then "true" else "false";
+        } // lib.optionalAttrs (headroomMcpConfig.minContextTokens != null) {
+          HEADROOM_MIN_CONTEXT_TOKENS = toString headroomMcpConfig.minContextTokens;
+        } // lib.optionalAttrs (headroomMcpConfig.minMessageChars != null) {
+          HEADROOM_MIN_MESSAGE_CHARS = toString headroomMcpConfig.minMessageChars;
         };
       };
-      extra = cfg.extraMcpServers;
-    in {
-      mcpServers = existingMcp.mcpServers // base // extra;
-    };
+      agentmemory = {
+        command = "npx";
+        args = [ "-y" "@agentmemory/agentmemory" ];
+      };
+      hindsight = {
+        command = "npx";
+        args = [ "-y" "@vectorize-io/hindsight-mcp" ];
+      };
+    } // cfg.extraMcpServers;
+  };
+
+  # Materialize managed files into the Nix store as regular files (not
+  # symlinks). The activation step below copies them to the user's home.
+  configYmlFile = pkgs.writeText "omp-config.yml" (builtins.toJSON finalOmpConfig);
+  mcpJsonFile = pkgs.writeText "omp-mcp.json" (builtins.toJSON mcpJson);
+  modelsYmlFile = pkgs.writeText "omp-models.yml" (lib.generators.toYAML {} piModels);
+  marketplacesJsonFile = pkgs.writeText "omp-marketplaces.json"
+    (builtins.toJSON [{ url = ompMarketplaceUrl; type = "git"; }]);
 
 in {
   options.omp = with lib; {
     enable = mkEnableOption "Oh My Pi (OMP) agent configuration";
+
+    settings = mkOption {
+      type = types.attrs;
+      default = {};
+      description = ''
+        OMP config attrs to deep-merge on top of module defaults. Used to
+        override module policy explicitly. Do NOT use this to migrate
+        runtime edits from ~/.omp/agent/config.yml — declare intent in
+        Nix instead.
+      '';
+    };
 
     extraMcpServers = mkOption {
       type = types.attrsOf (types.submodule {
@@ -138,18 +145,30 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-
-    # ── config.yml ─────────────────────────────────────────────────────
-    home.file."${ompAgentDir}/config.yml".text = builtins.toJSON mergedOmpConfig;
-
-    # ── mcp.json ───────────────────────────────────────────────────────
-    home.file."${ompAgentDir}/mcp.json".text = builtins.toJSON mcpJson;
-
-    # ── marketplaces.json ───────────────────────────────────────────────
-    home.file."${ompDir}/marketplaces.json".text =
-      builtins.toJSON [{ url = ompMarketplaceUrl; type = "git"; }];
-
-    # ── Activation scripts ────────────────────────────────────────────────
+    # Materialize managed files as regular files (not symlinks), so OMP can
+    # write flock(2) locks next to them. Runs after linkGeneration so any
+    # prior symlinks are visible and replaceable.
+    #
+    # User-edited files are PRESERVED across deploys: if a managed file already
+    # exists on disk, we leave it alone. To re-seed defaults from the module,
+    # delete the file first. This avoids clobbering the user's runtime edits
+    # (which is what OMP itself writes back to these files). The "by design"
+    # overwrite behavior is gated behind an opt-in flag below.
+    home.activation.ompMaterializeConfigs = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      mkdir -p "${ompAgentDir}" "${ompDir}"
+      if [ ! -e "${ompAgentDir}/config.yml" ]; then
+        ${pkgs.coreutils}/bin/install -m 600 "${configYmlFile}" "${ompAgentDir}/config.yml"
+      fi
+      if [ ! -e "${ompAgentDir}/models.yml" ]; then
+        ${pkgs.coreutils}/bin/install -m 600 "${modelsYmlFile}" "${ompAgentDir}/models.yml"
+      fi
+      if [ ! -e "${ompAgentDir}/mcp.json" ]; then
+        ${pkgs.coreutils}/bin/install -m 600 "${mcpJsonFile}" "${ompAgentDir}/mcp.json"
+      fi
+      if [ ! -e "${ompDir}/marketplaces.json" ]; then
+        ${pkgs.coreutils}/bin/install -m 600 "${marketplacesJsonFile}" "${ompDir}/marketplaces.json"
+      fi
+    '';
 
     home.activation.ompMarketplace = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       echo "Installing OMP marketplace..."
@@ -165,7 +184,7 @@ in {
 
     home.activation.ompEnsembleSkill = lib.hm.dag.entryAfter [ "ompMarketplace" ] ''
       echo "Installing ensemble skill into OMP..."
-      local skillTarget="${ompAgentDir}/skills/ensemble"
+      skillTarget="${ompAgentDir}/skills/ensemble"
       if [ ! -d "$skillTarget" ]; then
         mkdir -p "${ompAgentDir}/skills"
         # Sparse-clone just the ensemble skill
