@@ -63,4 +63,13 @@
     owner = "ldangelo";
     mode = "0400";
   };
+
+  # WakaTime API key (https://wakatime.com/api-key)
+  # Declared so the system-level sops module can decrypt it; the
+  # ~/.wakatime.cfg file is owned by modules/home-manager/sops.nix
+  # which is shared between macOS and Linux home-manager configs.
+  sops.secrets.wakatime_api_key = {
+    owner = "ldangelo";
+    mode = "0400";
+  };
 }

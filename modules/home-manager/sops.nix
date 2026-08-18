@@ -18,5 +18,20 @@ in
   sops.secrets.openai_api_key.mode = "0400";
   sops.secrets.minimax_api_key.mode = "0400";
   sops.secrets.litellm_ui_password.mode = "0400";
+
+  # WakaTime API key (https://wakatime.com/api-key)
+  # Rendered to ~/.wakatime.cfg so the omp-wakatime plugin and the wakatime
+  # tray cask pick up the key without further config. wakatime-cli itself
+  # was dropped (see Brewfile); the omp-wakatime plugin reads this file
+  # directly.
+  sops.secrets.wakatime_api_key.mode = "0400";
+  sops.templates."wakatime.cfg" = {
+    path = "${homeDir}/.wakatime.cfg";
+    content = ''
+      [settings]
+      api_key = ${config.sops.placeholder.wakatime_api_key}
+    '';
+    mode = "0600";
+  };
   sops.secrets.litellm_master_key.mode = "0400";
 }
