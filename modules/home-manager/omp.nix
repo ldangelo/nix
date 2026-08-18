@@ -101,11 +101,36 @@ let
     } // cfg.extraMcpServers;
   };
 
+  # pi-models.json is pi's native format (see migration inputs above), whose
+  # apiKey syntax ($VAR / ${VAR} / !cmd / literal) differs from OMP's
+  # (bare-VAR-name-or-literal / !cmd). Translate simple $VAR / ${VAR}
+  # references to OMP's bare-name form when building models.yml; !cmd and
+  # literals already work identically in both and pass through unchanged.
+  # Does not handle mixed interpolation (e.g. "${FOO}_BAR") — pi-models.json
+  # only uses whole-value $VAR references today.
+  toOmpApiKey = v:
+    if !(builtins.isString v) then v
+    else if lib.hasPrefix "!" v then v
+    else if lib.hasPrefix "$$" v then v
+    else if lib.hasPrefix "\${" v && lib.hasSuffix "}" v
+      then builtins.substring 2 (builtins.stringLength v - 3) v
+    else if lib.hasPrefix "$" v
+      then builtins.substring 1 (builtins.stringLength v - 1) v
+    else v;
+
+  ompModels = piModels // {
+    providers = lib.mapAttrs
+      (_: provider: provider // lib.optionalAttrs (provider ? apiKey) {
+        apiKey = toOmpApiKey provider.apiKey;
+      })
+      (piModels.providers or {});
+  };
+
   # Materialize managed files into the Nix store as regular files (not
   # symlinks). The activation step below copies them to the user's home.
   configYmlFile = pkgs.writeText "omp-config.yml" (builtins.toJSON finalOmpConfig);
   mcpJsonFile = pkgs.writeText "omp-mcp.json" (builtins.toJSON mcpJson);
-  modelsYmlFile = pkgs.writeText "omp-models.yml" (lib.generators.toYAML {} piModels);
+  modelsYmlFile = pkgs.writeText "omp-models.yml" (lib.generators.toYAML {} ompModels);
   marketplacesJsonFile = pkgs.writeText "omp-marketplaces.json"
     (builtins.toJSON [{ url = ompMarketplaceUrl; type = "git"; }]);
 
