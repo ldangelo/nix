@@ -78,21 +78,18 @@ in {
     ] ++ lib.optionals isDarwin [
       "1password"
     ];
-    initExtra = ''
-      # Auto-spawn tmux on interactive shells (not inside tmux, herdr, or orca)
-      if [ -z "$TMUX" ] && [ -z "$HERDR_ENV" ] && [ -z "$ORCA_CLI_COMMAND" ]; then
-        exec tmux new-session -A -s main
-      fi
+    initContent = ''
+      # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
+      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
+      # tmux auto-spawn moved to wezterm.lua `default_prog` — keep shell config
+      # out of terminal-multiplexing responsibilities so SSH/IDE/subshells
+      # don't get wrapped in tmux.
 
       # Docker MCP bearer token — reads fresh on shell init
       if [ -f "$HOME/.docker/mcp/docker-mcp-bearer-token" ]; then
         export MCP_DOCKER_BEARER_TOKEN="$(cat "$HOME/.docker/mcp/docker-mcp-bearer-token")"
       fi
-    '';
-
-    initContent = ''
-      # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
-      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
 
 #      [[ -f "/Users/ldangelo/.config/gastown/shell-hook.sh" ]] && source "/Users/ldangelo/.config/gastown/shell-hook.sh"
@@ -113,8 +110,6 @@ in {
       eval "$(fd --gen-completions zsh 2>/dev/null)"
       eval "$(rg --generate complete-zsh 2>/dev/null)"
  
-      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
-
           EDITOR='nvim'
           export EDITOR
 
@@ -288,6 +283,7 @@ in {
           '/opt/homebrew/opt/postgresql@17/bin'
           '/opt/homebrew/opt/python@3.13/bin'
           '/opt/homebrew/bin'
+          /opt/homebrew/opt/erlang/lib/erlang/erts-*/bin(N)  # erlexec, beam.smp, etc.
           $path
         )
       fi
@@ -295,6 +291,10 @@ in {
 
 fi
 
+# Worktrunk shell integration (wt config shell init zsh)
+if command -v wt > /dev/null 2>&1; then
+  eval "$(wt config shell init zsh)"
+fi
     '';
   };
 

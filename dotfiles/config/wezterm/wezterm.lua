@@ -68,8 +68,12 @@ local config = {
   -- font_size = 10.0,
   font = wezterm.font("FiraCode Nerd Font"),
   font_size = 14,
-  -- Launch login shell so Nix-managed PATH is inherited
-  default_prog = { "/bin/zsh", "-l" },
+  -- Launch an interactive login shell that sources ~/.zshrc, then exec into
+  -- tmux. The `--` separator matters: wezterm forwards the array as argv and
+  -- zsh needs the explicit end-of-options marker before the command string.
+  -- Path is hardcoded to Homebrew tmux (/opt/homebrew/bin/tmux) to bypass the
+  -- Nix-store tmux that has been SIGSEGV-crashing on fork pre-exec.
+  default_prog = { "/bin/zsh", "-l", "-c", "--", "exec /opt/homebrew/bin/tmux new-session -A -s main" },
   check_for_updates = false,
   use_ime = true,
   ime_preedit_rendering = "Builtin",

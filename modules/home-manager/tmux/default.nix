@@ -54,8 +54,16 @@ let
   };
 in
 {
-  programs.tmux = {
+   programs.tmux = {
     enable = true;
+    # Use Homebrew tmux instead of the Nix-store one. The Nix tmux 3.7b has
+    # been SIGSEGV-crashing on fork pre-exec on macOS 26.5.2. Switch the build
+    # to verify the underlying cause is the Nix-store binary, not the binary
+    # itself.
+    package = pkgs.runCommand "homebrew-tmux" { } ''
+      mkdir -p $out/bin
+      ln -s /opt/homebrew/bin/tmux $out/bin/tmux
+    '';
     tmuxinator.enable = true;
     prefix = "C-Space";
     mouse = true;
@@ -192,6 +200,11 @@ in
       set -ag terminal-overrides ",xterm-256color:RGB"
       set -ag terminal-overrides ",ghostty:RGB"
 
+      # Required for wezterm ↔ tmux integration: lets wezterm pass through
+      # OSC sequences, images, and user vars from tmux panes. Without this,
+      # the wezterm GUI can't read tmux state for native rendering.
+      set -g allow-passthrough on
+
       # Renumber windows when one is closed
       set -g renumber-windows on
 
@@ -201,9 +214,6 @@ in
 
       # Diff view — toggle a full-height diffnav pane pinned to the left edge
       bind e run-shell '~/.local/bin/tmux-diff-sidebar'
-
-      # Beads — toggle a full-height beads tree pane pinned to the right edge
-      bind b run-shell '~/.local/bin/tmux-beads-sidebar'
 
       # New window in current path
       bind c new-window -c "#{pane_current_path}"
@@ -275,15 +285,24 @@ in
       set -g pane-border-status top
       set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
 
-      # Popup overlays — native display-popup (no plugin)
-      bind t display-popup -w75% -h75% -E -d '#{pane_current_path}'
-      bind h display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}
+      # Popup overlays — native display-popup with if-shell toggle.
+      # "display-popup -C" closes the topmost popup; the false branch opens the requested one.
+      bind t if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}'"
+      bind h if-shell "display-popup -C" "" "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
+      bind b if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'bv'"
 
       # Tmuxinator sessions — popup-style with cwd from active pane
       bind g run-shell "tmuxinator start lazygit '#{pane_current_path}'"
       bind y run-shell "tmuxinator start yazi '#{pane_current_path}'"
       bind s run-shell "tmuxinator start br-stats '#{pane_current_path}'"
-      bind V run-shell "tmuxinator start bv '#{pane_current_path}'"
+
+      # Pin resurrect/continuum save dir inside the home-manager-managed tree
+      # so the default ~/.tmux/ path doesn't silently fail and the `-N` clone
+      # sessions stop appearing on every server restart. Directories are
+      # pre-created by home.file below so the save script never has to.
+      set -g @resurrect-dir "$HOME/.local/share/tmux/resurrect"
+      set -g @continuum-save-dir "$HOME/.local/share/tmux/continuum"
+      set -g @continuum-save-last-timestamp-on-start 'on'
     '';
   };
 
@@ -427,22 +446,22 @@ in
         menu:
           - name: Shell
             key: t
-            command: "display-popup -w75% -h75% -E -d #{pane_current_path}"
+            command: "display-popup -w75% -h75% -E -d \\\"#{pane_current_path}\\\""
           - name: Lazygit
             key: g
-            command: "run-shell \"tmuxinator start lazygit #{pane_current_path}\""
+            command: "run-shell \"tmuxinator start lazygit \\\"#{pane_current_path}\\\"\""
           - name: Yazi
             key: "y"
-            command: "run-shell \"tmuxinator start yazi #{pane_current_path}\""
+            command: "run-shell \"tmuxinator start yazi \\\"#{pane_current_path}\\\"\""
           - name: Bead stats
             key: s
-            command: "run-shell \"tmuxinator start br-stats #{pane_current_path}\""
-          - name: Bead viewer
-            key: v
-            command: "run-shell \"tmuxinator start bv #{pane_current_path}\""
+            command: "run-shell \"tmuxinator start br-stats \\\"#{pane_current_path}\\\"\""
           - name: Help
             key: h
             command: "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
+      - name: Bead viewer
+        key: b
+        command: "if-shell \"display-popup -C\" \"\" \"display-popup -w75% -h75% -E -d \\\"#{pane_current_path}\\\" \\\"bv\\\"\""
       - separator: true
       - name: Reload config
         key: R
@@ -478,8 +497,11 @@ in
       - code:
           layout: even-horizontal
           panes:
-            - nvim .
-            - claude --continue
+            - omp -r
+      - nvim:
+          layout: main-vertical
+          panes:
+            - nvim
       - ops:
           layout: main-vertical
           panes:
@@ -587,15 +609,6 @@ in
             - br stats
   '';
 
-  # Beads viewer — full-window bv TUI at pane cwd (needs .beads)
-  xdg.configFile."tmuxinator/bv.yml".text = ''
-    name: bv
-    root: <%= @args[0] || ENV.fetch("HOME") %>
-    windows:
-      - main:
-          panes:
-            - bv
-  '';
 
   # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
   home.file.".local/bin/tmux-project-picker" = {
@@ -848,7 +861,6 @@ in
         tmux set-option -wu @diff_sidebar 2>/dev/null || true
         exit 0
       fi
-
       # Otherwise open one: a full-height pane pinned to the left edge (-fhb),
       # 40% wide, running diffnav in watch mode so it live-updates.
       path="$(tmux display-message -p '#{pane_current_path}')"
@@ -856,38 +868,10 @@ in
       tmux set-option -w @diff_sidebar "$pane"
     '';
   };
-
-  # Beads sidebar — toggle the bv TUI in a top-docked horizontal strip.
-  # Bound to Prefix b in the tmux config above. bv's board view (Kanban)
-  # is wider than tall, so a top strip fits naturally; the list view is
-  # also usable but verticals may clip at narrow row counts.
-  home.file.".local/bin/tmux-beads-sidebar" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -uo pipefail
-
-      # If a beads sidebar is already open in this window, close it (toggle off).
-      existing="$(tmux show-options -wqv @beads_sidebar 2>/dev/null || true)"
-      if [[ -n "$existing" ]] && tmux list-panes -a -F '#{pane_id}' | grep -qx "$existing"; then
-        tmux kill-pane -t "$existing"
-        tmux set-option -wu @beads_sidebar 2>/dev/null || true
-        exit 0
-      fi
-
-      # Open the bv TUI in a top-docked horizontal strip. tmux does not
-      # support "split above", so we split below (-v) and swap the new pane
-      # up (-U) to dock it at the top.
-      path="$(tmux display-message -p '#{pane_current_path}')"
-      pane="$(tmux split-window -v -l 30% -c "$path" -P -F '#{pane_id}' 'bv')"
-      tmux swap-pane -U -t "$pane"
-      tmux set-option -w @beads_sidebar "$pane"
-
-      # Default to board view (Kanban); its wide aspect matches the top dock.
-      # Press l inside bv to switch back to the list view.
-      sleep 0.3
-      tmux send-keys -t "$pane" 'b'
-    '';
+  home.file.".local/share/tmux/resurrect/.keep" = {
+    text = "";
   };
-
+  home.file.".local/share/tmux/continuum/.keep" = {
+    text = "";
+  };
 }
