@@ -15,6 +15,13 @@
       },
       "models": [
         {
+          "id": "ornith",
+          "name": "ornith",
+          "contextWindow": 32768,
+          "maxTokens": 1024,
+          "reasoning": false
+        },
+        {
           "id": "openclaw",
           "name": "OpenClaw — Qwen3.6 35B via LiteLLM",
           "reasoning": true,
