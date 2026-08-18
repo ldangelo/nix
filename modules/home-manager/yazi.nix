@@ -48,9 +48,10 @@ in {
 				max_height = 1000;
 			};
 			plugin = {
+				# yazi >= v26.1.22 renamed fetcher `id` -> `group` and `name` -> `url`.
 				prepend_fetchers = [
-					{ id = "git"; name = "*"; run = "git"; }
-					{ id = "git"; name = "*/"; run = "git"; }
+					{ url = "*"; run = "git"; group = "git"; }
+					{ url = "*/"; run = "git"; group = "git"; }
 				];
 			};
 		};
