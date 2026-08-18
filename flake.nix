@@ -129,6 +129,9 @@
                 ./modules/home-manager/default.nix
               ];
               pi-agent.enable = true;
+              # OMP declarative config: module-managed ~/.omp/agent/config.yml + mcp.json.
+              # Existing manual config.yml will be backed up to config.yml.bak on next deploy.
+              omp.enable = true;
               # Parallel AI-agent worktree workflow (worktrunk + clash + tmuxinator).
               # NOTE: requires versions + hashes filled in ai-worktrees.nix before deploy.
               # aiWorktrees.enable = true;  # disabled: ai-worktrees.nix has fakeHash placeholders (worktrunk + clash-sh). Re-enable after pasting real versions + hashes per the file's own onboarding steps.
