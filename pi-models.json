@@ -1,29 +1,83 @@
 {
   "providers": {
-    "litellm-gx10": {
-      "type": "openai",
-      "baseURL": "http://gx10-1:14000/v1",
-      "apiKey": "sk-35ccf...PASTE_FULL_KEY_HERE..."
+    "litellm": {
+      "baseUrl": "http://gx10-1:14000/v1",
+      "api": "openai-completions",
+      "apiKey": "!bash -lc \"cat /run/secrets/litellm_master_key\"",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "supportsStrictMode": false,
+        "supportsUsageInStreaming": true,
+        "maxTokensField": "max_tokens"
+      },
+      "models": [
+        {
+          "id": "qwen",
+          "name": "Qwen3.6 35B FP8 256k via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 237568,
+          "maxTokens": 16384,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "local",
+            "spark",
+            "long-context"
+          ]
+        },
+        {
+          "id": "qwen38",
+          "name": "Qwen3.8 27B FP8 256k via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 237568,
+          "maxTokens": 16384,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "local",
+            "spark",
+            "long-context",
+            "candidate"
+          ]
+        },
+        {
+          "id": "ornith",
+          "name": "Ornith 1.0 35B 256k via LiteLLM",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 237568,
+          "maxTokens": 16384,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "local",
+            "spark",
+            "long-context"
+          ]
+        }
+      ]
     }
-  },
-  "models": {
-    "qwen": {
-      "provider": "litellm-gx10",
-      "model": "qwen",
-      "contextWindow": 262144,
-      "maxTokens": 8192,
-      "reasoning": false,
-      "thinkingFormat": "qwen-chat-template"
-    },
-    "ornith": {
-      "provider": "litellm-gx10",
-      "model": "ornith",
-      "contextWindow": 262144,
-      "maxTokens": 4096,
-      "reasoning": false
-    }
-  },
-  "defaultModel": "ornith",
-  "titleModel": "ornith",
-  "summaryModel": "ornith"
+  }
 }
