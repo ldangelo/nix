@@ -446,22 +446,22 @@ in
         menu:
           - name: Shell
             key: t
-            command: "display-popup -w75% -h75% -E -d \\\"#{pane_current_path}\\\""
+            command: run-shell ~/.local/bin/tmux-popup-shell
           - name: Lazygit
             key: g
-            command: "run-shell \"tmuxinator start lazygit \\\"#{pane_current_path}\\\"\""
+            command: run-shell ~/.local/bin/tmux-popup-lazygit
           - name: Yazi
             key: "y"
-            command: "run-shell \"tmuxinator start yazi \\\"#{pane_current_path}\\\"\""
+            command: run-shell ~/.local/bin/tmux-popup-yazi
           - name: Bead stats
             key: s
-            command: "run-shell \"tmuxinator start br-stats \\\"#{pane_current_path}\\\"\""
+            command: run-shell ~/.local/bin/tmux-popup-br-stats
           - name: Help
             key: h
-            command: "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
+            command: run-shell ~/.local/bin/tmux-popup-help
       - name: Bead viewer
         key: b
-        command: "if-shell \"display-popup -C\" \"\" \"display-popup -w75% -h75% -E -d \\\"#{pane_current_path}\\\" \\\"bv\\\"\""
+        command: run-shell ~/.local/bin/tmux-popup-bv
       - separator: true
       - name: Reload config
         key: R
@@ -608,6 +608,70 @@ in
           panes:
             - br stats
   '';
+
+  # tmux-which-key cannot safely embed heavily quoted commands in generated
+  # command-alias entries. Keep menu commands simple and move quoting here.
+  home.file.".local/bin/tmux-popup-shell" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      dir="$(tmux display-message -p '#{pane_current_path}')"
+      tmux display-popup -w75% -h75% -E -d "$dir"
+    '';
+  };
+
+  home.file.".local/bin/tmux-popup-lazygit" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      dir="$(tmux display-message -p '#{pane_current_path}')"
+      tmuxinator start lazygit "$dir"
+    '';
+  };
+
+  home.file.".local/bin/tmux-popup-yazi" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      dir="$(tmux display-message -p '#{pane_current_path}')"
+      tmuxinator start yazi "$dir"
+    '';
+  };
+
+  home.file.".local/bin/tmux-popup-br-stats" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      dir="$(tmux display-message -p '#{pane_current_path}')"
+      tmuxinator start br-stats "$dir"
+    '';
+  };
+
+  home.file.".local/bin/tmux-popup-help" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      tmux display-popup -w90% -h90% -E "glow -p ${../../../docs/tmux-guide.md}"
+    '';
+  };
+
+  home.file.".local/bin/tmux-popup-bv" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      if tmux display-popup -C; then
+        exit 0
+      fi
+      dir="$(tmux display-message -p '#{pane_current_path}')"
+      tmux display-popup -w75% -h75% -E -d "$dir" bv
+    '';
+  };
 
 
   # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
@@ -809,12 +873,12 @@ in
     '';
   };
 
-  # Ensure which-key's generated init.tmux is writable after each deploy.
-  # The plugin regenerates this file on every tmux start; if it's read-only
-  # (e.g. from a previous umask or macOS quarantine attribute), the plugin
-  # silently fails and prefix+Space reverts to next-layout.
+  # Ensure which-key's generated init.tmux exists and is writable after deploy.
+  # If missing, the plugin copies a read-only Nix-store example there, then
+  # build.py cannot overwrite it on macOS. Pre-create a regular writable file.
   home.activation.fixWhichKeyPermissions = lib.hm.dag.entryAfter ["linkGeneration"] ''
     mkdir -p "$HOME/.local/share/tmux/plugins/tmux-which-key"
+    touch "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux"
     chmod -f u+w "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux" || true
   '';
 
