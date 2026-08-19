@@ -1,6 +1,4 @@
-# Terminal Workspace Guide
-
-**Last Updated**: 2026-06-26
+**Last Updated**: 2026-08-19
 **Architecture**: WezTerm (dumb terminal) + tmux (multiplexer) + sesh/tmux-template (project switching) + tmuxp (layouts/templates)
 **Prefix Key**: `Ctrl+Space`
 **Configuration**: `modules/home-manager/tmux/default.nix`, `dotfiles/config/wezterm/`
@@ -25,9 +23,10 @@ WezTerm (terminal emulator)
         └── Popups (floating, toggleable)
               ├── lazygit    (Prefix g)
               ├── yazi       (Prefix y)
-              └── shell      (Prefix t)
+              ├── shell      (Prefix t)
+              ├── bv         (Prefix b)
+              ├── br stats   (Prefix s)
 ```
-
 **WezTerm** handles: font rendering, colors, clipboard (Cmd+C/V), window chrome.
 **tmux** handles: everything else — sessions, windows, panes, copy mode, popups, navigation.
 
@@ -102,7 +101,7 @@ If you forget a shortcut, press `Prefix Space` — the which-key menu shows ever
 | Key | Action |
 |-----|--------|
 | `Prefix f` | **Sessionizer** — fuzzy project picker via zoxide + tmux-template |
-| `Prefix o` | tmux-tea legacy session picker |
+| `Prefix o` | tmux-tea session manager |
 | `Prefix S` | Choose session (built-in picker) |
 | `Prefix N` | New raw tmux session in current directory |
 | `Prefix d` | Detach from session |
@@ -161,17 +160,24 @@ These work seamlessly across tmux panes and Neovim splits via vim-tmux-navigator
 
 ### Popups (floating, toggleable)
 
-Popups are floating windows that persist in the background. Press the key once to open, press again to dismiss (the process keeps running). Toggle back anytime to check on it.
+All popups use native `display-popup` with `if-shell` toggle: press once to open, press again to close (process keeps running).
 
 | Key | Action | Size |
 |-----|--------|------|
+| `Prefix t` | General shell | 75% |
+| `Prefix b` | Bead viewer (`bv`) | 75% |
+| `Prefix h` | This help guide (glow) | 90% |
 | `Prefix g` | **lazygit** — git operations | 90% |
 | `Prefix y` | **yazi** — file browser | 90% |
-| `Prefix t` | General shell | 75% |
-| `Prefix D` | Deploy (`just deploy`) | 80x60% |
-| `Prefix h` | This help guide | 90% |
+| `Prefix s` | **bead stats** (`br stats`) | 75% |
 
-Popups open in the current pane's working directory.
+**Diff view** (not in the table above):
+
+| Key | Action |
+|-----|--------|
+| `Prefix e` | Toggle diff sidebar (`diffnav --watch`) |
+
+Popups open in the current pane's working directory. All use `display-popup -C` to toggle (close/open).
 
 ### Copy Mode (vi keys)
 

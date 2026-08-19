@@ -284,18 +284,14 @@ in
       set -g set-clipboard on
       set -g pane-border-status top
       set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
-
       # Popup overlays — native display-popup with if-shell toggle.
       # "display-popup -C" closes the topmost popup; the false branch opens the requested one.
       bind t if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}'"
       bind h if-shell "display-popup -C" "" "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
       bind b if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'bv'"
-
-      # Tmuxinator sessions — popup-style with cwd from active pane
-      bind g run-shell "tmuxinator start lazygit '#{pane_current_path}'"
-      bind y run-shell "tmuxinator start yazi '#{pane_current_path}'"
-      bind s run-shell "tmuxinator start br-stats '#{pane_current_path}'"
-
+      bind g if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' lazygit"
+      bind y if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' yazi"
+      bind s if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'br stats'"
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
       # so the default ~/.tmux/ path doesn't silently fail and the `-N` clone
       # sessions stop appearing on every server restart. Directories are
@@ -627,17 +623,22 @@ in
       #!/usr/bin/env bash
       set -euo pipefail
       dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmuxinator start lazygit "$dir"
+      if tmux display-popup -C; then
+        exit 0
+      fi
+      tmux display-popup -w90% -h90% -E -d "$dir" lazygit
     '';
   };
-
   home.file.".local/bin/tmux-popup-yazi" = {
     executable = true;
     text = ''
       #!/usr/bin/env bash
       set -euo pipefail
       dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmuxinator start yazi "$dir"
+      if tmux display-popup -C; then
+        exit 0
+      fi
+      tmux display-popup -w90% -h90% -E -d "$dir" yazi
     '';
   };
 
@@ -647,7 +648,10 @@ in
       #!/usr/bin/env bash
       set -euo pipefail
       dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmuxinator start br-stats "$dir"
+      if tmux display-popup -C; then
+        exit 0
+      fi
+      tmux display-popup -w75% -h75% -E -d "$dir" 'br stats'
     '';
   };
 
