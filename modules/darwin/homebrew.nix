@@ -22,7 +22,6 @@
       "manaflow-ai/cmux"
       "acsandmann/tap"
       "stablyai/orca"
-      "asheshgoplani/tap"  # agent-deck
     ];
 
     # Brew formulae not easily available in nixpkgs
@@ -32,6 +31,7 @@
       "basedpyright"                   # Pyright fork with improvements
       "dicklesworthstone/tap/bv"        # Beads Viewer TUI (graph-aware issue triage)
       #"gastown"                        # Go-based agentic task runner (steveyegge)
+#      "devpod"                         # Development containers
       "evil-helix"                     # Helix editor soft fork
       "steipete/tap/imsg"              # iMessage/SMS CLI
       "steipete/tap/peekaboo"          # macOS UI automation CLI
@@ -47,7 +47,6 @@
       "swagger-codegen"                # OpenAPI code generator
       "worktrunk"                      # Git worktree manager (parallel agent workflows)
       "localstack"                     # Local AWS cloud emulator
-      "asheshgoplani/tap/agent-deck"   # AI agent deck CLI
 
       # Shell & System Tools
       "bakks/bakks/butterfish"         # LLM command-line tool
@@ -70,69 +69,184 @@
       "dotnet@6"                       # .NET 6
       "flyctl"                         # Fly.io CLI
       "vi-sql"                  # Terminal UI for SQL databases with vim motions
-    ] ++ lib.optionals isWorkstation [
-      "fzf"
-      "fd"
-      "ripgrep"
-      "bat"
-      "delta"
-      "tree"
-      "the_silver_searcher"
-      "z"
-      "zoxide"
-      "httpie"
-      "yq"
-      "jq"
-      "kubectx"
-      "skopeo"
-      "gh"
-      "helm"
-      "kind"
-      "minikube"
-      "k9s"
-      "kubectl"
+     ] ++ lib.optionals isWorkstation [
+      # https://github.com/marcus/sidecar
+
+      # Special packages with build requirements
+#      {
+#        name = "d12frosted/emacs-plus/emacs-plus@31";
+#        args = [
+#          "with-imagemagick"
+#          "with-mailutils"
+#        ];
+#      }
+      # Window/UI management
+      "felixkratz/formulae/borders"    # Window border system
+
+
+      "choose-gui"                     # Dotfile manager
+      "fileql"                         # SQL-like queries on files
+      "ifstat"                         # Interface statistics
+      "kanata"                         # Keyboard remapper
+        #      "switchaudio-osx"                # Change audio source CLI
+      "vfkit"                          # Virtualization framework CLI
+      "tailscale"
+      # Email (not available on macOS via nix)
+      # Packages from original config
+      "podman"                         # Container management
+      "docker-compose"                 # Docker compose
+      "chart-testing"                  # Helm chart testing
+
+      # Additional utilities
+     "dotnet@8"                       # .NET 8 (Swift build broken in nixpkgs)
+      "mpv"                            # Media player (Swift build broken in nixpkgs)
+      "fisher"                         # Fish shell plugin manager
+      "haskell-stack"                  # Haskell development
+      "nvm"                            # Node version manager
+      "watch"
+      "yt-dlp"                         # YouTube downloader (curl-impersonate broken in nixpkgs on macOS 15)
+      "wakatime-cli"                   # WakaTime CLI for time tracking
+          
+
+
+        # Dicklesworthstone flywheel tools (via dicklesworthstone/tap)
+        # bv moved to common brews list above (installed on all darwin boxes)
+        #"caam"                         # Coding Agent Account Manager
+        #"cass"                         # Coding Agent Session Search
+        #"cm"                           # CASS Memory System
+        #"ru"                           # Repo Updater
+        #"slb"                          # Simultaneous Launch Button (two-person auth)
+        # "dcg" - Destructive Command Guard: install manually via curl (tap checksum issues)
+        #   curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/destructive_command_guard/main/install.sh?$(date +%s)" | bash -s -- --easy-mode && dcg install
+        # "giil" - Get Image from Internet Link: install manually via curl (not in tap)
+        #   curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/giil/main/install.sh?$(date +%s)" | bash
+        # "csctf" - Chat Shared Conversation to File: install manually via curl (not in tap)
+        #   curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/chat_shared_conversation_to_file/main/install.sh?$(date +%s)" | bash
+        # ntm, ubs, mcp-agent-mail: managed via Nix overlay in overlays/acfs.nix
     ];
 
     # macOS applications (casks) not in nixpkgs or better via homebrew
     casks = [
+      # Common casks (both machines)
       "1password"
       "1password-cli"
-      "alfred"
-      "android-studio"
-      "bartender"
-      "brave-browser"
-      "claude-code"
-      "docker-desktop"
-      "flux-app"
-      "gemini"
-      "ghostty"
-      "iterm2"
-      "keyboardcleantool"
-      "microsoft-edge"
-      "microsoft-teams"
-      "notion"
+      #      "claude-code"            # Terminal AI assistant
+#      "claude-monitor"            # Terminal AI assistant
+      "font-cantarell"
+      "font-fira-code"
+      "font-fira-code-nerd-font"
+      "font-powerline-symbols"
+      "font-source-code-pro"
+      "git-credential-manager"
+      "homerow"                # Keyboard shortcuts for macOS
+      "tailscale-app"
+      "rustdesk"              # Remote desktop client
+      "block-goose"            # AI agent
       "obsidian"
-      "openinterminal"
-      "rectangle"
-      "raycast"
+      "raycast"                # Launcher and productivity
+      # Terminal emulators (both workstation and server)
+      "iterm2"
+      "itermai"                # AI for iTerm2
+      "itermbrowserplugin"     # Browser in iTerm2
+      "wezterm"
+    ] ++ lib.optionals isWorkstation [
+      # Workstation-only casks (MacBook Pro)
+      "aldente"                # Battery charge limiter
+#      "alt-tab"                # Windows-like alt-tab
+      "apparency"              # App inspector
+      "kiro-cli"               # AI assistant
+#      "ammonite"               # Tag visualizer
+      "appcleaner"
+      "arc"                    # Chromium browser
+#      "felixkratz/formulae/borders"
+      "davmail-app"            # Exchange mail/calendar client
+      "docker-desktop"
+        #      "elgato-camera-hub"
+        #      "elgato-control-center"
+      "elgato-stream-deck"
+        #      "elgato-wave-link"
+      "fantastical"            # Calendar
+      "google-chrome"
+      "gotomeeting"
+      "grammarly-desktop"
+      "granola"                # AI meeting notes
+#      "hammerspoon"            # Desktop automation
+#      "hookmark"               # Link and retrieve info
+      # iterm2/itermai/wezterm moved to common casks above
+      "jetbrains-toolbox"
+      "launchcontrol"          # Service manager
+      "lens"                   # Kubernetes IDE
+#      "limitless"              # AI transcription
+      "linear"                 # Project management
+      "logseq"                 # Knowledge management
+      "mactex-no-gui"          # TeX distribution
+      "meld"                   # Visual diff
+      "microsoft-auto-update"
+      "microsoft-teams"
+      "mouseless@preview"      # Mouse control via keyboard
+      "ollama-app"             # Local LLMs
+      "stablyai/orca/orca"      # AI coding agent orchestrator
+      "postgres-app"           # Postgres.app
+      "postman"
+      "postman-cli"
+      "proxyman"               # HTTP debugging proxy
+      "qutebrowser"            # Keyboard-driven browser; Nix qtwebengine fails on Darwin
+      "readdle-spark"          # Email client
+      "repo-prompt"            # Prompt generation
+      "rider"
+        #      "rize"
+      "setapp"
+      "sf-symbols"
+#      "shortcat"               # Keyboard navigation
       "slack"
-      "spotify"
-      "tableplus"
-      "telegram"
-      "the-unarchiver"
-      "visual-studio-code"
+      "sourcetree"             # Git GUI
+#      "stats"                  # System monitor
+        #      "superhuman"             # Email client
+      "todoist-app"
+      "tradingview"
+#      "vscodium"               # VS Code without telemetry
+      "wakatime"
+      "warp"                    # Warp terminal (Rust-based AI terminal)
+      "warp-agent-cli"          # Warp agentic CLI for command-line workflows
+      "cmux"                   # AI terminal multiplexer (manaflow-ai)
+      "witsy"                  # BYOK AI assistant
+      "zed"                    # Code editor
       "zoom"
+      #
+      # yubi key
+      "yubico-authenticator"
     ];
 
     # Mac App Store applications
     masApps = {
-      "Fantastical" = 975937182;
+#      "1Password for Safari" = ;
+#      "AdGuard for Safari" = 1440147259;
+#      "Desktop App for Jira" = 6572290663;
+#      "Everhour" = 1539652800;
+#      "GarageBand" = 682658836;
+#      "Grammarly for Safari" = 1462114288;
+#      "iMovie" = 408981434;
+#      "Keynote" = 409183694;
+#      "MarkChart" = 6475648822;
+#      "Notion Web Clipper" = 1559269364;
+#      "Numbers" = 409203825;
+#      "Obsidian Web Clipper" = 6720708363;
+#      "Omi" = 6502156163;
+#      "Pages" = 409201541;
+#      "Raycast Companion" = 6738274497;
+#      "TestFlight" = 899247664;
+#      "Toggl Track" = 1291898086;
+#      "Tracking Time | Button" = 1587766224;
+#      "Userscripts" = 1463298887;
+#      "Vimkey" = 1585682577;
+#      "Windows App" = 1295203466;
     };
+
     # Cleanup options
     onActivation = {
-      autoUpdate = true;
-      cleanup = "none";
-      upgrade = true;
+      cleanup = "none";      # Disable cleanup (use "uninstall" or "zap" with HOMEBREW_ASK=1)
+      autoUpdate = true;          # Auto-update Homebrew
+      upgrade = false;            # Keep deploy idempotent; upgrade Homebrew packages manually
     };
   };
 }
