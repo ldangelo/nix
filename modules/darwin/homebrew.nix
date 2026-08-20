@@ -107,9 +107,7 @@
       "gemini"
       "ghostty"
       "iterm2"
-      "karabiner-elements"
       "keyboardcleantool"
-      "logi-options+"
       "microsoft-edge"
       "microsoft-teams"
       "notion"
@@ -117,25 +115,18 @@
       "openinterminal"
       "rectangle"
       "raycast"
-      "safari-technology-preview"
-#      "skype"  # DNS unreachable: download.skype.com
       "slack"
       "spotify"
       "tableplus"
       "telegram"
       "the-unarchiver"
       "visual-studio-code"
-      "wireshark-app"
       "zoom"
-    ] ++ lib.optionals isWorkstation [
-      "fleet"
     ];
 
     # Mac App Store applications
     masApps = {
       "Fantastical" = 975937182;
-#      "OmniGraffle" = 361905126;  # invalid MAS ID
-      "DEVONthink 3" = 906179395;
     };
 
     # Cleanup options
