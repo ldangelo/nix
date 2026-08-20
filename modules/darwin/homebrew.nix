@@ -134,7 +134,7 @@
     # Mac App Store applications
     masApps = {
       "Fantastical" = 975937182;
-      "OmniGraffle" = 361905126;
+#      "OmniGraffle" = 361905126;  # invalid MAS ID
       "DEVONthink 3" = 906179395;
     };
 
