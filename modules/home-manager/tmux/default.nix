@@ -27,18 +27,6 @@ let
     };
   };
 
-  # tmux-tea: fuzzy tmux session manager (zoxide, fzf, tmuxinator)
-  # Not in nixpkgs — built from source (2KAbhishek/tmux-tea)
-  tmux-tea = pkgs.tmuxPlugins.mkTmuxPlugin {
-    pluginName = "tmux-tea";
-    version = "unstable";
-    src = pkgs.fetchFromGitHub {
-      owner = "2KAbhishek";
-      repo = "tmux-tea";
-      rev = "806aa7186c0344e0c7b2c9fa0c044267d6b3ca9e";
-      sha256 = "sha256-Z5IaZG4OJUqERz1P8aZu0CVcuo4v741rqTob9HBaqU8=";
-    };
-  };
 
   # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
   # Not in nixpkgs — built from source (sainnhe/tmux-fzf)
@@ -107,12 +95,6 @@ in
       extrakto
 
       {
-        plugin = tmux-which-key;
-        extraConfig = ''
-          set -g @tmux-which-key-xdg-enable 1
-        '';
-      }
-      {
         plugin = catppuccin;
         extraConfig = ''
           set -g @catppuccin_flavor "mocha"
@@ -159,14 +141,9 @@ in
       set -g @tmux-fzf-popup-enable "true"
       run-shell "${tmux-fzf}/share/tmux-plugins/tmux-fzf/main.tmux"
 
-      # tmux-tea: fuzzy tmux session manager
-      # Note: plugin uses tea.tmux instead of tmux_tea.tmux
-      set -g @tea-bind 'o'
-      set -g @tea-default-command 'nvim .'
-      set -g @tea-find-path "$HOME/Development"
-      set -g @tea-preview-position 'top'
-      set -g @tea-session-name 'basename'
-      run-shell "${tmux-tea}/share/tmux-plugins/tmux-tea/tea.tmux"
+      # tmux-palette: command palette (replaces tmux-tea + tmux-which-key)
+      run-shell "~/Development/tmux-palette/bin/tmux-palette.sh"
+
 
       # treemux: Nvim-Tree/Neo-Tree file explorer as a tmux sidebar
       # Note: plugin uses sidebar.tmux instead of treemux.tmux
@@ -275,7 +252,7 @@ in
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
 
-      # Session management via tmux-template (prefix + f) and tmux-tea (prefix + o)
+      # Session management via tmux-template (prefix + f) and tmux-palette (prefix + p)
       # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
 
       # UX tweaks
@@ -292,6 +269,9 @@ in
       bind g if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' lazygit"
       bind y if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' yazi"
       bind s if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'br stats'"
+
+      # tmux-palette: command palette
+      bind o run-shell "~/Development/tmux-palette/bin/tmux-palette.sh"
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
       # so the default ~/.tmux/ path doesn't silently fail and the `-N` clone
       # sessions stop appearing on every server restart. Directories are
@@ -309,164 +289,6 @@ in
 
   # Tmuxinator workspaces
   # tmux-which-key configuration
-  xdg.configFile."tmux/plugins/tmux-which-key/config.yaml" = {
-    force = true;
-    text = ''
-    command_alias_start_index: 200
-    keybindings:
-      prefix_table: Space
-    title:
-      style: align=centre,bold
-      prefix: tmux
-      prefix_style: fg=green,align=centre,bold
-    position:
-      x: C
-      y: S
-    custom_variables:
-      - name: log_info
-        value: "#[fg=green,italics] [info]#[default]#[italics]"
-    macros:
-      - name: reload-config
-        commands:
-          - source-file ~/.config/tmux/tmux.conf
-          - display "Config reloaded"
-    items:
-      - name: Run
-        key: space
-        command: command-prompt
-      - name: Last window
-        key: tab
-        command: last-window
-      - separator: true
-      - name: +Windows
-        key: w
-        menu:
-          - name: Last
-            key: tab
-            command: last-window
-          - name: Choose
-            key: w
-            command: choose-tree -Zw
-          - name: Previous
-            key: p
-            command: previous-window
-          - name: Next
-            key: n
-            command: next-window
-          - name: New
-            key: c
-            command: "neww -c #{pane_current_path}"
-          - separator: true
-          - name: Split |
-            key: /
-            command: "splitw -h -c #{pane_current_path}"
-          - name: Split -
-            key: "-"
-            command: "splitw -v -c #{pane_current_path}"
-          - separator: true
-          - name: Rename
-            key: R
-            command: command-prompt -I "#W" "renamew -- \"%%\""
-          - name: Kill
-            key: X
-            command: 'confirm-before -p "Kill window #W? (y/n)" kill-window'
-      - name: +Panes
-        key: p
-        menu:
-          - name: Last
-            key: tab
-            command: lastp
-          - name: Choose
-            key: p
-            command: displayp -d 0
-          - separator: true
-          - name: Zoom
-            key: z
-            command: resizep -Z
-          - name: +Resize
-            key: r
-            menu:
-              - name: Left
-                key: h
-                command: resizep -L 5
-                transient: true
-              - name: Down
-                key: j
-                command: resizep -D 5
-                transient: true
-              - name: Up
-                key: k
-                command: resizep -U 5
-                transient: true
-              - name: Right
-                key: l
-                command: resizep -R 5
-                transient: true
-          - separator: true
-          - name: Break to window
-            key: "!"
-            command: break-pane
-          - name: Kill
-            key: X
-            command: 'confirm-before -p "Kill pane #P? (y/n)" kill-pane'
-          - name: Sync panes
-            key: "Y"
-            command: setw synchronize-panes
-      - name: +Sessions
-        key: s
-        menu:
-          - name: Project picker
-            key: f
-            command: run-shell ~/.local/bin/tmux-project-picker
-          - name: Choose
-            key: s
-            command: choose-tree -Zs
-          - name: New here
-            key: n
-            command: new-session -c "#{pane_current_path}"
-          - name: Tea
-            key: t
-            command: run "tea"
-          - name: Rename
-            key: r
-            command: command-prompt -I "#S" "rename-session -- \"%%\""
-          - name: Detach
-            key: d
-            command: detach
-      - name: Copy mode
-        key: c
-        command: copy-mode
-      - separator: true
-      - name: +Popups
-        key: t
-        menu:
-          - name: Shell
-            key: t
-            command: run-shell ~/.local/bin/tmux-popup-shell
-          - name: Lazygit
-            key: g
-            command: run-shell ~/.local/bin/tmux-popup-lazygit
-          - name: Yazi
-            key: "y"
-            command: run-shell ~/.local/bin/tmux-popup-yazi
-          - name: Bead stats
-            key: s
-            command: run-shell ~/.local/bin/tmux-popup-br-stats
-          - name: Help
-            key: h
-            command: run-shell ~/.local/bin/tmux-popup-help
-      - name: Bead viewer
-        key: b
-        command: run-shell ~/.local/bin/tmux-popup-bv
-      - separator: true
-      - name: Reload config
-        key: R
-        macro: reload-config
-      - name: Keys
-        key: "?"
-        command: list-keys -N
-  '';
-  };
 
   xdg.configFile."tmuxinator/simple.yml".text = ''
     name: simple
@@ -877,14 +699,6 @@ in
     '';
   };
 
-  # Ensure which-key's generated init.tmux exists and is writable after deploy.
-  # If missing, the plugin copies a read-only Nix-store example there, then
-  # build.py cannot overwrite it on macOS. Pre-create a regular writable file.
-  home.activation.fixWhichKeyPermissions = lib.hm.dag.entryAfter ["linkGeneration"] ''
-    mkdir -p "$HOME/.local/share/tmux/plugins/tmux-which-key"
-    touch "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux"
-    chmod -f u+w "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux" || true
-  '';
 
   # treemux init file — copy from nix store to stable location
   # so the path doesn't change across rebuilds with different store hashes
@@ -896,15 +710,6 @@ in
       cp -f "$_treemux_init_src" "$_treemux_init_dst"
     fi
   '';
-  # tmux-tea: symlink tea.sh from plugin to ~/.local/bin/tea
-  home.activation.installTea = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    _tea_src="${tmux-tea}/share/tmux-plugins/tmux-tea/bin/tea.sh"
-    mkdir -p "$HOME/.local/bin"
-    if [[ -f "$_tea_src" ]]; then
-      ln -sfnv "$_tea_src" "$HOME/.local/bin/tea"
-    fi
-  '';
-
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available
   home.file.".local/bin/sudo-askpass" = {
     executable = true;

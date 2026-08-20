@@ -24,7 +24,7 @@ This repository manages the complete development workstation configuration for m
 Each subdirectory has its own AGENTS.md with conventions:
 
 | Directory | Guide |
-|-----------|-------|
+| ----------- | ------- |
 | `modules/darwin/` | [darwin/AGENTS.md](modules/darwin/AGENTS.md) — system config, Homebrew, services |
 | `modules/home-manager/` | [home-manager/AGENTS.md](modules/home-manager/AGENTS.md) — packages, editors, dotfiles |
 | `modules/flakes/` | [flakes/AGENTS.md](modules/flakes/AGENTS.md) — flake inputs |
@@ -36,7 +36,7 @@ Each subdirectory has its own AGENTS.md with conventions:
 ## Key Commands
 
 | Command | Description |
-|---------|-------------|
+| --------- | ------------- |
 | `just deploy` | Deploy system configuration |
 | `just deploy-nc` | Deploy without cache (after flake changes) |
 | `just deploy-rebuild` | Force complete rebuild |
@@ -61,6 +61,7 @@ git push                # Push to remote
 Respond terse like smart caveman. All technical substance stay. Only fluff die.
 
 Rules:
+
 - Drop: articles (a/an/the), filler (just/really/basically), pleasantries, hedging
 - Fragments OK. Short synonyms. Technical terms exact. Code unchanged.
 - Pattern: [thing] [action] [reason]. [next step].
@@ -107,16 +108,20 @@ bv --robot-triage                     # Graph-aware triage for agents
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
 4. **PUSH TO REMOTE** - This is MANDATORY:
+
    ```bash
    git pull --rebase
    git push
    git status  # MUST show "up to date with origin"
    ```
+
 5. **Clean up** - Clear stashes, prune remote branches
 6. **Verify** - All changes committed AND pushed
 7. **Hand off** - Provide context for next session
 
 **CRITICAL RULES:**
+
+- Update documentation and user guides when changes are made
 - Work is NOT complete until `git push` succeeds
 - NEVER stop before pushing - that leaves work stranded locally
 - NEVER say "ready to push when you are" - YOU must push
