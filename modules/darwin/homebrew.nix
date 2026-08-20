@@ -102,8 +102,8 @@
       "bartender"
       "brave-browser"
       "claude-code"
-      "docker"
-      "flux"
+      "docker-desktop"
+      "flux-app"
       "gemini"
       "ghostty"
       "iterm2"
@@ -131,7 +131,7 @@
     # Cleanup options
     onActivation = {
       autoUpdate = true;
-      cleanup = "uninstall";
+      cleanup = "none";
       upgrade = true;
     };
   };
