@@ -284,9 +284,9 @@ in
       set -g set-clipboard on
       set -g pane-border-status top
       set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
-      # Popup overlays — native display-popup with if-shell toggle.
-      # "display-popup -C" closes the topmost popup; the false branch opens the requested one.
-      bind t if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}'"
+      # Popup overlays — use script for toggle + shell with interactive zsh,
+      # direct commands for the rest. "display-popup -C" closes topmost popup.
+      bind t run-shell "~/.local/bin/tmux-popup-shell"
       bind h if-shell "display-popup -C" "" "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
       bind b if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'bv'"
       bind g if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' lazygit"
@@ -605,18 +605,21 @@ in
             - br stats
   '';
 
-  # tmux-which-key cannot safely embed heavily quoted commands in generated
-  # command-alias entries. Keep menu commands simple and move quoting here.
+  # tmux-popup-shell: toggle + open a shell popup. Uses zsh -i to get an
+  # interactive shell so that ~/.zshrc and completions load normally.
+  # Toggle: closes an existing popup instead of stacking new ones.
   home.file.".local/bin/tmux-popup-shell" = {
     executable = true;
     text = ''
       #!/usr/bin/env bash
       set -euo pipefail
+      if tmux display-popup -C; then
+        exit 0
+      fi
       dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmux display-popup -w75% -h75% -E -d "$dir"
+      tmux display-popup -w75% -h75% -E -d "$dir" -- zsh -i
     '';
   };
-
   home.file.".local/bin/tmux-popup-lazygit" = {
     executable = true;
     text = ''
