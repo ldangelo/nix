@@ -1,4 +1,4 @@
-**Last Updated**: 2026-08-19
+**Last Updated**: 2026-08-20
 **Architecture**: WezTerm (dumb terminal) + tmux (multiplexer) + sesh/tmux-template (project switching) + tmuxp (layouts/templates)
 **Prefix Key**: `Ctrl+Space`
 **Configuration**: `modules/home-manager/tmux/default.nix`, `dotfiles/config/wezterm/`
@@ -90,18 +90,16 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 
 | Key | Action |
 |-----|--------|
-| `Prefix Space` | **Which-key menu** — browse all keybindings interactively |
 | `Prefix h` | Open this help guide in a popup |
 | `Prefix ?` | List all keybindings (raw) |
 
-If you forget a shortcut, press `Prefix Space` — the which-key menu shows everything organized by category.
 
 ### Sessions
 
 | Key | Action |
 |-----|--------|
+| `Prefix o` | **tmux-palette** — command palette (fuzzy search all tools) |
 | `Prefix f` | **Sessionizer** — fuzzy project picker via zoxide + tmux-template |
-| `Prefix o` | tmux-tea session manager |
 | `Prefix S` | Choose session (built-in picker) |
 | `Prefix N` | New raw tmux session in current directory |
 | `Prefix d` | Detach from session |
@@ -171,6 +169,7 @@ All popups use native `display-popup` with `if-shell` toggle: press once to open
 | `Prefix y` | **yazi** — file browser | 90% |
 | `Prefix s` | **bead stats** (`br stats`) | 75% |
 
+| `Prefix o` | **tmux-palette** — command palette | 75% |
 **Diff view** (not in the table above):
 
 | Key | Action |
@@ -213,7 +212,7 @@ Recommended plugin set for this setup:
 | `resurrect` + `continuum` | Session save/restore |
 | `tmux-yank` | Copy mode → macOS clipboard |
 | `tmux-toggle-popup` | Lazygit/yazi/shell as persistent popups |
-| `tmux-which-key` | Discover bindings from `Prefix Space` |
+| `tmux-palette` | Command palette (Prefix o) |
 | `tmux-fzf` + `fzf-tmux-url` | Fuzzy tmux ops + URL picker |
 | `tmux-thumbs` / `extrakto` | Fast copy/extract URLs, paths, hashes |
 | `tmux-notify` | macOS alerts when long commands/agents finish |
@@ -393,7 +392,6 @@ Prefix f          # Sessionizer — pick another project
                   # Each project is its own tmux session
 M-1 through M-9   # Quick-switch between sessions (Alt+number)
 Prefix S          # Built-in session tree picker
-Prefix o          # tmux-tea legacy picker
 ```
 
 ### Quick Git Operations
@@ -429,7 +427,6 @@ muxi start agents
 | Key | Action |
 |-----|--------|
 | `Ctrl+Space` | **Prefix key** (start of every command) |
-| `Prefix Space` | **Which-key menu** (discover all shortcuts) |
 | `Prefix f` | **Sessionizer** (pick project, auto-layout) |
 | `Ctrl+h/j/k/l` | Navigate panes (no prefix, works with Neovim) |
 | `Prefix g` | Toggle lazygit popup |
@@ -442,7 +439,6 @@ muxi start agents
 | `Prefix -` | Split vertical |
 | `Prefix d` | Detach |
 | `Prefix S` | Session tree picker |
-| `Prefix o` | tmux-tea legacy picker |
 | `Prefix h` | This help guide (popup) |
 | `Prefix F` | Thumbs (quick copy) |
 | `Prefix u` | URL picker |
