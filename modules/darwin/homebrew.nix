@@ -125,9 +125,7 @@
     ];
 
     # Mac App Store applications
-    masApps = {
-      "Fantastical" = 975937182;
-    };
+    # masApps = {};  # All MAS apps removed — require interactive App Store auth
 
     # Cleanup options
     onActivation = {
