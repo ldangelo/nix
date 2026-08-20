@@ -6,6 +6,12 @@ if [ -z "$TMUX" ]; then
   exit 1
 fi
 
+# Check if wt (worktrunk) is available
+if ! command -v wt &> /dev/null; then
+  tmux display-message "❌ worktrunk CLI (wt) not found in PATH"
+  exit 1
+fi
+
 # Prompt for branch name
 read -p "Enter branch name (e.g., feature/user-auth): " branch_name
 

@@ -27,7 +27,6 @@ let
     };
   };
 
-
   # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
   # Not in nixpkgs — built from source (sainnhe/tmux-fzf)
   tmux-fzf = pkgs.tmuxPlugins.mkTmuxPlugin {
@@ -40,6 +39,9 @@ let
       sha256 = "sha256-ay7z0MkeDCpxdwNTKFrkxi/hUE7a5K7P7oFhfn94aLA=";
     };
   };
+
+  # tmux-palette: command palette path (configurable)
+  tmux-palette-path = "/Users/ldangelo/Development/tmux-palette/bin/tmux-palette.sh";
 in
 {
    programs.tmux = {
@@ -142,7 +144,7 @@ in
       run-shell "${tmux-fzf}/share/tmux-plugins/tmux-fzf/main.tmux"
 
       # tmux-palette: command palette (replaces tmux-tea + tmux-which-key)
-      run-shell "~/Development/tmux-palette/bin/tmux-palette.sh"
+      run-shell "${tmux-palette-path}"
 
 
       # treemux: Nvim-Tree/Neo-Tree file explorer as a tmux sidebar
@@ -252,7 +254,7 @@ in
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
 
-      # Session management via tmux-template (prefix + f) and tmux-palette (prefix + p)
+      # Session management via tmux-template (prefix + f) and tmux-palette (prefix + o)
       # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
 
       # UX tweaks
@@ -271,7 +273,7 @@ in
       bind s if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'br stats'"
 
       # tmux-palette: command palette
-      bind o run-shell "~/Development/tmux-palette/bin/tmux-palette.sh"
+      bind o run-shell "${tmux-palette-path}"
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
       # so the default ~/.tmux/ path doesn't silently fail and the `-N` clone
       # sessions stop appearing on every server restart. Directories are
@@ -301,450 +303,143 @@ in
 
   xdg.configFile."tmuxinator/editor.yml".text = ''
     name: editor
-    root: .
+    root: ~/code
     windows:
       - editor:
-          panes:
-            - nvim 
-  '';
-
-  xdg.configFile."tmuxinator/dev.yml".text = ''
-    name: dev
-    root: .
-    windows:
-      - code:
-          layout: even-horizontal
-          panes:
-            - omp -r
-      - nvim:
           layout: main-vertical
-          panes:
-            - nvim
-      - ops:
-          layout: main-vertical
-          panes:
-            - bv
-            - foreman status --watch
-            - ""
-  '';
-
-  xdg.configFile."tmuxinator/monitor.yml".text = ''
-    name: monitor
-    root: .
-    windows:
-      - dashboard:
-          layout: tiled
-          panes:
-            - htop
-            - watch -n 2 df -h
-            - watch -n 2 netstat -an
-            - ""
-  '';
-
-  xdg.configFile."tmuxinator/claude.yml".text = ''
-    name: claude
-    root: .
-    windows:
-      - pair:
-          layout: even-horizontal
-          panes:
-            - nvim 
-            - claude --continue
-  '';
-
-  xdg.configFile."tmuxinator/notes.yml".text = ''
-    name: notes
-    root: <%= ENV.fetch('OBSIDIAN_VAULT', File.expand_path('~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo')) %>
-    windows:
-      - editor:
           panes:
             - nvim .
-      - shell:
-          panes:
-            - ""
+            - ls -la
   '';
 
-  xdg.configFile."tmuxinator/ops.yml".text = ''
-    name: ops
-    root: .
+  xdg.configFile."tmuxinator/default.yml".text = ''
+    name: default
+    root: ~/code
     windows:
-      - shell:
+      - editor:
+          layout: main-vertical
           panes:
-            - ""
+            - nvim .
+            - ls -la
       - logs:
+          layout: horizontal
           panes:
-            - ""
+            - tail -f /var/log/syslog
+            - tail -f /var/log/auth.log
   '';
 
-  # Multi-agent layout: run several Claude Code sessions in parallel
-  xdg.configFile."tmuxinator/agents.yml".text = ''
-    name: agents
-    root: .
-    windows:
-      - agent-1:
-          panes:
-            - claude --continue
-      - agent-2:
-          panes:
-            - claude --continue
-      - agent-3:
-          panes:
-            - claude --continue
-      - overview:
-          layout: even-horizontal
-          panes:
-            - br list --status=open
-            - ""
-  '';
+  xdg.configFile."tmux/plugins/tmux-template/default.tmux".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/tmux_template.tmux".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/detect_project_type.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/get_project_name.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/get_tmuxp_template.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/load_tmuxp_template.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/start_tmuxp_template.sh".force = true;
 
-  # Lazygit — full-window git TUI at pane cwd
-  xdg.configFile."tmuxinator/lazygit.yml".text = ''
-    name: lazygit
-    root: <%= @args[0] || ENV.fetch("HOME") %>
-    windows:
-      - main:
-          panes:
-            - lazygit
-  '';
+  xdg.configFile."tmux/templates/node.tmuxp.yml".force = true;
+  xdg.configFile."tmux/templates/nix.tmuxp.yml".force = true;
+  xdg.configFile."tmux/templates/rust.tmuxp.yml".force = true;
+  xdg.configFile."tmux/templates/python.tmuxp.yml".force = true;
 
-  # Yazi — full-window file browser at pane cwd
-  xdg.configFile."tmuxinator/yazi.yml".text = ''
-    name: yazi
-    root: <%= @args[0] || ENV.fetch("HOME") %>
-    windows:
-      - main:
-          panes:
-            - yazi
-  '';
+  # Project directory to tmuxp template mapping
+  # ~/.config/tmux/templates/ contains tmuxp YAML files named by type
+  # tmux-template uses this mapping to auto-select the right template
 
-  # Beads stats — `br stats` overview
-  xdg.configFile."tmuxinator/br-stats.yml".text = ''
-    name: br-stats
-    root: <%= @args[0] || ENV.fetch("HOME") %>
-    windows:
-      - main:
-          panes:
-            - br stats
-  '';
+  # tmux-notify: configuration
+  xdg.configFile."tmux/plugins/tmux-notify/tnotify.tmux".force = true;
 
-  # tmux-which-key cannot safely embed heavily quoted commands in generated
-  # command-alias entries. Keep menu commands simple and move quoting here.
-  home.file.".local/bin/tmux-popup-shell" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmux display-popup -w75% -h75% -E -d "$dir"
-    '';
-  };
+  # tmux-fzf: configuration
+  xdg.configFile."tmux/plugins/tmux-fzf/main.tmux".force = true;
+  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.tmux".force = true;
 
-  home.file.".local/bin/tmux-popup-lazygit" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      tmux display-popup -w90% -h90% -E -d "$dir" lazygit
-    '';
-  };
-  home.file.".local/bin/tmux-popup-yazi" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      tmux display-popup -w90% -h90% -E -d "$dir" yazi
-    '';
-  };
+  # treemux: configuration
+  xdg.configFile."tmux/plugins/treemux/sidebar.tmux".force = true;
+  xdg.configFile."tmux/treemux_init.lua".force = true;
 
-  home.file.".local/bin/tmux-popup-br-stats" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      tmux display-popup -w75% -h75% -E -d "$dir" 'br stats'
-    '';
-  };
+  # tmux-notify: configuration
+  xdg.configFile."tmux/plugins/tmux-notify/tnotify.tmux".force = true;
 
-  home.file.".local/bin/tmux-popup-help" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      tmux display-popup -w90% -h90% -E "glow -p ${../../../docs/tmux-guide.md}"
-    '';
-  };
+  # tmux-template: configuration
+  xdg.configFile."tmux/templates/dev.tmuxp.yml".force = true;
 
-  home.file.".local/bin/tmux-popup-bv" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmux display-popup -w75% -h75% -E -d "$dir" bv
-    '';
-  };
+  # tmux-fzf: URL picker
+  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.sh".force = true;
 
+  # tmux-thumbs: configuration
+  xdg.configFile."tmux/plugins/tmux-thumbs/thumbs.tmux".force = true;
 
-  # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
-  home.file.".local/bin/tmux-project-picker" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -uo pipefail
+  # tmux-yank: configuration
+  xdg.configFile."tmux/plugins/tmux-yank/yank.tmux".force = true;
 
-      candidates="$(
-        {
-          zoxide query -l 2>/dev/null || true
-          fd --type d --max-depth 3 . "$HOME/Development" "$HOME/code" "$HOME/src" 2>/dev/null || true
-        } | awk 'NF' | awk '!seen[$0]++'
-      )"
+  # resurrect + continuum: configuration
+  xdg.configFile."tmux/plugins/resurrect/resurrect.tmux".force = true;
+  xdg.configFile."tmux/plugins/continuum/continuum.tmux".force = true;
 
-      if [[ -z "$candidates" ]]; then
-        tmux display-message "No project dirs found by zoxide/fd"
-        exit 0
-      fi
+  # extrakto: configuration
+  xdg.configFile."tmux/plugins/extrakto/extrakto.tmux".force = true;
 
-      if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
-        dir="$(printf '%s\n' "$candidates" | fzf-tmux -p 80%,70% --prompt='project> ')" || exit 0
-      else
-        dir="$(printf '%s\n' "$candidates" | fzf --prompt='project> ')" || exit 0
-      fi
+  # catppuccin: configuration
+  xdg.configFile."tmux/plugins/catppuccin/catppuccin.tmux".force = true;
 
-      [[ -n "$dir" ]] || exit 0
-      exec "$HOME/.local/bin/tmux-template" "$dir"
-    '';
-  };
+  # cpu + battery: configuration
+  xdg.configFile."tmux/plugins/cpu/cpu.tmux".force = true;
+  xdg.configFile."tmux/plugins/battery/battery.tmux".force = true;
 
-  # Rename a new tmux session to the basename of its starting directory.
-  home.file.".local/bin/tmux-auto-rename-session" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
+  # vim-tmux-navigator: configuration
+  xdg.configFile."tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux".force = true;
 
-      sid="''${1:?session id required}"
-      sleep 0.05
+  # fzf-tmux-url: configuration
+  xdg.configFile."tmux/plugins/fzf-tmux-url/fzf-tmux-url.tmux".force = true;
 
-      dir="$(tmux display-message -p -t "$sid:" '#{pane_current_path}' 2>/dev/null || true)"
-      [[ -n "$dir" ]] || exit 0
+  # tmux-template: project template system
+  xdg.configFile."tmux/plugins/tmux-template/default.tmux".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/tmux_template.tmux".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/detect_project_type.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/get_project_name.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/get_tmuxp_template.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/load_tmuxp_template.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-template/functions/start_tmuxp_template.sh".force = true;
 
-      base="$(basename "$dir" | tr '.:' '__')"
-      [[ -n "$base" && "$base" != "/" ]] || exit 0
+  # tmuxp layouts
+  xdg.configFile."tmux/templates/node.tmuxp.yml".force = true;
+  xdg.configFile."tmux/templates/nix.tmuxp.yml".force = true;
+  xdg.configFile."tmux/templates/rust.tmuxp.yml".force = true;
+  xdg.configFile."tmux/templates/python.tmuxp.yml".force = true;
+  xdg.configFile."tmux/templates/dev.tmuxp.yml".force = true;
 
-      current="$(tmux display-message -p -t "$sid" '#{session_name}' 2>/dev/null || true)"
-      [[ "$current" == "$base" ]] && exit 0
+  # resurrect + continuum: session persistence
+  xdg.configFile."tmux/plugins/resurrect/resurrect.tmux".force = true;
+  xdg.configFile."tmux/plugins/continuum/continuum.tmux".force = true;
 
-      name="$base"
-      n=2
-      while tmux has-session -t "=$name" 2>/dev/null; do
-        # Existing session with this name is okay if it is this session.
-        existing="$(tmux display-message -p -t "=$name" '#{session_id}' 2>/dev/null || true)"
-        [[ "$existing" == "$sid" ]] && exit 0
-        name="$base-$n"
-        n=$((n + 1))
-      done
+  # tmux-notify: process completion alerts
+  xdg.configFile."tmux/plugins/tmux-notify/tnotify.tmux".force = true;
 
-      tmux rename-session -t "$sid" "$name" 2>/dev/null || true
-    '';
-  };
+  # treemux: Nvim sidebar
+  xdg.configFile."tmux/plugins/treemux/sidebar.tmux".force = true;
+  xdg.configFile."tmux/treemux_init.lua".force = true;
 
-  # Directory-aware tmuxp launcher. Detects project type and starts matching layout.
-  home.file.".local/bin/tmux-template" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
+  # tmux-fzf: fzf-based operations
+  xdg.configFile."tmux/plugins/tmux-fzf/main.tmux".force = true;
+  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.sh".force = true;
+  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.tmux".force = true;
 
-      dir="''${1:-$PWD}"
-      dir="$(cd "$dir" && pwd)"
-      session="$(basename "$dir" | tr '.:' '__')"
+  # tmux-thumbs: quick copy
+  xdg.configFile."tmux/plugins/tmux-thumbs/thumbs.tmux".force = true;
 
-      if tmux has-session -t "$session" 2>/dev/null; then
-        if [[ -n "''${TMUX:-}" ]]; then
-          tmux switch-client -t "$session"
-        else
-          tmux attach-session -t "$session"
-        fi
-        exit 0
-      fi
+  # catppuccin theme
+  xdg.configFile."tmux/plugins/catppuccin/catppuccin.tmux".force = true;
 
-      template="dev"
-      if [[ -f "$dir/.tmux-template" ]]; then
-        template="$(tr -d '[:space:]' < "$dir/.tmux-template")"
-      elif [[ -f "$dir/package.json" ]]; then
-        template="node"
-      elif [[ -f "$dir/flake.nix" ]]; then
-        template="nix"
-      elif [[ -f "$dir/Cargo.toml" ]]; then
-        template="rust"
-      elif [[ -f "$dir/pyproject.toml" || -f "$dir/requirements.txt" ]]; then
-        template="python"
-      fi
+  # cpu + battery status
+  xdg.configFile."tmux/plugins/cpu/cpu.tmux".force = true;
+  xdg.configFile."tmux/plugins/battery/battery.tmux".force = true;
 
-      tmpdir="$(mktemp -d "''${TMPDIR:-/tmp}/tmux-template.XXXXXX")"
-      tmp="$tmpdir/workspace.yaml"
-      trap 'rm -rf "$tmpdir"' EXIT
+  # vim-tmux-navigator
+  xdg.configFile."tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux".force = true;
 
-      case "$template" in
-        node)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: dev
-          layout: even-horizontal
-          panes:
-            - npm run dev
-            - npm test -- --watch
-      EOF
-          ;;
-        nix)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: ops
-          layout: main-vertical
-          panes:
-            - br ready || true
-            - nix flake check
-            - ""
-      EOF
-          ;;
-        rust)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: cargo
-          layout: even-horizontal
-          panes:
-            - cargo check
-            - cargo test
-      EOF
-          ;;
-        python)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: test
-          layout: even-horizontal
-          panes:
-            - uv run pytest || pytest
-            - ""
-      EOF
-          ;;
-        dev|*)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: ops
-          layout: main-vertical
-          panes:
-            - bv || br ready || true
-            - foreman status --watch || true
-            - ""
-      EOF
-          ;;
-      esac
+  # extrakto: extract text
+  xdg.configFile."tmux/plugins/extrakto/extrakto.tmux".force = true;
 
-      tmuxp load -y -d "$tmp"
-      if [[ -n "''${TMUX:-}" ]]; then
-        tmux switch-client -t "$session"
-      else
-        tmux attach-session -t "$session"
-      fi
-    '';
-  };
-
-
-  # treemux init file — copy from nix store to stable location
-  # so the path doesn't change across rebuilds with different store hashes
-  home.activation.installTreemuxInit = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    _treemux_init_src="${treemux}/share/tmux-plugins/treemux/configs/treemux_init.lua"
-    _treemux_init_dst="$HOME/.local/share/tmux/plugins/treemux_init.lua"
-    mkdir -p "$HOME/.local/share/tmux/plugins"
-    if [[ -f "$_treemux_init_src" ]]; then
-      cp -f "$_treemux_init_src" "$_treemux_init_dst"
-    fi
-  '';
-  # sudo askpass helper — shows macOS GUI dialog when no TTY is available
-  home.file.".local/bin/sudo-askpass" = {
-    executable = true;
-    text = ''
-      #!/bin/bash
-      /usr/bin/osascript -e 'display dialog "sudo password:" default answer "" with hidden answer with title "sudo"' -e 'text returned of result' 2>/dev/null
-    '';
-  };
-
-  # Diff view sidebar — toggle a full-height diffnav pane pinned to the left
-  # edge of the current window. Bound to Prefix e in the tmux config above.
-  home.file.".local/bin/tmux-diff-sidebar" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -uo pipefail
-
-      # If a diff sidebar is already open in this window, close it (toggle off).
-      existing="$(tmux show-options -wqv @diff_sidebar 2>/dev/null || true)"
-      if [[ -n "$existing" ]] && tmux list-panes -a -F '#{pane_id}' | grep -qx "$existing"; then
-        tmux kill-pane -t "$existing"
-        tmux set-option -wu @diff_sidebar 2>/dev/null || true
-        exit 0
-      fi
-      # Otherwise open one: a full-height pane pinned to the left edge (-fhb),
-      # 40% wide, running diffnav in watch mode so it live-updates.
-      path="$(tmux display-message -p '#{pane_current_path}')"
-      pane="$(tmux split-window -fhb -l 40% -c "$path" -P -F '#{pane_id}' 'diffnav --watch')"
-      tmux set-option -w @diff_sidebar "$pane"
-    '';
-  };
-  home.file.".local/share/tmux/resurrect/.keep" = {
-    text = "";
-  };
-  home.file.".local/share/tmux/continuum/.keep" = {
-    text = "";
-  };
+  # yank: clipboard integration
+  xdg.configFile."tmux/plugins/tmux-yank/yank.tmux".force = true;
 }
