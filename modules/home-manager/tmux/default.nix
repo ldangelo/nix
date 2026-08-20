@@ -146,7 +146,6 @@ in
       # tmux-palette: command palette (replaces tmux-tea + tmux-which-key)
       run-shell "${tmux-palette-path}"
 
-
       # treemux: Nvim-Tree/Neo-Tree file explorer as a tmux sidebar
       # Note: plugin uses sidebar.tmux instead of treemux.tmux
       set -g @treemux-tree-client 'nvim-tree'
@@ -253,7 +252,6 @@ in
       set -g bell-action other
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
-
       # Session management via tmux-template (prefix + f) and tmux-palette (prefix + o)
       # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
 
@@ -290,8 +288,6 @@ in
   xdg.configFile."tmux/tmux.conf".force = true;
 
   # Tmuxinator workspaces
-  # tmux-which-key configuration
-
   xdg.configFile."tmuxinator/simple.yml".text = ''
     name: simple
     root: .
@@ -328,118 +324,4 @@ in
             - tail -f /var/log/auth.log
   '';
 
-  xdg.configFile."tmux/plugins/tmux-template/default.tmux".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/tmux_template.tmux".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/detect_project_type.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/get_project_name.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/get_tmuxp_template.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/load_tmuxp_template.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/start_tmuxp_template.sh".force = true;
-
-  xdg.configFile."tmux/templates/node.tmuxp.yml".force = true;
-  xdg.configFile."tmux/templates/nix.tmuxp.yml".force = true;
-  xdg.configFile."tmux/templates/rust.tmuxp.yml".force = true;
-  xdg.configFile."tmux/templates/python.tmuxp.yml".force = true;
-
-  # Project directory to tmuxp template mapping
-  # ~/.config/tmux/templates/ contains tmuxp YAML files named by type
-  # tmux-template uses this mapping to auto-select the right template
-
-  # tmux-notify: configuration
-  xdg.configFile."tmux/plugins/tmux-notify/tnotify.tmux".force = true;
-
-  # tmux-fzf: configuration
-  xdg.configFile."tmux/plugins/tmux-fzf/main.tmux".force = true;
-  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.tmux".force = true;
-
-  # treemux: configuration
-  xdg.configFile."tmux/plugins/treemux/sidebar.tmux".force = true;
-  xdg.configFile."tmux/treemux_init.lua".force = true;
-
-  # tmux-notify: configuration
-  xdg.configFile."tmux/plugins/tmux-notify/tnotify.tmux".force = true;
-
-  # tmux-template: configuration
-  xdg.configFile."tmux/templates/dev.tmuxp.yml".force = true;
-
-  # tmux-fzf: URL picker
-  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.sh".force = true;
-
-  # tmux-thumbs: configuration
-  xdg.configFile."tmux/plugins/tmux-thumbs/thumbs.tmux".force = true;
-
-  # tmux-yank: configuration
-  xdg.configFile."tmux/plugins/tmux-yank/yank.tmux".force = true;
-
-  # resurrect + continuum: configuration
-  xdg.configFile."tmux/plugins/resurrect/resurrect.tmux".force = true;
-  xdg.configFile."tmux/plugins/continuum/continuum.tmux".force = true;
-
-  # extrakto: configuration
-  xdg.configFile."tmux/plugins/extrakto/extrakto.tmux".force = true;
-
-  # catppuccin: configuration
-  xdg.configFile."tmux/plugins/catppuccin/catppuccin.tmux".force = true;
-
-  # cpu + battery: configuration
-  xdg.configFile."tmux/plugins/cpu/cpu.tmux".force = true;
-  xdg.configFile."tmux/plugins/battery/battery.tmux".force = true;
-
-  # vim-tmux-navigator: configuration
-  xdg.configFile."tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux".force = true;
-
-  # fzf-tmux-url: configuration
-  xdg.configFile."tmux/plugins/fzf-tmux-url/fzf-tmux-url.tmux".force = true;
-
-  # tmux-template: project template system
-  xdg.configFile."tmux/plugins/tmux-template/default.tmux".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/tmux_template.tmux".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/detect_project_type.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/get_project_name.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/get_tmuxp_template.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/load_tmuxp_template.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-template/functions/start_tmuxp_template.sh".force = true;
-
-  # tmuxp layouts
-  xdg.configFile."tmux/templates/node.tmuxp.yml".force = true;
-  xdg.configFile."tmux/templates/nix.tmuxp.yml".force = true;
-  xdg.configFile."tmux/templates/rust.tmuxp.yml".force = true;
-  xdg.configFile."tmux/templates/python.tmuxp.yml".force = true;
-  xdg.configFile."tmux/templates/dev.tmuxp.yml".force = true;
-
-  # resurrect + continuum: session persistence
-  xdg.configFile."tmux/plugins/resurrect/resurrect.tmux".force = true;
-  xdg.configFile."tmux/plugins/continuum/continuum.tmux".force = true;
-
-  # tmux-notify: process completion alerts
-  xdg.configFile."tmux/plugins/tmux-notify/tnotify.tmux".force = true;
-
-  # treemux: Nvim sidebar
-  xdg.configFile."tmux/plugins/treemux/sidebar.tmux".force = true;
-  xdg.configFile."tmux/treemux_init.lua".force = true;
-
-  # tmux-fzf: fzf-based operations
-  xdg.configFile."tmux/plugins/tmux-fzf/main.tmux".force = true;
-  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.sh".force = true;
-  xdg.configFile."tmux/plugins/tmux-fzf/fzf-tmux-url.tmux".force = true;
-
-  # tmux-thumbs: quick copy
-  xdg.configFile."tmux/plugins/tmux-thumbs/thumbs.tmux".force = true;
-
-  # catppuccin theme
-  xdg.configFile."tmux/plugins/catppuccin/catppuccin.tmux".force = true;
-
-  # cpu + battery status
-  xdg.configFile."tmux/plugins/cpu/cpu.tmux".force = true;
-  xdg.configFile."tmux/plugins/battery/battery.tmux".force = true;
-
-  # vim-tmux-navigator
-  xdg.configFile."tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux".force = true;
-
-  # extrakto: extract text
-  xdg.configFile."tmux/plugins/extrakto/extrakto.tmux".force = true;
-
-  # yank: clipboard integration
-  xdg.configFile."tmux/plugins/tmux-yank/yank.tmux".force = true;
 }
