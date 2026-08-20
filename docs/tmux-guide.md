@@ -458,9 +458,6 @@ tmux-palette is a command palette that provides fuzzy search across all tools an
 | Sessions | 🏠 | Sessionizer, session picker, new session |
 | Git Tools | 🔧 | Browse git log, show diffs, lazygit |
 | Worktrees | 🌳 | Add, list, merge, delete worktrees |
-| Files | 📁 | yazi file browser |
-| Shell | 🖥️ | General shell popup |
-| Beads | 📊 | Bead viewer, bead stats |
 
 ### Git Tools Scripts
 
@@ -480,7 +477,7 @@ Located in `scripts/external/`:
   gd --side             # Side-by-side diff
   ```
 
-Both scripts support all `git diff`/`git log` flags and open in browser with `Ctrl+o`.
+Both scripts support all `git diff`/`git log` flags and open in browser with `Ctrl+o` (fzf internal binding, no tmux conflict).
 
 ### Worktree Integration
 
@@ -496,4 +493,3 @@ Setup:
 git clone https://github.com/eduwass/tmux-palette ~/Development/tmux-palette
 cd ~/Development/tmux-palette && bun install
 ```
-
