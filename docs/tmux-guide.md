@@ -444,3 +444,56 @@ muxi start agents
 | `Prefix u` | URL picker |
 | `Prefix r` | Reload config |
 | `M-1` to `M-9` | Switch to Nth session (no prefix) |
+
+---
+
+## tmux-palette (Prefix o)
+
+tmux-palette is a command palette that provides fuzzy search across all tools and commands. Open with `Prefix o`.
+
+### Available Categories
+
+| Category | Icon | Description |
+|----------|------|-------------|
+| Sessions | 🏠 | Sessionizer, session picker, new session |
+| Git Tools | 🔧 | Browse git log, show diffs, lazygit |
+| Worktrees | 🌳 | Add, list, merge, delete worktrees |
+| Files | 📁 | yazi file browser |
+| Shell | 🖥️ | General shell popup |
+| Beads | 📊 | Bead viewer, bead stats |
+
+### Git Tools Scripts
+
+Located in `scripts/external/`:
+
+- **`gl`** — Browse git log through fzf with delta for side-by-side diffs
+  ```bash
+  gl                    # Search commit messages
+  gl -S                 # Search code changes
+  gl --side             # Show diffs side-by-side
+  ```
+
+- **`gd`** — Show git diffs through fzf with delta
+  ```bash
+  gd                    # Show working tree diffs
+  gd --staged           # Show staged changes
+  gd --side             # Side-by-side diff
+  ```
+
+Both scripts support all `git diff`/`git log` flags and open in browser with `Ctrl+o`.
+
+### Worktree Integration
+
+Worktree operations are accessible from the palette under the "Worktrees" category:
+
+- **Add new worktree** — Create branch + worktree with `wt switch --create`
+- **List worktrees** — Show all worktrees with `wt list`
+- **Merge current worktree** — Squash merge with `wt merge`
+- **Delete current worktree** — Remove with `wt remove`
+
+Setup:
+```bash
+git clone https://github.com/eduwass/tmux-palette ~/Development/tmux-palette
+cd ~/Development/tmux-palette && bun install
+```
+
