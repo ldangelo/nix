@@ -52,6 +52,9 @@ let
       sha256 = "sha256-ay7z0MkeDCpxdwNTKFrkxi/hUE7a5K7P7oFhfn94aLA=";
     };
   };
+
+  # tmux-palette: command palette path (configurable; external Bun project)
+  tmux-palette-path = "/Users/ldangelo/Development/tmux-palette/bin/tmux-palette.sh";
 in
 {
    programs.tmux = {
@@ -275,7 +278,8 @@ in
       set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
 
 
-      # Session management via tmux-template (prefix + f) and tmux-tea (prefix + o)
+      # Session management via tmux-template (prefix + f), tmux-tea (prefix + o),
+      # and tmux-palette (prefix + p).
       # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
 
       # UX tweaks
@@ -284,14 +288,18 @@ in
       set -g set-clipboard on
       set -g pane-border-status top
       set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
-      # Popup overlays — use script for toggle + shell with interactive zsh,
-      # direct commands for the rest. "display-popup -C" closes topmost popup.
-      bind t run-shell "~/.local/bin/tmux-popup-shell"
+      # Popup overlays — native tmux display-popup.
+      # Keep default-command empty so display-popup opens tmux's default shell
+      # directly instead of stale reattach/script wrappers captured by old servers.
+      set -g default-command ""
+      bind t display-popup -w75% -h75% -E -d '#{pane_current_path}'
       bind h if-shell "display-popup -C" "" "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
       bind b if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'bv'"
       bind g if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' lazygit"
       bind y if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' yazi"
       bind s if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'br stats'"
+      bind p run-shell "${tmux-palette-path}"
+      bind P previous-window
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
       # so the default ~/.tmux/ path doesn't silently fail and the `-N` clone
       # sessions stop appearing on every server restart. Directories are
@@ -442,7 +450,7 @@ in
         menu:
           - name: Shell
             key: t
-            command: run-shell ~/.local/bin/tmux-popup-shell
+            command: display-popup -w75% -h75% -E -d "#{pane_current_path}"
           - name: Lazygit
             key: g
             command: run-shell ~/.local/bin/tmux-popup-lazygit
@@ -605,21 +613,6 @@ in
             - br stats
   '';
 
-  # tmux-popup-shell: toggle + open a shell popup. Uses zsh -i to get an
-  # interactive shell so that ~/.zshrc and completions load normally.
-  # Toggle: closes an existing popup instead of stacking new ones.
-  home.file.".local/bin/tmux-popup-shell" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmux display-popup -w75% -h75% -E -d "$dir" -- zsh -i
-    '';
-  };
   home.file.".local/bin/tmux-popup-lazygit" = {
     executable = true;
     text = ''

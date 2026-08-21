@@ -98,7 +98,8 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 
 | Key | Action |
 |-----|--------|
-| `Prefix o` | **tmux-palette** — command palette (fuzzy search all tools) |
+| `Prefix o` | **tmux-tea** — fuzzy tmux session manager |
+| `Prefix p` | **tmux-palette** — command palette (fuzzy search all tools) |
 | `Prefix f` | **Sessionizer** — fuzzy project picker via zoxide + tmux-template |
 | `Prefix S` | Choose session (built-in picker) |
 | `Prefix N` | New raw tmux session in current directory |
@@ -115,7 +116,7 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 | `Prefix ,` | Rename window |
 | `Prefix &` | Close window |
 | `Prefix n` | Next window |
-| `Prefix p` | Previous window |
+| `Prefix P` | Previous window |
 | `Prefix 1-9` | Jump to window by number |
 | `Prefix w` | Window/session tree picker |
 | `Prefix Tab` | Last window (toggle) |
@@ -156,9 +157,9 @@ These work seamlessly across tmux panes and Neovim splits via vim-tmux-navigator
 | `Prefix K` | Resize up 5 cells |
 | `Prefix L` | Resize right 5 cells |
 
-### Popups (floating, toggleable)
+### Popups (floating)
 
-All popups use native `display-popup` with `if-shell` toggle: press once to open, press again to close (process keeps running).
+`Prefix t` uses native tmux `display-popup` directly, matching the old shell popup behavior. Tool popups use native `display-popup` with `if-shell` toggle.
 
 | Key | Action | Size |
 |-----|--------|------|
@@ -169,14 +170,14 @@ All popups use native `display-popup` with `if-shell` toggle: press once to open
 | `Prefix y` | **yazi** — file browser | 90% |
 | `Prefix s` | **bead stats** (`br stats`) | 75% |
 
-| `Prefix o` | **tmux-palette** — command palette | 75% |
+| `Prefix p` | **tmux-palette** — command palette | 75% |
 **Diff view** (not in the table above):
 
 | Key | Action |
 |-----|--------|
 | `Prefix e` | Toggle diff sidebar (`diffnav --watch`) |
 
-Popups open in the current pane's working directory. All use `display-popup -C` to toggle (close/open).
+Popups open in the current pane's working directory. `Prefix t` opens a tmux shell popup directly; tool popups use `display-popup -C` to toggle (close/open).
 
 ### Copy Mode (vi keys)
 
@@ -212,7 +213,7 @@ Recommended plugin set for this setup:
 | `resurrect` + `continuum` | Session save/restore |
 | `tmux-yank` | Copy mode → macOS clipboard |
 | `tmux-toggle-popup` | Lazygit/yazi/shell as persistent popups |
-| `tmux-palette` | Command palette (Prefix o) |
+| `tmux-palette` | Command palette (Prefix p) |
 | `tmux-fzf` + `fzf-tmux-url` | Fuzzy tmux ops + URL picker |
 | `tmux-thumbs` / `extrakto` | Fast copy/extract URLs, paths, hashes |
 | `tmux-notify` | macOS alerts when long commands/agents finish |
@@ -431,7 +432,7 @@ muxi start agents
 | `Ctrl+h/j/k/l` | Navigate panes (no prefix, works with Neovim) |
 | `Prefix g` | Toggle lazygit popup |
 | `Prefix y` | Toggle yazi popup |
-| `Prefix t` | Toggle shell popup |
+| `Prefix t` | Open shell popup |
 | `Prefix z` | Zoom pane (toggle fullscreen) |
 | `Prefix c` | New window |
 | `Prefix 1-9` | Switch to window N |
@@ -447,9 +448,9 @@ muxi start agents
 
 ---
 
-## tmux-palette (Prefix o)
+## tmux-palette (Prefix p)
 
-tmux-palette is a command palette that provides fuzzy search across all tools and commands. Open with `Prefix o`.
+tmux-palette is a command palette that provides fuzzy search across all tools and commands. Open with `Prefix p`.
 
 ### Available Categories
 
