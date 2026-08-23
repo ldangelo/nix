@@ -53,6 +53,19 @@ let
     };
   };
 
+  # tmux-floax: floating scratch pane (omerxx/tmux-floax)
+  # Built from source — not in nixpkgs.
+  tmux-floax = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "tmux-floax";
+    version = "unstable";
+    src = pkgs.fetchFromGitHub {
+      owner = "omerxx";
+      repo = "tmux-floax";
+      rev = "133f526793d90d2caa323c47687dd5544a2c704b";
+      sha256 = "sha256-0z1wllqvcmrn1g5v7b0hrb8djzbiy85s4vc8f255w75agmvgsxpl";
+    };
+  };
+
   # tmux-palette: command palette path (configurable; external Bun project)
   tmux-palette-path = "/Users/ldangelo/Development/tmux-palette/bin/tmux-palette.sh";
 in
@@ -160,7 +173,17 @@ in
       set -g @tmux-fzf-launch-key-assign "F"
       set -g @tmux-fzf-preview-enabled "true"
       set -g @tmux-fzf-popup-enable "true"
-      run-shell "${tmux-fzf}/share/tmux-plugins/tmux-fzf/main.tmux"
+      # tmux-floax: persistent floating scratch pane.
+      # Default <prefix>+p conflicts with tmux-palette; default <prefix>+P
+      # conflicts with the previous-window binding. Override both and keep the
+      # scratch pane conceptually separate from the pop-launch popups under <prefix>+t.
+      set -g @floax-bind 'T'
+      set -g @floax-bind-menu 'F'
+      set -g @floax-session-name 'scratch'
+      set -g @floax-width '75%'
+      set -g @floax-height '75%'
+      run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
+
 
       # tmux-tea: fuzzy tmux session manager
       # Note: plugin uses tea.tmux instead of tmux_tea.tmux
@@ -292,11 +315,12 @@ in
       # Keep default-command empty so display-popup opens tmux's default shell
       # directly instead of stale reattach/script wrappers captured by old servers.
       set -g default-command ""
-      bind t display-popup -w75% -h75% -E -d '#{pane_current_path}'
+      bind t if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}'"
       bind h if-shell "display-popup -C" "" "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
       bind b if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'bv'"
       bind g if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' lazygit"
       bind y if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' yazi"
+      bind w if-shell "display-popup -C" "" "display-popup -w90% -h90% -E 'workmux dashboard'"
       bind s if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'br stats'"
       bind p run-shell "${tmux-palette-path}"
       bind P previous-window
@@ -345,39 +369,9 @@ in
       - name: Last window
         key: tab
         command: last-window
-      - separator: true
-      - name: +Windows
+      - name: Workmux
         key: w
-        menu:
-          - name: Last
-            key: tab
-            command: last-window
-          - name: Choose
-            key: w
-            command: choose-tree -Zw
-          - name: Previous
-            key: p
-            command: previous-window
-          - name: Next
-            key: n
-            command: next-window
-          - name: New
-            key: c
-            command: "neww -c #{pane_current_path}"
-          - separator: true
-          - name: Split |
-            key: /
-            command: "splitw -h -c #{pane_current_path}"
-          - name: Split -
-            key: "-"
-            command: "splitw -v -c #{pane_current_path}"
-          - separator: true
-          - name: Rename
-            key: R
-            command: command-prompt -I "#W" "renamew -- \"%%\""
-          - name: Kill
-            key: X
-            command: 'confirm-before -p "Kill window #W? (y/n)" kill-window'
+        command: if-shell "display-popup -C" "" "display-popup -w90% -h90% -E 'workmux dashboard'"
       - name: +Panes
         key: p
         menu:
@@ -450,7 +444,7 @@ in
         menu:
           - name: Shell
             key: t
-            command: display-popup -w75% -h75% -E -d "#{pane_current_path}"
+            command: if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d \"#{pane_current_path}\""
           - name: Lazygit
             key: g
             command: run-shell ~/.local/bin/tmux-popup-lazygit
@@ -463,6 +457,9 @@ in
           - name: Help
             key: h
             command: run-shell ~/.local/bin/tmux-popup-help
+      - name: Floax
+        key: T
+        command: run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
       - name: Bead viewer
         key: b
         command: run-shell ~/.local/bin/tmux-popup-bv
@@ -685,22 +682,33 @@ in
         {
           zoxide query -l 2>/dev/null || true
           fd --type d --max-depth 3 . "$HOME/Development" "$HOME/code" "$HOME/src" 2>/dev/null || true
+          for f in "$HOME/.config/tmuxinator/"*.yml; do
+            [[ -f "$f" ]] && printf '[tmuxinator] %s\n' "$(basename "''${f%.yml}")"
+          done
         } | awk 'NF' | awk '!seen[$0]++'
       )"
 
       if [[ -z "$candidates" ]]; then
-        tmux display-message "No project dirs found by zoxide/fd"
+        tmux display-message "No project dirs or tmuxinator configs found"
         exit 0
       fi
 
       if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
-        dir="$(printf '%s\n' "$candidates" | fzf-tmux -p 80%,70% --prompt='project> ')" || exit 0
+        pick="$(printf '%s\n' "$candidates" | fzf-tmux -p 80%,70% --prompt='project> ')" || exit 0
       else
-        dir="$(printf '%s\n' "$candidates" | fzf --prompt='project> ')" || exit 0
+        pick="$(printf '%s\n' "$candidates" | fzf --prompt='project> ')" || exit 0
       fi
 
-      [[ -n "$dir" ]] || exit 0
-      exec "$HOME/.local/bin/tmux-template" "$dir"
+      [[ -n "$pick" ]] || exit 0
+
+      case "$pick" in
+        '[tmuxinator] '*)
+          exec tmuxinator start "''${pick#'[tmuxinator] '}"
+          ;;
+        *)
+          exec "$HOME/.local/bin/tmux-template" "$pick"
+          ;;
+      esac
     '';
   };
 
