@@ -43,10 +43,15 @@ deploy-nc-macos:
   host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --flake .#$host --option eval-cache false
 
 deploy-rebuild-macos:
-  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --rebuild --flake .#$host
+  host="$(scutil --get LocalHostName)"; CI=1 HOMEBREW_NO_ENV_HINTS=1 HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1 {{_sudo_prefix}} {{darwin_rebuild}} switch --rebuild --flake .#$host
 
 deploy-macos:
-  host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --flake .#$host
+  # CI=1: Homebrew skips interactive upgrade/tap-trust prompts.
+  # HOMEBREW_NO_ENV_HINTS: silences harmless hint banners.
+  # HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1: skip auto-upgrade of casks
+  #   flagged with auto_updates true; use `brew upgrade --greedy` manually
+  #   when you actually want them.
+  host="$(scutil --get LocalHostName)"; CI=1 HOMEBREW_NO_ENV_HINTS=1 HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1 {{_sudo_prefix}} {{darwin_rebuild}} switch --flake .#$host
 
 debug-macos:
   host="$(scutil --get LocalHostName)"; {{_sudo_prefix}} {{darwin_rebuild}} switch --flake .#$host --show-trace --verbose

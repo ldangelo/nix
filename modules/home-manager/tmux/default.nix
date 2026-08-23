@@ -62,7 +62,7 @@ let
       owner = "omerxx";
       repo = "tmux-floax";
       rev = "133f526793d90d2caa323c47687dd5544a2c704b";
-      sha256 = "sha256-0z1wllqvcmrn1g5v7b0hrb8djzbiy85s4vc8f255w75agmvgsxpl";
+      sha256 = "sha256-9Hb9dn2qHF6KcIhtogvycX3Z0MoQrLPLCzZXtjGlPHw=";
     };
   };
 
