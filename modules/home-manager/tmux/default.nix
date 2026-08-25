@@ -380,7 +380,7 @@ in
         command: run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
       - name: Workmux Add
         key: A
-        command: display-popup -w80% -h70% -E -d '#{pane_current_path}' ~/.local/bin/tmux-workmux-add
+        command: display-popup -w80% -h70% -E -d##{pane_current_path} ~/.local/bin/tmux-workmux-add
       - name: +Panes
         key: p
         menu:
