@@ -330,6 +330,7 @@ in
       bind y run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=yazi yazi"
       bind w run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
       bind s run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=brstats br stats"
+      bind A run "#{@popup-toggle} -w80% -h70% --name=workmuxadd ~/.local/bin/tmux-workmux-add"
       bind p run-shell "${tmux-palette-path}"
       bind P previous-window
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
@@ -380,6 +381,9 @@ in
       - name: Workmux
         key: w
         command: run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
+      - name: Workmux Add
+        key: A
+        command: run "#{@popup-toggle} -w80% -h70% --name=workmuxadd ~/.local/bin/tmux-workmux-add"
       - name: +Panes
         key: p
         menu:
@@ -656,6 +660,54 @@ in
           exec "$HOME/.local/bin/tmux-template" "$pick"
           ;;
       esac
+    '';
+  };
+
+  # Pick a git repo (zoxide + Development/code/src scan, filtered to git
+  # roots) then prompt for a branch name and run `workmux add` in it —
+  # lets you spin up a worktree+window without dropping to a shell first.
+  home.file.".local/bin/tmux-workmux-add" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -uo pipefail
+
+      candidates="$(
+        {
+          zoxide query -l 2>/dev/null || true
+          fd --type d --max-depth 3 . "$HOME/Development" "$HOME/code" "$HOME/src" 2>/dev/null || true
+        } | awk 'NF' | awk '!seen[$0]++' | while IFS= read -r d; do
+          [[ -d "$d/.git" ]] && printf '%s\n' "$d"
+        done
+      )"
+
+      if [[ -z "$candidates" ]]; then
+        tmux display-message "No git project dirs found"
+        exit 0
+      fi
+
+      if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
+        dir="$(printf '%s\n' "$candidates" | fzf-tmux -p 80%,70% --prompt='workmux repo> ')" || exit 0
+      else
+        dir="$(printf '%s\n' "$candidates" | fzf --prompt='workmux repo> ')" || exit 0
+      fi
+      [[ -n "$dir" ]] || exit 0
+
+      branches="$(cd "$dir" && git branch --format='%(refname:short)' 2>/dev/null || true)"
+      if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
+        branch_out="$(printf '%s\n' "$branches" | fzf-tmux -p 80%,50% --prompt='branch> ' --print-query --header='Type a new branch or select an existing one')" || exit 0
+      else
+        branch_out="$(printf '%s\n' "$branches" | fzf --prompt='branch> ' --print-query --header='Type a new branch or select an existing one')" || exit 0
+      fi
+      query="$(printf '%s\n' "$branch_out" | sed -n '1p')"
+      selection="$(printf '%s\n' "$branch_out" | sed -n '2p')"
+      branch="''${selection:-$query}"
+      [[ -n "$branch" ]] || exit 0
+
+      cd "$dir" || exit 1
+      workmux add "$branch"
+      echo
+      read -n 1 -s -r -p "Press any key to close..."
     '';
   };
 
