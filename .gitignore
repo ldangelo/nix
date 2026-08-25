@@ -56,3 +56,5 @@ pi-agent-config-backup/
 # pi-vault-mind
 .lancedb/
 .obsidian/workspace*.json
+# Ephemeral scratch / dumps (DB dumps, exports, etc.)
+.tmp/
