@@ -619,6 +619,24 @@ in
             - br stats
   '';
 
+  # gx10-1 — remote GPU/inference box (serves LiteLLM). Shell window plus a
+  # monitor window split between nvidia-smi and a free shell for log tailing
+  # (adjust the log command to match whatever actually runs the LiteLLM
+  # service on that box).
+  xdg.configFile."tmuxinator/gx10-1.yml".text = ''
+    name: gx10-1
+    root: "~"
+    windows:
+      - shell:
+          panes:
+            - ssh gx10-1
+      - monitor:
+          layout: even-vertical
+          panes:
+            - ssh gx10-1 -t 'watch -n 2 nvidia-smi'
+            - ssh gx10-1
+  '';
+
   # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
   home.file.".local/bin/tmux-project-picker" = {
     executable = true;
