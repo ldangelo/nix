@@ -248,7 +248,7 @@
 
     # Cleanup options
     onActivation = {
-      cleanup = "none";      # Disable cleanup (use "uninstall" or "zap" with HOMEBREW_ASK=1)
+      cleanup = "none";         # Temporarily disabled; see brew-uninstall plan
       autoUpdate = true;          # Auto-update Homebrew
       upgrade = false;            # Keep deploy idempotent; upgrade Homebrew packages manually
     };
