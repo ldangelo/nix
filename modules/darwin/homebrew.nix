@@ -189,7 +189,7 @@
       "microsoft-teams"
       "mouseless@preview"      # Mouse control via keyboard
       "ollama-app"             # Local LLMs
-      "stablyai/orca/orca"      # AI coding agent orchestrator
+        #      "stablyai/orca/orca"      # AI coding agent orchestrator
       "postgres-app"           # Postgres.app
       "postman"
       "postman-cli"
