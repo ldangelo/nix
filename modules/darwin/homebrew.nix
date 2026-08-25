@@ -22,6 +22,7 @@
       "manaflow-ai/cmux"
       "acsandmann/tap"
       "stablyai/orca"
+      "raine/workmux"
     ];
 
     # Brew formulae not easily available in nixpkgs
@@ -69,6 +70,7 @@
       "dotnet@6"                       # .NET 6
       "flyctl"                         # Fly.io CLI
       "vi-sql"                  # Terminal UI for SQL databases with vim motions
+      "raine/workmux/workmux"          # Terminal workflow manager (git worktrees, tmux)
      ] ++ lib.optionals isWorkstation [
       # https://github.com/marcus/sidecar
 
