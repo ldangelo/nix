@@ -133,6 +133,7 @@
       # Common casks (both machines)
       "1password"
       "1password-cli"
+      "claude"                  # Claude desktop app
       #      "claude-code"            # Terminal AI assistant
 #      "claude-monitor"            # Terminal AI assistant
       "font-cantarell"
