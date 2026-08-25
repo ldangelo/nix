@@ -672,6 +672,12 @@ in
       dir="$(tmux display-message -p -t "$sid:" '#{pane_current_path}' 2>/dev/null || true)"
       [[ -n "$dir" ]] || exit 0
 
+      # Skip popup-toggle sessions: renaming breaks tmux-toggle-popup's
+      # opened_name/has-session identity check, causing every toggle
+      # press to be treated as a brand-new popup instead of closing
+      # the existing one.
+      tmux show-environment -t "$sid" __tmux_popup_name >/dev/null 2>&1 && exit 0
+
       # Skip bootstrap session: WezTerm's -A -s main creates a session whose
       # cwd is $HOME. Renaming it away defeats -A reuse on the next tab.
       [[ "$dir" == "$HOME" ]] && exit 0
