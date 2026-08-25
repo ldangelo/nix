@@ -705,7 +705,14 @@ in
       [[ -n "$branch" ]] || exit 0
 
       cd "$dir" || exit 1
-      workmux add "$branch"
+      # A highlighted fzf selection means the branch already exists —
+      # open its existing worktree instead of trying to create a
+      # duplicate one with `add`.
+      if [[ -n "$selection" ]]; then
+        workmux open "$branch"
+      else
+        workmux add "$branch"
+      fi
       echo
       read -n 1 -s -r -p "Press any key to close..."
     '';
