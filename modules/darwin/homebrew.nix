@@ -70,6 +70,7 @@
       "dotnet@6"                       # .NET 6
       "flyctl"                         # Fly.io CLI
       "vi-sql"                  # Terminal UI for SQL databases with vim motions
+      "tmux"                           # Terminal multiplexer (smart-splits.nvim, tmate, etc.)
       "raine/workmux/workmux"          # Terminal workflow manager (git worktrees, tmux)
      ] ++ lib.optionals isWorkstation [
       # https://github.com/marcus/sidecar
