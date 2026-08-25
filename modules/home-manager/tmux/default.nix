@@ -683,19 +683,11 @@ in
         exit 0
       fi
 
-      if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
-        dir="$(printf '%s\n' "$candidates" | fzf-tmux -p 80%,70% --prompt='workmux repo> ')" || exit 0
-      else
-        dir="$(printf '%s\n' "$candidates" | fzf --prompt='workmux repo> ')" || exit 0
-      fi
+      dir="$(printf '%s\n' "$candidates" | fzf --prompt='workmux repo> ')" || exit 0
       [[ -n "$dir" ]] || exit 0
 
       branches="$(cd "$dir" && git branch --format='%(refname:short)' 2>/dev/null || true)"
-      if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
-        branch_out="$(printf '%s\n' "$branches" | fzf-tmux -p 80%,50% --prompt='branch> ' --print-query --header='Type a new branch or select an existing one')" || exit 0
-      else
-        branch_out="$(printf '%s\n' "$branches" | fzf --prompt='branch> ' --print-query --header='Type a new branch or select an existing one')" || exit 0
-      fi
+      branch_out="$(printf '%s\n' "$branches" | fzf --prompt='branch> ' --print-query --header='Type a new branch or select an existing one')" || exit 0
       query="$(printf '%s\n' "$branch_out" | sed -n '1p')"
       selection="$(printf '%s\n' "$branch_out" | sed -n '2p')"
       branch="''${selection:-$query}"
