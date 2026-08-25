@@ -1,8 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
-let
-  isDarwin = pkgs.stdenv.isDarwin;
-in {
+{
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -75,9 +73,14 @@ in {
       "tmuxinator"
       "vi-mode"
       "zoxide"
-    ] ++ lib.optionals isDarwin [
-      "1password"
     ];
+    # NOTE: oh-my-zsh's upstream "1password" plugin unconditionally runs
+    # `op completion zsh &|` on every shell init with no completion (file
+    # empty) guard. In short-lived shells (tmux popups: `-E`, dies as soon
+    # as the shell exits) that background job gets SIGHUP'd before it can
+    # finish, so it never succeeds and macOS re-prompts the Automation
+    # dialog on every popup, forever. Generate the completion once,
+    # synchronously, guarded on non-empty output, instead.
     initContent = ''
       # Make tramp work (https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html)
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
@@ -98,6 +101,26 @@ in {
 
       # Where to look for autoloaded function definitions
       fpath=(~/.zfunc $fpath)
+
+      # 1Password CLI (`op`) — completions + `opswd` helper, replacing the
+      # upstream oh-my-zsh "1password" plugin removed above. That plugin
+      # unconditionally ran `op completion zsh &|` in the background on
+      # every shell init with no success guard; in short-lived tmux popup
+      # shells (`display-popup -E`, which exits the moment the shell does)
+      # the job gets SIGHUP'd before it finishes, so it never completes and
+      # macOS re-shows the Automation ("op would like to access data from
+      # other apps") prompt on every popup. Generate the completion once,
+      # synchronously, in a long-lived shell, then just source the cache.
+      if (( ''${+commands[op]} )); then
+        _op_cache="$ZSH_CACHE_DIR/completions/_op"
+        if [[ ! -s "$_op_cache" ]]; then
+          mkdir -p "$ZSH_CACHE_DIR/completions"
+          op completion zsh >| "$_op_cache" 2>/dev/null
+        fi
+        source "$_op_cache" 2>/dev/null
+        fpath+=("${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/1password")
+        autoload -Uz opswd
+      fi
 
       # Tool completions (not covered by oh-my-zsh plugins)
       source <(jj util completion zsh 2>/dev/null)
