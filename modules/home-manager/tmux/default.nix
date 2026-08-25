@@ -327,7 +327,7 @@ in
       bind y run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=yazi yazi"
       bind w run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
       bind s run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=brstats br stats"
-      bind A run "#{@popup-toggle} -w80% -h70% --name=workmuxadd ~/.local/bin/tmux-workmux-add"
+      bind A display-popup -w80% -h70% -E -d '#{pane_current_path}' ~/.local/bin/tmux-workmux-add
       bind p run-shell "${tmux-palette-path}"
       bind P previous-window
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
@@ -380,7 +380,7 @@ in
         command: run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
       - name: Workmux Add
         key: A
-        command: run "#{@popup-toggle} -w80% -h70% --name=workmuxadd ~/.local/bin/tmux-workmux-add"
+        command: display-popup -w80% -h70% -E -d '#{pane_current_path}' ~/.local/bin/tmux-workmux-add
       - name: +Panes
         key: p
         menu:
