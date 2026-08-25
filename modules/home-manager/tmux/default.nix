@@ -702,8 +702,12 @@ in
       else
         workmux add "$branch"
       fi
-      echo
-      read -n 1 -s -r -p "Press any key to close..."
+      status=$?
+      if [[ $status -ne 0 ]]; then
+        echo
+        read -n 1 -s -r -p "workmux failed (exit $status). Press any key to close..."
+      fi
+      exit $status
     '';
   };
 
