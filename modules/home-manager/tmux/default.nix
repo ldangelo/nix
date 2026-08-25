@@ -619,10 +619,8 @@ in
             - br stats
   '';
 
-  # gx10-1 — remote GPU/inference box (serves LiteLLM). Shell window plus a
-  # monitor window split between nvidia-smi and a free shell for log tailing
-  # (adjust the log command to match whatever actually runs the LiteLLM
-  # service on that box).
+  # gx10-1 — remote GPU/inference box (serves LiteLLM in docker). Shell
+  # window plus a monitor window split between nvidia-smi and docker stats.
   xdg.configFile."tmuxinator/gx10-1.yml".text = ''
     name: gx10-1
     root: "~"
@@ -634,7 +632,7 @@ in
           layout: even-vertical
           panes:
             - ssh gx10-1 -t 'watch -n 2 nvidia-smi'
-            - ssh gx10-1
+            - ssh gx10-1 -t 'docker stats'
   '';
 
   # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
