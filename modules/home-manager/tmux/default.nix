@@ -165,6 +165,16 @@ in
           set -g @batt_color_status_primary_discharging "#cdd6f4"
         '';
       }
+      {
+        plugin = tmux-toggle-popup;
+        extraConfig = ''
+          # Real nested tmux session per popup (not raw display-popup) so
+          # the prefix table, copy-mode, and same-key dismissal all work
+          # inside popups — raw display-popup forwards keys straight to
+          # the popup's shell with no prefix lookup at all.
+          set -g @popup-toggle-mode 'switch'
+        '';
+      }
     ];
     
     extraConfig = ''
@@ -311,17 +321,15 @@ in
       set -g set-clipboard on
       set -g pane-border-status top
       set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
-      # Popup overlays — native tmux display-popup.
-      # Keep default-command empty so display-popup opens tmux's default shell
-      # directly instead of stale reattach/script wrappers captured by old servers.
+      # Popup overlays — real nested tmux sessions via tmux-toggle-popup.
       set -g default-command ""
-      bind t if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}'"
-      bind h if-shell "display-popup -C" "" "display-popup -w90% -h90% glow -p ${../../../docs/tmux-guide.md}"
-      bind b if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'bv'"
-      bind g if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' lazygit"
-      bind y if-shell "display-popup -C" "" "display-popup -w90% -h90% -E -d '#{pane_current_path}' yazi"
-      bind w if-shell "display-popup -C" "" "display-popup -w90% -h90% -E 'workmux dashboard'"
-      bind s if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d '#{pane_current_path}' 'br stats'"
+      bind t run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=shell"
+      bind h run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
+      bind b run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=bv bv"
+      bind g run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=lazygit lazygit"
+      bind y run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=yazi yazi"
+      bind w run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
+      bind s run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=brstats br stats"
       bind p run-shell "${tmux-palette-path}"
       bind P previous-window
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
@@ -371,7 +379,7 @@ in
         command: last-window
       - name: Workmux
         key: w
-        command: if-shell "display-popup -C" "" "display-popup -w90% -h90% -E 'workmux dashboard'"
+        command: run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
       - name: +Panes
         key: p
         menu:
@@ -444,25 +452,25 @@ in
         menu:
           - name: Shell
             key: t
-            command: if-shell "display-popup -C" "" "display-popup -w75% -h75% -E -d \"#{pane_current_path}\""
+            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=shell"
           - name: Lazygit
             key: g
-            command: run-shell ~/.local/bin/tmux-popup-lazygit
+            command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=lazygit lazygit"
           - name: Yazi
             key: "y"
-            command: run-shell ~/.local/bin/tmux-popup-yazi
+            command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=yazi yazi"
           - name: Bead stats
             key: s
-            command: run-shell ~/.local/bin/tmux-popup-br-stats
+            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=brstats br stats"
           - name: Help
             key: h
-            command: run-shell ~/.local/bin/tmux-popup-help
+            command: run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
       - name: Floax
         key: T
         command: run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
       - name: Bead viewer
         key: b
-        command: run-shell ~/.local/bin/tmux-popup-bv
+        command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=bv bv"
       - separator: true
       - name: Reload config
         key: R
@@ -609,67 +617,6 @@ in
           panes:
             - br stats
   '';
-
-  home.file.".local/bin/tmux-popup-lazygit" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      tmux display-popup -w90% -h90% -E -d "$dir" lazygit
-    '';
-  };
-  home.file.".local/bin/tmux-popup-yazi" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      tmux display-popup -w90% -h90% -E -d "$dir" yazi
-    '';
-  };
-
-  home.file.".local/bin/tmux-popup-br-stats" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      tmux display-popup -w75% -h75% -E -d "$dir" 'br stats'
-    '';
-  };
-
-  home.file.".local/bin/tmux-popup-help" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      tmux display-popup -w90% -h90% -E "glow -p ${../../../docs/tmux-guide.md}"
-    '';
-  };
-
-  home.file.".local/bin/tmux-popup-bv" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      if tmux display-popup -C; then
-        exit 0
-      fi
-      dir="$(tmux display-message -p '#{pane_current_path}')"
-      tmux display-popup -w75% -h75% -E -d "$dir" bv
-    '';
-  };
-
 
   # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
   home.file.".local/bin/tmux-project-picker" = {
