@@ -88,6 +88,7 @@ in
     escapeTime = 0;
     historyLimit = 50000;
     keyMode = "vi";
+    focusEvents = true;
     sensibleOnTop = true;
 
     plugins = with pkgs.tmuxPlugins; [

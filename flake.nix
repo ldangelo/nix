@@ -159,12 +159,14 @@
                 "https://github.com/tmonk/pi-goal-x"
                 "https://github.com/KristjanPikhof/pi-yaml-hooks"
                 # "npm:pi-context"  # disabled - API incompatible
-                {
-                  source = "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi";
-                  # Local Ensemble provides Pi skills and prompt templates only.
-                  # Keep extensions disabled to avoid duplicate/conflicting tools.
-                  extensions = [];
-                }
+                # Local Ensemble: skills + commands + agents. Declared as a bare
+                # source string on purpose. The attrset form with `extensions = []`
+                # does NOT mean "extensions off, skills on" — pi treats it as a
+                # resource filter and suppresses ALL resources, which left every
+                # ensemble skill undiscoverable (pi list reported "(filtered)").
+                # The package ships no extensions (no extensions/ dir, no `pi.extensions`
+                # manifest key), so there is nothing to conflict with.
+                "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi"
               ];
               pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
@@ -267,12 +269,14 @@
                   "https://github.com/tmonk/pi-goal-x"
                   "https://github.com/KristjanPikhof/pi-yaml-hooks"
                   # "npm:pi-context"  # disabled - API incompatible
-                  {
-                    source = "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi";
-                    # Local Ensemble provides Pi skills and prompt templates only.
-                    # Keep extensions disabled to avoid duplicate/conflicting tools.
-                    extensions = [];
-                  }
+                  # Local Ensemble: skills + commands + agents. Declared as a bare
+                  # source string on purpose. The attrset form with `extensions = []`
+                  # does NOT mean "extensions off, skills on" — pi treats it as a
+                  # resource filter and suppresses ALL resources, which left every
+                  # ensemble skill undiscoverable (pi list reported "(filtered)").
+                  # The package ships no extensions (no extensions/ dir, no `pi.extensions`
+                  # manifest key), so there is nothing to conflict with.
+                  "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi"
                 ];
                 pi-agent.mcpConfig = {};
                 pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);

@@ -63,7 +63,7 @@
       "notmuch"                        # Email indexing
 
       "direnv"                         # Shell env loader (nixpkgs build broken on macOS aarch64)
-      "xpdf"                           # PDF viewer (insecure in nix)
+      #      "xpdf"                           # PDF viewer (insecure in nix)
       "cask"                           # Emacs dependency management
       "dockutil"                       # Dock management (Swift build broken in nixpkgs)
       "marksman"                       # Markdown language server (depends on .NET/Swift in nixpkgs)

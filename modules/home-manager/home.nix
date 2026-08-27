@@ -16,7 +16,7 @@
       fi
     }
 
-#    export ANTHROPIC_API_KEY="$(secret anthropic_api_key)"
+    export ANTHROPIC_API_KEY="$(secret anthropic_api_key)"
     export OPENROUTER_API_KEY="$(secret openrouter_api_key)"
     export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 #    export OPENCLAW_GATEWAY_TOKEN="$(secret openclaw_gateway_token)"
@@ -26,6 +26,7 @@
     export MINIMAX_API_KEY="$(secret minimax_api_key)"
     export LITELLM_UI_PASSWORD="$(secret litellm_ui_password)"
     export LITELLM_MASTER_KEY="$(secret litellm_master_key)"
+    export GEMINI_API_KEY="$(secret gemini_api_key)"
   '';
 }
 
