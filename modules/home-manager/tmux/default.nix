@@ -332,11 +332,11 @@ in
       set -g default-command ""
       bind t run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=shell"
       bind h run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
-      bind b run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=bv bash -c 'bv; bash'"
+      bind b run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=bv bash -c "bv; bash""
       bind g run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=lazygit lazygit"
 bind y run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=yazi yazi"
-bind w run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux bash -c 'workmux list --pr; bash'"
-      bind s run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=brstats bash -c 'br stats; bash'"
+bind w run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux bash -c "workmux list --pr; bash""
+      bind s run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=brstats bash -c "br stats; bash""
       bind A display-popup -w80% -h70% -E -d '#{pane_current_path}' ~/.local/bin/tmux-workmux-add
 bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux workmux sidebar"
       bind p run-shell "${tmux-palette-path}"
@@ -476,7 +476,7 @@ bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux 
             command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=yazi yazi"
           - name: Bead stats
             key: s
-            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=brstats bash -c 'br stats; bash'"
+            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=brstats bash -c "br stats; bash""
           - name: Help
             key: h
             command: run "#{@popup-toggle} -w90% -h90% --name=help glow -p /Users/ldangelo/nix/docs/tmux-guide.md"
@@ -485,7 +485,7 @@ bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux 
         command: run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
       - name: Bead viewer
         key: b
-        command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=bv bash -c 'bv; bash'"
+        command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=bv bash -c "bv; bash""
       - name: TmuxAI
         key: i
         command: new-window -c "#{pane_current_path}" tmuxai
