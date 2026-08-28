@@ -117,12 +117,11 @@ in
       {
         plugin = tmux-thumbs;
         extraConfig = ''
-          set -g @thumbs-key F
+          set -g @thumbs-key u
         '';
       }
       fzf-tmux-url
       extrakto
-
       {
         plugin = tmux-which-key;
         extraConfig = ''
@@ -180,8 +179,8 @@ in
     
     extraConfig = ''
       # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
-      # Note: plugin uses main.tmux instead of tmux_fzf.tmux
-      set -g @tmux-fzf-launch-key-assign "F"
+      # Note: plugin uses main.tmux which reads TMUX_FZF_LAUNCH_KEY env var
+      set-environment -g TMUX_FZF_LAUNCH_KEY F
       set -g @tmux-fzf-preview-enabled "true"
       set -g @tmux-fzf-popup-enable "true"
       # tmux-floax: persistent floating scratch pane.
@@ -218,6 +217,10 @@ in
       set -g @tnotify-sleep-duration '5'
       set -g @tnotify-verbose-msg '#S:#W — process finished'
       run-shell "${tmux-notify}/share/tmux-plugins/tmux-notify/tnotify.tmux"
+      # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
+      # Plugin is not in home-manager's plugins list because mkTmuxPlugin defaults to
+      # looking for tmux_fzf.tmux, but the plugin provides main.tmux instead. Source it here.
+      run-shell "${tmux-fzf}/share/tmux-plugins/tmux-fzf/main.tmux"
 
       # Extended keys — required for modified Enter/Tab keys (e.g. Pi, Neovim)
       # Pi expects CSI-u encoding; xterm format causes keybinding warnings.
@@ -297,18 +300,24 @@ in
       bind m set -g mouse \; display "Mouse: #{?mouse,ON,OFF}"
       # Reload config
       bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
+      # Terminal window title
+      set -g set-titles on
+
       # Activity monitoring
+      set -g monitor-activity on
       set -g visual-activity off
 
-      # Bell monitoring — Claude Code and other agents send terminal bells
-      # when waiting for input. This highlights the window and triggers
-      # a macOS notification via terminal-notifier.
+      # Bell monitoring — Claude Code / pi agents send terminal BEL when waiting
+      # for input. This highlights the window and fires a macOS notification.
+      # Use run-shell -b (background/forked) so the hook doesn't block tmux
+      # event loop; terminal-notifier -remove prevents duplicate notifications
+      # when bells fire in rapid succession.
       set -g monitor-bell on
+      set -g bell-action any
       set -g visual-bell off
-      set -g bell-action other
-      set-hook -g alert-bell 'run-shell "terminal-notifier -title \"tmux: #{session_name}\" -message \"#{window_name} needs attention\" -sound default -group tmux-#{session_name}-#{window_index}"'
-
-
+      set-hook -g alert-bell {
+        run-shell -b "terminal-notifier -remove 'tmux-#{session_name}-#{window_index}' >/dev/null 2>&1; terminal-notifier -title 'tmux: #{session_name}' -message '#{window_name} needs input' -sound default -group 'tmux-#{session_name}-#{window_index}'"
+      }
       # Session management via tmux-template (prefix + f), tmux-tea (prefix + o),
       # and tmux-palette (prefix + p).
       # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
@@ -321,15 +330,19 @@ in
       set -g pane-border-format " #{pane_index}: #{pane_current_command} [#{b:pane_current_path}] "
       # Popup overlays — real nested tmux sessions via tmux-toggle-popup.
       set -g default-command ""
-      bind t run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=shell"
+      bind t run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=shell"
       bind h run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
-      bind b run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=bv bv"
-      bind g run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=lazygit lazygit"
-      bind y run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=yazi yazi"
-      bind w run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
-      bind s run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}' --name=brstats br stats"
+      bind b run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=bv bv"
+      bind g run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=lazygit lazygit"
+bind y run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=yazi yazi"
+bind w run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux workmux list --pr"
+      bind s run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=brstats br stats"
       bind A display-popup -w80% -h70% -E -d '#{pane_current_path}' ~/.local/bin/tmux-workmux-add
+bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux workmux sidebar"
       bind p run-shell "${tmux-palette-path}"
+      # tmuxai: AI terminal assistant. Launch in a new window (not a nested
+      # popup) so it can observe/drive the real session's panes.
+      bind i new-window -c "#{pane_current_path}" tmuxai
       bind P previous-window
       # Pin resurrect/continuum save dir inside the home-manager-managed tree
       # so the default ~/.tmux/ path doesn't silently fail and the `-N` clone
@@ -376,12 +389,12 @@ in
       - name: Last window
         key: tab
         command: last-window
-      - name: Workmux
+      - name: Workmux List
         key: w
-        command: run "#{@popup-toggle} -w90% -h90% --name=workmux workmux dashboard"
+        command: run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux workmux list --pr"
       - name: Workmux Add
         key: A
-        command: display-popup -w80% -h70% -E -d##{pane_current_path} ~/.local/bin/tmux-workmux-add
+        command: display-popup -w80% -h70% -E -d "#{pane_current_path}" ~/.local/bin/tmux-workmux-add
       - name: +Panes
         key: p
         menu:
@@ -459,20 +472,23 @@ in
             key: g
             command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=lazygit lazygit"
           - name: Yazi
-            key: "y"
+            key: y
             command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=yazi yazi"
           - name: Bead stats
             key: s
             command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=brstats br stats"
           - name: Help
             key: h
-            command: run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
+            command: run "#{@popup-toggle} -w90% -h90% --name=help glow -p /Users/ldangelo/nix/docs/tmux-guide.md"
       - name: Floax
         key: T
         command: run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
       - name: Bead viewer
         key: b
         command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=bv bv"
+      - name: TmuxAI
+        key: i
+        command: new-window -c "#{pane_current_path}" tmuxai
       - separator: true
       - name: Reload config
         key: R
