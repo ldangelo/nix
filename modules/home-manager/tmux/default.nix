@@ -476,7 +476,7 @@ bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux 
             command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=yazi yazi"
           - name: Bead stats
             key: s
-            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=brstats $SHELL -lc 'br stats; exec $SHELL'"
+            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=brstats $SHELL -lc \"br stats; exec $SHELL\""
           - name: Help
             key: h
             command: run "#{@popup-toggle} -w90% -h90% --name=help glow -p /Users/ldangelo/nix/docs/tmux-guide.md"
@@ -485,7 +485,7 @@ bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux 
         command: run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
       - name: Bead viewer
         key: b
-        command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=bv $SHELL -lc 'bv; exec $SHELL'"
+        command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=bv $SHELL -lc \"bv; exec $SHELL\""
       - name: TmuxAI
         key: i
         command: new-window -c "#{pane_current_path}" tmuxai
