@@ -391,7 +391,6 @@ in
           ".pi/agent/extensions/progressive-context.ts".source = ./pi-extensions/progressive-context.ts;
           ".pi/agent/extensions/auto-commit-on-exit.ts".source = ./pi-extensions/auto-commit-on-exit.ts;
           ".pi/agent/extensions/preset.ts".source = ./pi-extensions/preset.ts;
-          ".pi/agent/extensions/auto-compact.ts".source = ./pi-extensions/auto-compact.ts;
           ".pi/agent/extensions/pi-fact.ts".source = ./pi-extensions/pi-fact.ts;
           ".pi/agent/extensions/obsidian-session-saver.ts".source = ./pi-extensions/obsidian/obsidian-session-saver.ts;
           ".pi/agent/extensions/nvim/index.ts".source = ./pi-extensions/nvim/index.ts;
