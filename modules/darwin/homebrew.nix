@@ -22,7 +22,6 @@
       "manaflow-ai/cmux"
       "acsandmann/tap"
       "stablyai/orca"
-      "raine/workmux"
     ];
 
     # Brew formulae not easily available in nixpkgs
@@ -46,7 +45,6 @@
       "pi-coding-agent"                # Pi AI coding agent
       "repomix"                        # Pack repo into AI-friendly file
       "swagger-codegen"                # OpenAPI code generator
-      "worktrunk"                      # Git worktree manager (parallel agent workflows)
       "localstack"                     # Local AWS cloud emulator
 
       # Shell & System Tools
@@ -71,7 +69,7 @@
       "flyctl"                         # Fly.io CLI
       "vi-sql"                  # Terminal UI for SQL databases with vim motions
       "tmux"                           # Terminal multiplexer (smart-splits.nvim, tmate, etc.)
-      "raine/workmux/workmux"          # Terminal workflow manager (git worktrees, tmux)
+      "tmuxai"                         # AI-powered non-intrusive terminal assistant (points at LiteLLM proxy)
      ] ++ lib.optionals isWorkstation [
       # https://github.com/marcus/sidecar
 

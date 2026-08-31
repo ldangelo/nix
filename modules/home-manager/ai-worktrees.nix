@@ -60,16 +60,12 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = [ worktrunk clash pkgs.tmuxinator ];
 
-    # ── worktrunk user config ──────────────────────────────────────────────
-    xdg.configFile."worktrunk/config.toml".text = ''
-      worktree-path = "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
-
-      [commit.generation]
-      command = "omp -p --model=anthropic/claude-haiku"
-
-      [list]
-      columns = ["branch", "status", "ci", "path"]
-    '';
+    # NB: this module used to also write xdg.configFile."worktrunk/config.toml"
+    # here, but that collided with the config.toml now owned by
+    # modules/home-manager/tmux/default.nix (which sets a post-switch hook
+    # wiring `wt switch` to `sesh connect`). That block was removed; the
+    # tmux module's config.toml is now the single source of truth for
+    # worktrunk configuration.
 
     # ── tmuxinator project:  `tmuxinator start agents`  (run from a repo) ────
     # Large control pane on the left; right column has the clash radar on top

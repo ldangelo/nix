@@ -1,5 +1,5 @@
-**Last Updated**: 2026-08-20
-**Architecture**: WezTerm (dumb terminal) + tmux (multiplexer) + sesh/tmux-template (project switching) + tmuxp (layouts/templates)
+**Last Updated**: 2026-08-31
+**Architecture**: WezTerm (dumb terminal) + tmux (multiplexer) + sesh (session switching) + worktrunk (worktree management) + tmuxp (ad-hoc layouts)
 **Prefix Key**: `Ctrl+Space`
 **Configuration**: `modules/home-manager/tmux/default.nix`, `dotfiles/config/wezterm/`
 
@@ -10,7 +10,7 @@
 ```
 WezTerm (terminal emulator)
   └── tmux (multiplexer — owns all windows, panes, sessions)
-        ├── Session: "foreman" (tmuxp dev template)
+        ├── Session: "foreman" (example layout)
         │     ├── Window 1: "code"     ← tab in status bar
         │     │     ├── Pane: nvim
         │     │     └── Pane: claude --continue
@@ -26,6 +26,9 @@ WezTerm (terminal emulator)
               ├── shell      (Prefix t)
               ├── bv         (Prefix b)
               ├── br stats   (Prefix s)
+              ├── sesh       (Prefix S)
+              ├── worktrunk  (Prefix W)
+              └── gh-dash    (Prefix w)
 ```
 **WezTerm** handles: font rendering, colors, clipboard (Cmd+C/V), window chrome.
 **tmux** handles: everything else — sessions, windows, panes, copy mode, popups, navigation.
@@ -42,43 +45,38 @@ Only tmux windows appear as "tabs" in the status bar. Lazygit and yazi are float
 # Start tmux
 tmux
 
-# Launch the sessionizer to pick a project
-# Prefix f  (Ctrl+Space, then f)
-
-# Or launch the directory-aware template launcher directly
-cd ~/Development/Fortium/foreman
-tmux-template .
-
-# `mux` is tmuxp for ad-hoc layouts; `muxi` keeps old tmuxinator layouts
+# Launch the session picker to pick a project
+# Prefix S  (Ctrl+Space, then S)
 ```
 
 ### Daily Workflow
 
 1. Open WezTerm
-2. `Prefix f` to open the sessionizer — pick your project
-3. The `dev` layout starts automatically: code + ops windows
-4. `Prefix g` for lazygit, `Prefix y` for yazi (popups — no extra tabs)
-5. `Prefix d` to detach when done (session keeps running)
-6. Tomorrow: open WezTerm, `tmux attach` or `Prefix f` again
+2. `Prefix S` (sesh picker) to attach an existing session, or `Prefix W` (worktrunk) to switch/create a worktree
+3. `Prefix g` for lazygit, `Prefix y` for yazi (popups — no extra tabs)
+4. `Prefix d` to detach when done (session keeps running)
+5. Tomorrow: open WezTerm, `tmux attach` or `Prefix S` again
 
 ---
 
-## Sessionizer (Prefix f)
+## Session & Worktree Switching (Prefix S / Prefix W)
 
-The sessionizer is a fuzzy project picker. It creates or attaches to one tmux session per project, using `tmux-template` to pick a tmuxp layout by project type.
+**Prefix S** opens **sesh picker**, a fast TUI listing live tmux sessions and zoxide-tracked directories. Use fuzzy search + Enter to attach.
+
+**Prefix W** opens **worktrunk's** `wt switch` picker, an interactive list of git worktrees. Selecting (or creating) one attaches you to it; a post-switch hook (`sesh connect --switch`) automatically brings up a live tmux session on the new worktree path.
 
 | Key | Action |
 |-----|--------|
-| `Prefix f` | Open sessionizer (fzf project picker) |
+| `Prefix S` | Open sesh picker (fuzzy search + Enter) — sessions + zoxide dirs |
+| `Prefix W` | Open worktrunk's `wt switch` picker — create/switch worktrees, auto-attaches tmux |
+| `Prefix w` | Open gh-dash — GitHub PR/issue dashboard |
 
 How it works:
-1. Queries zoxide for your most-used directories; falls back to `fd` under `~/Development`, `~/code`, `~/src`
-2. Shows them in fzf for fuzzy selection
-3. Cancel exits cleanly without tmux error noise
-4. If a tmux session already exists for that project → switches to it
-5. If not → creates a new session using detected tmuxp template
+1. `Prefix S` — pick a live tmux session or a zoxide-known directory to attach/create
+2. `Prefix W` — pick or create a git worktree; the post-switch hook attaches a tmux session automatically
+3. Each project/worktree maps to its own tmux session
 
-This means each project gets its own isolated tmux session with the right workspace for its stack, and you switch between projects instantly.
+This means switching between projects, worktrees, and checking PR status are each one keypress away.
 
 ---
 
@@ -98,15 +96,11 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 
 | Key | Action |
 |-----|--------|
-| `Prefix o` | **tmux-tea** — fuzzy tmux session manager |
+| `Prefix S` | **sesh** — session/directory picker |
+| `Prefix W` | **worktrunk** — worktree picker (`wt switch`) |
 | `Prefix p` | **tmux-palette** — command palette (fuzzy search all tools) |
-| `Prefix f` | **Sessionizer** — fuzzy project picker via zoxide + tmux-template |
-| `Prefix S` | Choose session (built-in picker) |
-| `Prefix N` | New raw tmux session in current directory |
 | `Prefix d` | Detach from session |
 | `Prefix BTab` | Switch to last session |
-| `M-t` | New session in current dir (no prefix) |
-| `M-1` to `M-9` | Switch to Nth session by creation order (no prefix) |
 
 ### Windows (tabs in the status bar)
 
@@ -118,7 +112,6 @@ All bindings use the prefix `Ctrl+Space` unless marked as **root** (no prefix ne
 | `Prefix n` | Next window |
 | `Prefix P` | Previous window |
 | `Prefix 1-9` | Jump to window by number |
-| `Prefix w` | Window/session tree picker |
 | `Prefix Tab` | Last window (toggle) |
 | `Prefix <` | Move window left |
 | `Prefix >` | Move window right |
@@ -169,8 +162,11 @@ These work seamlessly across tmux panes and Neovim splits via vim-tmux-navigator
 | `Prefix g` | **lazygit** — git operations | 90% |
 | `Prefix y` | **yazi** — file browser | 90% |
 | `Prefix s` | **bead stats** (`br stats`) | 75% |
-
+| `Prefix S` | **sesh** — session picker | 75% |
+| `Prefix W` | **worktrunk** — worktree picker (`wt switch`) | 90% |
+| `Prefix w` | **gh-dash** — GitHub PR/issue dashboard | 90% |
 | `Prefix p` | **tmux-palette** — command palette | 75% |
+
 **Diff view** (not in the table above):
 
 | Key | Action |
@@ -219,7 +215,7 @@ Recommended plugin set for this setup:
 | `tmux-notify` | macOS alerts when long commands/agents finish |
 | `catppuccin`, `cpu`, `battery` | Statusline/theme |
 
-Optional later: `tmux-sessionx` if `Prefix f` feels too minimal. Avoid adding more layout/session plugins until `tmux-template` proves insufficient.
+Session/worktree switching is now handled by external tools (sesh, worktrunk) bound to `Prefix S` / `Prefix W` rather than a tmux plugin — see "Session & Worktree Switching" below.
 
 ### Session Persistence: resurrect + continuum
 
@@ -284,52 +280,29 @@ Mocha variant with slanted window status. Status bar shows:
 
 ---
 
-## Session Manager + Templates
+## Session Management
 
-Recommended stack:
+### sesh + worktrunk — Session & Worktree Switching
 
-| Tool | Role |
-|------|------|
-| `sesh` | Session discovery/switching CLI |
-| `tmux-template` | Local launcher: maps directory → template |
-| `tmuxp` / `mux` | Layout/template engine |
-| `tmuxinator` / `muxi` | Legacy layouts kept for compatibility |
+sesh is the tmux session/directory picker; worktrunk is the git worktree lifecycle manager, wired to auto-attach a tmux session on switch via a post-switch hook.
 
-### Directory → Template Mapping
+| Command | Action |
+|---------|--------|
+| `Prefix S` | sesh picker — TUI session/directory picker |
+| `Prefix W` | worktrunk (`wt switch`) — interactive worktree picker; auto-attaches a tmux session |
+| `Prefix w` | gh-dash — GitHub PR/issue dashboard |
 
-`tmux-template DIR` checks files in this order:
+### tmuxp — Ad-hoc Layouts
 
-| Signal | Template |
-|--------|----------|
-| `.tmux-template` | Explicit override. File contains `dev`, `node`, `nix`, `rust`, or `python` |
-| `package.json` | `node` |
-| `flake.nix` | `nix` |
-| `Cargo.toml` | `rust` |
-| `pyproject.toml` / `requirements.txt` | `python` |
-| fallback | `dev` |
-
-### Current Templates
-
-| Template | Windows | Best for |
-|----------|---------|----------|
-| `dev` | `code` = nvim + claude, `ops` = bv/foreman/shell | Default project |
-| `node` | `code`, `dev` = npm dev + npm test watch | JS/TS apps |
-| `nix` | `code`, `ops` = br + `nix flake check` + shell | Nix flakes |
-| `rust` | `code`, `cargo` = check + test | Rust crates |
-| `python` | `code`, `test` = pytest + shell | Python projects |
-
-### Commands
+`mux` loads tmuxp layouts manually when needed for custom setups:
 
 ```bash
-tmux-template .                 # Detect current dir and start/switch session
-tmux-template ~/code/myapp       # Start/switch specific project
-sesh list                        # List sessions/dirs known to sesh
-sesh connect <name-or-path>      # Connect via sesh
-mux load <layout.yaml>           # Load any tmuxp layout manually
-muxi start dev                   # Legacy tmuxinator layout
+mux load <layout.yaml>
 ```
 
-### dev (primary fallback)
+### Suggested Project Layout
+
+A common manual layout for a project session (build these windows/panes yourself, or via a saved sesh/tmuxp layout):
 
 ```
 Window 1: "code" (even-horizontal)
@@ -378,8 +351,7 @@ Everything else (splits, panes, sessions, copy mode, search) is handled by tmux.
 
 ```bash
 # Open WezTerm, then:
-Prefix f          # Sessionizer — pick your project
-                  # dev layout starts automatically
+Prefix S          # sesh picker — pick your project/session
 Prefix 1          # Switch to code window (nvim + claude)
 Prefix 2          # Switch to ops window (bv + foreman)
 Prefix g          # Toggle lazygit popup
@@ -389,10 +361,10 @@ Prefix y          # Toggle yazi popup
 ### Switching Between Projects
 
 ```bash
-Prefix f          # Sessionizer — pick another project
+Prefix S          # sesh picker — switch to another session/project
                   # Each project is its own tmux session
-M-1 through M-9   # Quick-switch between sessions (Alt+number)
-Prefix S          # Built-in session tree picker
+Prefix W          # worktrunk — switch to (or create) a git worktree
+                  # auto-attaches a tmux session on selection
 ```
 
 ### Quick Git Operations
@@ -411,16 +383,6 @@ Prefix d          # Detach — everything keeps running
 tmux attach       # Everything is exactly where you left it
 ```
 
-### Multi-Agent Development
-
-```bash
-cd ~/Development/Fortium/foreman
-muxi start agents
-# Legacy tmuxinator layout:
-# Window 1-3: three Claude Code sessions working in parallel
-# Window 4: overview with task list
-```
-
 ---
 
 ## Quick Reference Cheat Sheet
@@ -428,10 +390,14 @@ muxi start agents
 | Key | Action |
 |-----|--------|
 | `Ctrl+Space` | **Prefix key** (start of every command) |
-| `Prefix f` | **Sessionizer** (pick project, auto-layout) |
+| `Prefix S` | **sesh** — session/project picker |
+| `Prefix W` | **worktrunk** — worktree picker (`wt switch`) |
+| `Prefix w` | **gh-dash** — GitHub PR/issue dashboard |
 | `Ctrl+h/j/k/l` | Navigate panes (no prefix, works with Neovim) |
 | `Prefix g` | Toggle lazygit popup |
 | `Prefix y` | Toggle yazi popup |
+| `Prefix b` | Toggle bead viewer (`bv`) popup |
+| `Prefix s` | Toggle bead stats (`br stats`) popup |
 | `Prefix t` | Open shell popup |
 | `Prefix z` | Zoom pane (toggle fullscreen) |
 | `Prefix c` | New window |
@@ -439,12 +405,10 @@ muxi start agents
 | `Prefix \|` | Split horizontal |
 | `Prefix -` | Split vertical |
 | `Prefix d` | Detach |
-| `Prefix S` | Session tree picker |
 | `Prefix h` | This help guide (popup) |
 | `Prefix F` | Thumbs (quick copy) |
 | `Prefix u` | URL picker |
 | `Prefix r` | Reload config |
-| `M-1` to `M-9` | Switch to Nth session (no prefix) |
 
 ---
 

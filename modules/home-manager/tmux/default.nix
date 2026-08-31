@@ -27,19 +27,6 @@ let
     };
   };
 
-  # tmux-tea: fuzzy tmux session manager (zoxide, fzf, tmuxinator)
-  # Not in nixpkgs — built from source (2KAbhishek/tmux-tea)
-  tmux-tea = pkgs.tmuxPlugins.mkTmuxPlugin {
-    pluginName = "tmux-tea";
-    version = "unstable";
-    src = pkgs.fetchFromGitHub {
-      owner = "2KAbhishek";
-      repo = "tmux-tea";
-      rev = "806aa7186c0344e0c7b2c9fa0c044267d6b3ca9e";
-      sha256 = "sha256-Z5IaZG4OJUqERz1P8aZu0CVcuo4v741rqTob9HBaqU8=";
-    };
-  };
-
   # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
   # Not in nixpkgs — built from source (sainnhe/tmux-fzf)
   tmux-fzf = pkgs.tmuxPlugins.mkTmuxPlugin {
@@ -80,7 +67,6 @@ in
       mkdir -p $out/bin
       ln -s /opt/homebrew/bin/tmux $out/bin/tmux
     '';
-    tmuxinator.enable = true;
     prefix = "C-Space";
     mouse = true;
     terminal = "tmux-256color";
@@ -90,7 +76,6 @@ in
     keyMode = "vi";
     focusEvents = true;
     sensibleOnTop = true;
-
     plugins = with pkgs.tmuxPlugins; [
       {
         plugin = vim-tmux-navigator;
@@ -122,12 +107,6 @@ in
       }
       fzf-tmux-url
       extrakto
-      {
-        plugin = tmux-which-key;
-        extraConfig = ''
-          set -g @tmux-which-key-xdg-enable 1
-        '';
-      }
       {
         plugin = catppuccin;
         extraConfig = ''
@@ -194,15 +173,6 @@ in
       set -g @floax-height '75%'
       run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
 
-
-      # tmux-tea: fuzzy tmux session manager
-      # Note: plugin uses tea.tmux instead of tmux_tea.tmux
-      set -g @tea-bind 'o'
-      set -g @tea-default-command 'nvim .'
-      set -g @tea-find-path "$HOME/Development"
-      set -g @tea-preview-position 'top'
-      set -g @tea-session-name 'basename'
-      run-shell "${tmux-tea}/share/tmux-plugins/tmux-tea/tea.tmux"
 
       # treemux: Nvim-Tree/Neo-Tree file explorer as a tmux sidebar
       # Note: plugin uses sidebar.tmux instead of treemux.tmux
@@ -273,21 +243,6 @@ in
       bind Enter copy-mode
       bind v copy-mode
 
-      # Session/project navigation
-      bind f run-shell '~/.local/bin/tmux-project-picker'
-      bind S choose-tree -Zs
-      bind N new-session -c "#{pane_current_path}"
-      bind-key -n M-t run-shell '~/.local/bin/tmux-template "#{pane_current_path}"'
-      bind-key -n M-1 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "1p")" && tmux switch-client -t "$target"'
-      bind-key -n M-2 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "2p")" && tmux switch-client -t "$target"'
-      bind-key -n M-3 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "3p")" && tmux switch-client -t "$target"'
-      bind-key -n M-4 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "4p")" && tmux switch-client -t "$target"'
-      bind-key -n M-5 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "5p")" && tmux switch-client -t "$target"'
-      bind-key -n M-6 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "6p")" && tmux switch-client -t "$target"'
-      bind-key -n M-7 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "7p")" && tmux switch-client -t "$target"'
-      bind-key -n M-8 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "8p")" && tmux switch-client -t "$target"'
-      bind-key -n M-9 run-shell 'target="$(tmux list-sessions -F "##{session_id}" | sed -n "9p")" && tmux switch-client -t "$target"'
-
       # Window navigation
       bind Tab last-window
       bind BTab switch-client -l
@@ -318,11 +273,8 @@ in
       set-hook -g alert-bell {
         run-shell -b "terminal-notifier -remove 'tmux-#{session_name}-#{window_index}' >/dev/null 2>&1; terminal-notifier -title 'tmux: #{session_name}' -message '#{window_name} needs input' -sound default -group 'tmux-#{session_name}-#{window_index}'"
       }
-      # Session management via tmux-template (prefix + f), tmux-tea (prefix + o),
+      # Session management via sesh (prefix + S), worktrunk (prefix + W),
       # and tmux-palette (prefix + p).
-      # Replaces: fzf-sessionizer, M-t, M-1..9, bind S/N
-
-      # UX tweaks
       set -g display-time 2000
       set -g detach-on-destroy off
       set -g set-clipboard on
@@ -334,11 +286,21 @@ in
       bind h run "#{@popup-toggle} -w90% -h90% --name=help glow -p ${../../../docs/tmux-guide.md}"
       bind b run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=bv $SHELL -lc 'bv; exec $SHELL'"
       bind g run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=lazygit lazygit"
-bind y run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=yazi yazi"
-bind w run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux $SHELL -lc 'workmux list --pr; exec $SHELL'"
+      bind y run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=yazi yazi"
+      # gh-dash: full TUI GitHub PR/issue dashboard (replaces the old
+      # `workmux list --pr` binding on the same key).
+      bind w run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=ghdash gh-dash"
       bind s run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=brstats $SHELL -lc 'br stats; exec $SHELL'"
-      bind A display-popup -w80% -h70% -E -d '#{pane_current_path}' ~/.local/bin/tmux-workmux-add
-bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux workmux sidebar"
+      # sesh: tmux session manager (lists live tmux sessions + zoxide dirs).
+      # `sesh picker` is sesh's own self-contained interactive TUI — it
+      # handles session creation/attach internally, so no extra quoting or
+      # helper script is needed (same simple pattern as lazygit/yazi above).
+      bind S run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=sesh sesh picker"
+      # worktrunk: git worktree manager. `wt switch` with no branch argument
+      # opens its own interactive picker; on selection, the post-switch hook
+      # in ~/.config/worktrunk/config.toml runs `sesh connect` on the new
+      # worktree path, attaching a live tmux session automatically.
+      bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=worktrunk wt switch"
       bind p run-shell "${tmux-palette-path}"
       # tmuxai: AI terminal assistant. Launch in a new window (not a nested
       # popup) so it can observe/drive the real session's panes.
@@ -359,535 +321,24 @@ bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux 
   # refuses to clobber an existing symlink whose target hash drifted.
   xdg.configFile."tmux/tmux.conf".force = true;
 
-  # Tmuxinator workspaces
-  # tmux-which-key configuration
-  xdg.configFile."tmux/plugins/tmux-which-key/config.yaml" = {
+  # worktrunk user config: wires a post-switch hook so that creating or
+  # switching to a worktree (via `bind W` → `wt switch` above) also attaches
+  # a live tmux session on the new worktree path, replacing workmux's old
+  # add/open flow. `sesh connect --switch` is used (rather than the plain
+  # `connect`/attach form) because the hook fires from a background process,
+  # not an interactive terminal — see https://worktrunk.dev/hook/.
+  #
+  # NB: modules/home-manager/ai-worktrees.nix (disabled by default; see
+  # flake.nix) previously also wrote xdg.configFile."worktrunk/config.toml"
+  # under its own `aiWorktrees.enable` option, which would have collided
+  # with this definition. That writer was removed — this is now the single
+  # source of truth for worktrunk configuration.
+  xdg.configFile."worktrunk/config.toml" = {
     force = true;
     text = ''
-    command_alias_start_index: 200
-    keybindings:
-      prefix_table: Space
-    title:
-      style: align=centre,bold
-      prefix: tmux
-      prefix_style: fg=green,align=centre,bold
-    position:
-      x: C
-      y: S
-    custom_variables:
-      - name: log_info
-        value: "#[fg=green,italics] [info]#[default]#[italics]"
-    macros:
-      - name: reload-config
-        commands:
-          - source-file ~/.config/tmux/tmux.conf
-          - display "Config reloaded"
-    items:
-      - name: Run
-        key: space
-        command: command-prompt
-      - name: Last window
-        key: tab
-        command: last-window
-      - name: Workmux List
-        key: w
-        command: run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux workmux list --pr"
-      - name: Workmux Add
-        key: A
-        command: display-popup -w80% -h70% -E -d "#{pane_current_path}" ~/.local/bin/tmux-workmux-add
-      - name: +Panes
-        key: p
-        menu:
-          - name: Last
-            key: tab
-            command: lastp
-          - name: Choose
-            key: p
-            command: displayp -d 0
-          - separator: true
-          - name: Zoom
-            key: z
-            command: resizep -Z
-          - name: +Resize
-            key: r
-            menu:
-              - name: Left
-                key: h
-                command: resizep -L 5
-                transient: true
-              - name: Down
-                key: j
-                command: resizep -D 5
-                transient: true
-              - name: Up
-                key: k
-                command: resizep -U 5
-                transient: true
-              - name: Right
-                key: l
-                command: resizep -R 5
-                transient: true
-          - separator: true
-          - name: Break to window
-            key: "!"
-            command: break-pane
-          - name: Kill
-            key: X
-            command: 'confirm-before -p "Kill pane #P? (y/n)" kill-pane'
-          - name: Sync panes
-            key: "Y"
-            command: setw synchronize-panes
-      - name: +Sessions
-        key: s
-        menu:
-          - name: Project picker
-            key: f
-            command: run-shell ~/.local/bin/tmux-project-picker
-          - name: Choose
-            key: s
-            command: choose-tree -Zs
-          - name: New here
-            key: n
-            command: new-session -c "#{pane_current_path}"
-          - name: Tea
-            key: t
-            command: run "tea"
-          - name: Rename
-            key: r
-            command: command-prompt -I "#S" "rename-session -- \"%%\""
-          - name: Detach
-            key: d
-            command: detach
-      - name: Copy mode
-        key: c
-        command: copy-mode
-      - separator: true
-      - name: +Popups
-        key: t
-        menu:
-          - name: Shell
-            key: t
-            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=shell"
-          - name: Lazygit
-            key: g
-            command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=lazygit lazygit"
-          - name: Yazi
-            key: y
-            command: run "#{@popup-toggle} -w90% -h90% -Ed##{pane_current_path} --name=yazi yazi"
-          - name: Bead stats
-            key: s
-            command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=brstats $SHELL -lc \"br stats; exec $SHELL\""
-          - name: Help
-            key: h
-            command: run "#{@popup-toggle} -w90% -h90% --name=help glow -p /Users/ldangelo/nix/docs/tmux-guide.md"
-      - name: Floax
-        key: T
-        command: run-shell "${tmux-floax}/share/tmux-plugins/tmux-floax/floax.tmux"
-      - name: Bead viewer
-        key: b
-        command: run "#{@popup-toggle} -w75% -h75% -Ed##{pane_current_path} --name=bv $SHELL -lc \"bv; exec $SHELL\""
-      - name: TmuxAI
-        key: i
-        command: new-window -c "#{pane_current_path}" tmuxai
-      - separator: true
-      - name: Reload config
-        key: R
-        macro: reload-config
-      - name: Keys
-        key: "?"
-        command: list-keys -N
-  '';
-  };
-
-  xdg.configFile."tmuxinator/simple.yml".text = ''
-    name: simple
-    root: .
-    windows:
-      - shell:
-          panes:
-            - ""
-  '';
-
-  xdg.configFile."tmuxinator/editor.yml".text = ''
-    name: editor
-    root: .
-    windows:
-      - editor:
-          panes:
-            - nvim 
-  '';
-
-  xdg.configFile."tmuxinator/dev.yml".text = ''
-    name: dev
-    root: .
-    windows:
-      - code:
-          layout: even-horizontal
-          panes:
-            - omp -r
-      - nvim:
-          layout: main-vertical
-          panes:
-            - nvim
-      - ops:
-          layout: main-vertical
-          panes:
-            - bv
-            - foreman status --watch
-            - ""
-  '';
-
-  xdg.configFile."tmuxinator/monitor.yml".text = ''
-    name: monitor
-    root: .
-    windows:
-      - dashboard:
-          layout: tiled
-          panes:
-            - htop
-            - watch -n 2 df -h
-            - watch -n 2 netstat -an
-            - ""
-  '';
-
-  xdg.configFile."tmuxinator/claude.yml".text = ''
-    name: claude
-    root: .
-    windows:
-      - pair:
-          layout: even-horizontal
-          panes:
-            - nvim 
-            - claude --continue
-  '';
-
-  xdg.configFile."tmuxinator/notes.yml".text = ''
-    name: notes
-    root: <%= ENV.fetch('OBSIDIAN_VAULT', File.expand_path('~/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo')) %>
-    windows:
-      - editor:
-          panes:
-            - nvim .
-      - shell:
-          panes:
-            - ""
-  '';
-
-  xdg.configFile."tmuxinator/ops.yml".text = ''
-    name: ops
-    root: .
-    windows:
-      - shell:
-          panes:
-            - ""
-      - logs:
-          panes:
-            - ""
-  '';
-
-  # Multi-agent layout: run several Claude Code sessions in parallel
-  xdg.configFile."tmuxinator/agents.yml".text = ''
-    name: agents
-    root: .
-    windows:
-      - agent-1:
-          panes:
-            - claude --continue
-      - agent-2:
-          panes:
-            - claude --continue
-      - agent-3:
-          panes:
-            - claude --continue
-      - overview:
-          layout: even-horizontal
-          panes:
-            - br list --status=open
-            - ""
-  '';
-
-  # Lazygit — full-window git TUI at pane cwd
-  xdg.configFile."tmuxinator/lazygit.yml".text = ''
-    name: lazygit
-    root: <%= @args[0] || ENV.fetch("HOME") %>
-    windows:
-      - main:
-          panes:
-            - lazygit
-  '';
-
-  # Yazi — full-window file browser at pane cwd
-  xdg.configFile."tmuxinator/yazi.yml".text = ''
-    name: yazi
-    root: <%= @args[0] || ENV.fetch("HOME") %>
-    windows:
-      - main:
-          panes:
-            - yazi
-  '';
-
-  # Beads stats — `br stats` overview
-  xdg.configFile."tmuxinator/br-stats.yml".text = ''
-    name: br-stats
-    root: <%= @args[0] || ENV.fetch("HOME") %>
-    windows:
-      - main:
-          panes:
-            - br stats
-  '';
-
-  # gx10-1 — remote GPU/inference box (serves LiteLLM in docker). Shell
-  # window plus a monitor window split between nvidia-smi and docker stats.
-  xdg.configFile."tmuxinator/gx10-1.yml".text = ''
-    name: gx10-1
-    root: "~"
-    windows:
-      - shell:
-          panes:
-            - ssh gx10-1
-      - monitor:
-          layout: even-vertical
-          panes:
-            - ssh gx10-1 -t 'watch -n 2 nvidia-smi'
-            - ssh gx10-1 -t 'docker stats'
-  '';
-
-  # Robust project picker for Prefix f. Cancels cleanly and falls back when zoxide is empty.
-  home.file.".local/bin/tmux-project-picker" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -uo pipefail
-
-      candidates="$(
-        {
-          zoxide query -l 2>/dev/null || true
-          fd --type d --max-depth 3 . "$HOME/Development" "$HOME/code" "$HOME/src" 2>/dev/null || true
-          for f in "$HOME/.config/tmuxinator/"*.yml; do
-            [[ -f "$f" ]] && printf '[tmuxinator] %s\n' "$(basename "''${f%.yml}")"
-          done
-        } | awk 'NF' | awk '!seen[$0]++'
-      )"
-
-      if [[ -z "$candidates" ]]; then
-        tmux display-message "No project dirs or tmuxinator configs found"
-        exit 0
-      fi
-
-      if [[ -n "''${TMUX:-}" ]] && command -v fzf-tmux >/dev/null 2>&1; then
-        pick="$(printf '%s\n' "$candidates" | fzf-tmux -p 80%,70% --prompt='project> ')" || exit 0
-      else
-        pick="$(printf '%s\n' "$candidates" | fzf --prompt='project> ')" || exit 0
-      fi
-
-      [[ -n "$pick" ]] || exit 0
-
-      case "$pick" in
-        '[tmuxinator] '*)
-          exec tmuxinator start "''${pick#'[tmuxinator] '}"
-          ;;
-        *)
-          exec "$HOME/.local/bin/tmux-template" "$pick"
-          ;;
-      esac
+      post-switch = "sesh connect --switch {{ worktree_path }}"
     '';
   };
-
-  # Pick a git repo (zoxide + Development/code/src scan, filtered to git
-  # roots) then prompt for a branch name and run `workmux add` in it —
-  # lets you spin up a worktree+window without dropping to a shell first.
-  home.file.".local/bin/tmux-workmux-add" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -uo pipefail
-
-      candidates="$(
-        {
-          zoxide query -l 2>/dev/null || true
-          fd --type d --max-depth 3 . "$HOME/Development" "$HOME/code" "$HOME/src" 2>/dev/null || true
-        } | awk 'NF' | awk '!seen[$0]++' | while IFS= read -r d; do
-          [[ -d "$d/.git" ]] && printf '%s\n' "$d"
-        done
-      )"
-
-      if [[ -z "$candidates" ]]; then
-        tmux display-message "No git project dirs found"
-        exit 0
-      fi
-
-      dir="$(printf '%s\n' "$candidates" | fzf --prompt='workmux repo> ')" || exit 0
-      [[ -n "$dir" ]] || exit 0
-
-      branches="$(cd "$dir" && git branch --format='%(refname:short)' 2>/dev/null || true)"
-      branch_out="$(printf '%s\n' "$branches" | fzf --prompt='branch> ' --print-query --header='Type a new branch or select an existing one')" || exit 0
-      query="$(printf '%s\n' "$branch_out" | sed -n '1p')"
-      selection="$(printf '%s\n' "$branch_out" | sed -n '2p')"
-      branch="''${selection:-$query}"
-      [[ -n "$branch" ]] || exit 0
-
-      cd "$dir" || exit 1
-      # A highlighted fzf selection means the branch already exists —
-      # open its existing worktree instead of trying to create a
-      # duplicate one with `add`.
-      if [[ -n "$selection" ]]; then
-        workmux open "$branch"
-      else
-        workmux add "$branch"
-      fi
-      status=$?
-      if [[ $status -ne 0 ]]; then
-        echo
-        read -n 1 -s -r -p "workmux failed (exit $status). Press any key to close..."
-      fi
-      exit $status
-    '';
-  };
-
-  # Directory-aware tmuxp launcher. Detects project type and starts matching layout.
-  home.file.".local/bin/tmux-template" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-
-      dir="''${1:-$PWD}"
-      dir="$(cd "$dir" && pwd)"
-      session="$(basename "$dir" | tr '.:' '__')"
-
-      if tmux has-session -t "$session" 2>/dev/null; then
-        if [[ -n "''${TMUX:-}" ]]; then
-          tmux switch-client -t "$session"
-        else
-          tmux attach-session -t "$session"
-        fi
-        exit 0
-      fi
-
-      template="dev"
-      if [[ -f "$dir/.tmux-template" ]]; then
-        template="$(tr -d '[:space:]' < "$dir/.tmux-template")"
-      elif [[ -f "$dir/package.json" ]]; then
-        template="node"
-      elif [[ -f "$dir/flake.nix" ]]; then
-        template="nix"
-      elif [[ -f "$dir/Cargo.toml" ]]; then
-        template="rust"
-      elif [[ -f "$dir/pyproject.toml" || -f "$dir/requirements.txt" ]]; then
-        template="python"
-      fi
-
-      tmpdir="$(mktemp -d "''${TMPDIR:-/tmp}/tmux-template.XXXXXX")"
-      tmp="$tmpdir/workspace.yaml"
-      trap 'rm -rf "$tmpdir"' EXIT
-
-      case "$template" in
-        node)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: dev
-          layout: even-horizontal
-          panes:
-            - npm run dev
-            - npm test -- --watch
-      EOF
-          ;;
-        nix)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: ops
-          layout: main-vertical
-          panes:
-            - br ready || true
-            - nix flake check
-            - ""
-      EOF
-          ;;
-        rust)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: cargo
-          layout: even-horizontal
-          panes:
-            - cargo check
-            - cargo test
-      EOF
-          ;;
-        python)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: test
-          layout: even-horizontal
-          panes:
-            - uv run pytest || pytest
-            - ""
-      EOF
-          ;;
-        dev|*)
-          cat > "$tmp" <<EOF
-      session_name: "$session"
-      start_directory: "$dir"
-      windows:
-        - window_name: code
-          layout: even-horizontal
-          panes:
-            - nvim .
-            - claude --continue
-        - window_name: ops
-          layout: main-vertical
-          panes:
-            - bv || br ready || true
-            - foreman status --watch || true
-            - ""
-      EOF
-          ;;
-      esac
-
-      tmuxp load -y -d "$tmp"
-      if [[ -n "''${TMUX:-}" ]]; then
-        tmux switch-client -t "$session"
-      else
-        tmux attach-session -t "$session"
-      fi
-    '';
-  };
-
-  # Ensure which-key's generated init.tmux exists and is writable after deploy.
-  # If missing, the plugin copies a read-only Nix-store example there, then
-  # build.py cannot overwrite it on macOS. Pre-create a regular writable file.
-  home.activation.fixWhichKeyPermissions = lib.hm.dag.entryAfter ["linkGeneration"] ''
-    mkdir -p "$HOME/.local/share/tmux/plugins/tmux-which-key"
-    touch "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux"
-    chmod -f u+w "$HOME/.local/share/tmux/plugins/tmux-which-key/init.tmux" || true
-  '';
 
   # treemux init file — copy from nix store to stable location
   # so the path doesn't change across rebuilds with different store hashes
@@ -899,14 +350,21 @@ bind W run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=workmux 
       cp -f "$_treemux_init_src" "$_treemux_init_dst"
     fi
   '';
-  # tmux-tea: symlink tea.sh from plugin to ~/.local/bin/tea
-  home.activation.installTea = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    _tea_src="${tmux-tea}/share/tmux-plugins/tmux-tea/bin/tea.sh"
-    mkdir -p "$HOME/.local/bin"
-    if [[ -f "$_tea_src" ]]; then
-      ln -sfnv "$_tea_src" "$HOME/.local/bin/tea"
-    fi
-  '';
+
+  # Runs a command and then drops into an interactive shell, keeping a popup
+  # pane open after the command exits (e.g. `tmux-stay-open bv`). Generically
+  # useful for ad-hoc popup commands; kept as a standalone utility even though
+  # no binding in this file currently depends on it (the `bind b` / `bind s`
+  # popups above use the equivalent inline `$SHELL -lc 'cmd; exec $SHELL'`
+  # form directly, which works fine in a plain double-quoted tmux command).
+  home.file.".local/bin/tmux-stay-open" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      "$@"
+      exec "$SHELL"
+    '';
+  };
 
   # sudo askpass helper — shows macOS GUI dialog when no TTY is available
   home.file.".local/bin/sudo-askpass" = {

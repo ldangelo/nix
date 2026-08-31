@@ -29,6 +29,7 @@ in {
       just
       maven
       nil
+      nixfmt                 # Official Nix formatter (RFC 166 style)
       openapi-generator-cli
       plantuml
       process-compose
@@ -38,9 +39,11 @@ in {
       # Git Tools
       delta
       diffnav
+      gh-dash
       git-town
       glab
       jira-cli-go
+      worktrunk
 
       # Shell & Terminal Tools
       atuin
@@ -52,9 +55,9 @@ in {
       eza
       fasd
       fd
-      sesh
       tmuxp
       mosh
+      sesh
       zoxide
       git-lfs
       htop
