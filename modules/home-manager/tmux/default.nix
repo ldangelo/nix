@@ -1,22 +1,25 @@
 { config, lib, pkgs, ... }:
 let
-  # hiroppy/tmux-agent-sidebar: tracks Claude Code, Codex, OpenCode panes across all tmux sessions.
-  # Pre-built binary (Rust, ~10 MB) — no need to compile locally.
-  tmux-agent-sidebar = let sidebar-src = pkgs.fetchFromGitHub {
-    owner = "hiroppy"; repo = "tmux-agent-sidebar";
-    rev = "4cbf770d042273ef55a91d9da6ee4ab6bf2c1cdc";
-    hash = "sha256-snHZuw78Bx7emmSgxhe6Y2ug7PmEf+5g56xIhBKu/i4=";
-  }; in pkgs.tmuxPlugins.mkTmuxPlugin {
+  # hiroppy/tmux-agent-sidebar: tracks Claude Code, Codex, OpenCode, OMP panes across all tmux sessions.
+  # Patched fork (ldangelo) adds OMP agent support — built from source.
+  tmux-agent-sidebar = let 
+    sidebar-src = /Users/ldangelo/tmux-agent-sidebar;
+    sidebar-bin = pkgs.rustPlatform.buildRustPackage {
+      pname = "tmux-agent-sidebar";
+      version = "0.13.0-omp";
+      src = sidebar-src;
+      cargoLock = {
+        lockFile = "${sidebar-src}/Cargo.lock";
+      };
+    };
+  in pkgs.tmuxPlugins.mkTmuxPlugin {
     pluginName = "tmux-agent-sidebar";
-    version = "0.13.0";
-    rtpFilePath = "tmux-agent-sidebar.tmux";  # must match repo filename
+    version = "0.13.0-omp";
+    rtpFilePath = "tmux-agent-sidebar.tmux";
     src = sidebar-src;
     postInstall = ''
       mkdir -p $out/share/tmux-plugins/tmux-agent-sidebar/bin
-      cp ${pkgs.fetchurl {
-        url = "https://github.com/hiroppy/tmux-agent-sidebar/releases/download/v0.13.0/tmux-agent-sidebar-darwin-aarch64";
-        sha256 = "Ycf68bN65yYUiJkUzgFjeLDkhGHXTW+vNgGT7WSMI6M=";
-      }} $out/share/tmux-plugins/tmux-agent-sidebar/bin/tmux-agent-sidebar
+      cp ${sidebar-bin}/bin/tmux-agent-sidebar $out/share/tmux-plugins/tmux-agent-sidebar/bin/
       chmod +x $out/share/tmux-plugins/tmux-agent-sidebar/bin/tmux-agent-sidebar
     '';
   };
