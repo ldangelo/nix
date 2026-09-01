@@ -1,6 +1,26 @@
 { config, lib, pkgs, ... }:
-
 let
+  # hiroppy/tmux-agent-sidebar: tracks Claude Code, Codex, OpenCode panes across all tmux sessions.
+  # Pre-built binary (Rust, ~10 MB) — no need to compile locally.
+  tmux-agent-sidebar = let sidebar-src = pkgs.fetchFromGitHub {
+    owner = "hiroppy"; repo = "tmux-agent-sidebar";
+    rev = "4cbf770d042273ef55a91d9da6ee4ab6bf2c1cdc";
+    hash = "sha256-snHZuw78Bx7emmSgxhe6Y2ug7PmEf+5g56xIhBKu/i4=";
+  }; in pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "tmux-agent-sidebar";
+    version = "0.13.0";
+    rtpFilePath = "tmux-agent-sidebar.tmux";  # must match repo filename
+    src = sidebar-src;
+    postInstall = ''
+      mkdir -p $out/share/tmux-plugins/tmux-agent-sidebar/bin
+      cp ${pkgs.fetchurl {
+        url = "https://github.com/hiroppy/tmux-agent-sidebar/releases/download/v0.13.0/tmux-agent-sidebar-darwin-aarch64";
+        sha256 = "Ycf68bN65yYUiJkUzgFjeLDkhGHXTW+vNgGT7WSMI6M=";
+      }} $out/share/tmux-plugins/tmux-agent-sidebar/bin/tmux-agent-sidebar
+      chmod +x $out/share/tmux-plugins/tmux-agent-sidebar/bin/tmux-agent-sidebar
+    '';
+  };
+
   # tmux-notify: monitors panes and sends macOS notifications when processes finish
   # Not in nixpkgs — built from source (rickstaa/tmux-notify)
   tmux-notify = pkgs.tmuxPlugins.mkTmuxPlugin {
@@ -154,8 +174,18 @@ in
           set -g @popup-toggle-mode 'switch'
         '';
       }
+      {
+        plugin = tmux-agent-sidebar;
+        extraConfig = ''
+          # Remap from default prefix+e (diff-sidebar) to prefix+A
+          set -g @sidebar_key A
+          set -g @sidebar_position left
+          set -g @sidebar_width 15%
+          # Auto-create sidebar in new windows — off; explicit only via prefix+A
+          set -g @sidebar_auto_create off
+        '';
+      }
     ];
-    
     extraConfig = ''
       # tmux-fzf: fzf-based session/window/pane/command/keybinding/clipboard/process manager
       # Note: plugin uses main.tmux which reads TMUX_FZF_LAUNCH_KEY env var
@@ -271,7 +301,7 @@ in
       set -g bell-action any
       set -g visual-bell off
       set-hook -g alert-bell {
-        run-shell -b "terminal-notifier -remove 'tmux-#{session_name}-#{window_index}' >/dev/null 2>&1; terminal-notifier -title 'tmux: #{session_name}' -message '#{window_name} needs input' -sound default -group 'tmux-#{session_name}-#{window_index}'"
+        run-shell -b "terminal-notifier -remove 'tmux-#{session_name}-#{window_index}' >/dev/null 2>&1; terminal-notifier -title 'tmux: #{session_name}' -subtitle 'Window: #{window_name} (#{window_index})' -message 'Pane #{pane_index} (#{pane_current_command}): needs input' -sound default -group 'tmux-#{session_name}-#{window_index}' -execute 'tmux switch-client -t #{session_name}:#{window_index}'"
       }
       # Session management via sesh (prefix + S), worktrunk (prefix + W),
       # and tmux-palette (prefix + p).
@@ -292,10 +322,44 @@ in
       bind w run "#{@popup-toggle} -w90% -h90% -Ed#{pane_current_path} --name=ghdash gh-dash"
       bind s run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=brstats $SHELL -lc 'br stats; exec $SHELL'"
       # sesh: tmux session manager (lists live tmux sessions + zoxide dirs).
-      # `sesh picker` is sesh's own self-contained interactive TUI — it
-      # handles session creation/attach internally, so no extra quoting or
-      # helper script is needed (same simple pattern as lazygit/yazi above).
-      bind S run "#{@popup-toggle} -w75% -h75% -Ed#{pane_current_path} --name=sesh sesh picker"
+      #
+      # This intentionally does NOT go through `#{@popup-toggle}` like the
+      # other popup bindings above. tmux-toggle-popup (src/variables.sh:
+      # DEFAULT_SOCKET_NAME='popup') always opens popups as a session on a
+      # SEPARATE nested tmux server (a second `tmux -L popup ...` client
+      # exec'd inside a display-popup overlay — see its src/toggle.sh
+      # `open_cmds`), so that the prefix table/copy-mode work inside them.
+      # That's the right model for disposable utility popups (lazygit,
+      # yazi, bv, br stats), but it's actively wrong for a session
+      # *switcher*: `$TMUX` inside such a popup points at the throwaway
+      # `popup` socket, not the real one, so `sesh list`/`sesh connect`
+      # run there only ever see/target the other popup-name sessions on
+      # that nested server — never your real sessions (main, project
+      # dirs, etc). `sesh connect --switch` would then call
+      # `switch-client` against that nested, invisible popup client
+      # instead of the real outer client, so the picked session appeared
+      # "trapped" inside the popup and it never closed.
+      #
+      # A raw `display-popup -E` pane, by contrast, belongs to the same
+      # server/client as the pane that invoked it (no second nested tmux
+      # client), so `switch-client` run inside it correctly retargets the
+      # actual outer client, and `-E` auto-closes the popup as soon as the
+      # command exits (i.e. right after the switch already happened).
+      # `sesh connect --switch` is the same flag/verb already proven to
+      # work from a non-interactive context in the worktrunk `post-switch`
+      # hook below (`sesh connect --switch {{ worktree_path }}`).
+      # `xargs -I{}` no-ops on empty input, so cancelling the fzf picker
+      # (Esc) just closes the popup with no error.
+      # NOTE: unlike the `#{@popup-toggle}`-based bindings above, `-d` here
+      # must be its own separately-quoted token (`-d '#{...}'`), not the
+      # compact `-Ed#{...}` smashed-flag style — tmux's native display-popup
+      # argument parser (unlike toggle-popup's bash getopts re-parsing of
+      # the same style) fails to even register this bind at all when the
+      # format string is smashed directly onto a short flag; confirmed by
+      # isolating it with `tmux -f <conf> new-session -d ...; list-keys -a`
+      # in a throwaway test server (no visible parse error is printed, it
+      # just silently never appears in list-keys).
+      bind S display-popup -w75% -h75% -E -d '#{pane_current_path}' -T sesh "$SHELL -lc 'sesh list | fzf --reverse --border | xargs -I{} sesh connect --switch \"{}\"'"
       # worktrunk: git worktree manager. `wt switch` with no branch argument
       # opens its own interactive picker; on selection, the post-switch hook
       # in ~/.config/worktrunk/config.toml runs `sesh connect` on the new
