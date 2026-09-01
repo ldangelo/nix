@@ -68,7 +68,7 @@ let
     # Auto-load tmux-agent-sidebar status extension for tmux-agent-sidebar integration.
     # The extension writes @pane_agent / @pane_status per pane so the sidebar
     # plugin can display OMP sessions alongside Claude Code and Codex.
-    extensions = [ "${homeDir}/.pi/agent/extensions/tmux-agent-sidebar-status.ts" ];
+    extensions = [ "${homeDir}/.omp/agent/extensions/tmux-agent-sidebar-status.ts" ];
     memory.backend = "hindsight";
     hindsight.mentalModelAutoSeed = true;
     compaction.thresholdPercent = 70;
