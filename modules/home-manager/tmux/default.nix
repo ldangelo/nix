@@ -181,8 +181,8 @@ in
           set -g @sidebar_key A
           set -g @sidebar_position left
           set -g @sidebar_width 15%
-          # Auto-create sidebar in new windows — off; explicit only via prefix+A
-          set -g @sidebar_auto_create off
+          # Auto-create sidebar in new windows so OMP panes appear automatically
+          set -g @sidebar_auto_create on
         '';
       }
     ];
