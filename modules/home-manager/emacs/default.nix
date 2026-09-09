@@ -1,21 +1,26 @@
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
-{ config, pkgs, ... }:
-
-
-let my-emacs = pkgs.emacs-macport.override {
+let
+  my-emacs = pkgs.emacs-macport.override {
     withNativeCompilation = true;
     withSQLite3 = true;
     withTreeSitter = true;
     withWebP = true;
   };
 
-  my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages (epkgs: with epkgs; [
-    mu4e
-    vterm
-    multi-vterm
-    pdf-tools
-    treesit-grammars.with-all-grammars
-  ]
+  my-emacs-with-packages = (pkgs.emacsPackagesFor my-emacs).emacsWithPackages (
+    epkgs: with epkgs; [
+      mu4e
+      vterm
+      multi-vterm
+      pdf-tools
+      treesit-grammars.with-all-grammars
+    ]
   );
 in
 {
@@ -23,10 +28,26 @@ in
   #     source=../../../dotfiles/config/emacs;
   #     recursive=true;
   # };
-  #
-  home.file.".config/doom" = {
-    source=../../../dotfiles/config/doom;
-    recursive=true;
+
+  home.sessionVariables = {
+    EMACS = "/Applications/Emacs.app/Contents/MacOS/Emacs";
   };
+
+  # Doom's bin/doom launcher needs the Xcode/CommandLineTools toolchain and
+  # a C locale on PATH before Oh-My-Zsh plugins initialize; keeping this
+  # here (rather than hand-patched into ~/.config/emacs/bin/doom, which
+  # `doom upgrade` resets) lets `doom upgrade` run without local diffs.
+  programs.zsh.envExtra = lib.mkAfter ''
+    export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Library/Developer/CommandLineTools/usr/bin:$PATH"
+    export LANG="''${LANG:-C}"
+    export LC_ALL="''${LC_ALL:-C}"
+  '';
+  #
+  # Doom is intentionally managed outside Nix.
+  # The standalone configuration lives at ~/.config/doom.
+  # home.file.".config/doom" = {
+  #   source=../../../dotfiles/config/doom;
+  #   recursive=true;
+  # };
 
 }
