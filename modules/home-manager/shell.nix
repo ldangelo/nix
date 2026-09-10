@@ -62,6 +62,7 @@
       "docker-compose"
       "dotnet"
       "eza"
+      "fzf"
       "gh"
       "git"
       "kubectl"
@@ -247,16 +248,7 @@
 
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
           # vterm (emacs) related functions for prompt tracking, etc...
-          # NOTE: `oh-my-posh init zsh` (no --print) writes a shared,
-          # non-atomic cache file at a path keyed only by (shell, config),
-          # identical across every shell process. Concurrent shell startups
-          # (e.g. tmux resurrect restoring many panes at once) race to write
-          # that same file and truncate/corrupt it — breaks the prompt with
-          # "CONFIG NOT FOUND" or a zsh syntax error. `--print` emits the
-          # full script inline instead, no shared file, no race. Also
-          # hardcode the nix-managed binary: Homebrew's oh-my-posh has
-          # shipped versions with an unrelated init-generation bug.
-          [[ -z "$INSIDE_EMACS" ]] && eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --print --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/catppuccin_mocha.omp.json)"
+          [[ -z "$INSIDE_EMACS" ]] && eval "$(oh-my-posh init zsh)"
           if [[ "$(uname -s)" == "Darwin" ]]; then
             [[ -f ~/.config/zsh/rc/homebrew.zsh ]] && source ~/.config/zsh/rc/homebrew.zsh
           fi
