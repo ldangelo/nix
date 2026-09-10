@@ -62,7 +62,6 @@
       "docker-compose"
       "dotnet"
       "eza"
-      "fzf"
       "gh"
       "git"
       "kubectl"
