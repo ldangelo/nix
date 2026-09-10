@@ -247,7 +247,7 @@
 
           NOTMUCH_CONFIG=~/.config/notmuch/default/config
           # vterm (emacs) related functions for prompt tracking, etc...
-          [[ -z "$INSIDE_EMACS" ]] && eval "$(oh-my-posh init zsh)"
+          [[ -z "$INSIDE_EMACS" ]] && eval "$(${pkgs.starship}/bin/starship init zsh)"
           if [[ "$(uname -s)" == "Darwin" ]]; then
             [[ -f ~/.config/zsh/rc/homebrew.zsh ]] && source ~/.config/zsh/rc/homebrew.zsh
           fi
