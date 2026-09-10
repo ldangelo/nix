@@ -39,6 +39,8 @@ in
   # `doom upgrade` resets) lets `doom upgrade` run without local diffs.
   programs.zsh.envExtra = lib.mkAfter ''
     export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Library/Developer/CommandLineTools/usr/bin:$PATH"
+    # Ensure home-manager tools (e.g., git) take priority over system versions
+    export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
     export LANG="''${LANG:-C}"
     export LC_ALL="''${LC_ALL:-C}"
   '';
