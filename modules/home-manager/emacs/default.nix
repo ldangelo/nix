@@ -41,8 +41,10 @@ in
     export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Library/Developer/CommandLineTools/usr/bin:$PATH"
     # Ensure home-manager tools (e.g., git) take priority over system versions
     export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
-    export LANG="''${LANG:-C}"
-    export LC_ALL="''${LC_ALL:-C}"
+    # Scope C locale to the doom CLI wrapper so OMP (and other UTF-8
+    # consumers, e.g. status-line `preset: nerd` Nerd Font glyphs) keep
+    # multibyte handling outside of doom invocations.
+    doom() { LANG=C LC_ALL=C command doom "$@"; }
   '';
   #
   # Doom is intentionally managed outside Nix.

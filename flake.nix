@@ -31,9 +31,17 @@
 
     catppuccin.url = "github:catppuccin/nix";
 
+    # Local patched fork of hiroppy/tmux-agent-sidebar (adds OMP agent support).
+    # Tracked as a flake input instead of `builtins.path { path = /abs; }`
+    # because darwin-rebuild evaluates in pure mode and forbids absolute paths.
+    tmux-agent-sidebar-src = {
+      url = "path:/Users/ldangelo/tmux-agent-sidebar";
+      flake = false;
+    };
+
   };
 
-  outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, ... }:
+  outputs = inputs@{ self, nixpkgs, catppuccin, nur, flake-parts, sops-nix, home-manager, nix-darwin, nix-search-tv, tmux-agent-sidebar-src, ... }:
     let
       common-overlays = [
       (self: super: {
@@ -118,6 +126,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bak";
+            home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.sharedModules = [
               sops-nix.homeManagerModules.sops
               ./modules/home-manager/pi-agent.nix

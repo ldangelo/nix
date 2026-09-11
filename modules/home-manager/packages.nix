@@ -1,7 +1,7 @@
 { pkgs, lib, config, ... }:
 
 let
-  inherit (pkgs.stdenv) isDarwin isLinux;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
 in {
   # Explicitly opt out of managing ~/.npmrc; the installAgentMemory activation
   # script sets NPM_CONFIG_PREFIX explicitly and does not depend on this file.
@@ -88,7 +88,7 @@ in {
 
       # Programming Languages & Runtimes
       cargo
-      elixir
+      beamPackages.elixir
       #      nodejs
       openjdk21
       postgresql
@@ -154,7 +154,7 @@ in {
       pizauth
 
       # Development Tools
-      antigravity
+      antigravity-ide
       ghostty-bin
       jankyborders
 

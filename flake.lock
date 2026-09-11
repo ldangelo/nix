@@ -354,7 +354,8 @@
         "nixpkgs": "nixpkgs_3",
         "nur": "nur",
         "shell-flake": "shell-flake",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "tmux-agent-sidebar-src": "tmux-agent-sidebar-src"
       }
     },
     "shell-flake": {
@@ -417,6 +418,18 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "tmux-agent-sidebar-src": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-onnytzEqdNU9rwbzx+envgQsiiIPcHpZOl164cjNOTE=",
+        "path": "/Users/ldangelo/tmux-agent-sidebar",
+        "type": "path"
+      },
+      "original": {
+        "path": "/Users/ldangelo/tmux-agent-sidebar",
+        "type": "path"
       }
     }
   },

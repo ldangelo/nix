@@ -1,9 +1,9 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
   # hiroppy/tmux-agent-sidebar: tracks Claude Code, Codex, OpenCode, OMP panes across all tmux sessions.
   # Patched fork (ldangelo) adds OMP agent support — built from source.
   tmux-agent-sidebar = let 
-    sidebar-src = builtins.path { path = /Users/ldangelo/tmux-agent-sidebar; name = "tmux-agent-sidebar-src"; };
+    sidebar-src = inputs.tmux-agent-sidebar-src;
     sidebar-bin = pkgs.rustPlatform.buildRustPackage {
       pname = "tmux-agent-sidebar";
       version = "0.13.0-omp";
