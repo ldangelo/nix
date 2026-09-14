@@ -115,7 +115,7 @@ Output structure for file:
 ## Confidence Assessment
 [How certain are we about each inference]
 
-## Score: A-F (one line rationale)
+## Score: <1.0-5.0> / <Letter> (one line rationale; assign the number from evidence first, derive the letter mechanically from `skill://assessment-report-suite`'s Scoring Scale — never assign a bare letter)
 
 ## Recommendations
 [What docs would help future AI agents]
@@ -126,7 +126,7 @@ Return a summary (max 5 lines) with:
 - Inferred purpose (1 sentence)
 - Domain
 - Confidence level
-- Score: A-F with one-line rationale
+- Score: <1.0-5.0>/<Letter> with one-line rationale (numeric first; letter derived mechanically, never assigned directly)
 - Top 2 recommendations for documentation
 ```
 
@@ -184,7 +184,7 @@ Output structure for file:
 1. [Issue with reference]
 2. [Issue with reference]
 
-## Score: A-F (one line rationale)
+## Score: <1.0-5.0> / <Letter> (one line rationale; assign the number from evidence first, derive the letter mechanically from `skill://assessment-report-suite`'s Scoring Scale — never assign a bare letter)
 
 ## Recommendations
 1. [Priority]
@@ -194,7 +194,7 @@ Output structure for file:
 Return a summary (max 5 lines) with:
 - Project structure overview
 - Top 3 architectural issues
-- Score: A-F with one-line rationale
+- Score: <1.0-5.0>/<Letter> with one-line rationale (numeric first; letter derived mechanically, never assigned directly)
 - Top 2 recommendations
 ```
 
@@ -245,7 +245,7 @@ Output structure for file:
 ## Error Handling
 [Patterns found with file:line]
 
-## Score: A-F (one line rationale)
+## Score: <1.0-5.0> / <Letter> (one line rationale; assign the number from evidence first, derive the letter mechanically from `skill://assessment-report-suite`'s Scoring Scale — never assign a bare letter)
 
 ## Recommendations
 1. [Priority]
@@ -256,7 +256,7 @@ Return a summary (max 5 lines) with:
 - Top 5 largest files (estimate lines)
 - Technical debt counts (TODO, FIXME, etc.)
 - Top 3 issues
-- Score: A-F with one-line rationale
+- Score: <1.0-5.0>/<Letter> with one-line rationale (numeric first; letter derived mechanically, never assigned directly)
 - Top 2 recommendations
 ```
 
@@ -299,7 +299,7 @@ Output structure for file:
 ## Coverage Gaps
 [What's not tested]
 
-## Score: A-F (one line rationale)
+## Score: <1.0-5.0> / <Letter> (one line rationale; assign the number from evidence first, derive the letter mechanically from `skill://assessment-report-suite`'s Scoring Scale — never assign a bare letter)
 
 ## Recommendations
 1. [Priority]
@@ -310,7 +310,7 @@ Return a summary (max 5 lines) with:
 - Test projects found
 - Coverage estimate (%)
 - Top 3 gaps
-- Score: A-F with one-line rationale
+- Score: <1.0-5.0>/<Letter> with one-line rationale (numeric first; letter derived mechanically, never assigned directly)
 - Top 2 recommendations
 ```
 
@@ -357,7 +357,7 @@ Output structure for file:
 |------|----------|----------|
 | ... | ... | ... |
 
-## Score: A-F (one line rationale)
+## Score: <1.0-5.0> / <Letter> (one line rationale; assign the number from evidence first, derive the letter mechanically from `skill://assessment-report-suite`'s Scoring Scale — never assign a bare letter)
 
 ## Recommendations
 1. [Priority]
@@ -368,7 +368,7 @@ Return a summary (max 5 lines) with:
 - Auth patterns found
 - Secret management issues
 - Top 3 security issues (severity)
-- Score: A-F with one-line rationale
+- Score: <1.0-5.0>/<Letter> with one-line rationale (numeric first; letter derived mechanically, never assigned directly)
 - Top 2 recommendations
 ```
 
@@ -395,7 +395,7 @@ Also check:
 **Tools:** find, read, search. NOT bash pipelines.
 
 **IMPORTANT:**
-- Rate all 8 dimensions A-F
+- Rate all 8 dimensions on the shared 1.0-5.0 scale (`skill://assessment-report-suite` Scoring Scale); derive each letter mechanically from the numeric score — never assign a bare letter
 - Cite evidence for each
 - One-line rationale for overall score
 - Save full findings to output file, return summary only
@@ -407,14 +407,14 @@ Output structure for file:
 ## 8-Dimension Assessment
 | Dimension | Score | Evidence |
 |-----------|-------|----------|
-| Context Efficiency | A-F | ... |
-| Refactorability | A-F | ... |
-| Testability | A-F | ... |
-| Determinism | A-F | ... |
-| Observability | A-F | ... |
-| Error Recovery | A-F | ... |
-| Incremental Changes | A-F | ... |
-| Skill Coverage | A-F | ... |
+| Context Efficiency | <1.0-5.0>/<Letter> | ... |
+| Refactorability | <1.0-5.0>/<Letter> | ... |
+| Testability | <1.0-5.0>/<Letter> | ... |
+| Determinism | <1.0-5.0>/<Letter> | ... |
+| Observability | <1.0-5.0>/<Letter> | ... |
+| Error Recovery | <1.0-5.0>/<Letter> | ... |
+| Incremental Changes | <1.0-5.0>/<Letter> | ... |
+| Skill Coverage | <1.0-5.0>/<Letter> | ... |
 
 ## Documentation
 [What exists, what's missing]
@@ -422,7 +422,7 @@ Output structure for file:
 ## Missing for AI Agents
 [What's lacking]
 
-## Score: A-F (one line rationale)
+## Score: <1.0-5.0> / <Letter> (one line rationale; assign the number from evidence first, derive the letter mechanically from `skill://assessment-report-suite`'s Scoring Scale — never assign a bare letter)
 
 ## Recommendations
 1. [Priority]
@@ -432,7 +432,7 @@ Output structure for file:
 Return a summary (max 5 lines) with:
 - All 8 dimension scores (brief)
 - Top 3 gaps
-- Score: A-F with one-line rationale
+- Score: <1.0-5.0>/<Letter> with one-line rationale (numeric first; letter derived mechanically, never assigned directly)
 - Top 2 recommendations
 ```
 
@@ -480,7 +480,7 @@ Output structure for file:
 ## Weaknesses
 1. ...
 
-## Score: A-F (one line rationale)
+## Score: <1.0-5.0> / <Letter> (one line rationale; assign the number from evidence first, derive the letter mechanically from `skill://assessment-report-suite`'s Scoring Scale — never assign a bare letter)
 
 ## Recommendations
 1. [Priority]
@@ -491,7 +491,7 @@ Return a summary (max 5 lines) with:
 - CI system found
 - Pipeline stages (brief)
 - Top 3 weaknesses
-- Score: A-F with one-line rationale
+- Score: <1.0-5.0>/<Letter> with one-line rationale (numeric first; letter derived mechanically, never assigned directly)
 - Top 2 recommendations
 ```
 
@@ -534,12 +534,12 @@ Generate the comprehensive report that references agent outputs.
 
 ## Overall Scores
 
-| Assessment | Grade |
-|------------|-------|
-| Overall | A-F |
-| AI Readiness | A-F |
+| Assessment | Score | Grade |
+|------------|------:|-------|
+| Overall | <1.0-5.0> | <Letter> |
+| AI Readiness | <1.0-5.0> | <Letter> |
 
-**Scoring Rubric:** A=best practice, B=solid, C=debt present, D=significant issues, F=critical
+**Scoring Rubric:** Always assign a numeric score first (1.0-5.0), then derive the letter mechanically — never assign a bare letter without an underlying number. Anchors: 5=A, 4=B, 3=C, 2=D, 1=F, with `+`/`-` thirds subdividing each band (A and F are terminal, unsplit) — see `skill://assessment-report-suite`'s "Scoring Scale" section for the exact range table. Never invent an alternate numeric-to-letter mapping, and never calibrate one repo's dimension score by analogy to a different repo's or a portfolio composite's score — score strictly from this repo's own evidence.
 
 ---
 
@@ -547,16 +547,16 @@ Generate the comprehensive report that references agent outputs.
 
 | Category | Score | Key Issues | Recommendation |
 |----------|-------|------------|----------------|
-| Architecture | A-F | 2-3 issues | 1-2 sentences |
-| Code Quality | A-F | 2-3 issues | 1-2 sentences |
-| Error Handling | A-F | 2-3 issues | 1-2 sentences |
-| Observability | A-F | 2-3 issues | 1-2 sentences |
-| Dependencies | A-F | 2-3 issues | 1-2 sentences |
-| Scalability | A-F | 2-3 issues | 1-2 sentences |
-| Testing | A-F | 2-3 issues | 1-2 sentences |
-| CI/CD | A-F | 2-3 issues | 1-2 sentences |
-| Security | A-F | 2-3 issues | 1-2 sentences |
-| AI Readiness | A-F | 2-3 issues | 1-2 sentences |
+| Architecture | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| Code Quality | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| Error Handling | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| Observability | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| Dependencies | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| Scalability | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| Testing | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| CI/CD | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| Security | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
+| AI Readiness | <1.0-5.0>/<Letter> | 2-3 issues | 1-2 sentences |
 
 ---
 
@@ -586,7 +586,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 | Domain | HIGH/MEDIUM/LOW | ... |
 | Users | HIGH/MEDIUM/LOW | ... |
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. Add [doc] to clarify [aspect]
@@ -618,7 +618,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 1. [Finding with file:line reference]
 2. [Finding with file:line reference]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -634,7 +634,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 1. [Finding with file:line reference]
 2. [Finding with file:line reference]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -649,7 +649,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 1. [Finding]
 2. [Finding]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -668,7 +668,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 1. [Finding]
 2. [Finding]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -683,7 +683,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 1. [Finding with file:line reference]
 2. [Finding with file:line reference]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -704,7 +704,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 1. [Finding]
 2. [Finding]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -727,7 +727,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 1. [Finding]
 2. [Finding]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -747,7 +747,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 | [Finding 1] | HIGH/MEDIUM/LOW |
 | [Finding 2] | HIGH/MEDIUM/LOW |
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -763,20 +763,20 @@ Target Users: [Developers/End Users/Admins/etc.]
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
-| Context Efficiency | A-F | ... |
-| Refactorability | A-F | ... |
-| Testability | A-F | ... |
-| Determinism | A-F | ... |
-| Observability | A-F | ... |
-| Error Recovery | A-F | ... |
-| Incremental Changes | A-F | ... |
-| Skill Coverage | A-F | ... |
+| Context Efficiency | <1.0-5.0>/<Letter> | ... |
+| Refactorability | <1.0-5.0>/<Letter> | ... |
+| Testability | <1.0-5.0>/<Letter> | ... |
+| Determinism | <1.0-5.0>/<Letter> | ... |
+| Observability | <1.0-5.0>/<Letter> | ... |
+| Error Recovery | <1.0-5.0>/<Letter> | ... |
+| Incremental Changes | <1.0-5.0>/<Letter> | ... |
+| Skill Coverage | <1.0-5.0>/<Letter> | ... |
 
 ### Key Findings
 1. [Finding]
 2. [Finding]
 
-### Score: A-F
+### Score: <1.0-5.0> / <Letter>
 
 ### Recommendations
 1. [Priority]
@@ -826,6 +826,7 @@ Target Users: [Developers/End Users/Admins/etc.]
 
 ## Agent Output Files
 
+- [Purpose Analysis](docs/assessment/<REPORT_PREFIX>-purpose.md)
 - [Architecture Analysis](docs/assessment/<REPORT_PREFIX>-architecture.md)
 - [Code Quality Analysis](docs/assessment/<REPORT_PREFIX>-code-quality.md)
 - [Testing Analysis](docs/assessment/<REPORT_PREFIX>-testing.md)
@@ -835,4 +836,4 @@ Target Users: [Developers/End Users/Admins/etc.]
 
 ---
 
-*Document generated from multi-agent parallel analysis.*- [Purpose Analysis](docs/assessment/<REPORT_PREFIX>-purpose.md)
+*Document generated from multi-agent parallel analysis.*
