@@ -77,6 +77,7 @@
       "vi-sql" # Terminal UI for SQL databases with vim motions
       "tmux" # Terminal multiplexer (smart-splits.nvim, tmate, etc.)
       "tmuxai" # AI-powered non-intrusive terminal assistant (points at LiteLLM proxy)
+      "herdr" # Session multiplexer (terminal agent)
     ]
     ++ lib.optionals isWorkstation [
       # https://github.com/marcus/sidecar
