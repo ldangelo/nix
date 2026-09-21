@@ -9,6 +9,29 @@ local utils = require("utils")
 M.tmux_keybinds = {
     -- this is for claude code
     { key = "Enter", mods = "SHIFT",    action = wezterm.action({ SendString = "\x1b\r" }) },
+
+    -- Work around herdr/herdr#1266: with enable_kitty_keyboard = true, WezTerm
+    -- sends a bare "\x1b" on keydown and a separate "\x1b[27;1:3u" release
+    -- event right behind it. Herdr's escape-disambiguation (is this a lone
+    -- Esc or the start of an Alt+key/CSI sequence?) races that release byte
+    -- and silently drops quick Esc taps, so Esc stops exiting insert mode in
+    -- nvim panes hosted by herdr. Sending one fully-formed CSI-u press
+    -- sequence instead of a raw byte makes it unambiguous to parse, so
+    -- herdr (and anything it hosts) always sees exactly one Esc. Only
+    -- plain, unmodified Escape is affected; every other app/keychord is
+    -- untouched.
+    {
+        key = "Escape",
+        mods = "NONE",
+        action = wezterm.action_callback(function(window, pane)
+            local process = pane:get_foreground_process_name() or ""
+            if process:match("herdr$") then
+                pane:send_text("\x1b[27;1u")
+            else
+                window:perform_action(act({ SendKey = { key = "Escape", mods = "NONE" } }), pane)
+            end
+        end),
+    },
     { key = "q",     mods = "CMD",      action = wezterm.action.QuitApplication },
     { key = "t",     mods = "CMD",      action = act.SpawnTab("CurrentPaneDomain") },
     { key = "1",     mods = "CMD",      action = act({ ActivateTab = 0 }) },
