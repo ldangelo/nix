@@ -53,7 +53,6 @@ in {
       bun
       coreutils
       eza
-      fasd
       fd
       tmuxp
       mosh
