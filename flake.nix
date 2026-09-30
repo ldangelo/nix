@@ -213,6 +213,7 @@
               config.allowUnfree = true;
               overlays = common-overlays;
             };
+            extraSpecialArgs = { inherit inputs; };
             modules = [
               catppuccin.homeModules.catppuccin
               sops-nix.homeManagerModules.sops
@@ -303,6 +304,7 @@
               config.allowUnfree = true;
               overlays = common-overlays;
             };
+            extraSpecialArgs = { inherit inputs; };
             modules = [
               catppuccin.homeModules.catppuccin
               sops-nix.homeManagerModules.sops
