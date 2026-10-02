@@ -25,6 +25,7 @@ let
     "npm:pi-subagents"
     "npm:pi-intercom"
     "npm:pi-context"
+    "npm:pi-advisor-flow"
     "npm:pi-memory"
     "npm:billion-context"
     "npm:@raquezha/noheadroom"
@@ -39,6 +40,40 @@ let
       lib.unique (mergedPackages ++ cfg.settings.packages)
     else
       mergedPackages;
+
+  # ── Advisor Flow defaults ───────────────────────────────────────────────
+  advisorConfig = {
+    executor = "openai-codex/gpt-5.5";
+    advisor = "openai-codex/gpt-5.5";
+    executorEffort = "medium";
+    advisorEffort = "xhigh";
+    contextMaxChars = 25000;
+    advisorGitContext = "summary";
+    advisorGitContextMaxChars = 20000;
+    advisorPlanGate = true;
+    advisorFailureGate = true;
+    advisorCompletionGate = true;
+    advisorAutoLoopGate = true;
+    advisorLoopThreshold = 3;
+    advisorMaxCallsPerSession = 5;
+    advisorBlockOnBlocked = true;
+    gateFailureMode = "block-session";
+    advisorSessionSummary = false;
+    advisorScoutEnabled = false;
+    showUsageDetails = true;
+    showUsageFooter = false;
+    simpleMode = false;
+    alwaysOn = true;
+    advisorHerdrIntegration = true;
+    advisorToolResultMaxLines = 2000;
+    advisorToolResultMaxBytes = 51200;
+    advisorRedactSecrets = true;
+    advisorAgentsMdContext = true;
+    advisorTrackedFileContent = false;
+    advisorUntrackedContent = false;
+    advisorDisableSameModel = false;
+    advisorOutcomeLogging = false;
+  };
 
   # ── Vault Mind shared Obsidian wiki ─────────────────────────────────────
   vaultMindVaultPath =
@@ -453,6 +488,10 @@ in
 
             ".pi/agent/vault-mind.config.json" = {
               source = pkgs.writeText "vault-mind.config.json" (makeSettings vaultMindConfig);
+              force = true;
+            };
+            ".pi/agent/advisor.json" = {
+              source = pkgs.writeText "pi-advisor.json" (makeSettings advisorConfig);
               force = true;
             };
             ".pi/agent/headroom/settings.json" = {
