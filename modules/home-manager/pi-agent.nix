@@ -27,6 +27,7 @@ let
     "npm:pi-memory"
     "npm:billion-context"
     "npm:@raquezha/noheadroom"
+    "npm:pi-vault-mind"
   ];
 
   # Merge default packages with user-provided packages (dedup).

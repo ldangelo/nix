@@ -32,6 +32,9 @@
 
     # Brew formulae not easily available in nixpkgs
     brews = [
+      # Window manager
+      "acsandmann/tap/rift" # Keyboard-driven tiling window manager (see ~/.config/rift)
+
       # Development Tools (not in nixpkgs)
       "aider" # AI pair programming
       "basedpyright" # Pyright fork with improvements
