@@ -167,7 +167,6 @@
                 "npm:pi-powerline-footer"
                 "https://github.com/tmonk/pi-goal-x"
                 "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                # "npm:pi-context"  # disabled - API incompatible
                 # Local Ensemble: skills + commands + agents. Declared as a bare
                 # source string on purpose. The attrset form with `extensions = []`
                 # does NOT mean "extensions off, skills on" — pi treats it as a
@@ -234,7 +233,6 @@
                     "npm:pi-powerline-footer"
                     "https://github.com/tmonk/pi-goal-x"
                     "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                    # "npm:pi-context"  # disabled - API incompatible
                   ];
                   powerline = {
                     preset = "nerd";
@@ -278,7 +276,6 @@
                   "npm:pi-powerline-footer"
                   "https://github.com/tmonk/pi-goal-x"
                   "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                  # "npm:pi-context"  # disabled - API incompatible
                   # Local Ensemble: skills + commands + agents. Declared as a bare
                   # source string on purpose. The attrset form with `extensions = []`
                   # does NOT mean "extensions off, skills on" — pi treats it as a
@@ -331,7 +328,6 @@
                     "npm:pi-powerline-footer"
                     "https://github.com/tmonk/pi-goal-x"
                     "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                    # "npm:pi-context"  # disabled - API incompatible with pi-coding-agent 0.78.0
                     {
                       source = "${ensemblePi}/packages/pi";
                       # Ensemble currently ships an ask_user extension. We provide
@@ -382,7 +378,6 @@
                   "npm:pi-powerline-footer"
                   "https://github.com/tmonk/pi-goal-x"
                   "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                  # "npm:pi-context"  # disabled - API incompatible
                   # Ensemble pi package is registered via pi-agent.settings.packages
                   # as an attrset with extensions=[] to avoid duplicate ask_user
                   # tool registration with the nix-managed ask-user.ts extension.

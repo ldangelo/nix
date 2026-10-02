@@ -24,6 +24,7 @@ let
     "https://github.com/KristjanPikhof/pi-yaml-hooks"
     "npm:pi-subagents"
     "npm:pi-intercom"
+    "npm:pi-context"
     "npm:pi-memory"
     "npm:billion-context"
     "npm:@raquezha/noheadroom"
