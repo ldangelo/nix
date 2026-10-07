@@ -1,4 +1,10 @@
-{ config, pkgs, lib, isWorkstation ? true, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  isWorkstation ? true,
+  ...
+}:
 
 {
   # Launchd Services Configuration
@@ -20,125 +26,125 @@
 
   # Karabiner VirtualHIDDevice Daemon (system-level)
   # Manages the virtual HID device driver
-  launchd.daemons.karabiner-vhiddaemon = lib.mkIf isWorkstation {
-    serviceConfig = {
-      Label = "com.ldangelo.karabiner-vhiddaemon";
-      ProgramArguments = [
-        "/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon"
-      ];
-      RunAtLoad = true;
-      KeepAlive = true;
-      StandardOutPath = "/var/log/karabiner-vhiddaemon.out.log";
-      StandardErrorPath = "/var/log/karabiner-vhiddaemon.err.log";
-      UserName = "root";
-      GroupName = "wheel";
-    };
-  };
-
-  # Karabiner VirtualHIDDevice Manager (system-level)
-  # Activates the virtual HID device
-  launchd.daemons.karabiner-vhidmanager = lib.mkIf isWorkstation {
-    serviceConfig = {
-      Label = "com.ldangelo.karabiner-vhidmanager";
-      ProgramArguments = [
-        "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager"
-        "activate"
-      ];
-      RunAtLoad = true;
-      KeepAlive = true;
-      StandardOutPath = "/var/log/karabiner-vhidmanager.out.log";
-      StandardErrorPath = "/var/log/karabiner-vhidmanager.err.log";
-      UserName = "root";
-      GroupName = "wheel";
-     };
-  };
-
-  # Place kanata config at /etc so root launchd daemon can access it
-  # (root cannot traverse /Users/ldangelo which has mode 750)
-  environment.etc."kanata/home-row.kbd".text = builtins.readFile ../../dotfiles/config/kanata/home-row.kbd;
-
-  # Kanata - Advanced keyboard remapper (system-level daemon)
-  # https://github.com/jtroo/kanata
-  # Must be a daemon (not agent) to run as root - agents ignore UserName
-  launchd.daemons.kanata = lib.mkIf isWorkstation {
-    serviceConfig = {
-      Label = "com.ldangelo.kanata";
-      ProgramArguments = [
-        "/opt/homebrew/bin/kanata"
-        "--cfg"
-        "/etc/kanata/home-row.kbd"
-      ];
-      KeepAlive = true;
-      RunAtLoad = true;
-      StandardOutPath = "/var/log/kanata.out.log";
-      StandardErrorPath = "/var/log/kanata.err.log";
-      ProcessType = "Interactive";
-      Nice = -20;
-      UserName = "root";
-      GroupName = "wheel";
-    };
-  };
-
-  # RustDesk remote-access service.
-  # Official macOS install creates one root daemon plus one per-session LaunchAgent:
-  #   /Library/LaunchDaemons/com.carriez.RustDesk_service.plist
-  #   /Library/LaunchAgents/com.carriez.RustDesk_server.plist
-  # Homebrew runs late in nix-darwin activation, so wrappers wait for the cask app
-  # instead of failing first deploy before /Applications/RustDesk.app exists.
-  launchd.daemons.rustdesk-service = lib.mkIf isWorkstation {
-    serviceConfig = {
-      Label = "com.carriez.RustDesk_service";
-      ProgramArguments = [
-        "/bin/sh"
-        "-c"
-        ''
-          while [ ! -x /Applications/RustDesk.app/Contents/MacOS/service ]; do
-            sleep 30
-          done
-          cd /Applications/RustDesk.app/Contents/MacOS
-          exec ./service
-        ''
-      ];
-      KeepAlive = true;
-      RunAtLoad = true;
-      ThrottleInterval = 30;
-      StandardOutPath = "/var/log/rustdesk_service.out";
-      StandardErrorPath = "/var/log/rustdesk_service.err";
-      UserName = "root";
-      GroupName = "wheel";
-    };
-  };
-
-  launchd.agents.rustdesk-server = lib.mkIf isWorkstation {
-    serviceConfig = {
-      Label = "com.carriez.RustDesk_server";
-      ProgramArguments = [
-        "/bin/sh"
-        "-c"
-        ''
-          while [ ! -x /Applications/RustDesk.app/Contents/MacOS/RustDesk ]; do
-            sleep 30
-          done
-          cd /Applications/RustDesk.app/Contents/MacOS
-          exec ./RustDesk --server
-        ''
-      ];
-      LimitLoadToSessionType = [
-        "LoginWindow"
-        "Aqua"
-      ];
-      KeepAlive = {
-        SuccessfulExit = false;
-        AfterInitialDemand = false;
-      };
-      RunAtLoad = true;
-      ThrottleInterval = 30;
-      ProcessType = "Interactive";
-      StandardOutPath = "/tmp/rustdesk_server.out";
-      StandardErrorPath = "/tmp/rustdesk_server.err";
-    };
-  };
-
+  # launchd.daemons.karabiner-vhiddaemon = lib.mkIf isWorkstation {
+  #   serviceConfig = {
+  #     Label = "com.ldangelo.karabiner-vhiddaemon";
+  #     ProgramArguments = [
+  #       "/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon"
+  #     ];
+  #     RunAtLoad = true;
+  #     KeepAlive = true;
+  #     StandardOutPath = "/var/log/karabiner-vhiddaemon.out.log";
+  #     StandardErrorPath = "/var/log/karabiner-vhiddaemon.err.log";
+  #     UserName = "root";
+  #     GroupName = "wheel";
+  #   };
+  # };
+  #
+  # # Karabiner VirtualHIDDevice Manager (system-level)
+  # # Activates the virtual HID device
+  # launchd.daemons.karabiner-vhidmanager = lib.mkIf isWorkstation {
+  #   serviceConfig = {
+  #     Label = "com.ldangelo.karabiner-vhidmanager";
+  #     ProgramArguments = [
+  #       "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager"
+  #       "activate"
+  #     ];
+  #     RunAtLoad = true;
+  #     KeepAlive = true;
+  #     StandardOutPath = "/var/log/karabiner-vhidmanager.out.log";
+  #     StandardErrorPath = "/var/log/karabiner-vhidmanager.err.log";
+  #     UserName = "root";
+  #     GroupName = "wheel";
+  #    };
+  # };
+  #
+  # # Place kanata config at /etc so root launchd daemon can access it
+  # # (root cannot traverse /Users/ldangelo which has mode 750)
+  # environment.etc."kanata/home-row.kbd".text = builtins.readFile ../../dotfiles/config/kanata/home-row.kbd;
+  #
+  # # Kanata - Advanced keyboard remapper (system-level daemon)
+  # # https://github.com/jtroo/kanata
+  # # Must be a daemon (not agent) to run as root - agents ignore UserName
+  # launchd.daemons.kanata = lib.mkIf isWorkstation {
+  #   serviceConfig = {
+  #     Label = "com.ldangelo.kanata";
+  #     ProgramArguments = [
+  #       "/opt/homebrew/bin/kanata"
+  #       "--cfg"
+  #       "/etc/kanata/home-row.kbd"
+  #     ];
+  #     KeepAlive = true;
+  #     RunAtLoad = true;
+  #     StandardOutPath = "/var/log/kanata.out.log";
+  #     StandardErrorPath = "/var/log/kanata.err.log";
+  #     ProcessType = "Interactive";
+  #     Nice = -20;
+  #     UserName = "root";
+  #     GroupName = "wheel";
+  #   };
+  # };
+  #
+  # # RustDesk remote-access service.
+  # # Official macOS install creates one root daemon plus one per-session LaunchAgent:
+  # #   /Library/LaunchDaemons/com.carriez.RustDesk_service.plist
+  # #   /Library/LaunchAgents/com.carriez.RustDesk_server.plist
+  # # Homebrew runs late in nix-darwin activation, so wrappers wait for the cask app
+  # # instead of failing first deploy before /Applications/RustDesk.app exists.
+  # launchd.daemons.rustdesk-service = lib.mkIf isWorkstation {
+  #   serviceConfig = {
+  #     Label = "com.carriez.RustDesk_service";
+  #     ProgramArguments = [
+  #       "/bin/sh"
+  #       "-c"
+  #       ''
+  #         while [ ! -x /Applications/RustDesk.app/Contents/MacOS/service ]; do
+  #           sleep 30
+  #         done
+  #         cd /Applications/RustDesk.app/Contents/MacOS
+  #         exec ./service
+  #       ''
+  #     ];
+  #     KeepAlive = true;
+  #     RunAtLoad = true;
+  #     ThrottleInterval = 30;
+  #     StandardOutPath = "/var/log/rustdesk_service.out";
+  #     StandardErrorPath = "/var/log/rustdesk_service.err";
+  #     UserName = "root";
+  #     GroupName = "wheel";
+  #   };
+  # };
+  #
+  # launchd.agents.rustdesk-server = lib.mkIf isWorkstation {
+  #   serviceConfig = {
+  #     Label = "com.carriez.RustDesk_server";
+  #     ProgramArguments = [
+  #       "/bin/sh"
+  #       "-c"
+  #       ''
+  #         while [ ! -x /Applications/RustDesk.app/Contents/MacOS/RustDesk ]; do
+  #           sleep 30
+  #         done
+  #         cd /Applications/RustDesk.app/Contents/MacOS
+  #         exec ./RustDesk --server
+  #       ''
+  #     ];
+  #     LimitLoadToSessionType = [
+  #       "LoginWindow"
+  #       "Aqua"
+  #     ];
+  #     KeepAlive = {
+  #       SuccessfulExit = false;
+  #       AfterInitialDemand = false;
+  #     };
+  #     RunAtLoad = true;
+  #     ThrottleInterval = 30;
+  #     ProcessType = "Interactive";
+  #     StandardOutPath = "/tmp/rustdesk_server.out";
+  #     StandardErrorPath = "/tmp/rustdesk_server.err";
+  #   };
+  # };
+  #
   # pizauth: authentication proxy (user agent so it can open browser for OAuth)
   launchd.user.agents.pizauth = {
     serviceConfig = {
@@ -157,12 +163,11 @@
 
   # Jankyboarders: enable
   services.jankyborders = lib.mkIf isWorkstation {
-      enable = true;
-      width = 6.0;
-      hidpi = false;
-      active_color =  "0xffe2e2e3";
-      inactive_color = "0xff414550";
-    };
-
+    enable = true;
+    width = 6.0;
+    hidpi = false;
+    active_color = "0xffe2e2e3";
+    inactive_color = "0xff414550";
+  };
 
 }
