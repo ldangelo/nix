@@ -1,6 +1,6 @@
 # Rift config - Leo D'Angelo
 # https://acsandmann.github.io/rift-docs/
-# Copy/symlinked to ~/.config/rift/config.toml (see ../../modules/home-manager/dotfiles-chezmoi.nix)
+# Templated into ~/.config/rift/config.toml by modules/home-manager/rift-plugins.nix (fills @...@ tokens)
 #
 # Five virtual workspaces, all inside whichever macOS Space you activate with Alt + Z:
 #   0 Development  (default) - WezTerm, Chrome, Obsidian           - master_stack
@@ -25,6 +25,14 @@ focus_follows_mouse = false
 default_disable = false
 mouse_hides_on_focus = false
 hot_reload = true
+
+# Flash rift-container-highlighter whenever ascend/descend moves the selection.
+# Runs once at rift startup (not on hot reload). Needs absolute paths and
+# /bin/sh -c: rift appends the event JSON as a trailing arg, which `sh -c`
+# discards as $0. @...@ tokens are substituted by modules/home-manager/rift-plugins.nix.
+run_on_start = [
+  "@rift-cli@ subscribe cli --event selection_changed --command /bin/sh --args -c --args '@rift-container-highlighter@ peek'",
+]
 
 [settings.ui]
 
@@ -209,7 +217,7 @@ workspace = "Trading"
 "Alt + BracketLeft" = "ascend"
 "Alt + BracketRight" = "descend"
 "Alt + Backslash" = { exec = [
-  "/Users/ldangelo/.cargo/bin/rift-container-highlighter",
+  "@rift-container-highlighter@",
   "peek",
 ] }
 

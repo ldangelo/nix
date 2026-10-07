@@ -28,6 +28,7 @@
     ./omp.nix
     ./ai-worktrees.nix
     ./tmuxai.nix
+    ./rift-plugins.nix
   ];
 
   home = {

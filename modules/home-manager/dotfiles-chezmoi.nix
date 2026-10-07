@@ -12,7 +12,6 @@ in
     # Window managers
     "yabai".source = "${dotfilesPath}/config/yabai";
     "skhd".source = "${dotfilesPath}/config/skhd";
-    "rift/config.toml".source = "${dotfilesPath}/config/rift/config.toml";
 
     # UI customization
     # borders - already handled by ./borders module
