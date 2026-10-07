@@ -19,8 +19,14 @@
 # apps with an explicit rule below are auto-routed.
 
 [settings]
-animate = true
+animate = false
 animation_duration = 0.2
+focus_follows_mouse = false
+default_disable = false
+mouse_hides_on_focus = false
+hot_reload = true
+
+[settings.ui]
 
 [settings.layout]
 mode = "traditional"
@@ -45,10 +51,11 @@ new_window_placement = "stack"
 [settings.layout.bsp]
 window_insertion_point = "next_to_selection"
 
-[settins.layout.scrolling]
-column_width_ratio = 0.25
+[settings.layout.scrolling]
+column_width_ratio = 0.33
 focus_navigation_style = "anchored"
-preseve_window_sizes = false
+preserve_window_sizes = false
+alignment = "center"
 
 [virtual_workspaces]
 default_workspace_count = 5

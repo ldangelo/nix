@@ -174,7 +174,7 @@
                 # ensemble skill undiscoverable (pi list reported "(filtered)").
                 # The package ships no extensions (no extensions/ dir, no `pi.extensions`
                 # manifest key), so there is nothing to conflict with.
-                "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi"
+                "/Users/ldangelo/Development/Sunstone/ensemble.dev/packages/pi"
               ];
               pi-agent.mcpConfig = {};
               pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);

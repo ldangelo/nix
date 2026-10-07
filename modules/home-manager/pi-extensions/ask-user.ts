@@ -13,7 +13,7 @@ function bell(): void {
 
 export default function askUser(pi: ExtensionAPI) {
   pi.registerTool({
-    name: "ask_user",
+    name: "ask",
     label: "Ask User",
     description: "Ask the user a clarifying question. Use this when user input is required before proceeding.",
     promptSnippet: "Ask the user a clarifying question and wait for their answer.",
