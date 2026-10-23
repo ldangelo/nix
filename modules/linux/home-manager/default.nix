@@ -23,7 +23,6 @@
     ../../home-manager/sops.nix
     ../../home-manager/zoxide.nix
     ../../home-manager/tmux
-    ../../home-manager/yazi.nix
   ];
 
   home = {
@@ -45,7 +44,6 @@
     nvim.enable = true;
     qutebrowser.enable = true;
     tmux.enable = true;
-    yazi.enable = true;
   };
 
   fonts.fontconfig.enable = true;

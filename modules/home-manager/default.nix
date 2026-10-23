@@ -23,9 +23,7 @@
     ./zoxide.nix
     ./tmux
     ./ghostty.nix
-    ./yazi.nix
     ./mutable-config.nix
-    ./ai-worktrees.nix
     ./tmuxai.nix
     ./rift-plugins.nix
   ];
@@ -52,17 +50,12 @@
     zsh-syntax-highlighting.enable = true;
     qutebrowser.enable = true;
     tmux.enable = true;
-    yazi.enable = true;
   };
   # Programs that rewrite their own config (or lock it in place) — see mutable-config.nix.
   mutableConfig.xdgFiles = [
     "worktrunk/config.toml"
     "gh/config.yml"
     "gh-dash/config.yml"
-    "yazi/yazi.toml"
-    "yazi/keymap.toml"
-    "yazi/theme.toml"
-    "yazi/init.lua"
     "jj/config.toml"
     "git/config"
   ];

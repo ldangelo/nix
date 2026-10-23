@@ -135,9 +135,6 @@
                 catppuccin.homeModules.catppuccin
                 ./modules/home-manager/default.nix
               ];
-              # Parallel AI-agent worktree workflow (worktrunk + clash + tmuxinator).
-              # NOTE: requires versions + hashes filled in ai-worktrees.nix before deploy.
-              # aiWorktrees.enable = true;  # disabled: ai-worktrees.nix has fakeHash placeholders (worktrunk + clash-sh). Re-enable after pasting real versions + hashes per the file's own onboarding steps.
             };
           }
         ];
@@ -174,7 +171,6 @@
               catppuccin.homeModules.catppuccin
               sops-nix.homeManagerModules.sops
               ./modules/home-manager/default.nix
-              ./overlays
               {
                 home.username = "ldangelo";
                 home.homeDirectory = "/Users/ldangelo";
