@@ -1,1 +1,1 @@
-{{- onepasswordRead (printf "op://%s/mac_mail_key/credential" .vault) -}}
+{{- output "op" "read" (printf "op://%s/mac_mail_key/credential" .vault) | trim -}}

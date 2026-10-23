@@ -59,9 +59,11 @@ It installs Homebrew, chezmoi and the 1Password CLI, then `chezmoi init --apply`
 Secrets are never in this repo. Templates read `op://<vault>/<item>/credential`, where the item
 name is the old sops key (`anthropic_api_key`, `mac_mail_key`, …).
 
-1. One time, while sops still works: `VAULT=Private scripts/migrate-secrets-to-1password.sh --dry-run`, then without `--dry-run`.
-2. Sign in: `op signin` (or enable the 1Password desktop-app CLI integration).
-3. Set `secrets = true` in `~/.config/chezmoi/chezmoi.toml` and `chezmoi apply`.
+1. Enable the 1Password desktop-app CLI integration (app: Settings > Developer > *Integrate with 1Password CLI*, app unlocked).
+2. One time, while sops still works: `VAULT=Private scripts/migrate-secrets-to-1password.sh --dry-run`, then without `--dry-run`
+   (values travel sops -> op on stdin; nothing is printed). Done on this machine: 16 items in vault `Private`.
+3. Set `secrets = true` in `~/.config/chezmoi/chezmoi.toml` and `chezmoi apply`. Templates call `op read` via
+   `output`, so one Touch ID approval covers a whole apply; approve the prompt when it appears.
 
 This renders `~/.config/secrets/env` (sourced by `~/.envrc`), `~/.config/secrets/mac_mail_key`
 (msmtp/mbsync) and `~/.wakatime.cfg`, all mode 0600.
