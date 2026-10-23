@@ -187,6 +187,27 @@ in
           set -g @sidebar_width 15%
           # Auto-create sidebar in new windows so OMP panes appear automatically
           set -g @sidebar_auto_create on
+
+      # @sidebar_auto_create only covers after-new-window (prefix+c); the
+      # first window of a freshly created session (e.g. via sesh) never
+      # triggers it, so that window never gets a sidebar.
+      # NB: do NOT try to "fix" this by spawning a dummy second window from
+      # after-new-session: the dummy's after-new-window hook races the next
+      # command the creator sends (e.g. sesh's own `new-window -c <dir>`),
+      # so sessions non-deterministically end up with a phantom "tmux"
+      # window, or two sidebars, or a bare zsh window.
+      # Instead, defer a `toggle-all` (kill every sidebar pane, then
+      # `--create-only` one per remaining window - idempotent) one event
+      # loop tick past the *entire* after-new-session hook chain. By then
+      # the creator's commands (sesh's windows, continuum/resurrect's
+      # restores) have all run, so every real window in the session gets a
+      # sidebar in its own window - including window 1.
+      # NOTE: the outer hook body MUST stay single-quoted (double quotes
+      # would expand #{} and #{session_name} at definition time); the inner
+      # command is double-quoted so tmux expands them when it finally runs.
+      # `-b` on both run-shells so neither can self-deadlock a synchronous
+      # new-session.
+      set-hook -g after-new-session 'run-shell -b "tmux run-shell -b \"sleep 0.2; #{@agent_sidebar_bin} toggle-all\""'
         '';
       }
     ];

@@ -34,4 +34,5 @@ in
     mode = "0600";
   };
   sops.secrets.litellm_master_key.mode = "0400";
+  sops.secrets.litellm_proxy_master_key.mode = "0400";
 }

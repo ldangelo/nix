@@ -78,6 +78,41 @@
           ]
         }
       ]
+    },
+    "litellm-stack": {
+      "baseUrl": "http://localhost:4000/v1",
+      "api": "openai-completions",
+      "apiKey": "!bash -lc \"cat \\$HOME/.config/sops-nix/secrets/litellm_proxy_master_key\"",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "supportsStrictMode": false,
+        "supportsUsageInStreaming": true,
+        "maxTokensField": "max_tokens"
+      },
+      "models": [
+        {
+          "id": "smart_router",
+          "name": "Smart Router - auto selects cheapest capable model",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 262144,
+          "maxTokens": 4096,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "tags": [
+            "local",
+            "router"
+          ]
+        }
+      ]
     }
   }
 }

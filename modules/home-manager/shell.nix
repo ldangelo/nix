@@ -8,6 +8,7 @@
     history.share = false;
     defaultKeymap = "viins";
     envExtra = ''
+      export XDG_CONFIG_HOME="$HOME/.config"
       # Make single-user Nix/Home Manager profile tools available before
       # Oh My Zsh plugins initialize. This matters on Linux login shells.
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
