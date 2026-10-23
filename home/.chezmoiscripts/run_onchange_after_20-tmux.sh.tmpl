@@ -3,7 +3,11 @@
 # tmux.conf hash: {{ include "dot_config/tmux/tmux.conf" | sha256sum }}
 set -euo pipefail
 mkdir -p "$HOME/.local/share/tmux/resurrect" "$HOME/.local/share/tmux/continuum"
-if [ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
-  # TPM reads the @plugin lines from tmux.conf; needs a running server or TMUX_PLUGIN_MANAGER_PATH.
-  TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins/" "$HOME/.tmux/plugins/tpm/bin/install_plugins" || echo "tpm install_plugins failed; run prefix+I inside tmux"
+TPM="$HOME/.config/tmux/plugins/tpm"
+if [ -x "$TPM/bin/install_plugins" ]; then
+  # TPM reads @plugin lines from a running server, so use a throwaway one on its own
+  # socket (leaves your real tmux sessions alone).
+  tmux -L tpm-install -f "$HOME/.config/tmux/tmux.conf" new-session -d -s tpm
+  tmux -L tpm-install run-shell "$TPM/bin/install_plugins" || echo "tpm install_plugins failed; run prefix+I inside tmux"
+  tmux -L tpm-install kill-server 2>/dev/null || true
 fi

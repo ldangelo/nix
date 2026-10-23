@@ -8,12 +8,12 @@
   [".oh-my-zsh".pull]
     args = ["--ff-only"]
 
-[".tmux/plugins/tpm"]
+[".config/tmux/plugins/tpm"]
   type = "git-repo"
   url = "https://github.com/tmux-plugins/tpm.git"
   refreshPeriod = "168h"
 
-[".tmux/plugins/tmux-sensible"]
+[".config/tmux/plugins/tmux-sensible"]
   type = "git-repo"
   url = "https://github.com/tmux-plugins/tmux-sensible.git"
   refreshPeriod = "168h"

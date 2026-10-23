@@ -7,7 +7,7 @@ uid="$(id -u)"
 for plist in "$HOME"/Library/LaunchAgents/com.ldangelo.*.plist "$HOME"/Library/LaunchAgents/com.rift.*.plist; do
   [ -f "$plist" ] || continue
   label="$(/usr/libexec/PlistBuddy -c 'Print :Label' "$plist")"
-  launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+  launchctl bootout "gui/$uid/$label" 2>/dev/null && sleep 1 || true
   launchctl bootstrap "gui/$uid" "$plist" || echo "failed to load $label"
 done
 # borders (window borders) runs under brew services
