@@ -1,0 +1,39 @@
+[[mgr.prepend_keymap]]
+desc = "Maximize or restore the preview pane"
+on = "T"
+run = "plugin toggle-pane max-preview"
+
+[[mgr.prepend_keymap]]
+desc = "Chmod on selected files"
+on = ["c", "m"]
+run = "plugin chmod"
+
+[[mgr.prepend_keymap]]
+desc = "Smart filter"
+on = "f"
+run = "plugin smart-filter"
+
+[[mgr.prepend_keymap]]
+desc = "Jump to char"
+on = "F"
+run = "plugin jump-to-char"
+
+[[mgr.prepend_keymap]]
+desc = "Open file or enter directory"
+on = "l"
+run = "plugin smart-enter"
+
+[[mgr.prepend_keymap]]
+desc = "Smart paste"
+on = "p"
+run = "plugin smart-paste"
+
+[[mgr.prepend_keymap]]
+desc = "Diff selected file"
+on = ["d", "f"]
+run = "plugin diff"
+
+[[mgr.prepend_keymap]]
+desc = "macOS tag management"
+on = ["c", "t"]
+run = "plugin mactag"
