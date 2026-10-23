@@ -1,0 +1,12 @@
+{{- /* Prompted once per machine, then stored in ~/.config/chezmoi/chezmoi.toml */ -}}
+{{- $workstation := promptBoolOnce . "workstation" "Is this a workstation (full app set)" true -}}
+{{- $secrets := promptBoolOnce . "secrets" "Render 1Password secrets (needs `op` signed in)" false -}}
+{{- $vault := promptStringOnce . "vault" "1Password vault holding the secrets" "Private" -}}
+
+[data]
+  workstation = {{ $workstation }}
+  secrets = {{ $secrets }}
+  vault = {{ $vault | quote }}
+
+[onepassword]
+  command = "op"

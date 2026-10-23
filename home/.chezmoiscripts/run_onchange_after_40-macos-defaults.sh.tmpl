@@ -1,0 +1,36 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# macOS defaults previously set by nix-darwin (system.defaults). Edit and re-apply to change.
+# version: 1
+set -euo pipefail
+d() { defaults write "$@"; }
+# Global
+d NSGlobalDomain AppleInterfaceStyle -string Dark
+d NSGlobalDomain AppleShowAllExtensions -bool true
+d NSGlobalDomain AppleShowAllFiles -bool true
+d NSGlobalDomain _HIHideMenuBar -bool false
+d NSGlobalDomain AppleKeyboardUIMode -int 3
+d NSGlobalDomain com.apple.keyboard.fnState -bool true
+d NSGlobalDomain KeyRepeat -int 3
+d NSGlobalDomain InitialKeyRepeat -int 20
+# Dock
+d com.apple.dock autohide -bool true
+d com.apple.dock autohide-delay -float 0
+d com.apple.dock tilesize -int 48
+d com.apple.dock launchanim -bool false
+d com.apple.dock static-only -bool false
+d com.apple.dock showhidden -bool true
+d com.apple.dock show-recents -bool false
+d com.apple.dock show-process-indicators -bool true
+d com.apple.dock orientation -string bottom
+# Finder
+d com.apple.finder AppleShowAllExtensions -bool true
+d com.apple.finder AppleShowAllFiles -bool true
+d com.apple.finder _FXShowPosixPathInTitle -bool true
+d com.apple.finder ShowPathbar -bool true
+d com.apple.finder ShowStatusBar -bool true
+killall Dock Finder >/dev/null 2>&1 || true
+# Caps Lock -> Escape (keyboard.remapCapsLockToEscape). Takes effect immediately; not persistent
+# across reboots without a LaunchAgent, so also set it in System Settings > Keyboard > Modifier Keys.
+hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}' >/dev/null
+{{ end -}}

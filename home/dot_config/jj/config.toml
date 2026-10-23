@@ -1,0 +1,17 @@
+[merge-tools.delta]
+diff-args = ["$left", "$right"]
+diff-expected-exit-codes = [0, 1]
+diff-invocation-mode = "file-by-file"
+
+[merge-tools.meld]
+edit-args = ["--newtab", "$left", "$right"]
+meld = "/opt/homebrew/bin/meld"
+
+[ui]
+diff-formatter = ":git"
+editor = "nvim"
+pager = "delta"
+
+[user]
+email = "ldangelo@mac.com"
+name = "Leo D'Angelo"

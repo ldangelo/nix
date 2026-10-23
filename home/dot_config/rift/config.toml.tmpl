@@ -1,0 +1,226 @@
+# Rift config - Leo D'Angelo
+# https://acsandmann.github.io/rift-docs/
+# Templated into ~/.config/rift/config.toml by the chezmoi rift bootstrap (cargo-installed plugins)
+#
+# Five virtual workspaces, all inside whichever macOS Space you activate with Alt + Z:
+#   0 Development  (default) - WezTerm, Chrome, Obsidian           - master_stack
+#   1 Communication           - Outlook, Spark, Slack, Teams,
+#                               Discord, Messages                  - master_stack
+#   2 Meetings                - Zoom, Granola (+ Teams calls)      - master_stack
+#   3 Trading                 - TradingView                        - bsp
+#   4 Misc                    - everything else                    - traditional (global default)
+#
+# NOTE: Microsoft Teams is used for both chat and calls. It is routed to
+# Communication below since app rules can only target one workspace per app;
+# move an active Teams call to Meetings by hand with `Alt + Shift + 3`.
+#
+# NOTE: Rift has no "send everything unmatched here" rule - Misc is simply an
+# extra workspace you can move windows into manually (Alt + Shift + 5); only
+# apps with an explicit rule below are auto-routed.
+
+[settings]
+animate = false
+animation_duration = 0.2
+focus_follows_mouse = false
+default_disable = false
+mouse_hides_on_focus = false
+hot_reload = true
+
+# Flash rift-container-highlighter whenever ascend/descend moves the selection.
+# Runs once at rift startup (not on hot reload). Needs absolute paths and
+# /bin/sh -c: rift appends the event JSON as a trailing arg, which `sh -c`
+# discards as $0. plugin binaries are cargo-installed by run_onchange_after_rift-plugins.sh.tmpl.
+run_on_start = [
+  "/opt/homebrew/bin/rift-cli subscribe cli --event selection_changed --command /bin/sh --args -c --args '{{ .chezmoi.homeDir }}/.cargo/bin/rift-container-highlighter peek'",
+]
+
+[settings.ui]
+
+[settings.layout]
+mode = "traditional"
+window_insertion_point = "next_to_selection"
+
+[settings.layout.gaps.outer]
+top = 8
+left = 8
+bottom = 8
+right = 8
+
+[settings.layout.gaps.inner]
+horizontal = 8
+vertical = 8
+
+[settings.layout.master_stack]
+master_ratio = 0.6
+master_count = 1
+master_side = "left"
+new_window_placement = "stack"
+
+[settings.layout.bsp]
+window_insertion_point = "next_to_selection"
+
+[settings.layout.scrolling]
+column_width_ratio = 0.33
+focus_navigation_style = "anchored"
+preserve_window_sizes = false
+alignment = "center"
+
+[virtual_workspaces]
+default_workspace_count = 5
+default_workspace = 0
+workspace_names = [
+  "Development",
+  "Communication",
+  "Meetings",
+  "Trading",
+  "Misc",
+]
+workspace_auto_back_and_forth = false
+prevent_wrapping = false
+
+# Per-workspace layout overrides. Development can be switched from
+# "master_stack" to "scrolling" here if you'd rather have scrolling columns -
+# it's the only workspace prompt.md left open either way.
+[[virtual_workspaces.workspace_rules]]
+workspace = "Development"
+layout = "scrolling"
+
+[[virtual_workspaces.workspace_rules]]
+workspace = "Communication"
+layout = "master_stack"
+
+[[virtual_workspaces.workspace_rules]]
+workspace = "Meetings"
+layout = "stack"
+
+[[virtual_workspaces.workspace_rules]]
+workspace = "Trading"
+layout = "bsp"
+
+# --- Development ---
+[[virtual_workspaces.app_rules]]
+app_id = "com.github.wez.wezterm"
+workspace = "Development"
+
+[[virtual_workspaces.app_rules]]
+app_id = "com.google.Chrome"
+workspace = "Development"
+
+[[virtual_workspaces.app_rules]]
+app_id = "md.obsidian"
+workspace = "Development"
+
+# --- Communication ---
+[[virtual_workspaces.app_rules]]
+app_id = "com.microsoft.Outlook"
+workspace = "Communication"
+
+[[virtual_workspaces.app_rules]]
+app_id = "com.readdle.SparkDesktop"
+workspace = "Communication"
+
+[[virtual_workspaces.app_rules]]
+app_id = "com.tinyspeck.slackmacgap"
+workspace = "Communication"
+
+[[virtual_workspaces.app_rules]]
+app_id = "com.microsoft.teams2"
+workspace = "Communication"
+
+[[virtual_workspaces.app_rules]]
+app_id = "com.hnc.Discord"
+workspace = "Communication"
+
+[[virtual_workspaces.app_rules]]
+app_id = "com.apple.MobileSMS"
+workspace = "Communication"
+
+# --- Meetings ---
+[[virtual_workspaces.app_rules]]
+app_id = "us.zoom.xos"
+workspace = "Meetings"
+
+[[virtual_workspaces.app_rules]]
+app_id = "com.granola.app"
+workspace = "Meetings"
+
+# --- Trading ---
+[[virtual_workspaces.app_rules]]
+app_id = "com.tradingview.tradingviewapp.desktop"
+workspace = "Trading"
+
+[keys]
+# Activation - Rift leaves new Spaces inactive until toggled.
+"Alt + Z" = "toggle_space_activated"
+
+# Focus - mirrors skhd `alt - h/j/k/l`
+"Alt + H" = { move_focus = "left" }
+"Alt + J" = { move_focus = "down" }
+"Alt + K" = { move_focus = "up" }
+"Alt + L" = { move_focus = "right" }
+
+# Swap focused window with its neighbor - mirrors skhd `alt + ctrl - h/j/k/l`
+"Ctrl + Alt + H" = { move_node = "left" }
+"Ctrl + Alt + J" = { move_node = "down" }
+"Ctrl + Alt + K" = { move_node = "up" }
+"Ctrl + Alt + L" = { move_node = "right" }
+
+# Stack focused window with its neighbor - mirrors skhd `alt + shift - h/l`
+"Alt + Shift + H" = { join_window = "left" }
+"Alt + Shift + J" = { join_window = "down" }
+"Alt + Shift + K" = { join_window = "up" }
+"Alt + Shift + L" = { join_window = "right" }
+"Ctrl + Alt + E" = "unjoin_windows"
+
+# Rotate split orientation - mirrors skhd `alt - r` (space --rotate 90)
+"Alt + R" = "toggle_orientation"
+
+# Fullscreen / float - mirrors skhd `alt - f` / `alt - t`
+"Alt + F" = "toggle_fullscreen"
+"Alt + T" = { toggle_window_floating = { center = true, size = "smart" } }
+
+# Resize - mirrors skhd `alt(+shift) - y/x` (y = height, x = width)
+"Alt + Y" = { resize_window_grow = "vertical" }
+"Alt + X" = { resize_window_grow = "horizontal" }
+"Alt + Shift + Y" = { resize_window_shrink = "vertical" }
+"Alt + Shift + X" = { resize_window_shrink = "horizontal" }
+
+# Switch workspace - mirrors skhd `alt + ctrl - 1..9`, limited to the 5 defined above
+"Alt + 1" = { switch_to_workspace = 0 }  # Development
+"Alt + 2" = { switch_to_workspace = 1 }  # Communication
+"Alt + 3" = { switch_to_workspace = 2 }  # Meetings
+"Alt + 4" = { switch_to_workspace = 3 }  # Trading
+"Alt + 5" = { switch_to_workspace = 4 }  # Misc
+"Alt + Tab" = "switch_to_last_workspace"
+
+# Move focused window to workspace and follow it - mirrors skhd `shift + alt - 1..9`
+"Alt + Shift + 1" = { move_window_to_workspace = { workspace = 0, follow = true } }
+"Alt + Shift + 2" = { move_window_to_workspace = { workspace = 1, follow = true } }
+"Alt + Shift + 3" = { move_window_to_workspace = { workspace = 2, follow = true } }
+"Alt + Shift + 4" = { move_window_to_workspace = { workspace = 3, follow = true } }
+"Alt + Shift + 5" = { move_window_to_workspace = { workspace = 4, follow = true } }
+
+# New virtual workspace - closest match to skhd `shift + alt - n` (which created a
+# whole new macOS Space; Rift's workspaces live inside one Space instead).
+"Alt + Shift + N" = "create_workspace"
+
+# Master-stack controls (Development/Communication/Meetings use this layout)
+"Alt + Equal" = { adjust_master_ratio = 0.05 }
+"Alt + Minus" = { adjust_master_ratio = -0.05 }
+"Alt + Shift + Equal" = { adjust_master_count = { delta = 1 } }
+"Alt + Shift + Minus" = { adjust_master_count = { delta = -1 } }
+"Alt + Return" = "promote_to_master"
+"Alt + Shift + Return" = "swap_master_stack"
+
+# Tree navigation - also the keys rift-container-highlighter's README documents
+# ascend/descend under, kept matching so the plugin needs no extra bindings.
+"Alt + BracketLeft" = "ascend"
+"Alt + BracketRight" = "descend"
+"Alt + Backslash" = { exec = [
+  "{{ .chezmoi.homeDir }}/.cargo/bin/rift-container-highlighter",
+  "peek",
+] }
+
+# Launch terminal - mirrors skhd `cmd - return`, updated to WezTerm (the
+# Development workspace's terminal) instead of the old kitty binding.
+"Meta + Return" = { exec = ["/usr/bin/open", "-a", "WezTerm"] }

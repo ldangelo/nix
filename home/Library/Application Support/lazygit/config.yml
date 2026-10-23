@@ -1,0 +1,37 @@
+%YAML 1.1
+---
+customCommands:
+- command: jj st
+  context: global
+  description: Jujutsu status
+  key: J
+  output: popup
+git:
+  autoFetch: true
+  autoRefresh: true
+  diffRenderers:
+  - colorArg: always
+    command: delta --dark --paging=never --side-by-side --line-numbers
+    name: delta-sxs
+    type: stdinFilter
+  - colorArg: always
+    command: delta --dark --paging=never
+    name: delta
+    type: stdinFilter
+  log:
+    showGraph: always
+    showWholeGraph: false
+  parseEmoji: true
+gui:
+  animateExplosion: false
+  border: rounded
+  expandFocusedSidePanel: true
+  mouseEvents: true
+  nerdFontsVersion: '3'
+  showDivergenceFromBaseBranch: arrowAndNumber
+  showFileTree: true
+  showRandomTip: false
+  sideBySideDiff: true
+os:
+  editPreset: nvim
+promptToReturnFromSubprocess: false

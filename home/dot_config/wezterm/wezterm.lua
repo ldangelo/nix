@@ -1,0 +1,211 @@
+local wezterm = require("wezterm")
+local utils = require("utils")
+local keybinds = require("keybinds")
+local mux = wezterm.mux
+local act = wezterm.action
+local gpus = wezterm.gui.enumerate_gpus()
+require("on")
+
+---------------------------------------------------------------
+--- Plugins
+---------------------------------------------------------------
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
+
+-- /etc/ssh/sshd_config
+-- AcceptEnv TERM_PROGRAM_VERSION COLORTERM TERM TERM_PROGRAM WEZTERM_REMOTE_PANE
+-- sudo systemctl reload sshd
+
+---------------------------------------------------------------
+--- functions
+---------------------------------------------------------------
+-- selene: allow(unused_variable)
+---@diagnostic disable-next-line: unused-function, unused-local
+local function enable_wayland()
+  local wayland = os.getenv("XDG_SESSION_TYPE")
+  if wayland == "wayland" then
+    return true
+  end
+  return false
+end
+
+---------------------------------------------------------------
+--- Merge the Config
+---------------------------------------------------------------
+local function create_ssh_domain_from_ssh_config(ssh_domains)
+  if ssh_domains == nil then
+    ssh_domains = {}
+  end
+  for host, config in pairs(wezterm.enumerate_ssh_hosts()) do
+    table.insert(ssh_domains, {
+      name = host,
+      remote_address = config.hostname .. ":" .. config.port,
+      username = config.user,
+      multiplexing = "None",
+      assume_shell = "Posix",
+    })
+  end
+  return { ssh_domains = ssh_domains }
+end
+
+--- load local_config
+-- Write settings you don't want to make public, such as ssh_domains
+package.path = os.getenv("HOME") .. "/.local/share/wezterm/?.lua;" .. package.path
+local function load_local_config(module)
+  local m = package.searchpath(module, package.path)
+  if m == nil then
+    return {}
+  end
+  return dofile(m)
+end
+
+local local_config = load_local_config("local")
+
+---------------------------------------------------------------
+--- Config
+---------------------------------------------------------------
+local config = {
+  -- font = wezterm.font("Cica"),
+  -- font_size = 10.0,
+  font = wezterm.font("FiraCode Nerd Font"),
+  font_size = 14,
+  -- Launch interactive login shell, exec into herdr session manager.
+--  default_prog = { "/bin/zsh", "-l", "-c", "--", "exec herdr" },
+  check_for_updates = false,
+  use_ime = true,
+  ime_preedit_rendering = "Builtin",
+  use_dead_keys = false,
+  warn_about_missing_glyphs = false,
+  animation_fps = 1,
+  cursor_blink_ease_in = "Constant",
+  cursor_blink_ease_out = "Constant",
+  cursor_blink_rate = 0,
+  enable_wayland = false,
+  -- enable kitty keyboard (this is needed by oh_my_pi)
+  enable_kitty_keyboard = true,
+  -- Catppuccin Mocha theme (matches qutebrowser)
+  color_scheme = "Catppuccin Mocha",
+
+  -- Use xterm-256color until wezterm terminfo is installed system-wide
+  term = "xterm-256color",
+
+  -- Minimal UI (matches qutebrowser's tabs.show = "multiple" and statusbar.show = "in-mode")
+  hide_tab_bar_if_only_one_tab = false,
+  use_fancy_tab_bar = false,
+  tab_bar_at_bottom = true,
+  tab_max_width = 32,
+  show_tab_index_in_tab_bar = false,
+  show_new_tab_button_in_tab_bar = false,
+
+  -- Window styling
+  window_decorations = "TITLE|RESIZE",
+  adjust_window_size_when_changing_font_size = false,
+  window_background_opacity = 1.0,
+  macos_window_background_blur = 0,
+
+  -- Keep tmux pane borders flush with the terminal edges.
+  window_padding = {
+    left = 0,
+    right = 0,
+    top = 0,
+    bottom = 0,
+  },
+
+  -- Dim inactive panes to highlight the active one
+  inactive_pane_hsb = {
+    saturation = 0.7,
+    brightness = 0.6,
+  },
+
+  selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%",
+  exit_behavior = "CloseOnCleanExit",
+  window_close_confirmation = "NeverPrompt",
+  disable_default_key_bindings = true,
+  -- separate <Tab> <C-i>
+  enable_csi_u_key_encoding = true,
+  keys = keybinds.create_keybinds(),
+  key_tables = keybinds.key_tables,
+  mouse_bindings = keybinds.mouse_bindings,
+  -- https://github.com/wez/wezterm/issues/2756
+  webgpu_preferred_adapter = gpus[1],
+  front_end = "OpenGL",
+}
+
+config.hyperlink_rules = {
+  -- Matches: a URL in parens: (URL)
+  {
+    regex = "\\((\\w+://\\S+)\\)",
+    format = "$1",
+    highlight = 1,
+  },
+  -- Matches: a URL in brackets: [URL]
+  {
+    regex = "\\[(\\w+://\\S+)\\]",
+    format = "$1",
+    highlight = 1,
+  },
+  -- Matches: a URL in curly braces: {URL}
+  {
+    regex = "\\{(\\w+://\\S+)\\}",
+    format = "$1",
+    highlight = 1,
+  },
+  -- Matches: a URL in angle brackets: <URL>
+  {
+    regex = "<(\\w+://\\S+)>",
+    format = "$1",
+    highlight = 1,
+  },
+  -- Then handle URLs not wrapped in brackets
+  {
+    -- Before
+    --regex = '\\b\\w+://\\S+[)/a-zA-Z0-9-]+',
+    --format = '$0',
+    -- After
+    regex = "[^(]\\b(\\w+://\\S+[)/a-zA-Z0-9-]+)",
+    format = "$1",
+    highlight = 1,
+  },
+  -- implicit mailto link
+  {
+    regex = "\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b",
+    format = "mailto:$0",
+  },
+}
+table.insert(config.hyperlink_rules, {
+  regex = [[["]?([\w\d]{1}[-\w\d]+)(/){1}([-\w\d\.]+)["]?]],
+  format = "https://github.com/$1/$3",
+})
+
+--require("plugins/ai_helper")
+
+---------------------------------------------------------------
+--- Plugin Setup
+---------------------------------------------------------------
+
+-- Tabline setup (Catppuccin theme, minimal style)
+tabline.setup({
+  options = {
+    theme = "Catppuccin Mocha",
+    section_separators = { left = "", right = "" },
+    component_separators = { left = "", right = "" },
+    tab_separators = { left = "", right = "" },
+  },
+  sections = {
+    tabline_a = { "workspace" },
+    tabline_b = {},
+    tabline_c = {},
+    tab_active = { "index", { "cwd", padding = 1 } },
+    tab_inactive = { "index", { "process", padding = 1 } },
+    tabline_x = {},
+    tabline_y = { "datetime" },
+    tabline_z = { "hostname" },
+  },
+})
+tabline.apply_to_config(config)
+
+-- Re-apply settings that tabline.apply_to_config may override
+config.window_decorations = "TITLE | RESIZE"
+config.hide_tab_bar_if_only_one_tab = false
+
+local merged_config = utils.merge_tables(config, local_config)
+return utils.merge_tables(merged_config, create_ssh_domain_from_ssh_config(merged_config.ssh_domains))

@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/osascript -e 'display dialog "sudo password:" default answer "" with hidden answer with title "sudo"' -e 'text returned of result' 2>/dev/null

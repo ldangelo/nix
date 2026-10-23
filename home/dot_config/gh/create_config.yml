@@ -1,0 +1,13 @@
+%YAML 1.1
+---
+accessible_colors: disabled
+accessible_prompter: disabled
+aliases:
+  co: pr checkout
+color_labels: disabled
+editor: ''
+git_protocol: https
+prefer_editor_prompt: disabled
+prompt: enabled
+spinner: enabled
+version: '1'

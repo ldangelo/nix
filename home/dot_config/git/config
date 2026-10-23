@@ -1,0 +1,65 @@
+[core]
+	autocrlf = "input"
+	editor = "nvim"
+	excludesfile = "/Users/ldangelo/.gitignore_global"
+	pager = "delta"
+
+[credential "https://gist.github.com"]
+	helper = "!/opt/homebrew/bin/gh auth git-credential"
+
+[credential "https://github.com"]
+	helper = "!/opt/homebrew/bin/gh auth git-credential"
+
+[delta]
+	line-numbers = true
+	line-numbers-minus-style = "#F38BA8"
+	line-numbers-plus-style = "#A6E3A1"
+	line-numbers-zero-style = "#6C7086"
+	map-styles = "bold purple => syntax #330033, bold cyan => syntax #003333"
+	minus-emph-style = "syntax #6B2028"
+	minus-style = "syntax #3B1219"
+	navigate = true
+	plus-emph-style = "syntax #2B4830"
+	plus-style = "syntax #1B2B20"
+	side-by-side = true
+	syntax-theme = "Catppuccin Mocha"
+	wrap-max-lines = "unlimited"
+
+[difftool "sourcetree"]
+	cmd = "opendiff \"$LOCAL\" \"$REMOTE\""
+	path = ""
+
+[gpg]
+	format = "openpgp"
+
+[gpg "openpgp"]
+	program = "/opt/homebrew/bin/gpg"
+
+[interactive]
+	diffFilter = "delta --color-only"
+
+[merge]
+	conflictstyle = "zdiff3"
+
+[mergetool "sourcetree"]
+	cmd = "/Users/ldangelo/Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\""
+	trustExitCode = true
+
+[sendemail "curantis"]
+	envelopeSender = "auto"
+	from = "Leo D'Angelo <leo.dangelo@curantissolutions.com>"
+	sendmailCmd = "/opt/homebrew/bin/msmtp"
+
+[sendemail "fortium"]
+	envelopeSender = "auto"
+	from = "Leo A. D'Angelo <leo.dangelo@fortiumpartners.com>"
+	sendmailCmd = "/opt/homebrew/bin/msmtp"
+
+[sendemail "icloud"]
+	envelopeSender = "auto"
+	from = "Leo A. DAngelo <ldangelo@mac.com>"
+	sendmailCmd = "/opt/homebrew/bin/msmtp"
+
+[user]
+	email = "ldangelo@mac.com"
+	name = "Leo A. D'Angelo"

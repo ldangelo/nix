@@ -1,0 +1,1 @@
+post-switch = "sesh connect --switch {{ worktree_path }}"

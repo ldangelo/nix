@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Touch ID for sudo (replaces nix-darwin security.pam.services.sudo_local.touchIdAuth).
+# Needs root, so this only prints the command instead of prompting during apply.
+if ! grep -qs '^auth *sufficient *pam_tid.so' /etc/pam.d/sudo_local 2>/dev/null; then
+  echo "To enable Touch ID for sudo, run:"
+  echo "  echo 'auth       sufficient     pam_tid.so' | sudo tee /etc/pam.d/sudo_local"
+fi
+{{ end -}}

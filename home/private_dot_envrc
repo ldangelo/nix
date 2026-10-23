@@ -1,0 +1,5 @@
+# Home-directory direnv file. Secrets come from 1Password via chezmoi
+# (rendered to ~/.config/secrets/env, mode 0600) — nothing is read from sops.
+[ -r "$HOME/.config/secrets/env" ] && source "$HOME/.config/secrets/env"
+
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1

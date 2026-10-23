@@ -1,0 +1,9 @@
+#!/bin/bash
+# tmux plugin bootstrap. Re-runs when the plugin list in tmux.conf changes.
+# tmux.conf hash: {{ include "dot_config/tmux/tmux.conf" | sha256sum }}
+set -euo pipefail
+mkdir -p "$HOME/.local/share/tmux/resurrect" "$HOME/.local/share/tmux/continuum"
+if [ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
+  # TPM reads the @plugin lines from tmux.conf; needs a running server or TMUX_PLUGIN_MANAGER_PATH.
+  TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins/" "$HOME/.tmux/plugins/tpm/bin/install_plugins" || echo "tpm install_plugins failed; run prefix+I inside tmux"
+fi

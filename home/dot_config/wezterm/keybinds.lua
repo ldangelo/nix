@@ -1,0 +1,307 @@
+local M = {}
+local wezterm = require("wezterm")
+local act = wezterm.action
+local utils = require("utils")
+
+---------------------------------------------------------------
+--- keybinds
+---------------------------------------------------------------
+M.tmux_keybinds = {
+    -- this is for claude code
+    { key = "Enter", mods = "SHIFT",    action = wezterm.action({ SendString = "\x1b\r" }) },
+
+    -- Work around herdr/herdr#1266: with enable_kitty_keyboard = true, WezTerm
+    -- sends a bare "\x1b" on keydown and a separate "\x1b[27;1:3u" release
+    -- event right behind it. Herdr's escape-disambiguation (is this a lone
+    -- Esc or the start of an Alt+key/CSI sequence?) races that release byte
+    -- and silently drops quick Esc taps, so Esc stops exiting insert mode in
+    -- nvim panes hosted by herdr. Sending one fully-formed CSI-u press
+    -- sequence instead of a raw byte makes it unambiguous to parse, so
+    -- herdr (and anything it hosts) always sees exactly one Esc. Only
+    -- plain, unmodified Escape is affected; every other app/keychord is
+    -- untouched.
+    {
+        key = "Escape",
+        mods = "NONE",
+        action = wezterm.action_callback(function(window, pane)
+            local process = pane:get_foreground_process_name() or ""
+            if process:match("herdr$") then
+                pane:send_text("\x1b[27;1u")
+            else
+                window:perform_action(act({ SendKey = { key = "Escape", mods = "NONE" } }), pane)
+            end
+        end),
+    },
+    { key = "q",     mods = "CMD",      action = wezterm.action.QuitApplication },
+    { key = "t",     mods = "CMD",      action = act.SpawnTab("CurrentPaneDomain") },
+    { key = "1",     mods = "CMD",      action = act({ ActivateTab = 0 }) },
+    { key = "2",     mods = "CMD",      action = act({ ActivateTab = 1 }) },
+    { key = "3",     mods = "CMD",      action = act({ ActivateTab = 2 }) },
+    { key = "4",     mods = "CMD",      action = act({ ActivateTab = 3 }) },
+    { key = "5",     mods = "CMD",      action = act({ ActivateTab = 4 }) },
+    { key = "6",     mods = "CMD",      action = act({ ActivateTab = 5 }) },
+    { key = "7",     mods = "CMD",      action = act({ ActivateTab = 6 }) },
+    { key = "8",     mods = "CMD",      action = act({ ActivateTab = 7 }) },
+    { key = "9",     mods = "CMD",      action = act({ ActivateTab = 8 }) },
+}
+
+M.default_keybinds = {
+    -- Standard editing
+    { key = "c",        mods = "CMD",       action = act({ CopyTo = "Clipboard" }) },
+    { key = "v",        mods = "CMD",       action = act({ PasteFrom = "Clipboard" }) },
+    { key = "Insert",   mods = "SHIFT",     action = act({ PasteFrom = "PrimarySelection" }) },
+
+    -- Font sizing
+    { key = "=",        mods = "CMD",       action = "ResetFontSize" },
+    { key = "+",        mods = "CMD",       action = "IncreaseFontSize" },
+    { key = "-",        mods = "CMD",       action = "DecreaseFontSize" },
+
+    -- Scrolling - Moved from Alt to Cmd+Shift to avoid AeroSpace conflicts
+    { key = "PageUp",   mods = "CMD|SHIFT", action = act({ ScrollByPage = -1 }) },
+    { key = "PageDown", mods = "CMD|SHIFT", action = act({ ScrollByPage = 1 }) },
+    { key = "b",        mods = "CMD|SHIFT", action = act({ ScrollByPage = -1 }) },
+    { key = "f",        mods = "CMD|SHIFT", action = act({ ScrollByPage = 1 }) },
+
+    -- Configuration and utilities
+    { key = "r",        mods = "CMD",       action = "ReloadConfiguration" },
+    { key = "e",        mods = "CMD",       action = act({ EmitEvent = "trigger-nvim-with-scrollback" }) },
+    { key = "d",        mods = "CMD|SHIFT", action = wezterm.action.ShowDebugOverlay },
+
+    -- Pane operations - Keep Alt for q/x (low conflict)
+    { key = "q",        mods = "ALT",       action = act({ CloseCurrentPane = { confirm = true } }) },
+    { key = "x",        mods = "ALT",       action = act({ CloseCurrentPane = { confirm = true } }) },
+
+    -- Launcher and navigation
+    { key = "a",        mods = "CMD|SHIFT", action = wezterm.action.ShowLauncher },
+    { key = " ",        mods = "CMD|SHIFT", action = wezterm.action.ShowTabNavigator },
+    { key = "p",        mods = "CMD|SHIFT", action = wezterm.action.ActivateCommandPalette },
+
+    -- Resize mode activation
+    {
+        key = "r",
+        mods = "CMD|SHIFT",
+        action = act({
+            ActivateKeyTable = {
+                name = "resize_pane",
+                one_shot = false,
+                timeout_milliseconds = 3000,
+                replace_current = false,
+            },
+        }),
+    },
+
+    -- Pane selection
+    {
+        key = "s",
+        mods = "CMD|SHIFT",
+        action = act.PaneSelect({
+            alphabet = "1234567890",
+        }),
+    },
+
+    -- Pane rotation
+    { key = "`", mods = "CMD",       action = act.RotatePanes("CounterClockwise") },
+    { key = "`", mods = "CMD|SHIFT", action = act.RotatePanes("Clockwise") },
+
+    -- Tab renaming
+    {
+        key = "E",
+        mods = "CMD|SHIFT",
+        action = act.PromptInputLine({
+            description = "Enter new name for tab",
+            -- selene: allow(unused_variable)
+            ---@diagnostic disable-next-line: unused-local
+            action = wezterm.action_callback(function(window, pane, line)
+                -- line will be `nil` if they hit escape without entering anything
+                -- An empty string if they just hit enter
+                -- Or the actual line of text they wrote
+                if line then
+                    window:active_tab():set_title(line)
+                end
+            end),
+        }),
+    },
+}
+
+function M.create_keybinds()
+    return utils.merge_lists(M.default_keybinds, M.tmux_keybinds)
+end
+
+M.key_tables = {
+    resize_pane = {
+        { key = "LeftArrow",  action = act({ AdjustPaneSize = { "Left", 1 } }) },
+        { key = "h",          action = act({ AdjustPaneSize = { "Left", 1 } }) },
+        { key = "RightArrow", action = act({ AdjustPaneSize = { "Right", 1 } }) },
+        { key = "l",          action = act({ AdjustPaneSize = { "Right", 1 } }) },
+        { key = "UpArrow",    action = act({ AdjustPaneSize = { "Up", 1 } }) },
+        { key = "k",          action = act({ AdjustPaneSize = { "Up", 1 } }) },
+        { key = "DownArrow",  action = act({ AdjustPaneSize = { "Down", 1 } }) },
+        { key = "j",          action = act({ AdjustPaneSize = { "Down", 1 } }) },
+        -- Cancel the mode by pressing escape
+        { key = "Escape",     action = "PopKeyTable" },
+    },
+    copy_mode = {
+        {
+            key = "Escape",
+            mods = "NONE",
+            action = act.Multiple({
+                act.ClearSelection,
+                act.CopyMode("ClearPattern"),
+                act.CopyMode("Close"),
+            }),
+        },
+        { key = "q",          mods = "NONE",  action = act.CopyMode("Close") },
+        -- move cursor
+        { key = "h",          mods = "NONE",  action = act.CopyMode("MoveLeft") },
+        { key = "LeftArrow",  mods = "NONE",  action = act.CopyMode("MoveLeft") },
+        { key = "j",          mods = "NONE",  action = act.CopyMode("MoveDown") },
+        { key = "DownArrow",  mods = "NONE",  action = act.CopyMode("MoveDown") },
+        { key = "k",          mods = "NONE",  action = act.CopyMode("MoveUp") },
+        { key = "UpArrow",    mods = "NONE",  action = act.CopyMode("MoveUp") },
+        { key = "l",          mods = "NONE",  action = act.CopyMode("MoveRight") },
+        { key = "RightArrow", mods = "NONE",  action = act.CopyMode("MoveRight") },
+        -- move word
+        { key = "RightArrow", mods = "ALT",   action = act.CopyMode("MoveForwardWord") },
+        { key = "f",          mods = "ALT",   action = act.CopyMode("MoveForwardWord") },
+        { key = "\t",         mods = "NONE",  action = act.CopyMode("MoveForwardWord") },
+        { key = "w",          mods = "NONE",  action = act.CopyMode("MoveForwardWord") },
+        { key = "LeftArrow",  mods = "ALT",   action = act.CopyMode("MoveBackwardWord") },
+        { key = "b",          mods = "ALT",   action = act.CopyMode("MoveBackwardWord") },
+        { key = "\t",         mods = "SHIFT", action = act.CopyMode("MoveBackwardWord") },
+        { key = "b",          mods = "NONE",  action = act.CopyMode("MoveBackwardWord") },
+        {
+            key = "e",
+            mods = "NONE",
+            action = act({
+                Multiple = {
+                    act.CopyMode("MoveRight"),
+                    act.CopyMode("MoveForwardWord"),
+                    act.CopyMode("MoveLeft"),
+                },
+            }),
+        },
+        -- move start/end
+        { key = "0",  mods = "NONE",  action = act.CopyMode("MoveToStartOfLine") },
+        { key = "\n", mods = "NONE",  action = act.CopyMode("MoveToStartOfNextLine") },
+        { key = "$",  mods = "SHIFT", action = act.CopyMode("MoveToEndOfLineContent") },
+        { key = "$",  mods = "NONE",  action = act.CopyMode("MoveToEndOfLineContent") },
+        { key = "e",  mods = "CTRL",  action = act.CopyMode("MoveToEndOfLineContent") },
+        { key = "m",  mods = "ALT",   action = act.CopyMode("MoveToStartOfLineContent") },
+        { key = "^",  mods = "SHIFT", action = act.CopyMode("MoveToStartOfLineContent") },
+        { key = "^",  mods = "NONE",  action = act.CopyMode("MoveToStartOfLineContent") },
+        { key = "a",  mods = "CTRL",  action = act.CopyMode("MoveToStartOfLineContent") },
+        -- select
+        { key = " ",  mods = "NONE",  action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+        { key = "v",  mods = "NONE",  action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+        {
+            key = "v",
+            mods = "SHIFT",
+            action = act({
+                Multiple = {
+                    act.CopyMode("MoveToStartOfLineContent"),
+                    act.CopyMode({ SetSelectionMode = "Cell" }),
+                    act.CopyMode("MoveToEndOfLineContent"),
+                },
+            }),
+        },
+        -- copy
+        {
+            key = "y",
+            mods = "NONE",
+            action = act({
+                Multiple = {
+                    act({ CopyTo = "ClipboardAndPrimarySelection" }),
+                    act.CopyMode("Close"),
+                },
+            }),
+        },
+        {
+            key = "y",
+            mods = "SHIFT",
+            action = act({
+                Multiple = {
+                    act.CopyMode({ SetSelectionMode = "Cell" }),
+                    act.CopyMode("MoveToEndOfLineContent"),
+                    act({ CopyTo = "ClipboardAndPrimarySelection" }),
+                    act.CopyMode("Close"),
+                },
+            }),
+        },
+        -- scroll
+        { key = "G",        mods = "SHIFT", action = act.CopyMode("MoveToScrollbackBottom") },
+        { key = "G",        mods = "NONE",  action = act.CopyMode("MoveToScrollbackBottom") },
+        { key = "g",        mods = "NONE",  action = act.CopyMode("MoveToScrollbackTop") },
+        { key = "H",        mods = "NONE",  action = act.CopyMode("MoveToViewportTop") },
+        { key = "H",        mods = "SHIFT", action = act.CopyMode("MoveToViewportTop") },
+        { key = "M",        mods = "NONE",  action = act.CopyMode("MoveToViewportMiddle") },
+        { key = "M",        mods = "SHIFT", action = act.CopyMode("MoveToViewportMiddle") },
+        { key = "L",        mods = "NONE",  action = act.CopyMode("MoveToViewportBottom") },
+        { key = "L",        mods = "SHIFT", action = act.CopyMode("MoveToViewportBottom") },
+        { key = "o",        mods = "NONE",  action = act.CopyMode("MoveToSelectionOtherEnd") },
+        { key = "O",        mods = "NONE",  action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+        { key = "O",        mods = "SHIFT", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+        { key = "PageUp",   mods = "NONE",  action = act.CopyMode("PageUp") },
+        { key = "PageDown", mods = "NONE",  action = act.CopyMode("PageDown") },
+        { key = "b",        mods = "CTRL",  action = act.CopyMode("PageUp") },
+        { key = "f",        mods = "CTRL",  action = act.CopyMode("PageDown") },
+        {
+            key = "Enter",
+            mods = "NONE",
+            action = act.CopyMode("ClearSelectionMode"),
+        },
+        -- search
+        { key = "/", mods = "NONE", action = act.Search("CurrentSelectionOrEmptyString") },
+        {
+            key = "n",
+            mods = "NONE",
+            action = act.Multiple({
+                act.CopyMode("NextMatch"),
+                act.CopyMode("ClearSelectionMode"),
+            }),
+        },
+        {
+            key = "N",
+            mods = "SHIFT",
+            action = act.Multiple({
+                act.CopyMode("PriorMatch"),
+                act.CopyMode("ClearSelectionMode"),
+            }),
+        },
+    },
+    search_mode = {
+        { key = "Escape", mods = "NONE", action = act.CopyMode("Close") },
+        {
+            key = "Enter",
+            mods = "NONE",
+            action = act.Multiple({
+                act.CopyMode("ClearSelectionMode"),
+                act.ActivateCopyMode,
+            }),
+        },
+        { key = "p",      mods = "CTRL", action = act.CopyMode("PriorMatch") },
+        { key = "n",      mods = "CTRL", action = act.CopyMode("NextMatch") },
+        { key = "r",      mods = "CTRL", action = act.CopyMode("CycleMatchType") },
+        { key = "/",      mods = "NONE", action = act.CopyMode("ClearPattern") },
+        { key = "u",      mods = "CTRL", action = act.CopyMode("ClearPattern") },
+    },
+}
+
+M.mouse_bindings = {
+    {
+        event = { Up = { streak = 1, button = "Left" } },
+        mods = "NONE",
+        action = act({ CompleteSelection = "PrimarySelection" }),
+    },
+    {
+        event = { Up = { streak = 1, button = "Right" } },
+        mods = "NONE",
+        action = act({ CompleteSelection = "Clipboard" }),
+    },
+    {
+        event = { Up = { streak = 1, button = "Left" } },
+        mods = "CTRL",
+        action = "OpenLinkAtMouseCursor",
+    },
+}
+
+return M

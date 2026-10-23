@@ -1,0 +1,20 @@
+README.md
+{{- if not .secrets }}
+.config/secrets
+.wakatime.cfg
+{{- end }}
+{{- if ne .chezmoi.os "darwin" }}
+Library
+.config/yabai
+.config/skhd
+.config/kanata
+.config/borders
+.config/rift
+.config/stackline
+Brewfile
+.Brewfile
+.chezmoiscripts/*brew*
+.chezmoiscripts/*macos*
+.chezmoiscripts/*launchd*
+.chezmoiscripts/*rift*
+{{- end }}

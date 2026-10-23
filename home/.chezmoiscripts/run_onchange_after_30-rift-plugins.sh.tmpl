@@ -1,0 +1,15 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Rift companion plugins aren't in brew; build them with cargo, pinned to the
+# revs previously used by the nix module. They talk to rift over a
+# version-sensitive IPC, so after `brew upgrade rift` re-check these revs.
+# pins: container-highlighter 6c7f397  app-indicator 878d465  stackline 2502c58
+set -euo pipefail
+command -v cargo >/dev/null 2>&1 || { echo "cargo not found (brew install rust)" >&2; exit 0; }
+inst() { cargo install --locked --git "$1" --rev "$2" "$3"; }
+inst https://github.com/ubuntudroid/rift-container-highlighter 6c7f3975b799d8029f600f0ea2ec0e412932d530 rift-container-highlighter || echo "rift-container-highlighter build failed"
+inst https://github.com/Chandraprakash-Darji/rift-companian 878d4651158253a54aa246d957f9137d50c9f122 rift-app-indicator || echo "rift-app-indicator build failed"
+inst https://github.com/acsandmann/stackline 2502c581739a24102163abae8448fad3f4b36317 stackline || echo "stackline build failed"
+# pizauth (OAuth proxy for mail) is also cargo-only
+command -v pizauth >/dev/null 2>&1 || cargo install --locked pizauth || echo "pizauth build failed"
+{{ end -}}

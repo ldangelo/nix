@@ -1,0 +1,19 @@
+# Things that are git checkouts rather than dotfiles. chezmoi keeps them
+# cloned/updated (weekly); tmux plugins themselves are managed by TPM.
+
+[".oh-my-zsh"]
+  type = "git-repo"
+  url = "https://github.com/ohmyzsh/ohmyzsh.git"
+  refreshPeriod = "168h"
+  [".oh-my-zsh".pull]
+    args = ["--ff-only"]
+
+[".tmux/plugins/tpm"]
+  type = "git-repo"
+  url = "https://github.com/tmux-plugins/tpm.git"
+  refreshPeriod = "168h"
+
+[".tmux/plugins/tmux-sensible"]
+  type = "git-repo"
+  url = "https://github.com/tmux-plugins/tmux-sensible.git"
+  refreshPeriod = "168h"

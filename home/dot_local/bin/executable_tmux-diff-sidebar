@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+# If a diff sidebar is already open in this window, close it (toggle off).
+existing="$(tmux show-options -wqv @diff_sidebar 2>/dev/null || true)"
+if [[ -n "$existing" ]] && tmux list-panes -a -F '#{pane_id}' | grep -qx "$existing"; then
+  tmux kill-pane -t "$existing"
+  tmux set-option -wu @diff_sidebar 2>/dev/null || true
+  exit 0
+fi
+# Otherwise open one: a full-height pane pinned to the left edge (-fhb),
+# 40% wide, running diffnav in watch mode so it live-updates.
+path="$(tmux display-message -p '#{pane_current_path}')"
+pane="$(tmux split-window -fhb -l 40% -c "$path" -P -F '#{pane_id}' 'diffnav --watch')"
+tmux set-option -w @diff_sidebar "$pane"

@@ -1,0 +1,15 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# (Re)load the user LaunchAgents managed by chezmoi.
+# plists: {{ output "sh" "-c" (printf "cat %q/Library/LaunchAgents/*.plist 2>/dev/null | shasum -a 256" .chezmoi.sourceDir) | trim }}
+set -euo pipefail
+uid="$(id -u)"
+for plist in "$HOME"/Library/LaunchAgents/com.ldangelo.*.plist "$HOME"/Library/LaunchAgents/com.rift.*.plist; do
+  [ -f "$plist" ] || continue
+  label="$(/usr/libexec/PlistBuddy -c 'Print :Label' "$plist")"
+  launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+  launchctl bootstrap "gui/$uid" "$plist" || echo "failed to load $label"
+done
+# borders (window borders) runs under brew services
+command -v borders >/dev/null 2>&1 && brew services start felixkratz/formulae/borders >/dev/null 2>&1 || true
+{{ end -}}

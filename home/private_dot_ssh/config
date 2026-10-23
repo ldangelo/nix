@@ -1,0 +1,16 @@
+Host ssh.dev.azure.com
+  IdentitiesOnly yes
+  IdentityFile /Users/ldangelo/.ssh/id_rsa_azuredevops
+  User git
+
+Host *
+  AddKeysToAgent yes
+  Compression no
+  ControlMaster no
+  ControlPath ~/.ssh/master-%r@%n:%p
+  ControlPersist no
+  ForwardAgent no
+  HashKnownHosts no
+  ServerAliveCountMax 3
+  ServerAliveInterval 0
+  UserKnownHostsFile ~/.ssh/known_hosts

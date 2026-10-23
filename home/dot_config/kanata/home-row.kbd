@@ -1,0 +1,65 @@
+
+(defcfg
+  process-unmapped-keys yes
+)
+
+(defsrc
+    esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+    lsgt 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+    tab  q    w    e    r    t    y    u    i    o    p    [    ]
+    caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
+    lsft grv  z    x    c    v    b    n    m    ,    .    /    rsft
+    fn   lctl lalt lmet           spc            rmet ralt
+)
+
+(deflayer base
+    ;; everything is exactly the same, only the f-row is changed.
+    ;; you can of course change any of the other mappings.
+    esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+    lsgt 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+    tab  q    w    @e    r    t    y    u    @i    o    p    [    ]
+    @caps @a  @s    @d    @f    g    h    @j    @k    @l    @;    '    \    ret
+    lsft grv  z    x    c    v    b    n    m    ,    .    /    rsft
+    fn   lctl lalt lmet           spc            rmet ralt
+)
+
+(deflayer empty
+    ;; useful for creating new layers
+    -  -   -    -    -    -    -    -   -   -   -   -   -
+    - -    -    -    -    -    -    -    -    -    -    -    -    -
+    -  -    -    -    -    -    -    -    -    -    -    -    -
+    - -  -    -    -    -    -    -    -    -    -    -    -    -
+    - -  -    -    -    -    -    -    -    -    -    -    -
+    -   - - -           -            - -
+)
+
+(defvar
+  ;; Note: consider using different time values for your different fingers.
+  ;; For example, your pinkies might be slower to release keys and index
+  ;; fingers faster.
+  tap-time 200
+  hold-time 400
+  slow-hold-time 500)
+
+(deftemplate charmod (char mod)
+  (switch
+    ((key-timing 3 less-than 450)) $char break
+    () (tap-hold-release $tap-time $slow-hold-time $char $mod) break
+  )
+)
+
+(defalias
+  ;; hold e or i for hyper key
+  hyper (multi lctl lalt lmet lshift)
+  e (t! charmod e (multi lctl lalt lmet lshift))
+  i (t! charmod i (multi rctl ralt rmet rshift))
+  caps (t! charmod esc lctl)
+  a (t! charmod a lctl)
+  s (t! charmod s lalt)
+  d (t! charmod d lmet)
+  f (t! charmod f lsft)
+  j (t! charmod j rsft)
+  k (t! charmod k rmet)
+  l (t! charmod l ralt)
+  ; (t! charmod ; rctl)
+)

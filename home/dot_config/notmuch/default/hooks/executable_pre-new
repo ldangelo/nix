@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+export PATH="/opt/homebrew/bin${PATH:+:}$PATH"
+export NOTMUCH_CONFIG="/Users/ldangelo/.config/notmuch/default/config"
+export NMBGIT="/Users/ldangelo/.local/share/notmuch/nmbug"
+
+mbsync icloud & mbsync fortium & mbsync curantis & wait
+

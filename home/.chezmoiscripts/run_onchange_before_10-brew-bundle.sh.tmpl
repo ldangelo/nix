@@ -1,0 +1,16 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Re-runs when the Brewfile changes.
+# Brewfile hash: {{ include "dot_Brewfile.tmpl" | sha256sum }}
+set -euo pipefail
+if ! command -v brew >/dev/null 2>&1 && [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is not installed. See scripts/bootstrap.sh" >&2
+  exit 1
+fi
+# Render the Brewfile ourselves: this script runs before chezmoi writes ~/.Brewfile.
+chezmoi execute-template < "{{ .chezmoi.sourceDir }}/dot_Brewfile.tmpl" > "${TMPDIR:-/tmp}/chezmoi.Brewfile"
+brew bundle --file="${TMPDIR:-/tmp}/chezmoi.Brewfile" --no-upgrade || echo "brew bundle reported failures (see above); continuing"
+{{ end -}}

@@ -1,0 +1,36 @@
+# Environment for every zsh invocation (scripts included). Keep it fast and
+# side-effect free; interactive setup lives in ~/.zshrc.
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export DISABLE_AUTO_TITLE='true'
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+export EMACS="/Applications/Emacs.app/Contents/MacOS/Emacs"
+
+export FZF_DEFAULT_OPTS="--bind ctrl-k:kill-line --color=dark"
+export FZF_DEFAULT_OPTS_FILE="$HOME/.config/catppuccin/fzf/catppuccin-fzf-mocha.rc"
+export GLAMOUR_STYLE="$HOME/.config/catppuccin/glamour/catppuccin-mocha.json"
+export LG_CONFIG_FILE="$HOME/.config/catppuccin/lazygit/mocha/mauve.yml,$HOME/Library/Application Support/lazygit/config.yml"
+
+export MSMTPQ_LOG="$HOME/.local/share/msmtp/queue.log"
+export MSMTPQ_Q="$HOME/.local/share/msmtp/queue"
+export NMBGIT="$HOME/.local/share/notmuch/nmbug"
+export NOTMUCH_CONFIG="$HOME/.config/notmuch/default/config"
+export QUTE_1PASS_DMENU_CMD="choose"
+
+# Pi / OMP
+export PI_OBSIDIAN_VAULT="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/ldangelo"
+export PI_MEMORY_DIR="$PI_OBSIDIAN_VAULT/Agent/PiMemory"
+export PI_AUTO_COMPACT_THRESHOLD_PERCENT=60
+
+# Oh My Zsh (cloned by chezmoi to ~/.oh-my-zsh)
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"
+
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.npm-global/bin${PATH:+:}$PATH"
+
+# Scope C locale to the doom CLI wrapper so OMP (and other UTF-8
+# consumers, e.g. status-line `preset: nerd` Nerd Font glyphs) keep
+# multibyte handling outside of doom invocations.
+doom() { LANG=C LC_ALL=C command doom "$@"; }
