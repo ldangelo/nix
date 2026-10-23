@@ -16,6 +16,7 @@ let
   cfg = config.mutableConfig;
   home = config.home.homeDirectory;
   xdgDir = config.xdg.configHome;
+  target = name: "${xdgDir}/${name}";
 in {
   options.mutableConfig.xdgFiles = lib.mkOption {
     type = lib.types.listOf lib.types.str;
@@ -24,17 +25,19 @@ in {
   };
 
   config = lib.mkIf (cfg.xdgFiles != [ ]) {
-    xdg.configFile = lib.genAttrs cfg.xdgFiles (_: {
+    # Keyed on home.file (not xdg.configFile) because some modules, e.g.
+    # programs.jujutsu, write there directly; xdg.configFile feeds the same set.
+    home.file = lib.genAttrs (map target cfg.xdgFiles) (_: {
       enable = lib.mkForce false;
     });
 
     home.activation.materializeMutableConfigs = lib.hm.dag.entryAfter [ "linkGeneration" ] (
       lib.concatMapStrings (name: ''
-        dest=${lib.escapeShellArg "${xdgDir}/${name}"}
+        dest=${lib.escapeShellArg (target name)}
         if [ -L "$dest" ] || [ ! -e "$dest" ]; then
           rm -f "$dest"
           mkdir -p "$(dirname "$dest")"
-          ${pkgs.coreutils}/bin/install -m 644 ${config.xdg.configFile.${name}.source} "$dest"
+          ${pkgs.coreutils}/bin/install -m 644 ${config.home.file.${target name}.source} "$dest"
         fi
       '') cfg.xdgFiles
     );

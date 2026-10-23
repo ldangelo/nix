@@ -63,6 +63,8 @@
     "yazi/keymap.toml"
     "yazi/theme.toml"
     "yazi/init.lua"
+    "jj/config.toml"
+    "git/config"
   ];
   fonts.fontconfig.enable = true;
   home.stateVersion = "22.11";
