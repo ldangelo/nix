@@ -3,6 +3,8 @@
 {{- $secrets := promptBoolOnce . "secrets" "Render 1Password secrets (needs `op` signed in)" false -}}
 {{- $vault := promptStringOnce . "vault" "1Password vault holding the secrets" "Private" -}}
 
+sourceDir = {{ joinPath .chezmoi.homeDir "nix" | quote }}
+
 [data]
   workstation = {{ $workstation }}
   secrets = {{ $secrets }}

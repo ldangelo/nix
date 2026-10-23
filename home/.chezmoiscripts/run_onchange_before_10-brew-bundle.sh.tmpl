@@ -12,5 +12,10 @@ if ! command -v brew >/dev/null 2>&1; then
 fi
 # Render the Brewfile ourselves: this script runs before chezmoi writes ~/.Brewfile.
 chezmoi execute-template < "{{ .chezmoi.sourceDir }}/dot_Brewfile.tmpl" > "${TMPDIR:-/tmp}/chezmoi.Brewfile"
+# Homebrew refuses to load formulae from untrusted third-party taps. Trusting the taps
+# listed in the Brewfile matches what nix-darwin's CI=1 auto-confirm did before.
+grep -E '^tap "' "${TMPDIR:-/tmp}/chezmoi.Brewfile" | sed -E 's/^tap "([^"]+)".*/\1/' | while read -r t; do
+  brew trust --tap "$t" >/dev/null 2>&1 || true
+done
 brew bundle --file="${TMPDIR:-/tmp}/chezmoi.Brewfile" --no-upgrade || echo "brew bundle reported failures (see above); continuing"
 {{ end -}}
