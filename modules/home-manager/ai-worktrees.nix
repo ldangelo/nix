@@ -5,7 +5,7 @@
 #   clash           — predict merge conflicts across worktrees
 #   tmuxinator      — an `agents` layout with a live conflict radar
 #
-# The agents themselves (OMP / pi) are managed by omp.nix / pi-agent.nix — this
+# The agents themselves (OMP / pi) are configured directly in ~/.omp and ~/.pi (not managed by Nix) — this
 # module deliberately does not touch them.
 #
 # DISABLED BY DEFAULT so it can't break a deploy. To turn on:

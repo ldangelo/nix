@@ -24,8 +24,6 @@
     ./tmux
     ./ghostty.nix
     ./yazi.nix
-    ./pi-agent.nix
-    ./omp.nix
     ./ai-worktrees.nix
     ./tmuxai.nix
     ./rift-plugins.nix

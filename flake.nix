@@ -129,55 +129,15 @@
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.sharedModules = [
               sops-nix.homeManagerModules.sops
-              ./modules/home-manager/pi-agent.nix
-              ./modules/home-manager/omp.nix
             ];
             home-manager.users.ldangelo = { pkgs, ... }: {
               imports = [
                 catppuccin.homeModules.catppuccin
                 ./modules/home-manager/default.nix
               ];
-              pi-agent.enable = true;
-              # OMP declarative config: module-managed ~/.omp/agent/config.yml + mcp.json.
-              # Existing manual config.yml will be backed up to config.yml.bak on next deploy.
-              omp.enable = true;
               # Parallel AI-agent worktree workflow (worktrunk + clash + tmuxinator).
               # NOTE: requires versions + hashes filled in ai-worktrees.nix before deploy.
               # aiWorktrees.enable = true;  # disabled: ai-worktrees.nix has fakeHash placeholders (worktrunk + clash-sh). Re-enable after pasting real versions + hashes per the file's own onboarding steps.
-              pi-agent.skills = [
-                ./modules/home-manager/pi-extensions/obsidian
-              ];
-              pi-agent.extensions = [
-                ./modules/home-manager/pi-extensions/git-checkpoint.ts
-                ./modules/home-manager/pi-extensions/notify.ts
-                ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
-                ./modules/home-manager/pi-extensions/confirm-destructive.ts
-                ./modules/home-manager/pi-extensions/model-status.ts
-                ./modules/home-manager/pi-extensions/handoff.ts
-                ./modules/home-manager/pi-extensions/todo.ts
-                ./modules/home-manager/pi-extensions/bookmark.ts
-                ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
-                ./modules/home-manager/pi-extensions/preset.ts
-                ./modules/home-manager/pi-extensions/nvim
-                ./modules/home-manager/pi-extensions/poly-notify
-                ./modules/home-manager/pi-extensions/auto-active-skills.ts
-              ];
-              pi-agent.binTools = with pkgs; [ fd ripgrep nodejs bun ];
-              pi-agent.packages = [
-                "npm:pi-powerline-footer"
-                "https://github.com/tmonk/pi-goal-x"
-                "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                # Local Ensemble: skills + commands + agents. Declared as a bare
-                # source string on purpose. The attrset form with `extensions = []`
-                # does NOT mean "extensions off, skills on" — pi treats it as a
-                # resource filter and suppresses ALL resources, which left every
-                # ensemble skill undiscoverable (pi list reported "(filtered)").
-                # The package ships no extensions (no extensions/ dir, no `pi.extensions`
-                # manifest key), so there is nothing to conflict with.
-                "/Users/ldangelo/Development/Sunstone/ensemble.dev/packages/pi"
-              ];
-              pi-agent.mcpConfig = {};
-              pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
             };
           }
         ];
@@ -187,21 +147,18 @@
             system = "aarch64-darwin";
             modules = darwinModules;
             specialArgs = { inherit inputs; isWorkstation = true; };
-            # pi-agent config moved to home-manager only
           };
 
           "Sunstone-MacBook-Pro" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             modules = darwinModules;
             specialArgs = { inherit inputs; isWorkstation = true; };
-            # pi-agent config moved to home-manager only
           };
 
           "Leos-Mac-mini" = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             modules = darwinModules;
             specialArgs = { inherit inputs; isWorkstation = false; };
-            # pi-agent config moved to home-manager only
           };
         };
 
@@ -217,77 +174,7 @@
               catppuccin.homeModules.catppuccin
               sops-nix.homeManagerModules.sops
               ./modules/home-manager/default.nix
-              ./modules/home-manager/pi-agent.nix
-              ./modules/home-manager/omp.nix
               ./overlays
-              ({ pkgs, ... }:
-              {
-                pi-agent.enable = true;
-                omp.enable = true;
-                pi-agent.settings = {
-                  lastChangelogVersion = "0.72.1";
-                  defaultProvider = "openai-codex";
-                  defaultModel = "gpt-5.5";
-                  defaultThinkingLevel = "medium";
-                  packages = [
-                    "npm:pi-powerline-footer"
-                    "https://github.com/tmonk/pi-goal-x"
-                    "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                  ];
-                  powerline = {
-                    preset = "nerd";
-                  };
-                  workingVibeMode = "file";
-                  workingVibe = "off";
-                  permissionLevel = "low";
-                  permissionMode = "ask";
-                  bashMode = {
-                    toggleShortcut = "ctrl+shift+b";
-                    transcriptMaxLines = 2000;
-                    transcriptMaxBytes = 524288;
-                  };
-                  httpIdleTimeoutMs = 0;
-                };
-                pi-agent.binTools = with pkgs; [
-                  fd
-                  ripgrep
-                  nodejs
-                  bun
-                ];
-                pi-agent.skills = [
-                  ./modules/home-manager/pi-extensions/obsidian
-                ];
-                pi-agent.extensions = [
-                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
-                  ./modules/home-manager/pi-extensions/notify.ts
-                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
-                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
-                  ./modules/home-manager/pi-extensions/model-status.ts
-                  ./modules/home-manager/pi-extensions/handoff.ts
-                  ./modules/home-manager/pi-extensions/todo.ts
-                  ./modules/home-manager/pi-extensions/bookmark.ts
-                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
-                  ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
-                  ./modules/home-manager/pi-extensions/preset.ts
-                  ./modules/home-manager/pi-extensions/nvim
-                  ./modules/home-manager/pi-extensions/poly-notify
-                ];
-                pi-agent.packages = [
-                  "npm:pi-powerline-footer"
-                  "https://github.com/tmonk/pi-goal-x"
-                  "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                  # Local Ensemble: skills + commands + agents. Declared as a bare
-                  # source string on purpose. The attrset form with `extensions = []`
-                  # does NOT mean "extensions off, skills on" — pi treats it as a
-                  # resource filter and suppresses ALL resources, which left every
-                  # ensemble skill undiscoverable (pi list reported "(filtered)").
-                  # The package ships no extensions (no extensions/ dir, no `pi.extensions`
-                  # manifest key), so there is nothing to conflict with.
-                  "/Users/ldangelo/Development/Sunstone/ensemble/packages/pi"
-                ];
-                pi-agent.mcpConfig = {};
-                pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
-              })
               {
                 home.username = "ldangelo";
                 home.homeDirectory = "/Users/ldangelo";
@@ -306,85 +193,6 @@
               catppuccin.homeModules.catppuccin
               sops-nix.homeManagerModules.sops
               ./modules/linux/home-manager/default.nix
-              ./modules/home-manager/pi-agent.nix
-              ./modules/home-manager/omp.nix
-              ({ pkgs, ... }:
-              let
-                ensemblePi = pkgs.fetchFromGitHub {
-                  owner = "FortiumPartners";
-                  repo = "ensemble";
-                  rev = "faa88672815559b3739b8da5ec5c50607553eb5d";
-                  hash = "sha256-0jQiNfIWLY0sQP0el6b1WgjvjfT6c9YC0hpzFChka5A=";
-                };
-              in {
-                pi-agent.enable = true;
-                omp.enable = true;
-                pi-agent.settings = {
-                  lastChangelogVersion = "0.72.1";
-                  defaultProvider = "openai-codex";
-                  defaultModel = "gpt-5.5";
-                  defaultThinkingLevel = "medium";
-                  packages = [
-                    "npm:pi-powerline-footer"
-                    "https://github.com/tmonk/pi-goal-x"
-                    "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                    {
-                      source = "${ensemblePi}/packages/pi";
-                      # Ensemble currently ships an ask_user extension. We provide
-                      # a Pi-version-compatible ask_user extension separately to
-                      # avoid duplicate/conflicting tool registration.
-                      extensions = [];
-                    }
-                  ];
-                  powerline = {
-                    preset = "nerd";
-                  };
-                  workingVibeMode = "file";
-                  workingVibe = "off";
-                  permissionLevel = "low";
-                  permissionMode = "ask";
-                  bashMode = {
-                    toggleShortcut = "ctrl+shift+b";
-                    transcriptMaxLines = 2000;
-                    transcriptMaxBytes = 524288;
-                  };
-                  httpIdleTimeoutMs = 0;
-              };
-                pi-agent.binTools = with pkgs; [
-                  fd
-                  ripgrep
-                  nodejs
-                  bun
-                ];
-                pi-agent.skills = [
-                  ./modules/home-manager/pi-extensions/obsidian
-                ];
-                pi-agent.extensions = [
-                  ./modules/home-manager/pi-extensions/git-checkpoint.ts
-                  ./modules/home-manager/pi-extensions/notify.ts
-                  ./modules/home-manager/pi-extensions/dirty-repo-guard.ts
-                  ./modules/home-manager/pi-extensions/confirm-destructive.ts
-                  ./modules/home-manager/pi-extensions/model-status.ts
-                  ./modules/home-manager/pi-extensions/handoff.ts
-                  ./modules/home-manager/pi-extensions/todo.ts
-                  ./modules/home-manager/pi-extensions/bookmark.ts
-                  ./modules/home-manager/pi-extensions/auto-commit-on-exit.ts
-                  ./modules/home-manager/pi-extensions/preset.ts
-                  ./modules/home-manager/pi-extensions/nvim
-                  ./modules/home-manager/pi-extensions/poly-notify
-                  ./modules/home-manager/pi-extensions/auto-active-skills.ts
-                ];
-                pi-agent.packages = [
-                  "npm:pi-powerline-footer"
-                  "https://github.com/tmonk/pi-goal-x"
-                  "https://github.com/KristjanPikhof/pi-yaml-hooks"
-                  # Ensemble pi package is registered via pi-agent.settings.packages
-                  # as an attrset with extensions=[] to avoid duplicate ask_user
-                  # tool registration with the nix-managed ask-user.ts extension.
-                ];
-                pi-agent.mcpConfig = {};
-                pi-agent.models = builtins.fromJSON (builtins.readFile ./pi-models.json);
-              })
             ];
           };
         };
